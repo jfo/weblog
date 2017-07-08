@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode | default "en-us" }}">
+
+    {{ partial "head.html" . }}
+
+    <body>
+        <div id="content">
+            {{ partial "header.html" . }}
+            <article>
+                <h1>{{ .Title }}</h1>
+                <sub>{{ .Date.Format "January 2, 2006 " }}</sub>
+                <div>
+                    {{ .Content }}
+                </div>
+            </article>
+        </div>
+    </body>
+</html>

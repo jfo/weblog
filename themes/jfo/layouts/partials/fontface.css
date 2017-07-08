@@ -1,0 +1,5 @@
+@font-face {
+    font-family: "etbook";
+    src: url("{{ .Site.BaseURL }}css/et-book.woff") format('woff');
+}
+

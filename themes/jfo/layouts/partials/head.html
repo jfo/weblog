@@ -1,0 +1,13 @@
+<head>
+    <title>{{ .Title }}</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="{{ .Site.BaseURL }}images/jeff.ico" type="image/x-icon" />
+    <style type="text/css">
+        {{ partial "fontface.css" . | safeCSS }}
+    </style>
+    <link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css">
+    <link rel="stylesheet" href="{{ .Site.BaseURL }}css/solarized-dark.css">
+    <link href="{{ .RSSLink }}" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>

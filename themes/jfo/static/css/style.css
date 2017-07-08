@@ -1,0 +1,72 @@
+body {
+    background: #fffff2;
+    font-family: etbook;
+    font-size: 1.2em;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+p, li {
+    line-height: 1.5;
+}
+
+#content {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.site-header {
+    margin-top: 2em;
+    text-align:right;
+}
+.site-header * {
+    display: inline;
+}
+
+pre {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    overflow-x: auto;
+    border: 1px dotted #002b36;
+}
+
+blockquote {
+    font-style: italic;
+    padding: 0 15px;
+    margin: 2em 0;
+    color: #888;
+    border-left: 4px solid #ddd;
+}
+
+img, canvas {
+    max-width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid gray;
+}
+
+iframe {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: 350px;
+}
+
+.content hr {
+    width: 30%;
+}
+
+time {
+    font-size: 0.8em;
+    opacity:0.6;
+}

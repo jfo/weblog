@@ -1,0 +1,28 @@
+baseURL = "http://blog.jfo.click/"
+languageCode = "en-us"
+title = "blog.jfo.click"
+
+pygmentsuseclasses = true
+pygmentscodefences = true
+
+theme = "jfo"
+
+rssLimit = 3
+
+[mediaTypes]
+    [mediaTypes."application/rss"]
+        suffix = ''
+
+[outputFormats]
+    [outputFormats.RSS]
+        baseName = "feed"
+        suffix = ''
+
+[permalinks]
+    post= "/:title/"
+
+[taxonomies]
+    tag = ""
+    group = ""
+    category = ""
+    post = ""
