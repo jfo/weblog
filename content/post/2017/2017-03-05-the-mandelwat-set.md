@@ -787,6 +787,7 @@ These are just some numbers. They don't really have anything in common with
 each other, I just typed some numbers. And so for any number `x` that you can
 dream up, `x` will either be in this set, or not.
 
+```
 |-----------------+------------+
 | `x`             | Is in set? |
 |:---------------:|:----------:|
@@ -797,6 +798,7 @@ dream up, `x` will either be in this set, or not.
 | 397376          | yes        |
 | 100             | no         |
 |-----------------+------------+
+```
 
 
 Hey actually, JavaScript has a syntax for exactly this!
