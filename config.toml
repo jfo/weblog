@@ -8,15 +8,8 @@ pygmentscodefences = true
 theme = "jfo"
 
 rssLimit = 3
-
-[mediaTypes]
-    [mediaTypes."application/rss"]
-        suffix = ''
-
-[outputFormats]
-    [outputFormats.RSS]
-        baseName = "feed"
-        suffix = ''
+[outputFormats.RSS]
+    baseName = "feed"
 
 [permalinks]
     post= "/:title/"

@@ -66,7 +66,13 @@ iframe {
     width: 30%;
 }
 
-time {
-    font-size: 0.8em;
-    opacity:0.6;
+td {
+    padding-top: 0.4em;
+}
+
+tr time {
+    font-size: 0.7em;
+    opacity:0.5;
+    font-family: monospace;
+    margin-right: 3em;
 }

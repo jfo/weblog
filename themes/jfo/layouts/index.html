@@ -4,22 +4,16 @@
     <body>
         <div id="content">
             {{ partial "header.html" . }}
-
-            {{ range where .Pages "Type" "post" }}
-                {{ if eq .Draft true }}
-                    <div><a href="{{ .Permalink }}">{{ .Title }}</a></div>
-                {{ end }}
-            {{ end }}
-
+{{ range where .Pages "Type" "post" }}{{ if eq .Draft true }}
+            <div><a href="{{ .Permalink }}">{{ .Title }}</a></div>
+{{ end }}{{ end }}
             <table>
-                {{ range where .Pages "Type" "post" }}
-                    {{ if eq .Draft false }}
-                        <tr>
-                            <td><time>{{ .Date.Format "Jan 02, 2006" }}</time></td>
-                            <td><a href="{{ .Permalink }}">{{ .Title }}</a></td>
-                        </tr>
-                    {{ end }}
-                {{ end }}
+{{ range where .Pages "Type" "post" }}{{ if eq .Draft false }}
+                <tr>
+                    <td><time>{{ .Date.Format "Jan 02, 2006" }}</time></td>
+                    <td><a href="{{ .Permalink }}">{{ .Title }}</a></td>
+                </tr>
+{{ end }}{{ end }}
             </table>
         </div>
     </body>
