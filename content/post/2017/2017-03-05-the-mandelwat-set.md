@@ -1548,6 +1548,7 @@ function MandelbrotOne(canvasId) {
 </script>
 
 <canvas id="ex14" height="200" width="200" style="border: 1px solid black;"></canvas>
+
 <script>
     var mb = new MandelbrotOne("ex14")
     mb.render();
@@ -1583,6 +1584,7 @@ setInterval(function(){
 ```
 
 <canvas id="ex15" height="200" width="200" style="border: 1px solid black;"></canvas>
+
 <script>
 (function() {
     var mb = new MandelbrotOne("ex15")
@@ -1746,6 +1748,7 @@ This is _drastically_ cooler looking.
 </script>
 
 <canvas id="ex16" height="200" width="200" style="border: 1px solid black;"></canvas>
+
 <script>
 (function() {
     var mb = new Mandelbrot("ex16")
