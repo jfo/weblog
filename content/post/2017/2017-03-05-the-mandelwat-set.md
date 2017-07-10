@@ -1335,6 +1335,7 @@ function isMandlebrot(coord) {
 }
 ```
 <canvas id="ex12" height="200" width="200" style="border: 1px solid black;"></canvas>
+
 <script>
 (function() {
     function isMandlebrot(coord) {
@@ -1361,7 +1362,6 @@ function isMandlebrot(coord) {
 })();
 </script>
 
-
 ```js
 var graph = new Graph("ex12");
 graph.render(isMandlebrot);
@@ -1369,9 +1369,8 @@ graph.render(isMandlebrot);
 
 There it is. Our old friend. The Mandelbrot set.
 
-
-Lol that looks like a fuzzy potato why is this cool
-===================================================
+That looks like a fuzzy potato
+==============================
 
 Yeah, it might look boring from where we're sitting, _but it's totally not_
 
