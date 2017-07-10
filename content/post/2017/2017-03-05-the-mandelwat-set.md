@@ -1379,6 +1379,7 @@ and `center` accessible. We can totally change where we're looking at the graph
 and re-render on the fly!
 
 <canvas id="ex13" height="200" width="200" style="border: 1px solid black;"></canvas>
+
 <button class="ex13button" data-centerx="-0.7463" data-centery="0.1102" data-r="0.005" >x:-0.7463, y:0.1102, r:0.005</button>
 <button class="ex13button" data-centerx="-0.7453" data-centery="0.1127" data-r="0.00065" >x:-0.7453, y:0.1127, r:0.00065</button>
 <button class="ex13button" data-centerx="-1.25066" data-centery="0.02012" data-r="0.0005" >x:-1.25066, y:0.02012, r:0.0005</button>
@@ -1422,6 +1423,7 @@ and re-render on the fly!
 
 })();
 </script>
+
 
 Small refactor
 =================
