@@ -1880,6 +1880,8 @@ Unfortunately the last one is probably the best but I haven't been able to find
 it online anywhere. The one I saw was loaned to me by fellow fractal enthusiast
 and Etsian [Paul-Jean Letourneau](http://paul-jean.github.io/). Thanks Paul-Jean!
 
+> Update: [someone found it!](https://fod.infobase.com/p_ViewPlaylist.aspx?AssignmentID=6U4LJA)
+
 Also thanks to [Julia Evans](https://jvns.ca/) for talking me through some of
 the math early on and helping me with my complex number algebra that I kept
 messing up and which produced weird blobs on the canvas.
