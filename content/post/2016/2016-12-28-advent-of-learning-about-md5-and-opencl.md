@@ -362,16 +362,14 @@ end
 puts md5 "abbhdwsy"
 ```
 
-> It's important to split it into bytes first! In the case of our earlier unicode
-> example and how ruby thinks about things...
-
-> ```ruby
-> "λλλ".length # 3
-> "λλλ".bytes.length # 6
-> ```
+It's important to split it into bytes first! In the case of our earlier unicode
+example and how ruby thinks about things...
+```ruby
+"λλλ".length # 3
+"λλλ".bytes.length # 6
+```
 
 this gives me
-
 
 ```
 8
@@ -379,8 +377,6 @@ this gives me
 
 Which makes sense, because `"abbhdwsy"` is 8 characters long and none of them
 are more than one byte long in unicode because they all used to be ascii!
-
-> More on that:
 
 But remember, I'm going to want the length _in bits_. Ok, I've already got 8
 bytes, and there are 8 bits in a byte, so
