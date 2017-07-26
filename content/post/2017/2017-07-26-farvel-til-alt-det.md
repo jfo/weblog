@@ -1,7 +1,6 @@
 ---
 title: Farvel til alt det
 date: 2017-07-26
-draft: true
 ---
 
 After 9 years in New York, I am leaving for good on August 1st, when I'll be
