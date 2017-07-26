@@ -14,7 +14,7 @@ the decision to do so I maintain to be one of the most personally positively
 impactful ones I have ever made and likely ever will make in my life. I have
 limitless thanks for the [Recurse Center](https://www.recurse.com/),
 [Etsy](https://www.etsy.com/) and the many colleagues at both who helped to
-make that transition not only possible but also totally incredible.
+make that transition not only possible but also totally joyful.
 
 I'll be looking for engineering work in the coming weeks and months. I'm hoping
 to find a job somewhere that is...
