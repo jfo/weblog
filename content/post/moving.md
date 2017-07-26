@@ -1,5 +1,6 @@
 ---
-title: Farvel til alt det
+title: FFarvel til alt det
+date: 2017-01-02
 draft: true
 ---
 
