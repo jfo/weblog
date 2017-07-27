@@ -49,7 +49,7 @@ You can find many examples of my personal projects, communication and pedagogica
 thought process on this blog. I think my favorites right now are [The Mandelwat
 Set](/the-mandelwat-set/), which was republished in
 [DailyJS](https://medium.com/dailyjs/the-mandelwat-set-c3037204bf83), the [Sild
-series](/sild-is-a-list/), for which I wrote about 80,000 words on implementing an
+series](/sild-is-a-lisp-dialect/), for which I wrote about 80,000 words on implementing an
 interpreted lisp from scratch, and [How React Do?](/how-react-do/), which is my
 attempt to figure out React from something resembling first-ish principles.
 
