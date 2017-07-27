@@ -18,7 +18,7 @@ make that transition not only possible but also totally joyful.
 I'll be looking for engineering work in the coming weeks and months. I'm hoping
 to find a job somewhere that is...
 
-- Small enough for me to have a big impact on but big enough to offer a measure
+- small enough for me to have a big impact on but big enough to offer a measure
 of stability<sup>1</sup>
 
 ...and that is...
