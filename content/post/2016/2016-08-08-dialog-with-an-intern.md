@@ -84,7 +84,7 @@ url: dialog-with-an-intern
 > Here's a thing to try! Run some commands in an empty directory (not a git repo
 > just an empty directory...)
 
-``bash
+```bash
 printf 'hi mom\nhi dad\n' > 1.txt
 printf 'hi mom\nhi dad\nhello world\n' > 2.txt
 cat 1.txt
