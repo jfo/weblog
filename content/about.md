@@ -5,8 +5,7 @@ url: about
 This is the about page
 ======================
 
-My name is Jeff Fowler. I live in New York City for another few days, and then I'll
-live in Copenhagen with my wife and cat.
+My name is Jeff Fowler. I live in Copenhagen with my wife and cat.
 
 I'm trying to write more here. All the .coms were taken. 'jfo' is my irc handle.
 
