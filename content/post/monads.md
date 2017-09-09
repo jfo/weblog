@@ -499,7 +499,7 @@ back to sild
 -----------
 
 How can I keep track of all the functions I've run on an object? In a stateful
-language, this is easy.
+language, this is easy. Here's some Ruby:
 
 ```ruby
 class Whatever
@@ -575,4 +575,139 @@ I'll also need a couple of utility functions...
 ```
 
 `unshift` will "push" something on to the _end_ of a list. It's the opposite of
-`cons`.
+`cons`.  [Here read this!](http://www.perlmonks.org/?node_id=613124)
+
+Ok, with these useful extras out of the way, let's get to the meat of things.
+
+Here's the unit function. This monad will have the form:
+
+```
+(() ())
+```
+
+...that is to say, it must be a list with two lists inside of it.
+The first will be the value, the second will be the record (history) of all the
+procedures that were bound to the monad. `unit` then will take a value (a
+list), and 'wrap' it into a monad with a blank history.
+
+```scheme
+(def unit
+  (λ (x)
+    (cons x '(()))))
+```
+
+I'll have a constructor, that simple takes two lists and wraps them up.
+
+```scheme
+(def constructor
+  (λ (val hist)
+    (cons val (cons hist '()))))
+```
+
+And I'll define a few aliases to make it clearer what I'm doing to `Thing`s
+
+```scheme
+; some aliases to make usage clearer when applied to monads.
+(def get-val car)
+(def get-hist cadr)
+(def get-most-recent-hist caadr)
+```
+
+Here's a function that writes a new element to a history and returns a new Thing with that new history, leaving the value unchanged.
+
+```scheme
+; takes a symbol `sym` and a monad `Mx` and writes the symbol onto the end of
+; the monad's history
+(def write-to-hist
+  (λ (sym Mx)
+    (constructor (get-val Mx)
+            (unshift sym (get-hist Mx)))))
+```
+
+Next, I'll need this function that takes two `Thing`s an old one and a new one.
+It merges the histories, and returns a new `Thing` with the new value and the
+merged histories.
+
+```scheme
+; takes two monads, an old one and a new one. Combines the new's value with the
+; old's history while appending the new's most recent history entry.
+(def combine-hist
+  (λ (m-old m-new)
+; if both histories are equal, it's empty. We don't need to merge anything,
+; just return the new one:
+    (cond (eq (get-hist m-old) (get-hist m-new)) m-new ; otherwise, write the
+; most recent history entry from the new to the old and return a new monad
+; made of the value of the new and the merged histories
+              (m-make
+                (get-val m-new)
+                (get-hist (write-to-hist (get-most-recent-hist m-new)
+                                         m-old))))))
+```
+
+It's our friend, bind aka `>>=`! in this case, we apply the function with
+signature `a -> Mb` to the extracted value, and combine histories, and we're
+done!
+
+```
+(def bind
+  (λ (f Mx)
+    (combine-hist Mx
+                  (f (get-val Mx)))))
+```
+Now, we'll also need some functions of the form `x -> Mx`. 
+
+```scheme
+; takes a datum to push into something and a name for the function to be
+; recorded into history as and returns a function that pushes into a value and
+; returns a monad
+(def makepusher
+  (λ (datum name)
+    (λ (l) (write-to-hist name (unit (cons datum l))))))
+
+(def push-a (makepusher 'a 'push-a))
+(def push-b (makepusher 'b 'push-b))
+(def push-c (makepusher 'c 'push-c))
+; this will break if the monad's value list is empty! caveat lisper
+(def pop    (λ (l) (write-to-hist 'pop (unit (cdr l)))))
+```
+
+And finally, compose, which looks and acts just like the js example.
+
+
+```scheme
+(def compose
+  (λ (g f)
+    (λ (m) (bind f (bind g m)))))
+```
+
+With all of this out of the way, what do we get? Does this pass those three tests?
+
+```scheme
+; left identity
+(display (bind pop My))  ; ((b c) (pop))
+(display (pop y))        ; ((b c) (pop))
+
+; right identity
+(display My)             ; ((a b c) ())
+(display (bind unit My)) ; ((a b c) ())
+
+; associativity
+(display (bind push-c ((compose push-a pop) My))) ; ((c a b c) (push-a pop push-c))
+(display ((compose pop push-c) (bind push-a My))) ; ((c a b c) (push-a pop push-c))
+```
+
+Indeed it does. This is a monad! And look here,
+
+```scheme
+(display (bind push-c
+          (bind pop
+           (bind pop
+            (bind push-a
+             (bind push-b
+              (bind push-c
+               (bind pop
+                (bind pop My)))))))))
+; ((c c c) (pop pop push-c push-b push-a pop pop push-c))
+```
+
+This monad has a memory, a history of everything that's been bound to it! 
