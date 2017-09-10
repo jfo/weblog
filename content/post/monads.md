@@ -16,6 +16,19 @@ fate?
 
 <hr>
 
+I wouldn't call this a tutorial, though it feels like it. It kind of is one,
+but I prefer the term development log. I assume no real authority, I'm just
+trying to clearly explain something I've just learned about. Monads are
+particularly prickly, for a variety of reasons, but something that came up over
+and over again in my research was the necessity of "developing an intuition" about them.
+
+To that end, I've included a lot of links at the end of this post and I
+encourage you to read a lot of them if you are interested. Reading a lot of
+different takes on the subject can help to develop that intuition in a way that
+no single tutorial or log could ever do. 
+
+<hr>
+
 Monads have a reputation. Why?
 
 1. The term is [imprecise](https://en.wikipedia.org/wiki/Monad) across
@@ -58,8 +71,9 @@ point.](https://www.youtube.com/watch?v=ZhuHCtR3xq8&feature=youtu.be&t=26m20s)
 > category theory, to be fully conversant, to be _fully fluent_ in this language
 > of function composition. All you have to remember is the types need to line up.
 
-Of course, this is _not_ an indictment of category theory whatsoever. It looks
-absolutely fascinating! Beckman goes on...
+Of course, I'm not making an indictment of category theory whatsoever. It looks
+absolutely fascinating! I'm just saying it's not a _prerequisite_ to developing
+an understanding and intuition of what monads are and do. Beckman goes on...
 
 > If you're going to nest function calls, the types have to line up. There's
 > nothing complicated about this you don't need to know category theory to... I mean
@@ -76,17 +90,57 @@ rules_, and that is what makes them, in aggregate, a monad.
 
 The three things are:
 
-A something.
-
-a type of thing, and `unit()`
+a type of thing,
 -------------
 
-`unit` takes a value and returns a _new_ something of another type that
-incorporates that initial value.  It's basically just a constructor.
+The structure doesn't matter. What matters it that it's a functor. A functor is
+a thing that can be fmapped. fmap means functor map, and it's a function that
+_knows how to access values inside the functor_.
 
-You will need that other type, though. This could be class constructor or even
-just a list literal or something. In javascript, I could use the `new` keyword
-for this. _It does not matter what the structure of the returned object is._
+Let's see, in Ruby, an `Array` is a functor, and `Array#map` is an fmap.
+
+```ruby
+x = [1,2,3]
+print x.map {|e| e + 1}
+```
+```
+[2, 3, 4]
+```
+
+`map` knows how to get at those values inside the functor and operate on them,
+returning a new functor of the same type. This is similar but not exactly like
+how a monad works.
+
+Look, here's one:
+
+```ruby
+class MyFunctor
+    def initialize(val)
+        @val = val
+    end
+    def map
+        MyFunctor.new(yield(@val))
+    end
+end
+
+p MyFunctor.new(1).map {|e| e + 1}
+```
+
+```
+#<MyFunctor:0x007f8ca31fe0c8 @val=2>
+```
+
+
+and `unit()`
+-------------
+
+`unit` takes a value and returns a _new_ something of a type that incorporates
+that initial value.  It's _almost_ just a constructor. In the example above
+it's just like the `Array` literal `[]`, it could also be `Array.new`.
+
+In javascript, I could use the `new` keyword for this. As evidenced by the
+`MyFunctor` class above: _It does not matter what the structure of the returned
+object is, only that is is `fmap`-able._
 
 ```js
 const Thing = function(x) {
@@ -96,7 +150,8 @@ const Thing = function(x) {
 }
 ```
 
-and now, `unit` is simply a wrapper around this constructor.
+and for now, `unit` is simply a wrapper around this constructor, for
+illustration purposes.
 
 ```js
 const unit = function(x) {
@@ -111,12 +166,12 @@ I will use only the `unit` function below, and it always means `new Thing()`.
 
 > !IMPORTANT _This is not javascript's bind function!_
 
-Vanilla javascript doesn't have any typing to help here. Let's say though, that
-_all `x`'s are numbers._. I have a function lying around, let's see.
+Vanilla javascript doesn't have any typing to help here. I'm going to use
+a little Typescript instead.
 
 
 ```js
-const addOne = function(x) {
+const addOne = function(x: number) {
     return x + 1;
 }
 ```
@@ -128,22 +183,29 @@ let mx = unit(1);
 addOne(mx);
 ```
 
-Because javascript, this _does work_. What it returns is much worse than
-useless, though.
+`mx` is a `Thing`, and `addOne` expects and `number`, so I get this compilation
+error:
 
+```
+../monad.ts (15,12): Argument of type 'Thing' is not assignable to parameter of type 'number'. (2345)
+```
+
+> In vanilla javascript, this _does work_. What it returns is much worse than
+> useless, though.
+>
 ```
 [object Object]1
 ```
-
-It casted my `Thing` to a string by calling `Thing.prototype.toString()`,
-which returned `"[object Object]"`, then it "added" "1" to it by concatenating the
-string `"1"` onto the end of it.
+>
+> It casts my `Thing` to a string by calling `Thing.prototype.toString()`,
+> which returned `"[object Object]"`, then it "added" "1" to it by concatenating the
+> string `"1"` onto the end. Typescript catches this error.
 
 What I really wanted is a function `addOneToThing` that can add one to the
 `value` of a `Thing`.
 
 ```js
-const addOneToThing = function(mx) {
+const addOneToThing = function(mx: Thing) : Thing {
     return new Thing(mx.value + 1);
 }
 ```
@@ -167,16 +229,17 @@ thing and it knows how to make a new one.
 contained inside of another type._ This is the "knowing how to break apart"
 part.
 
-For this example, the underlying type is a `Number`, and the another type is a
+For this example, the underlying type is a `number`, and the another type is a
 `Thing`.
 
 ```js
-const bind = function(fn, mx) {
+const bind = function(fn: Function, mx: Thing) {
     return fn(mx.value);
 }
 ```
 
-`bind` knows about `.value`.
+`bind` knows about `.value`, so `addOne` doesn't have to be `addOneToThing`
+anymore. I can just use `bind`!
 
 What do I get, then, if I _bind_ `addOne` to a `Thing`?
 
@@ -191,28 +254,49 @@ I get:
 ```
 
 This works, but I am left with a `Number` instead of a `Thing`. Any function
-that is bound to a monad in this fashion must accept a bare value and _return a
-new `Thing`_.
+that is bound in this fashion must accept a _bare (underlying) value and
+_return a new `Thing`_.
 
 I'll redefine `addOne` then, to do so, and add a `timesTwo` function to help
 with the next example. The function signitures below amount to `x -> Mx` where
-`M` is a `Thing` and `x` is a `Number`.
+`M` is a `Thing(Number)` and `x` is a `Number`.
 
 
 ```js
-const addOne = function(x) {
-    return unit(x + 1);
-}
-
-const timesTwo = function(x) {
-    return unit(x * 2);
-}
+const addOne = (x: number) : Thing => unit(x + 1)
+const timesTwo = (x: number) : Thing => unit(x * 2);
 ```
 
-So far so good? This is all that is needed to satisfy
+Now, if I
 
+```typescript
+bind(addOne, unit(1))
+```
+I get...
 
-the three rules.
+```
+Thing { value: 2 }
+```
+
+`bind` knows how to apply these functions... and you may have noticed something
+_potentially useful._ Now that I'm returning a `Thing`, I can call `bind`
+directly on the return value!
+
+```typescript
+bind(timesTwo, bind(addOne, unit(1)))
+```
+
+yields:
+
+```
+Thing { value: 4 }
+```
+
+Interesting...
+
+So, this is all that is needed to satisfy:
+
+the three laws
 ==============
 
 Described in terms of the preceding functions, `addOne` could be any function at
@@ -236,13 +320,13 @@ associativity
 --------------
 
 ```js
-const compose = function(f, g) {
+const compose = function(g, f) {
     return function(mx) {
         bind(f, bind(g, mx));
     }
 }
 
-bind(addOne, compose(addOne, timesTwo)(mx)) == compose(addOne, addOne)(bind(timesTwo, mx))
+bind(addOne, compose(timesTwo, addOne)(mx)) == compose(addOne, addOne)(bind(timesTwo, mx))
 ```
 
 Look carefully at this last one, it is confusing, but ultimately
@@ -250,10 +334,11 @@ straightforward. `compose` takes 2 functions and returns a _new function_ that
 composes them together. `compose(f,g)` then, returns a function that takes an input
 `mx`, `bind`s `g` to it, and then `binds` `f` to _that_. The result is a
 function that essentially calls g, then f. In the example above, we're saying
-that calling `compose(addOne, timesTwo)` and then `addOne` is equivalent to
+that calling `compose(timesTwo, addOne)` and then `addOne` is equivalent to
 calling `timesTwo` and then `compose(addOne, addOne)`.
 
-I briefly confused associativity with commutativity.
+> [I briefly confused associativity with commutativity.](http://lambda-the-ultimate.org/node/2448)
+> Don't be like me, stay in school.
 
 Here's an addendum. All functions that can be bound like this must have the type
 signature `x -> Mx`, right? So, that original `addOne` function that had the
@@ -273,26 +358,33 @@ const lift = function(fn) {
 Now,
 
 ```js
+const addOne = (x: number) => x + 1
 bind(lift(addOne), unit(1))
 ```
 
 will return:
 
+```
+Thing { value: 2 }
+```
 
-but _why_.
+
+but... _why_
 ----------
 
-The usefulness of this construct is probably not readily apparent.
+The usefulness of this construct is probably not readily apparent, but in
+actual fact this is very powerful and can be used for many things, especially
+in a purely functional context!
 
-Purely functional languages such as Haskell can use monads for a lot of things,
-though!
+There aren't that many _truly_ purely functional languages, Haskell is the big
+one, of course, and much of _its_ reputation comes from the constraints writing
+in a purely functional way impose.
 
-It just so happens I have one of those lying around! Last year, I wrote a
-completely pure, 100% pass by value functional lisp called
-[sild](/sild-is-a-lisp-dialect). There is not much to recommend it as a
-language, really... it can't really do much at all. There are no types, not even
-_numbers_, just labels and lists. There is no mutable state, there are no `let`s
-or `do`s either.
+Last year, I wrote a completely pure, 100% pass by value functional lisp called
+[Sild](/sild-is-a-lisp-dialect). There is not much to recommend it,
+really... it can't really do that much at all. There are no types, not even
+_numbers_, just labels and lists. There is no mutable state, there are no
+`let`s or `do`s either.
 
 It's only quote, car, cdr, cons, eq, atom, cond, and lambda, really, and it has
 define, but only at the top level, and it has display for printing to stdout,
@@ -300,7 +392,7 @@ and _that's all_.
 
 Can I use monads in sild for anything useful? It turns out that I can!
 
-I'll start by implementing the same thing from above
+I'll start by implementing the same thing from above, the `identity` monad.
 
 ```scheme
 (define unit
@@ -308,9 +400,12 @@ I'll start by implementing the same thing from above
   (cons x '() )))
 ```
 
-I have no way of creating objects, or types of any kind at all, in sild, but I
-can denote that this is a `Thing` by wrapping it in a list. `unit` is a function
-that will take something and wrap it in a list, then!
+I have no way of creating objects other than lists,, or types of any kind at
+all, in Sild, but I can make a "`Thing`" by wrapping it in a list. Remember, it
+doesn't really matter what the _structure of the functor_ is, only that these
+particular interfaces are satisfied.
+
+`unit` is a function that will take something and wrap it in a list, then!
 
 ```scheme
 (unit '(a b c))
@@ -335,9 +430,9 @@ thing of that "type", and I have `bind`, which knows how to "unwrap" the value
 and apply a function to it!
 
 Remember that the function it applies must have the type signature `x -> Mx`.
-Again, we don't have types at all to help here! But, any function I pass in
-needs to take some value and return it as a "Thing", in this case by wrapping it
-in a list.
+We don't have a type system to help here! But, any function I pass in needs to
+take some value and return it as a "`Thing`", in this case by wrapping it in a
+list.
 
 Here are three test functions that do that:
 
@@ -381,32 +476,34 @@ check with, but we can just look at the output!
 ```
 
 So! This and the javascript examples so far are in fact _identity monads_. They
-fulfill all the criteria that a monad needs to fulfill, but don't do much!
+fulfill all the criteria that a monad needs to fulfill, but don't do anything _else_.
 
 
-Monads are like functions
+A digression Monads are _"like"_ functions
 -------------------------
 
-Monads, like functions, are an abstraction. Functions can be thought of in
+Monads, like functions, are an _abstraction_. Functions can be thought of in
 metaphorical terms... a black box, a machine with inputs and outputs, these are
-intuitive by insufficient descriptions of what a function _is_ and does. Monads
-can also be thought of in metaphorical terms. A monad is a container, a
-monad is a burrito, a bucket, or a package... more abstractly as a sort of
-composition of functions on types... likewise, these are intuitively correct but
-insufficient.  Monads are not the structure of type `Thing`, for example, and
-`Thing` alone, though acting as a container, is _not_ a monad.  `Thing` _plus_
-the `unit` and `bind` procedures made available to work with and around it
-_together_ make up the monad. What does this make _possible_? What does a
-function make possible, exactly? Does that question even really make _sense_? Is
-it specific enough to have any answer besides "a lot of things"?
+intuitive but insufficient descriptions of what a function _is_ and does.
+Monads can also be thought of in metaphorical terms. A monad is a container, a
+monad is a burrito, a bucket, or a package... more abstractly (and accurately,
+but not completely) as a sort of composition of functions on types... likewise,
+these metaphors can _be_ intuitively correct but insufficient.
+
+Monads are not the structure of type `Thing`, for example, and `Thing` alone,
+though acting as a container, is _not_ a monad.  `Thing` _plus_ the `unit` and
+`bind` procedures made available to work with and around it _together_ make up
+the monad.
+
+But, what does this make _possible_? Well, what do _functions_ make possible,
+exactly? Does that question even really make _sense_? Is it specific enough to
+have any answer besides "a lot of things"?
 
 It doesn't really matter how you architect these procedures and types, what
 matters is the availability of these rudimentary operations and their ability to
 pass those three tests: left identity, right identity, and associativity. That is _all_
-that matters in terms of defining a monad.
-
-To prove this, here's another Identity monad implemented in an object oriented
-way, This time using PHP.
+that matters in terms of defining a monad. To prove this, here's another
+Identity monad implemented in a more object oriented way, This time using PHP.
 
 First, I'll define an interface that any monadic class will need to implement.
 
@@ -418,7 +515,7 @@ interface Monad {
 }
 ```
 
-Now, I'll make one! The same one, actually, an Identity monad.
+Now, I'll make one! The same one, actually, that identity monad.
 
 ```php
 <?
@@ -445,9 +542,6 @@ class IdentityMonad implements Monad {
 }
 ```
 
-Did you know you can mark an object constructor `private` in php? Neither did I!
-Why would you ever want to do that?? I don't know! PHP!
-
 Here are two functions that I can pass to `bind`.
 
 ```php
@@ -463,25 +557,18 @@ Does this pass those tests?
 <?
 
 # left identity
-var_dump(
-    ID::unit(1)->bind($increment) == $increment(1)
-);
+ID::unit(1)->bind($increment) == $increment(1)
 
 # right identity
-var_dump(
-    ID::unit(1)->bind("ID::unit") == ID::unit(1)
-);
+ID::unit(1)->bind("ID::unit") == ID::unit(1)
 
 # associativity identity
-var_dump(
-    ID::unit(1)->compose($increment, $times2)->bind($increment)
-    ==
-    ID::unit(1)->bind($increment)->compose($times2, $increment)
-);
+ID::unit(1)->compose($increment, $times2)->bind($increment) ==
+ID::unit(1)->bind($increment)->compose($times2, $increment);
 
 ```
 
-All of these print out:
+All of these are:
 
 ```
 bool(true)
@@ -495,11 +582,11 @@ calculations employ techniques to mitigate and [abstract this
 away](http://okasaki.blogspot.dk/2008/02/ten-years-of-purely-functional-data.html)
 
 
-back to sild
+Back to sild, something useful...
 -----------
 
 How can I keep track of all the functions I've run on an object? In a stateful
-language, this is easy. Here's some Ruby:
+language, this is pretty easy. Here's one way to do so in some Ruby:
 
 ```ruby
 class Whatever
@@ -530,14 +617,15 @@ puts x.value # 1
 puts x.history.join(", ") # inc, inc, dec, inc, inc, inc, dec, dec, dec
 ```
 
-...for example.
+...for example. I'm sure that could be metaprogrammed and monkeypatched into
+Object if you wanted to debug _everything_ run on _everything_.
 
-How can I _possibly_ do this in a pure language, with no mutability, and no side
-effects? And yet, it can be done.
+But, how could I _possibly_ do this in a pure language, with no mutability, and
+no side effects? It can be done!
 
 I'm going to implement a [writer
 monad](http://adit.io/posts/2013-06-10-three-useful-monads.html#the-writer-monad)
-that will let me keep a log of all the functions I've run.
+that will let me keep a log of all the functions I've run, in Sild.
 
 First, I'll define some aliases I like to use:
 
@@ -613,7 +701,8 @@ And I'll define a few aliases to make it clearer what I'm doing to `Thing`s
 (def get-most-recent-hist caadr)
 ```
 
-Here's a function that writes a new element to a history and returns a new Thing with that new history, leaving the value unchanged.
+Here's a function that writes a new element to a history and returns a new
+Thing with that new history, leaving the value unchanged.
 
 ```scheme
 ; takes a symbol `sym` and a monad `Mx` and writes the symbol onto the end of
@@ -644,9 +733,8 @@ merged histories.
                                          m-old))))))
 ```
 
-It's our friend, bind aka `>>=`! in this case, we apply the function with
-signature `a -> Mb` to the extracted value, and combine histories, and we're
-done!
+It's our friend, bind! in this case, we apply the function with signature `a ->
+Mb` to the extracted value, and combine histories, and we're done!
 
 ```
 (def bind
@@ -654,7 +742,7 @@ done!
     (combine-hist Mx
                   (f (get-val Mx)))))
 ```
-Now, we'll also need some functions of the form `x -> Mx`. 
+Now, we'll also need some functions of the form `x -> Mx`.
 
 ```scheme
 ; takes a datum to push into something and a name for the function to be
@@ -683,6 +771,11 @@ And finally, compose, which looks and acts just like the js example.
 With all of this out of the way, what do we get? Does this pass those three tests?
 
 ```scheme
+; an initial value state to play with
+(def y '(a b c))
+; an initial monad with that initial value state to play with
+(def My (unit y))
+
 ; left identity
 (display (bind pop My))  ; ((b c) (pop))
 (display (pop y))        ; ((b c) (pop))
@@ -710,4 +803,39 @@ Indeed it does. This is a monad! And look here,
 ; ((c c c) (pop pop push-c push-b push-a pop pop push-c))
 ```
 
-This monad has a memory, a history of everything that's been bound to it! 
+This monad has a memory, a history of everything that's been bound to it!
+
+
+Appendix
+------------
+
+Here are a bunch of things I read to do this. I'm going to pare them down, put
+them in some kind of sensible order, and link with descriptions.
+
+- https://karma-engineering.com/lab/wiki/Monads2
+- http://goodmath.scientopia.org/2012/08/19/monads-and-programming/
+- https://miklos-martin.github.io/learn/fp/2016/03/10/monad-laws-for-regular-developers.html
+- http://lambda-the-ultimate.org/node/2448
+- https://web.archive.org/web/20050204001716/http://www.nomaware.com/monads/html/index.html
+- http://www.ccs.neu.edu/home/dherman/browse/shared/notes/monads/monads-for-schemers.txt
+- http://learnyouahaskell.com/functors-applicative-functors-and-monoids
+- http://learnyouahaskell.com/making-our-own-types-and-typeclasses#the-functor-typeclass
+- https://wiki.haskell.org/Monad_laws
+- http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html
+- https://stackoverflow.com/questions/3433608/explanation-of-monad-laws
+- https://curiosity-driven.org/monads-in-javascript
+- https://medium.com/@dtinth/what-is-a-functor-dcf510b098b6
+- http://learnyouahaskell.com/a-fistful-of-monads
+- https://medium.com/@tzehsiang/javascript-functor-applicative-monads-in-pictures-b567c6415221
+- http://slides.com/julientournay/a-monad-is-just-a-monoid-in-the-category-of-endofunctors-what-s-the-problem/#/
+- https://ericlippert.com/2013/02/21/monads-part-one/#more-461
+- http://etymon.blogspot.dk/2006/09/monad-laws.html
+- http://blog.ssanj.net/posts/2017-06-07-composing-monadic-functions-with-kleisli-arrows.html
+- https://jrsinclair.com/articles/2016/marvellously-mysterious-javascript-maybe-monad/
+- http://blog.klipse.tech/javascript/2016/08/31/monads-javascript.html
+- https://blog.jcoglan.com/2011/03/05/translation-from-haskell-to-javascript-of-selected-portions-of-the-best-introduction-to-monads-ive-ever-read/
+- https://byorgey.wordpress.com/2009/01/12/abstraction-intuition-and-the-monad-tutorial-fallacy/
+- https://two-wrongs.com/the-what-are-monads-fallacy
+- http://www.lispcast.com/monads-and-objects
+- http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.79.733&rep=rep1&type=pdf
+- https://www.youtube.com/watch?v=ZhuHCtR3xq8&feature=youtu.be&t=26m20s
