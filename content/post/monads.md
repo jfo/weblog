@@ -5,27 +5,35 @@ draft: true
 ---
 
 I have recently come into possession of a reasonably sound understanding of
-monads. Tradition dictates that I now have an obligation to write a shitty blog
-post tutorial about them, wherein I attempt to gracefully share this knowledge
-through the judicious use of carefully chosen metaphors and examples.  Legend
-has it that [I will inevitably
+monads. Tradition dictates that I now have an obligation to write a blog
+post/tutorial/thing about them, wherein I attempt to gracefully share this
+nascent knowledge through the judicious use of carefully chosen metaphors and
+examples.  Legend has it that [I will inevitably
 fail](https://byorgey.wordpress.com/2009/01/12/abstraction-intuition-and-the-monad-tutorial-fallacy/)
-in this, and then be raked over the coals for my sins by category theorists and
-haskellers alike. This isn't very appealing to me, but who am I to challenge
-fate?
+in this, and then be raked over the coals for my sins by both category
+theorists and Haskellers alike. This isn't very appealing to me, but who am I
+to challenge fate?
 
 <hr>
 
-I wouldn't call this a tutorial, though it feels like it. It kind of is one,
-but I prefer the term development log. I assume no real authority, I'm just
-trying to clearly explain something I've just learned about. Monads are
-particularly prickly, for a variety of reasons, but something that came up over
-and over again in my research was the necessity of "developing an intuition" about them.
+I would not call this a tutorial, and though it might feel like it, at times,
+I assume no real authority. I'm just trying to explain some things I've
+just learned a bit about. Monads are particularly prickly both to explain and
+understand, for a variety of reasons, but something that came up over and over
+again while I was reading about them  was the necessity of "developing an
+intuition."
 
-To that end, I've included a lot of links at the end of this post and I
-encourage you to read a lot of them if you are interested. Reading a lot of
-different takes on the subject can help to develop that intuition in a way that
-no single tutorial or log could ever do. 
+To that end, I've included a lot of links I found helpful at the end of this
+post. Reading different takes on the subject can help to develop that
+intuition in a way that no single tutorial ever could, and though
+many posts like this start with something along the lines of "I know the world
+doesn't need another monad tutorial," I might beg to differ a little bit. The
+only thing so far that's made any of this click at all for me is the
+overlapping bits of all these different posts and tutorials and such. It's a
+little like [mapping the
+potato!](http://www.moishelettvin.com/2015/12/16/lowering-the-bar/)
+
+So here's a little bit of the potato!
 
 <hr>
 
@@ -39,11 +47,16 @@ Monads have a reputation. Why?
 
 2. ...despite this, the term _is_ precise within [category
    theory](https://en.wikipedia.org/wiki/Monad_(category_theory)), which is a
-   fascinating but also advanced and abstract branch of mathematics.
+   fascinating but also particularly advanced and abstract branch of mathematics.
 
 3. ...and the term is _also_ precise [within
-   Haskell](https://wiki.haskell.org/Monad), which is a fascinating but advanced and
-   abstract programming language.
+   Haskell](https://wiki.haskell.org/Monad), which is a _also_ a fascinating
+   but particularly advanced and abstract programming language.
+
+Those two precisions seem to not always _quite_ line up, exactly. Certainly,
+the Haskell monads are derived from category theory, but the nomenclature is
+dense on both sides and is difficult to parse out if you're new to both of
+them.
 
 Though I appreciate that a _complete_ comprehension of monads and their
 theoretical underpinnings may very well be predicated on becoming intimate with
@@ -62,18 +75,23 @@ said as much:
 > with an emphasis on why abstruse theory may be of interest to computing
 > scientists.
 
-...pretty salty for academe, tbqh.
-
-[Here's Brian Beckman fullthroatedly making a similar
+Here's [Brian Beckman] fullthroatedly [making a similar
 point.](https://www.youtube.com/watch?v=ZhuHCtR3xq8&feature=youtu.be&t=26m20s)
 
 > ...and that's where we go into category theory... but you _don't need_ to know
 > category theory, to be fully conversant, to be _fully fluent_ in this language
 > of function composition. All you have to remember is the types need to line up.
 
-Of course, I'm not making an indictment of category theory whatsoever. It looks
-absolutely fascinating! I'm just saying it's not a _prerequisite_ to developing
-an understanding and intuition of what monads are and do. Beckman goes on...
+As I write this post, I know _very little_ real category theory, and _very
+little_ Haskell but I still have a working understanding of monads. This post
+is as much a record of that understanding _at this time_ as it is anything,
+and that understanding will likely change and grow richer and more nuanced if and
+when I _do_ learn more about category theory and/or Haskell (as you might
+expect, this process has piqued my interest in learning more Haskell!)
+
+I'm not making an indictment of category theory whatsoever in this post. It looks
+really fascinating! I'm just saying it's not a _prerequisite_ to developing an
+understanding and intuition of what monads are and do. Beckman goes on...
 
 > If you're going to nest function calls, the types have to line up. There's
 > nothing complicated about this you don't need to know category theory to... I mean
@@ -90,57 +108,21 @@ rules_, and that is what makes them, in aggregate, a monad.
 
 The three things are:
 
-a type of thing,
+a type of thing
 -------------
 
-The structure doesn't matter. What matters it that it's a functor. A functor is
-a thing that can be fmapped. fmap means functor map, and it's a function that
-_knows how to access values inside the functor_.
+The structure doesn't matter, only that it satisfies a certain interface I'll
+get into below.
 
-Let's see, in Ruby, an `Array` is a functor, and `Array#map` is an fmap.
-
-```ruby
-x = [1,2,3]
-print x.map {|e| e + 1}
-```
-```
-[2, 3, 4]
-```
-
-`map` knows how to get at those values inside the functor and operate on them,
-returning a new functor of the same type. This is similar but not exactly like
-how a monad works.
-
-Look, here's one:
-
-```ruby
-class MyFunctor
-    def initialize(val)
-        @val = val
-    end
-    def map
-        MyFunctor.new(yield(@val))
-    end
-end
-
-p MyFunctor.new(1).map {|e| e + 1}
-```
-
-```
-#<MyFunctor:0x007f8ca31fe0c8 @val=2>
-```
-
-
-and `unit()`
--------------
+`unit()`
+--------
 
 `unit` takes a value and returns a _new_ something of a type that incorporates
-that initial value.  It's _almost_ just a constructor. In the example above
-it's just like the `Array` literal `[]`, it could also be `Array.new`.
+that initial value.  It's _almost_ just a constructor.
 
-In javascript, I could use the `new` keyword for this. As evidenced by the
-`MyFunctor` class above: _It does not matter what the structure of the returned
-object is, only that is is `fmap`-able._
+In javascript, I could use the `new` keyword for this. Again, it does not
+matter what the structure of the returned thing is. I'll simply return an
+object that has a `value` property.
 
 ```js
 const Thing = function(x) {
@@ -150,8 +132,7 @@ const Thing = function(x) {
 }
 ```
 
-and for now, `unit` is simply a wrapper around this constructor, for
-illustration purposes.
+For now, `unit` will simply be a wrapper around this constructor.
 
 ```js
 const unit = function(x) {
@@ -164,19 +145,21 @@ I will use only the `unit` function below, and it always means `new Thing()`.
 `bind()`
 --------
 
-> !IMPORTANT _This is not javascript's bind function!_
+_This is not javascript's bind function._
 
-Vanilla javascript doesn't have any typing to help here. I'm going to use
-a little Typescript instead.
+Vanilla javascript doesn't have any typing to help here. I'm going to use a
+little [Typescript](https://www.typescriptlang.org/) instead. You can just think
+at it as javascript with type annotations!
 
+Here is a function that takes a number and adds one to it and return a number!
 
 ```js
-const addOne = function(x: number) {
+const addOne = function(x: number) : number {
     return x + 1;
 }
 ```
 
-Now, what if I want to add one to a `Thing`...
+What if I want to add one to a `Thing`?
 
 ```js
 let mx = unit(1);
@@ -206,11 +189,11 @@ What I really wanted is a function `addOneToThing` that can add one to the
 
 ```js
 const addOneToThing = function(mx: Thing) : Thing {
-    return new Thing(mx.value + 1);
+    return unit(mx.value + 1);
 }
 ```
 
-This function takes a `Thing` and returns a `Thing`. And it does what I would
+This function takes a `Thing` and returns a _new_ `Thing`. And it does what I would
 expect it to.
 
 ```js
@@ -226,11 +209,10 @@ addOneToThing(mx);
 thing and it knows how to make a new one.
 
 `bind` is a function that knows how to _apply a function to an underlying type
-contained inside of another type._ This is the "knowing how to break apart"
-part.
+contained inside of another type._
 
 For this example, the underlying type is a `number`, and the another type is a
-`Thing`.
+`Thing`, which is just an object with a `value` property that is a number!
 
 ```js
 const bind = function(fn: Function, mx: Thing) {
@@ -253,18 +235,43 @@ I get:
 2
 ```
 
-This works, but I am left with a `Number` instead of a `Thing`. Any function
-that is bound in this fashion must accept a _bare (underlying) value and
-_return a new `Thing`_.
-
-I'll redefine `addOne` then, to do so, and add a `timesTwo` function to help
-with the next example. The function signitures below amount to `x -> Mx` where
-`M` is a `Thing(Number)` and `x` is a `Number`.
-
+This certainly works, but I am left with a `number` instead of a `Thing`. If I
+try to bind another function to the return value, now:
 
 ```js
-const addOne = (x: number) : Thing => unit(x + 1)
-const timesTwo = (x: number) : Thing => unit(x * 2);
+console.log(
+    bind(addOne, bind(addOne, unit(1)))
+);
+```
+```
+NaN
+```
+
+> You might expect to see a type error like
+```
+Argument of type 'number' is not assignable to parameter of type 'Thing'. (2345)
+```
+> But `bind` is dynamically applying a function and can't be statically type checked here.
+
+If I wanted to _chain_ these calls, then any function that is bound in this
+fashion must accept a _bare_ (underlying) value and _return a new `Thing`_.
+
+> "If you're going to nest function calls, the types have to line up."
+
+You'll see this written a lot as `a -> M b`, where `a` and `b` are, say,
+numbers, and `M b` is, say, a number "wrapped" in some other structure or type.
+
+I'll redefine `addOne` then, to do this, and add a `timesTwo` function to help
+with the next example. The function signatures below amount to `a -> M b` where
+`M b` is a `Thing(number)` and `a` and `b` are `number`s.
+
+```js
+const addOne = function(x: number) : Thing {
+    return unit(x + 1);
+};
+const timesTwo = function(x: number) : Thing {
+    return unit(x * 2);
+};
 ```
 
 Now, if I
@@ -272,21 +279,19 @@ Now, if I
 ```typescript
 bind(addOne, unit(1))
 ```
-I get...
+I get a `Thing` back...
 
 ```
 Thing { value: 2 }
 ```
 
-`bind` knows how to apply these functions... and you may have noticed something
-_potentially useful._ Now that I'm returning a `Thing`, I can call `bind`
-directly on the return value!
+and if I
 
 ```typescript
 bind(timesTwo, bind(addOne, unit(1)))
 ```
 
-yields:
+I _also_ get a `Thing` back!
 
 ```
 Thing { value: 4 }
@@ -294,30 +299,71 @@ Thing { value: 4 }
 
 Interesting...
 
-So, this is all that is needed to satisfy:
+So, this is _all_ that is needed to satisfy:
 
 the three laws
 ==============
 
-Described in terms of the preceding functions, `addOne` could be any function at
-all with the type signiture `x -> Mx` (where in this example, Mx is a `Thing`).
+Described in terms of the preceding functions `unit` and `bind`, and using
+`addOne` and `timesTwo` as arbitrary example functions that _happen_ to have
+this `a -> M b` type signature, they are:
 
 left identity
 --------------
 
+Binding a function to a monad must result in the same output as calling the
+bare function on the value(s) contained "inside" the monad.
+
+so,
+
 ```js
-bind(addOne, unit(1)) == addone(1);
+bind(addOne, unit(1))
+```
+must be equivalent to:
+
+```js
+addone(1);
+```
+
+They are! They both return:
+
+```
+{ value: 2 }
 ```
 
 right identity
 --------------
 
+Binding a unit function to a monad must result in the same thing as simply
+calling the unit function on a bare value.
+
+So,
+
 ```js
-bind(unit, unit(1)) == unit(1);
+bind(unit, unit(1))
+```
+must be equivalent to:
+
+```js
+unit(1);
+```
+
+They are! They both return:
+
+```
+{ value: 1 }
 ```
 
 associativity
 --------------
+
+Functions should be able to be composed together in any grouping and result in
+the same ouput regardless of that grouping, assuming they are applied in the
+same order.
+
+`compose` takes 2 functions and returns a _new function_ that composes them
+together. `compose(g, f)` then, returns a function that takes an input `mx`,
+`bind`s `g` to it, and then `binds` `f` to _that_.
 
 ```js
 const compose = function(g, f) {
@@ -325,68 +371,41 @@ const compose = function(g, f) {
         bind(f, bind(g, mx));
     }
 }
-
-bind(addOne, compose(timesTwo, addOne)(mx)) == compose(addOne, addOne)(bind(timesTwo, mx))
 ```
 
-Look carefully at this last one, it is confusing, but ultimately
-straightforward. `compose` takes 2 functions and returns a _new function_ that
-composes them together. `compose(f,g)` then, returns a function that takes an input
-`mx`, `bind`s `g` to it, and then `binds` `f` to _that_. The result is a
-function that essentially calls g, then f. In the example above, we're saying
-that calling `compose(timesTwo, addOne)` and then `addOne` is equivalent to
-calling `timesTwo` and then `compose(addOne, addOne)`.
+So,
+
+```js
+bind(addOne, compose(timesTwo, addOne)(mx))
+```
+must be equivalent to:
+
+```js
+compose(addOne, addOne)(bind(timesTwo, mx))
+```
+
+They are! they both return
+
+```
+{ value: 4 }
+```
+
 
 > [I briefly confused associativity with commutativity.](http://lambda-the-ultimate.org/node/2448)
-> Don't be like me, stay in school.
-
-Here's an addendum. All functions that can be bound like this must have the type
-signature `x -> Mx`, right? So, that original `addOne` function that had the
-type signature `x -> x` where `x` was `Number` doesn't qualify. But, it's
-trivial to create a helper that will wrap that original `addOne` in a `unit`
-function, thus fulfilling that contract. This is very useful, and it's usually
-called `lift()`
-
-```js
-const lift = function(fn) {
-    return function(x) {
-        return unit(fn(x));
-    }
-}
-```
-
-Now,
-
-```js
-const addOne = (x: number) => x + 1
-bind(lift(addOne), unit(1))
-```
-
-will return:
-
-```
-Thing { value: 2 }
-```
-
 
 but... _why_
 ----------
 
 The usefulness of this construct is probably not readily apparent, but in
-actual fact this is very powerful and can be used for many things, especially
+actual fact this is very powerful and can be used for many things, _especially_
 in a purely functional context!
 
-There aren't that many _truly_ purely functional languages, Haskell is the big
-one, of course, and much of _its_ reputation comes from the constraints writing
-in a purely functional way impose.
-
 Last year, I wrote a completely pure, 100% pass by value functional lisp called
-[Sild](/sild-is-a-lisp-dialect). There is not much to recommend it,
-really... it can't really do that much at all. There are no types, not even
-_numbers_, just labels and lists. There is no mutable state, there are no
-`let`s or `do`s either.
+[Sild](/sild-is-a-lisp-dialect). There is not much to recommend it, really...
+there are no types, not even _numbers_, just labels and lists. There is no
+mutable state, there are no `let`s or `do`s either.
 
-It's only quote, car, cdr, cons, eq, atom, cond, and lambda, really, and it has
+It's only quote, car, cdr, cons, eq, atom, cond, and lambda, and it has
 define, but only at the top level, and it has display for printing to stdout,
 and _that's all_.
 
@@ -401,9 +420,9 @@ I'll start by implementing the same thing from above, the `identity` monad.
 ```
 
 I have no way of creating objects other than lists,, or types of any kind at
-all, in Sild, but I can make a "`Thing`" by wrapping it in a list. Remember, it
-doesn't really matter what the _structure of the functor_ is, only that these
-particular interfaces are satisfied.
+all, in Sild, but let's call a  "`Thing`" simply something that is wrapped in a
+list. Remember, it doesn't really matter what the _structure of the type_ is,
+only that these particular interfaces are satisfied.
 
 `unit` is a function that will take something and wrap it in a list, then!
 
@@ -414,9 +433,9 @@ particular interfaces are satisfied.
 ((a b c))
 ```
 
-`bind` needs to know how to "get at" that internal value. In this case, it's as
-simple as unwrapping that outer list by using `car` and then applying the given
-function to it.
+Remember that `bind` needs to know how to "get at" that internal value. In this
+case, it's as simple as unwrapping that outer list by using `car` and then
+applying the given function to it.
 
 ```scheme
 (define bind
@@ -424,13 +443,13 @@ function to it.
     (f (car mx))))
 ```
 
-This is already a monad! I've got a _type_ of something, in this case denoted by
+This is already _a_ monad! I've got a _type_ of something, in this case denoted by
 a doubly wrapped list. I have `unit` which takes a value and makes it into a
 thing of that "type", and I have `bind`, which knows how to "unwrap" the value
 and apply a function to it!
 
-Remember that the function it applies must have the type signature `x -> Mx`.
-We don't have a type system to help here! But, any function I pass in needs to
+Remember that the function it applies must have the type signature `a -> M b`.
+I don't have a type system to help here! But, any function I pass in needs to
 take some value and return it as a "`Thing`", in this case by wrapping it in a
 list.
 
@@ -450,10 +469,12 @@ like the js version:
 
 ```scheme
 (define compose (lambda (g f)
-  (lambda (m) (bind f (bind g m)))))
+  (lambda (m)
+    (bind f
+      (bind g m)))))
 ```
 
-Does this structure pass the tests? I don't have any list equality functions to
+Does this already pass the tests? I don't have any list equality functions to
 check with, but we can just look at the output!
 
 ```scheme
@@ -475,29 +496,31 @@ check with, but we can just look at the output!
 (display ((compose pop push_c) (bind push_a My))) ; ((c a b c))
 ```
 
-So! This and the javascript examples so far are in fact _identity monads_. They
-fulfill all the criteria that a monad needs to fulfill, but don't do anything _else_.
-
+This is the identity monad!
 
 A digression Monads are _"like"_ functions
 -------------------------
 
 Monads, like functions, are an _abstraction_. Functions can be thought of in
 metaphorical terms... a black box, a machine with inputs and outputs, these are
-intuitive but insufficient descriptions of what a function _is_ and does.
+intuitively correct but insufficient descriptions of what a function _is_.
 Monads can also be thought of in metaphorical terms. A monad is a container, a
 monad is a burrito, a bucket, or a package... more abstractly (and accurately,
 but not completely) as a sort of composition of functions on types... likewise,
-these metaphors can _be_ intuitively correct but insufficient.
+these metaphors can be intuitively correct but insufficient. Consider much of
+the language I use above... "get at that internal value" accurately describes
+what "bind" is doing for me right now, _but_ it's not at all sufficient to
+describe the _general_ case of what makes something monadic, just a _common_
+and easy to understand one. This is only part of the potato, is what I'm saying.
 
-Monads are not the structure of type `Thing`, for example, and `Thing` alone,
+Simlarly, monads are _not_ the structure of type `Thing`, and `Thing` alone,
 though acting as a container, is _not_ a monad.  `Thing` _plus_ the `unit` and
 `bind` procedures made available to work with and around it _together_ make up
 the monad.
 
-But, what does this make _possible_? Well, what do _functions_ make possible,
-exactly? Does that question even really make _sense_? Is it specific enough to
-have any answer besides "a lot of things"?
+You might ask, what does this make _possible_, then? Well, what do _functions_
+make possible, exactly? Does that question even really make _sense_? Is it
+specific enough to have any answer besides "a lot of things"?
 
 It doesn't really matter how you architect these procedures and types, what
 matters is the availability of these rudimentary operations and their ability to
@@ -515,7 +538,7 @@ interface Monad {
 }
 ```
 
-Now, I'll make one! The same one, actually, that identity monad.
+Now, I'll make one!
 
 ```php
 <?
@@ -582,7 +605,7 @@ calculations employ techniques to mitigate and [abstract this
 away](http://okasaki.blogspot.dk/2008/02/ten-years-of-purely-functional-data.html)
 
 
-Back to sild, something useful...
+Back to Sild and something actually useful...
 -----------
 
 How can I keep track of all the functions I've run on an object? In a stateful
@@ -617,11 +640,11 @@ puts x.value # 1
 puts x.history.join(", ") # inc, inc, dec, inc, inc, inc, dec, dec, dec
 ```
 
-...for example. I'm sure that could be metaprogrammed and monkeypatched into
-Object if you wanted to debug _everything_ run on _everything_.
+I'm sure that could be metaprogrammed and monkeypatched into Object if you
+wanted to debug _everything_ run on _everything_.
 
-But, how could I _possibly_ do this in a pure language, with no mutability, and
-no side effects? It can be done!
+But, how could I _possibly_ do this in a pure language, with no mutability or
+global state, and no side effects? It can be done!
 
 I'm going to implement a [writer
 monad](http://adit.io/posts/2013-06-10-three-useful-monads.html#the-writer-monad)
@@ -646,6 +669,8 @@ I'll also define a few old fashioned lisp functions.
 
 I'll also need a couple of utility functions...
 
+`reverse` will reverse a list.
+
 ```scheme
 (def revinner
  (λ (l acc)
@@ -654,16 +679,14 @@ I'll also need a couple of utility functions...
 (def reverse (λ (l) (revinner l '())))
 ```
 
-`reverse` will reverse a list.
+`unshift` will "push" something on to the _end_ of a list. It's the opposite of
+`cons` and `push`.  [Here read this!](http://www.perlmonks.org/?node_id=613124)
 
 ```scheme
 (def unshift
   (λ (el l)
     (reverse (cons el (reverse l)))))
 ```
-
-`unshift` will "push" something on to the _end_ of a list. It's the opposite of
-`cons`.  [Here read this!](http://www.perlmonks.org/?node_id=613124)
 
 Ok, with these useful extras out of the way, let's get to the meat of things.
 
@@ -684,18 +707,18 @@ list), and 'wrap' it into a monad with a blank history.
     (cons x '(()))))
 ```
 
-I'll have a constructor, that simple takes two lists and wraps them up.
+I'll have a constructor, that simply takes two lists and wraps them up.
 
 ```scheme
 (def constructor
-  (λ (val hist)
-    (cons val (cons hist '()))))
+  (λ (value history)
+    (cons value (cons history '()))))
 ```
 
 And I'll define a few aliases to make it clearer what I'm doing to `Thing`s
 
 ```scheme
-; some aliases to make usage clearer when applied to monads.
+; some aliases to make usage clearer when applied to `Thing`s.
 (def get-val car)
 (def get-hist cadr)
 (def get-most-recent-hist caadr)
@@ -705,12 +728,12 @@ Here's a function that writes a new element to a history and returns a new
 Thing with that new history, leaving the value unchanged.
 
 ```scheme
-; takes a symbol `sym` and a monad `Mx` and writes the symbol onto the end of
-; the monad's history
+; takes a symbol `sym` and a monad `Mx` and returns a new monad with the symbol
+; appended to its history list
 (def write-to-hist
   (λ (sym Mx)
     (constructor (get-val Mx)
-            (unshift sym (get-hist Mx)))))
+                 (unshift sym (get-hist Mx)))))
 ```
 
 Next, I'll need this function that takes two `Thing`s an old one and a new one.
@@ -724,9 +747,9 @@ merged histories.
   (λ (m-old m-new)
 ; if both histories are equal, it's empty. We don't need to merge anything,
 ; just return the new one:
-    (cond (eq (get-hist m-old) (get-hist m-new)) m-new ; otherwise, write the
-; most recent history entry from the new to the old and return a new monad
-; made of the value of the new and the merged histories
+    (cond (eq (get-hist m-old) (get-hist m-new)) m-new
+; otherwise, write the most recent history entry from the new to the old and
+; return a new monad made of the value of the new and the merged histories
               (m-make
                 (get-val m-new)
                 (get-hist (write-to-hist (get-most-recent-hist m-new)
@@ -734,7 +757,7 @@ merged histories.
 ```
 
 It's our friend, bind! in this case, we apply the function with signature `a ->
-Mb` to the extracted value, and combine histories, and we're done!
+M b` to the extracted value, and combine histories, and we're done!
 
 ```
 (def bind
@@ -742,7 +765,7 @@ Mb` to the extracted value, and combine histories, and we're done!
     (combine-hist Mx
                   (f (get-val Mx)))))
 ```
-Now, we'll also need some functions of the form `x -> Mx`.
+Now, we'll also need some functions of the form `a -> M b`.
 
 ```scheme
 ; takes a datum to push into something and a name for the function to be
@@ -809,8 +832,8 @@ This monad has a memory, a history of everything that's been bound to it!
 Appendix
 ------------
 
-Here are a bunch of things I read to do this. I'm going to pare them down, put
-them in some kind of sensible order, and link with descriptions.
+[ Here are a bunch of things I read to do this. I'm going to pare them down, put
+them in some kind of sensible order, and link with descriptions. ]
 
 - https://wiki.haskell.org/Typeclassopedia
 - http://vaibhavsagar.com/blog/2016/10/12/monad-anti-tutorial/
