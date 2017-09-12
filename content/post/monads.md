@@ -1,6 +1,5 @@
 ---
-title: Fuckin' monads, how do they work?
-description: and I don't wanna talk to a category theorist
+title: Monads, how do they work?
 draft: true
 ---
 
