@@ -827,6 +827,14 @@ Indeed it does. This is a monad! And look here,
 
 This monad has a memory, a history of everything that's been bound to it!
 
+Epilogue
+------------
+
+This is just one way to look at this stuff, and it is insufficient. I intend to
+revisit my ideas here after I've learned more about category theory, maybe
+haskell.
+
+[some more closing thoughts]
 
 Appendix
 ------------
