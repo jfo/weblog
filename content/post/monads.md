@@ -812,6 +812,8 @@ Appendix
 Here are a bunch of things I read to do this. I'm going to pare them down, put
 them in some kind of sensible order, and link with descriptions.
 
+- https://wiki.haskell.org/Typeclassopedia
+- http://vaibhavsagar.com/blog/2016/10/12/monad-anti-tutorial/
 - https://karma-engineering.com/lab/wiki/Monads2
 - http://goodmath.scientopia.org/2012/08/19/monads-and-programming/
 - https://miklos-martin.github.io/learn/fp/2016/03/10/monad-laws-for-regular-developers.html
