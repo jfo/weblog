@@ -3,6 +3,10 @@ title: Farvel til alt det
 date: 2017-07-26
 ---
 
+> September update: After a short but intense job hunt, I'm happy to say I'll be
+> working with [Peakon](https://peakon.com/) at their [beautiful office in Copenhagen](https://twitter.com/jeffowler/status/902596623271854081) in a few weeks!
+> Thanks to all who [shared and read this post](https://twitter.com/jeffowler/status/890057552796450816), it was a vast help to me.
+
 After 9 years in New York, I am leaving for good on August 1st, when I'll be
 moving to Copenhagen with my wife and cat.
 
