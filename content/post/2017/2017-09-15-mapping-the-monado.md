@@ -1,6 +1,6 @@
 ---
-title: Monads, how do they work?
-draft: true
+title: Mapping the Monado
+date: 2017-09-15
 ---
 
 I have recently come into possession of a reasonably sound understanding of
@@ -22,14 +22,13 @@ understand, for a variety of reasons, but something that came up over and over
 again while I was reading about them  was the necessity of "developing an
 intuition."
 
-To that end, I've included a lot of links I found helpful at the end of this
-post. Reading different takes on the subject can help to develop that
+To that end, [I've included a lot of links I found helpful at the end of this
+post](/#ref). Reading different takes on the subject can help to develop that
 intuition in a way that no single tutorial ever could, and though
 many posts like this start with something along the lines of "I know the world
-doesn't need another monad tutorial," I might beg to differ a little bit. The
-only thing so far that's made any of this click at all for me is the
-overlapping bits of all these different posts and tutorials and such. It's a
-little like [mapping the
+doesn't need another monad tutorial," I beg to differ. The only thing so far
+that's made any of this click at all for me is the overlapping bits of all
+these different posts and tutorials and such. It's a little like [mapping the
 potato!](http://www.moishelettvin.com/2015/12/16/lowering-the-bar/)
 
 So here's a little bit of the potato!
@@ -74,7 +73,8 @@ said as much:
 > with an emphasis on why abstruse theory may be of interest to computing
 > scientists.
 
-Here's [Brian Beckman] fullthroatedly [making a similar
+Here's [Brian Beckman](https://www.linkedin.com/in/brianbeckman/)
+fullthroatedly [making a similar
 point.](https://www.youtube.com/watch?v=ZhuHCtR3xq8&feature=youtu.be&t=26m20s)
 
 > ...and that's where we go into category theory... but you _don't need_ to know
@@ -82,15 +82,16 @@ point.](https://www.youtube.com/watch?v=ZhuHCtR3xq8&feature=youtu.be&t=26m20s)
 > of function composition. All you have to remember is the types need to line up.
 
 As I write this post, I know _very little_ real category theory, and _very
-little_ Haskell but I still have a working understanding of monads. This post
+little_ Haskell... but I still have a working understanding of monads. This post
 is as much a record of that understanding _at this time_ as it is anything,
 and that understanding will likely change and grow richer and more nuanced if and
 when I _do_ learn more about category theory and/or Haskell (as you might
-expect, this process has piqued my interest in learning more Haskell!)
+expect, this process has piqued my interest in learning [more category theory](https://bartoszmilewski.com/2014/10/28/category-theory-for-programmers-the-preface/)
+and/or Haskell!)
 
-I'm not making an indictment of category theory whatsoever in this post. It looks
-really fascinating! I'm just saying it's not a _prerequisite_ to developing an
-understanding and intuition of what monads are and do. Beckman goes on...
+I'm not making an indictment of either of those in this post, either. I'm just
+saying it's not a _prerequisite_ to developing an understanding and intuition
+of what monads are and do. Beckman goes on...
 
 > If you're going to nest function calls, the types have to line up. There's
 > nothing complicated about this you don't need to know category theory to... I mean
@@ -542,7 +543,7 @@ Now, I'll make one!
 ```php
 <?
 
-class IdentityMonad implements Monad {
+class ID implements Monad {
 
     private $value;
 
@@ -735,7 +736,7 @@ Thing with that new history, leaving the value unchanged.
                  (unshift sym (get-hist Mx)))))
 ```
 
-Next, I'll need this function that takes two `Thing`s an old one and a new one.
+Next, I'll need this function that takes two `Thing`s, an old one and a new one.
 It merges the histories, and returns a new `Thing` with the new value and the
 merged histories.
 
@@ -749,7 +750,7 @@ merged histories.
     (cond (eq (get-hist m-old) (get-hist m-new)) m-new
 ; otherwise, write the most recent history entry from the new to the old and
 ; return a new monad made of the value of the new and the merged histories
-              (m-make
+              (constructor
                 (get-val m-new)
                 (get-hist (write-to-hist (get-most-recent-hist m-new)
                                          m-old))))))
@@ -758,13 +759,26 @@ merged histories.
 It's our friend, bind! in this case, we apply the function with signature `a ->
 M b` to the extracted value, and combine histories, and we're done!
 
-```
+```scheme
 (def bind
   (λ (f Mx)
     (combine-hist Mx
                   (f (get-val Mx)))))
 ```
-Now, we'll also need some functions of the form `a -> M b`.
+
+It might seem like not much is happening here- to be fair, I've hidden quite
+a bit of complexity in that `combine-history` function. But this is truly
+"where the magic happens." Because `bind` "knows" so much about the structure
+of this monad, and has references available to both the old and new state of
+the monads as they are being operated on, I can _do stuff_ here. This writer
+monad is a type of "state" monad because it "persists" state throughout these
+function calls. `bind` is the place and the mechanism for that persistence. But
+this is _only one use_ of monads, and a relatively simple one at that.
+
+A salient take home point: `bind`'s implementation for any particular monad is
+where a lot of the complexity is both implemented and hidden away.
+
+Now, I'll also need some functions of the form `a -> M b`.
 
 ```scheme
 ; takes a datum to push into something and a name for the function to be
@@ -782,7 +796,6 @@ Now, we'll also need some functions of the form `a -> M b`.
 ```
 
 And finally, compose, which looks and acts just like the js example.
-
 
 ```scheme
 (def compose
@@ -825,49 +838,45 @@ Indeed it does. This is a monad! And look here,
 ; ((c c c) (pop pop push-c push-b push-a pop pop push-c))
 ```
 
-This monad has a memory, a history of everything that's been bound to it!
+This monad has a "memory", a history of everything that's been bound to it! That is useful!
 
-Epilogue
+Thanks to Gabe Herrera, Adit Bhargava, Vaibhav Sagar, Veit Heller, Julia Evans, and Alan O'Donnell for discussing drafts of this post with me.
+
+<div id="ref">
+
+References
 ------------
 
-This is just one way to look at this stuff, and it is insufficient. I intend to
-revisit my ideas here after I've learned more about category theory, maybe
-haskell.
+Here are a bunch of things I read or watched to do this post. In no particular
+order. I'd recommend reading as many things as you can get your hands on to get
+different perspectives and facets presented in as many ways as possible.
 
-[some more closing thoughts]
-
-Appendix
-------------
-
-[ Here are a bunch of things I read to do this. I'm going to pare them down, put
-them in some kind of sensible order, and link with descriptions. ]
-
-- https://wiki.haskell.org/Typeclassopedia
-- http://vaibhavsagar.com/blog/2016/10/12/monad-anti-tutorial/
-- https://karma-engineering.com/lab/wiki/Monads2
-- http://goodmath.scientopia.org/2012/08/19/monads-and-programming/
-- https://miklos-martin.github.io/learn/fp/2016/03/10/monad-laws-for-regular-developers.html
-- http://lambda-the-ultimate.org/node/2448
-- https://web.archive.org/web/20050204001716/http://www.nomaware.com/monads/html/index.html
-- http://www.ccs.neu.edu/home/dherman/browse/shared/notes/monads/monads-for-schemers.txt
-- http://learnyouahaskell.com/functors-applicative-functors-and-monoids
-- http://learnyouahaskell.com/making-our-own-types-and-typeclasses#the-functor-typeclass
-- https://wiki.haskell.org/Monad_laws
-- http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html
-- https://stackoverflow.com/questions/3433608/explanation-of-monad-laws
-- https://curiosity-driven.org/monads-in-javascript
-- https://medium.com/@dtinth/what-is-a-functor-dcf510b098b6
-- http://learnyouahaskell.com/a-fistful-of-monads
-- https://medium.com/@tzehsiang/javascript-functor-applicative-monads-in-pictures-b567c6415221
-- http://slides.com/julientournay/a-monad-is-just-a-monoid-in-the-category-of-endofunctors-what-s-the-problem/#/
-- https://ericlippert.com/2013/02/21/monads-part-one/#more-461
-- http://etymon.blogspot.dk/2006/09/monad-laws.html
-- http://blog.ssanj.net/posts/2017-06-07-composing-monadic-functions-with-kleisli-arrows.html
-- https://jrsinclair.com/articles/2016/marvellously-mysterious-javascript-maybe-monad/
-- http://blog.klipse.tech/javascript/2016/08/31/monads-javascript.html
-- https://blog.jcoglan.com/2011/03/05/translation-from-haskell-to-javascript-of-selected-portions-of-the-best-introduction-to-monads-ive-ever-read/
-- https://byorgey.wordpress.com/2009/01/12/abstraction-intuition-and-the-monad-tutorial-fallacy/
-- https://two-wrongs.com/the-what-are-monads-fallacy
-- http://www.lispcast.com/monads-and-objects
-- http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.79.733&rep=rep1&type=pdf
-- https://www.youtube.com/watch?v=ZhuHCtR3xq8&feature=youtu.be&t=26m20s
+- [Typeclassopedia](https://wiki.haskell.org/Typeclassopedia)
+- [Monads in JavaScript](https://curiosity-driven.org/monads-in-javascript)
+- [Abstraction, intuition, and the “monad tutorial fallacy”](https://byorgey.wordpress.com/2009/01/12/abstraction-intuition-and-the-monad-tutorial-fallacy/) by Brent Yorgey
+- [The "What Are Monads?" Fallacy](https://two-wrongs.com/the-what-are-monads-fallacy)
+- [Don't fear the Monad](https://www.youtube.com/watch?v=ZhuHCtR3xq8) by Brian Beckman
+- [Monad Anti-tutorial](http://vaibhavsagar.com/blog/2016/10/12/monad-anti-tutorial/) by Vaibhav Sagar
+- [Monads and Programming](http://goodmath.scientopia.org/2012/08/19/monads-and-programming/) by Mark Chu-Carroll
+- [Monad laws for regular developers](https://miklos-martin.github.io/learn/fp/2016/03/10/monad-laws-for-regular-developers.html) by Miklos Martin
+- [Question about the Monad associativity laws](http://lambda-the-ultimate.org/node/2448)
+- [All About Monads]( https://web.archive.org/web/20050204001716/http://www.nomaware.com/monads/html/index.html )
+- [A Schemer's Introduction to Monads](http://www.ccs.neu.edu/home/dherman/browse/shared/notes/monads/monads-for-schemers.txt) by Dave Herman
+- [The Functor Typeclass](http://learnyouahaskell.com/making-our-own-types-and-typeclasses#the-functor-typeclass) from LYAHFGG
+- [Functors, Applicative Functors and Monoids](http://learnyouahaskell.com/functors-applicative-functors-and-monoids) from LYAHFGG
+- [Monad Laws](https://wiki.haskell.org/Monad_laws) from the Haskell wiki
+- [Functors, Applicatives, And Monads In Pictures](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html) by Aditya Bhargava
+- [Explanation of Monad laws](https://stackoverflow.com/questions/3433608/explanation-of-monad-laws) from SO
+- [What is a functor?](https://medium.com/@dtinth/what-is-a-functor-dcf510b098b6) by Thai Pangsakulyanont
+- [A Fistful of Monads](http://learnyouahaskell.com/a-fistful-of-monads) from LYAHFGG
+- [Functors, Applicatives, And Monads In Pictures](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html) by Aditya Bhargava
+- [Javascript Functor, Applicative, Monads in pictures](https://medium.com/@tzehsiang/javascript-functor-applicative-monads-in-pictures-b567c6415221) 'by' Tze-Hsiang Lin
+- [A monad is just a monoid in the category of endofunctors. what's the problem?](http://slides.com/julientournay/a-monad-is-just-a-monoid-in-the-category-of-endofunctors-what-s-the-problem/#/) by Julien Tournay
+- [Monads, part one](https://ericlippert.com/2013/02/21/monads-part-one/#more-461) by Eric Lippert (this whole series is excellent)
+- [The Monad Laws](http://etymon.blogspot.dk/2006/09/monad-laws.html) by Andrae Muys
+- [Composing Monadic Functions with Kleisli Arrows](http://blog.ssanj.net/posts/2017-06-07-composing-monadic-functions-with-kleisli-arrows.html)
+- [The Marvellously Mysterious Javascript Maybe Monad](https://jrsinclair.com/articles/2016/marvellously-mysterious-javascript-maybe-monad/) by James Sinclair
+- [Functional programming: Monads made clear - in javascript](http://blog.klipse.tech/javascript/2016/08/31/monads-javascript.html) by Yehonathan Sharvit
+- [Translation from Haskell to JavaScript of selected portions of the best introduction to monads I’ve ever read](https://blog.jcoglan.com/2011/03/05/translation-from-haskell-to-javascript-of-selected-portions-of-the-best-introduction-to-monads-ive-ever-read/) by James Coglan
+- [Monads and Objects](http://www.lispcast.com/monads-and-objects) on LispCast
+- [A grumpy rant that makes some good points](https://karma-engineering.com/lab/wiki/Monads2)
