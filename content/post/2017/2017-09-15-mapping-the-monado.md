@@ -853,6 +853,8 @@ different perspectives and facets presented in as many ways as possible.
 
 - [Typeclassopedia](https://wiki.haskell.org/Typeclassopedia)
 - [Monads in JavaScript](https://curiosity-driven.org/monads-in-javascript)
+- [Monads, Arrows, and Idioms](http://homepages.inf.ed.ac.uk/wadler/topics/monads.html), a collection of papers by Philip Wadler
+- [You Could Have Invented Monads! (And Maybe You Already Have.)](http://blog.sigfpe.com/2006/08/you-could-have-invented-monads-and.html) by Dan Piponi
 - [Abstraction, intuition, and the “monad tutorial fallacy”](https://byorgey.wordpress.com/2009/01/12/abstraction-intuition-and-the-monad-tutorial-fallacy/) by Brent Yorgey
 - [The "What Are Monads?" Fallacy](https://two-wrongs.com/the-what-are-monads-fallacy)
 - [Don't fear the Monad](https://www.youtube.com/watch?v=ZhuHCtR3xq8) by Brian Beckman
