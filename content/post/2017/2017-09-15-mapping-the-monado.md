@@ -23,7 +23,7 @@ again while I was reading about them  was the necessity of "developing an
 intuition."
 
 To that end, [I've included a lot of links I found helpful at the end of this
-post](/#ref). Reading different takes on the subject can help to develop that
+post](#ref). Reading different takes on the subject can help to develop that
 intuition in a way that no single tutorial ever could, and though
 many posts like this start with something along the lines of "I know the world
 doesn't need another monad tutorial," I beg to differ. The only thing so far
@@ -866,10 +866,10 @@ different perspectives and facets presented in as many ways as possible.
 - [Functors, Applicative Functors and Monoids](http://learnyouahaskell.com/functors-applicative-functors-and-monoids) from LYAHFGG
 - [Monad Laws](https://wiki.haskell.org/Monad_laws) from the Haskell wiki
 - [Functors, Applicatives, And Monads In Pictures](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html) by Aditya Bhargava
+- [Three Useful Monads](http://adit.io/posts/2013-06-10-three-useful-monads.html) by Aditya Bhargava
 - [Explanation of Monad laws](https://stackoverflow.com/questions/3433608/explanation-of-monad-laws) from SO
 - [What is a functor?](https://medium.com/@dtinth/what-is-a-functor-dcf510b098b6) by Thai Pangsakulyanont
 - [A Fistful of Monads](http://learnyouahaskell.com/a-fistful-of-monads) from LYAHFGG
-- [Functors, Applicatives, And Monads In Pictures](http://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html) by Aditya Bhargava
 - [Javascript Functor, Applicative, Monads in pictures](https://medium.com/@tzehsiang/javascript-functor-applicative-monads-in-pictures-b567c6415221) 'by' Tze-Hsiang Lin
 - [A monad is just a monoid in the category of endofunctors. what's the problem?](http://slides.com/julientournay/a-monad-is-just-a-monoid-in-the-category-of-endofunctors-what-s-the-problem/#/) by Julien Tournay
 - [Monads, part one](https://ericlippert.com/2013/02/21/monads-part-one/#more-461) by Eric Lippert (this whole series is excellent)
