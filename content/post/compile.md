@@ -1,3 +1,8 @@
+---
+title: compile things
+draft: true
+---
+
 a file of a couple of megabytes.
 sum up all the 32 bit integers in ruby
 in c
