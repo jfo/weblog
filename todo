@@ -1,5 +1,4 @@
-add image sources and figure that ish out.
 decide on static site experiments hosting... maybe both blog and jfo.click?
-migrate from toml to yaml maybe
 script deploy process. force push that ish.
-set up cloudflare and https maybe
+
+root images directory yo.
