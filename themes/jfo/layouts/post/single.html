@@ -7,8 +7,10 @@
         <div id="content">
             {{ partial "header.html" . }}
             <article>
-                <h1>{{ .Title }}</h1>
-                <sub>{{ .Date.Format "January 2, 2006 " }}</sub>
+                <p>
+                    <h1>{{ .Title }}</h1>
+                    <sub>{{ .Date.Format "January 2, 2006 " }}</sub>
+                <p>
                 <div>
                     {{ .Content }}
                 </div>
