@@ -23,6 +23,4 @@ http://www.microchip.com/wwwproducts/en/ATtiny13A
 
 risc based, avr chip, ok!
 
-![img](https://s3-us-west-2.amazonaws.com/blog.jfo.click/images/cam.png)
-
-
+{{< img "cam.png" >}}
