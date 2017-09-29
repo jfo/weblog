@@ -9,7 +9,7 @@ title: The Mandelwat Set
     }
 </script>
 
-![img](http://i.imgur.com/mQNucqK.png)
+{{< img "mandelwat/mb.png" >}}
 
 If you've never seen the Mandelbrot set, do me and also yourself a favor and
 [watch some amount of time of one or two of these

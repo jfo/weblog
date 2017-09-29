@@ -9,10 +9,10 @@ build:
 	hugo
 
 syncs3:
-	aws s3 sync ./s3 s3://blog.jfo.click/
+	aws s3 sync ./s3 s3://assets.jfo.click/
 
 syncfroms3:
-	aws s3 sync s3://blog.jfo.click/ ./s3
+	aws s3 sync s3://assets.jfo.click/ ./s3
 
 resume:
 	pandoc ./resume.md -o ./static/jeff_fowler_resume.pdf -V geometry:"top=2cm, bottom=1.5cm, left=4cm, right=4cm"
