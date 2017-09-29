@@ -110,7 +110,7 @@ build:
 `build` simply issues the `hugo` command to build the site. `push` now `cd`'s
 into the built directory, adds and commits everything indiscriminantly, and
 pushes it to _its_ remote, which is a [git
-subtree](https://dev.to/letsbsocial1/deploying-to-gh-pages-with-git-subtre://dev.to/letsbsocial1/deploying-to-gh-pages-with-git-subtree)
+subtree](https://gohugo.io/hosting-and-deployment/hosting-on-github://gohugo.io/hosting-and-deployment/hosting-on-github/)
 
 Finally,
 
