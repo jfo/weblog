@@ -36,8 +36,6 @@ watch!
 
 {{< img "mb/mb02.jpg" >}}
 
-<hr>
-
 So before I can draw a Mandlebrot set, I have to have something to draw on! In
 html5 land, that thing is a `<canvas>`
 
@@ -84,7 +82,6 @@ That's it from the HTML side. All the rest of the canvases will look the same
 except with incrementing ids!
 
 {{< img "mb/mb03.jpg" >}}
-<hr>
 
 You can do many wonderful things on a canvas! First you need to grab a
 reference to the thing:
@@ -252,7 +249,7 @@ context.stroke();
 So, clearly, I have to account for the size of the canvas myself- it's not
 really designed to do that for me. Just keep that in mind!
 
-<hr>
+{{< img "mb/mb12.jpg" >}}
 
 It seems like this is really how you're supposed to interact with the canvas...
 it's definitely hinted at by the name, you draw strokes and shapes on it to
@@ -395,7 +392,6 @@ context.putImageData(imageData, 0, 0);
 > of course, there are easier ways to simply change the background color.
 
 {{< img "mb/mb04.jpg" >}}
-<hr>
 
 It is a minor inconvenience to have to address the pixel values linearly like
 this, what I'd really like to be able to do is address coordinates inside the
@@ -614,7 +610,6 @@ can be centered anywhere in the two dimensional plane and scaled up or down
 depending on what you want to see!
 
 {{< img "mb/mb05.jpg" >}}
-<hr>
 
 Before packing away this abstraction and explaining sets, I want to add one
 more thing. This render function above just randomly sets all the pixel values,
@@ -766,7 +761,6 @@ with this issue (and many more!). But I'm not, so I won't! This is adequate for
 now. Let's talk about sets!
 
 {{< img "mb/mb06.jpg" >}}
-<hr>
 
 Sets wtf is a set
 =================
@@ -882,7 +876,7 @@ coordinates, or build the coordinates into a real object that has a function
 that can do that, but I don't really want to. Instead I'm going to talk
 about sets more generally!
 
-<hr>
+{{< img "mb/mb13.jpg" >}}
 
 So, you can have a set that is just a defined set of whatever, and write all
 the whatevers out, like the example above.. That works great! But what about
@@ -961,7 +955,6 @@ This is cool, then, I have a way of "graphing" sets! These sets are pretty
 boring though. But you know what's not boring??
 
 {{< img "mb/mb07.jpg" >}}
-<hr>
 
 The Mandelbrot Set
 ==================
@@ -1115,8 +1108,6 @@ _But this one does!_ -1 is thus _in the Mandelbrot set_, and 2 _is not_.
 
 {{< img "mb/mb08.jpg" >}}
 
-<hr>
-
 Wait, though, we were talking about _complex numbers_. And the numbers -1 and 2
 are not coordinates, they are integers. How do you make a 2 dimensional graph
 with one number?
@@ -1153,8 +1144,6 @@ No but seriously. It's just one application and I can do it by hand and that's
 how we learn new things.
 
 {{< img "mb/mb09.jpg" >}}
-
-<hr>
 
 So, A complex number is made up of a real part and an imaginary part. Never the
 two shall meet. What if I wanted to add two complex numbers together?
@@ -1227,7 +1216,7 @@ outer, inner, last."
 Remember that `i` is actually the square root of -1, so i<sup>2</sup> is...
 `-1`!
 
-<hr>
+{{< img "mb/mb13.jpg" >}}
 
 So... let's go back to our testing function from before! All I need to do is
 replace `z` and `c` with "complex numbers" made up of `zr` (z real), `zi` (z
@@ -1368,6 +1357,8 @@ graph.render(isMandlebrot);
 ```
 
 There it is. Our old friend. The Mandelbrot set.
+
+{{< img "mb/mb44.jpg" >}}
 
 That looks like a fuzzy potato
 ==============================
@@ -1791,7 +1782,7 @@ Remember those little thingers from before? Look what they look like in _color_!
 })();
 </script>
 
-<hr>
+{{< img "mb/mb50.jpg" >}}
 
 Alright! This totally works and is beautiful! But, it's _slow._ On the one hand
 _of course it is_, this is a lot of computation. But on the other hand... we can do better.
@@ -1889,3 +1880,22 @@ messing up and which produced weird blobs on the canvas.
 I hope this was interesting. I'm going to shut off my computer for the rest of
 the day now. I've been thinking of picking one day a week and not looking at
 any screens, or at least not staring at the computer screen for the whole day.
+
+{{< img "mb/mb57.jpg" >}}
+
+(That one is secretely my favorite :))
+
+
+<div id="update"></div>
+
+Sept 2017 update!
+---------------
+
+As part of my self hosting images
+[initiative](/s3-hugo-and-static-asset-hosting/), I've updated all of the
+examples on this page to much more hi-res and web optimized images, and they
+look SO GOOD NOW despite being the same weight or lighter than the [images I
+used to have up here](https://imgur.com/gallery/15NIE). Special thanks to [Lara
+Hogan](https://twitter.com/Lara_Hogan) from whose book [Designing for
+Performance](http://shop.oreilly.com/product/0636920033578.do) I was able to
+figure out how to make that quality / size balance work optimally!
