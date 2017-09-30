@@ -9,7 +9,7 @@ title: The Mandelwat Set
     }
 </script>
 
-{{< img "mandelwat/mb.png" >}}
+{{< img "mb/mb01.jpg" >}}
 
 If you've never seen the Mandelbrot set, do me and also yourself a favor and
 [watch some amount of time of one or two of these
@@ -34,7 +34,7 @@ little lost or want something reinforced, jump down to the
 [references](#references) at the bottom for some good resources and videos to
 watch!
 
-![img](http://i.imgur.com/x278gIJ.png)
+{{< img "mb/mb02.jpg" >}}
 
 <hr>
 
@@ -83,7 +83,7 @@ Now we just need to slap an `id` in there and we can grab it from the JavaScript
 That's it from the HTML side. All the rest of the canvases will look the same
 except with incrementing ids!
 
-![img](http://i.imgur.com/zPKyB2n.png)
+{{< img "mb/mb03.jpg" >}}
 <hr>
 
 You can do many wonderful things on a canvas! First you need to grab a
@@ -394,7 +394,7 @@ context.putImageData(imageData, 0, 0);
 > These are just some ideas. You wouldn't have to use ImageData exclusively,
 > of course, there are easier ways to simply change the background color.
 
-![img](http://i.imgur.com/o78XTjo.png)
+{{< img "mb/mb04.jpg" >}}
 <hr>
 
 It is a minor inconvenience to have to address the pixel values linearly like
@@ -613,7 +613,7 @@ Each pixel, now, can be viewed as a single discrete coordinate on a plane that
 can be centered anywhere in the two dimensional plane and scaled up or down
 depending on what you want to see!
 
-![img](http://i.imgur.com/zKEcIQJ.png)
+{{< img "mb/mb05.jpg" >}}
 <hr>
 
 Before packing away this abstraction and explaining sets, I want to add one
@@ -765,7 +765,7 @@ If I were building a fully functional graphing library, I would have to deal
 with this issue (and many more!). But I'm not, so I won't! This is adequate for
 now. Let's talk about sets!
 
-![img](http://i.imgur.com/4P4tuRu.png)
+{{< img "mb/mb06.jpg" >}}
 <hr>
 
 Sets wtf is a set
@@ -960,7 +960,7 @@ graph.render(function(coord) {
 This is cool, then, I have a way of "graphing" sets! These sets are pretty
 boring though. But you know what's not boring??
 
-![img](http://i.imgur.com/iGGHbnF.png)
+{{< img "mb/mb07.jpg" >}}
 <hr>
 
 The Mandelbrot Set
@@ -1113,7 +1113,7 @@ Hmm...
 
 _But this one does!_ -1 is thus _in the Mandelbrot set_, and 2 _is not_.
 
-![img](http://i.imgur.com/JgtS1hj.png)
+{{< img "mb/mb08.jpg" >}}
 
 <hr>
 
@@ -1152,7 +1152,7 @@ but I'm not going to use any of them, because reasons!
 No but seriously. It's just one application and I can do it by hand and that's
 how we learn new things.
 
-![img](http://i.imgur.com/jnQVsTo.png)
+{{< img "mb/mb09.jpg" >}}
 
 <hr>
 
@@ -1608,7 +1608,7 @@ get more definition. That could go on infinitely, though what you see above is
 about as high fidelity as we can get at that zoom level, since pixels have a
 definite size, small as they may seem.
 
-![img](http://i.imgur.com/juMLg6F.png)
+{{< img "mb/mb10.jpg" >}}
 
 Colors come out of the speakers
 ==============================
@@ -1849,7 +1849,7 @@ and achieve a higher precision, but my mandelbrot bike shed doesn't need
 _another_ coat of paint before shipping. I'll likely try to get around to that
 sometime, or just put it off until 64 bit floats are native to the platform!
 
-![img](http://i.imgur.com/3QwnPZD.png)
+{{< img "mb/mb11.jpg" >}}
 <hr>
 
 
