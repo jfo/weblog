@@ -13,3 +13,9 @@ rssLimit = 3
 
 [permalinks]
     post= "/:title/"
+
+[taxonomies]
+    tag = ""
+    group = ""
+    category = ""
+    post = ""
