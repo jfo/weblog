@@ -26,6 +26,17 @@ h1 {
 
 p, li { line-height: 1.5; }
 
+a { text-decoration: none; }
+a:link {
+    color: #0000bb;
+    border-bottom: 1px solid #bbbbff;
+}
+a:hover { color: blue; }
+a:visited {
+    color: gray;
+    border-bottom: 1px solid #eeeeee;
+}
+
 #content {
     max-width: 720px;
     margin: 0 auto;
