@@ -1,3 +1,18 @@
+@font-face {
+    font-family: "etbook";
+    src: url("/css/et-book.woff") format('woff');
+}
+
+@font-face {
+    font-family: "Inconsolata";
+    src: url("/css/inconsolata.woff") format('woff');
+}
+
+.site-header {
+    margin-top: 2em;
+    text-align:right;
+}
+
 body {
     background: #fffff8;
     font-family: etbook;
@@ -9,29 +24,18 @@ h1 {
     font-size: 2em;
 }
 
-p, li {
-    line-height: 1.5;
-}
+p, li { line-height: 1.5; }
 
 #content {
     max-width: 720px;
     margin: 0 auto;
-}
-
-.site-header {
-    margin-top: 2em;
-    text-align:right;
-}
-.site-header * {
-    display: inline;
+    padding: 1em 0 1em 0;
 }
 
 pre {
     padding: 16px;
     overflow: auto;
     font-size: 15px;
-    /* line-height: 1.45; */
-    overflow-x: auto;
     border: 1px dotted #002b36;
 }
 
@@ -47,37 +51,15 @@ blockquote {
     border-left: 4px solid #ddd;
 }
 
-img, canvas {
+img, canvas, iframe {
     max-width: 100%;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 1em;
-}
-
-hr {
-    border: none;
-    border-top: 1px solid gray;
-}
-
-iframe {
-    display: block;
     margin: 0 auto;
-    width: 80%;
-    height: 350px;
-}
-
-.content hr {
-    width: 30%;
-}
-
-td {
-    padding-top: 0.4em;
 }
 
 tr time {
     font-size: 0.7em;
-    opacity:0.5;
+    opacity:0.7;
     font-family: monospace;
     margin-right: 3em;
 }

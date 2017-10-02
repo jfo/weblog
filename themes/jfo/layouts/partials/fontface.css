@@ -3,3 +3,7 @@
     src: url("{{ .Site.BaseURL }}css/et-book.woff") format('woff');
 }
 
+@font-face {
+    font-family: "Inconsolata";
+    src: url("{{ .Site.BaseURL }}css/inconsolata.woff") format('woff');
+}
