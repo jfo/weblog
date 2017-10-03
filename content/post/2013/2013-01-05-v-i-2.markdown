@@ -5,4 +5,4 @@ date: 2013-01-05T00:00:00Z
 title: V-I
 ---
 
-{{< img "redefine.jpg">}}
+{{< img "older/redefine.jpg">}}

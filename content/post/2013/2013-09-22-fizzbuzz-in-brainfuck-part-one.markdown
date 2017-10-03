@@ -10,13 +10,11 @@ title: fizzbuzz in brainfuck, part one
 <a href="http://replit.com/Kr0/1" target="_blank">Run that junk.</a>
 
 A couple of weeks ago I got it into my pointy little egg-head that I wanted to
-write a <a
-href="http://www.codinghorror.com/blog/2007/02/fizzbuzz-the-programmers-stairway-to-heaven.html"
-target="_blank">fizzbuzz</a> in <a
-href="http://www.jeffalanfowler.com/blog/how-brainfuck-works/"
-target="_blank">brainfuck</a>. As with a lot of the stupid ideas that occur to
-me, I initially dismissed it as a waste of time,
-as-well-I-had-ought-to-have-done.
+write a
+[fizzbuzz](http://www.codinghorror.com/blog/2007/02/fizzbuzz-the-programmers-stairway-to-heaven.html)
+in [brainfuck](http://www.jeffalanfowler.com/blog/how-brainfuck-works/)
+As with a lot of the stupid ideas that occur to me, I initially dismissed it as
+a waste of time, as-well-I-had-ought-to-have-done.
 
 "Nahhhhhhh," past me said to himself, chuckling, "that would be totally,
 needlessly hard right now, and it would take a lot of time, and anyway I don't
@@ -24,9 +22,8 @@ know how I would even START! Unless, maybe, well... I wonder if I could write
 an if/else... and then if I could do that...maybe with a multiples counter
 cell...and...."
 
-And so <a href="http://esolangs.org/wiki/brainfuck_algorithms"
-target="_blank">after a quick googling</a>, I was off. I <a
-href="http://xkcd.com/356/">nerd-sniped</a> myself.</p>
+And so [after a quick googling](http://esolangs.org/wiki/brainfuck_algorithms)
+I was off. I had [nerd-sniped](http://xkcd.com/356/) myself!
 
 I decided the easiest way to go about it was to write fizzbuzz in Ruby, first,
 and then translate it into brainfuck. Aww Ruby, <a
@@ -285,9 +282,22 @@ print thirteen
 ```
 
 
-Aside from the repetition we are ignoring- there are three problems left. Still no "FizzBuzz," and when it should make "FizzBuzz," it throws off the 5's counter into negative numbers so it never prints Buzz after 15. And it's not evaluating 100. The first and second problem can be fixed with just one more "if" statement, nuzzled way down in the bowels of our<a href="http://en.wikipedia.org/wiki/Spaghetti_code" target="_blank"> increasingly complex</a>program. We know we'll only have to write "FizzBuzz" if we've already written "Fizz," so anytime we print "Fizz," we just throw in an extra check against whether or not we need to write "Buzz." Now, if we write "FizzBuzz", we will also be resetting the 5's counter.
+Aside from the repetition we are ignoring- there are three problems left. Still
+no "FizzBuzz," and when it should make "FizzBuzz," it throws off the 5's
+counter into negative numbers so it never prints Buzz after 15. And it's not
+evaluating 100. The first and second problem can be fixed with just one more
+"if" statement, nuzzled way down in the bowels of our<a
+href="http://en.wikipedia.org/wiki/Spaghetti_code" target="_blank">
+increasingly complex</a>program. We know we'll only have to write "FizzBuzz" if
+we've already written "Fizz," so anytime we print "Fizz," we just throw in an
+extra check against whether or not we need to write "Buzz." Now, if we write
+"FizzBuzz", we will also be resetting the 5's counter.
 
-Oh and as for the last problem, I just hardcoded printing "Buzz" out at the end instead of "100", bypassing all the logic, because I'm a filthy, cheating, dirty fraud. YOLO####33<a href="http://knowyourmeme.com/memes/the-1-phenomenon" target="_blank">3</a>. Also because it will always end up on a multiple of 100, so at least the "Buzz" part will be right. Screw you, 300, 600, and 900!!
+Oh and as for the last problem, I just hardcoded printing "Buzz" out at the end
+instead of "100", bypassing all the logic, because I'm a filthy, cheating,
+dirty fraud. YOLO####33<a href="http://knowyourmeme.com/memes/the-1-phenomenon"
+target="_blank">3</a>. Also because it will always end up on a multiple of 100,
+so at least the "Buzz" part will be right. Screw you, 300, 600, and 900!!
 
 ```ruby
 five = 3
