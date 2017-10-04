@@ -16,3 +16,16 @@ syncfroms3:
 
 resume:
 	pandoc ./resume.md -o ./static/jeff_fowler_resume.pdf -V geometry:"top=2cm, bottom=1.5cm, left=4cm, right=4cm"
+
+initsubtree:
+	# git checkout --orphan gh-pages
+	# git reset --hard
+	# git commit --allow-empty -m "Initializing gh-pages branch"
+	# git push origin gh-pages
+	# git checkout master
+	rm -rf public
+	git worktree prune
+	git worktree add -B gh-pages public origin/gh-pages
+
+
+
