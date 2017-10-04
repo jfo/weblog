@@ -6,6 +6,8 @@ draft: true
 Wtf is a shell.
 ---------------
 
+{{< video "testvid.mp4" >}}
+
 A shell is a way to interact with your computer. you type in text commands at a _command line_, and the shell interprets them
 
 wtf is a filesystem.

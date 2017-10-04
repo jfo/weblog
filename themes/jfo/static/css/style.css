@@ -62,7 +62,7 @@ blockquote {
     border-left: 4px solid #ddd;
 }
 
-img, canvas, iframe {
+img, video, canvas, iframe {
     max-width: 100%;
     display: block;
     margin: 0 auto;
