@@ -1,1 +1,1 @@
-{{ if .Page.Draft }}<img src="/s3/{{ .Get 0 }}" />{{ else }}<img src="https://assets.jfo.click/{{ .Get 0 }}" />{{ end }}
+{{ if .Site.Params.dev }}<img src="/s3/{{ .Get 0 }}" />{{ else }}<img src="https://assets.jfo.click/{{ .Get 0 }}" />{{ end }}
