@@ -11,9 +11,6 @@ pygmentsUseClassic = true
 
 theme = "jfo"
 
-[params]
-    dev = true
-
 rssLimit = 3
 [outputFormats.RSS]
     baseName = "feed"
