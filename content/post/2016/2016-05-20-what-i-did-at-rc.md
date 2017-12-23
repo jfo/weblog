@@ -101,6 +101,8 @@ couple of days reading through some tutorials, doing some exercises... it all
 seemed very familiar, like I had already done this step... it was not super
 exciting.
 
+<div id="and-I-got-really-mad-actually"></div>
+
 On the third day of this, I was solving a [project euler](https://projecteuler.net/)
 problem in
 [Ruby](https://github.com/urthbound/euler/blob/master/18_max_path_sum.rb) and
