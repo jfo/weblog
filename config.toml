@@ -5,10 +5,6 @@ title = "blog.jfo.click"
 pygmentsUseClasses = true
 pygmentscodefences = true
 
-# should be able to use chroma in next release, see:
-# https://discourse.gohugo.io/t/differences-between-hugo-builtin-chroma-and-standalone-chroma/8644
-pygmentsUseClassic = true
-
 theme = "jfo"
 
 rssLimit = 3

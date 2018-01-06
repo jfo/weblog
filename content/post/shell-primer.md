@@ -3,14 +3,47 @@ title: Shell Primer
 draft: true
 ---
 
-Wtf is a shell.
----------------
+<style>
+  @keyframes blinker {
+    70% { opacity: 0; }
+  }
+</style>
+<code><h1>~$<span style="animation: blinker 1s linear infinite;">▓</span></h1></code>
 
-{{< video "testvid.mp4" >}}
+A filesystem is a tree
+----------------------
 
-A shell is a way to interact with your computer. you type in text commands at a _command line_, and the shell interprets them
+A computer that has storage stores data in what you can conceive of as one long
+continuous block of ones and zeros
 
-wtf is a filesystem.
+https://blog.jfo.click/c-and-simple-types/
+
+For completely obvious reasons, this data needs to be organized _somehow_.
+Imagine, if you will, a huge library whose books are in no particular order.
+Not very useful, right? Or how about a good chunk of those books' pages are
+split up and spread out among all the shelves and crammed in between each
+other. Even less useful! They need to be organized according to some sort of
+system. A filing system. 
+
+This is what a filesystem does on a computer.
+
+https://arstechnica.com/gadgets/2008/03/past-present-future-file-systems/
+
+The specifics of how this is implemented is interesting! But for now, all you
+need to know is that the filesystem is a tree consisting of:
+
+1- files
+2- directories that can contain files and other directories
+
+
+$PATH
+
+Every command is a program
+--------------------------
+
+You have an identity
+--------------------
+
 
 how do you move around the file system?
 
