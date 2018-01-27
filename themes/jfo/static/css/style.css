@@ -16,7 +16,7 @@
 body {
     background: #fffff8;
     font-family: etbook;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
 h1 {
@@ -24,7 +24,7 @@ h1 {
     font-size: 2em;
 }
 
-p, li { line-height: 1.5; }
+p, li { line-height: 1.4; }
 
 a { text-decoration: none; }
 a:link {
@@ -46,7 +46,7 @@ a:visited {
 pre {
     padding: 16px;
     overflow: auto;
-    font-size: 15px;
+    font-size: 0.8em;
     border: 1px dotted #002b36;
 }
 
