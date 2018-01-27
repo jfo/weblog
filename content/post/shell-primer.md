@@ -30,11 +30,11 @@ This is what a filesystem does on a computer.
 https://arstechnica.com/gadgets/2008/03/past-present-future-file-systems/
 
 The specifics of how this is implemented is interesting! But for now, all you
-need to know is that the filesystem is a tree consisting of:
+need to know is that the filesystem is a _tree_ consisting of a series of
+_nodes_ each of which can be one of either:
 
-1- files
-2- directories that can contain files and other directories
-
+1- a file
+2- a directory that can contain files and other directories
 
 $PATH
 

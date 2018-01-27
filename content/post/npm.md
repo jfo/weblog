@@ -33,10 +33,10 @@ incredibly complicated dependencies I'm sitting it on top of doesn't mean they
 go away. To be clear here, I'm not even talking about packages or libraries,
 but rather the language runtimes, the operating systems, the chips
 themselves... could it be that my desire to understand everything always is in
-point of fact actually a really immature impulse? And I have to consciously
-choose my layer of abstraction? And I could consciously choose to call my
-`node_modules` directory the mother of all black boxes and focus more intently
-on the API to the libraries I'm using and my understanding of that?
+point of fact actually a laudable but immature impulse? And I have to
+consciously choose my layer of abstraction? And I could consciously choose to
+call my `node_modules` directory another black box and focus more intently on
+the APIs to the libraries I'm using and my understanding of that?
 
 I then swing back around to where I started, that I have to be less fussy about
 this particular thing if I'm going to seriously learn modern JavaScript. The
