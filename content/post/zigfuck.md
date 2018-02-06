@@ -20,7 +20,7 @@ changed a lot since the [`0.1.1`](http://ziglang.org/download/) release a few
 months ago, so if you notice discrepencies from zig code you might have seen
 somewhere else, this is why.
 
-This code was all tested and compiled with Zig
+This code was all compiled and tested with Zig
 [`0.1.1.4d8d654`](https://github.com/zig-lang/zig/tree/44d8d654a0ba463a1d4cf34d435c8422bfcd1c81)
 
 For more on how brainfuck works, [look
@@ -425,4 +425,243 @@ bf(src, mem[0..]);
 
 > maybe something about []const u8 and how that works for src but not mem and why.
 
-Now I can start writing tests.
+Now I can start writing tests in earnest, unit testing the `bf()` function
+directly. I can just put test blocks at the bottom of this file, for now...
+
+```zig
+test "+" {
+    var mem = []u8{0};
+    const src = "+++";
+    bf(src, mem[0..]);
+    assert(mem[0] == 3);
+}
+```
+
+I'm operating on the mem byte array (of a single byte) and then asserting that
+what I thought was going to happen (the byte is incremented three times)
+happened. It did!
+
+```shell
+Test 1/1 +...OK
+```
+
+The `-` case is similar:
+
+```zig
+test "-" {
+    var mem = []u8{0};
+    const src = "---";
+    bf(src, mem[0..]);
+    assert(mem[0] == 253);
+}
+```
+
+But this fails! When I try to subtract `1` from `0` I get...
+
+```shell
+Test 2/2 -...integer overflow
+```
+
+Once again, Zig is forcing me to consider this possibility explicitly. In this
+case, it so happens that I don't care about this overflow- in fact I want it to
+default to overflow as per the [brainfuck spec](dfji), such as it is. Zig has a set
+of auxiliary arithmetic operators that offer ["guaranteed wrap around
+semantics"](http://ziglang.org/documentation/master/#Wrapping-Operations)
+
+```zig
+'+' => mem[memptr] +%= 1,
+'-' => mem[memptr] -%= 1,
+```
+
+For `<` and `>`, I'll navigate a small array and then check the value of an
+incremented cell:
+
+```zig
+test ">" {
+    var mem = []u8{0} ** 5;
+    const src = ">>>+++";
+    bf(src, mem[0..]);
+    assert(mem[3] == 3);
+}
+```
+
+and...
+
+```zig
+test "<" {
+    var mem = []u8{0} ** 5;
+    const src = ">>>+++<++<+";
+    bf(src, mem[0..]);
+    assert(mem[3] == 3);
+    assert(mem[2] == 2);
+    assert(mem[1] == 1);
+}
+```
+
+For this last one, I can directly compare the result to a static array using...
+
+```
+const mem = std.mem;
+```
+
+```zig
+test "<" {
+    var storage = []u8{0} ** 5;
+    const src = ">>>+++<++<+";
+    bf(src, storage[0..]);
+    assert(mem.eql(u8, storage, []u8{ 0, 1, 2, 3, 0 }));
+}
+```
+
+
+...and remember, string literals are just `u8` arrays in zig, and I can put in
+hexadecimal literals inside them ,so the following will work in the exact same
+way!
+
+```zig
+assert(mem.eql(u8, storage, "\x00\x01\x02\x03\x00"));
+```
+
+Let's add `.`! This simply prints the byte value as a character in the cell
+that is currently being pointed to. For now, I'll abuse `warn`, and revisit
+this later to properly handle `stdout` here.
+
+```zig
+'.' => warn("{c}", storage[memptr]),
+```
+
+> how do I test this?
+
+For now, I'll ignore `,`. // come back to that.
+
+Loops
+-----
+
+`[` and `]` are where the magic happens....
+
+```brainfuck
+[   if the value of current cell is zero skip to the matching bracket without executing the code
+]   if the value of the current cell is NOT zero go back to the opening bracket and execute the code again
+```
+
+I'll _start_ with the test case this time, testing them together (as it doesn't
+make sense to test them in isolation).
+
+```zig
+test "[] skips execution and exits" {
+    var storage = []u8{0} ** 2;
+    const src = "+++++>[>+++++<-]";
+    bf(src, storage[0..]);
+    assert(storage[0] == 5);
+    assert(storage[1] == 0);
+}
+```
+
+and I'll stub out the switch case:
+
+```zig
+'[' => if (storage[memptr] == 0) {
+},
+']' => if (storage[memptr] == 0) {
+},
+```
+
+Now, _what goes here_? A naive approach presents itself. I will simply advance
+the src index forward until I find a `]`! But I cannot do this in a zig `for`,
+which is designed simply to iterate over elements of a collection, never to
+skip around them. The appropriate construct here is `while`
+
+from:
+
+```
+var memptr: u16 = 0;
+for (src) |c| {
+    switch(c) {
+      ...
+    }
+}
+```
+
+```
+var memptr: u16 = 0;
+var srcptr: u16 = 0;
+while (srcptr < src.len) {
+    switch(src[srcptr]) {
+      ...
+    }
+    srcptr += 1;
+}
+```
+
+Now, I am free to reassign the `srcptr` index mid block, and I will do so.
+
+```zig
+'[' => if (storage[memptr] == 0) {
+    while (src[srcptr] != ']')
+        srcptr += 1;
+},
+```
+
+This satisfies the test "[] skips execution and exits", albeit flimsily, as
+we'll see.
+
+What about the closing brace? I suppose the analog will be simple enough:
+
+```zig
+test "[] executes and exits" {
+    var storage = []u8{0} ** 2;
+    const src = "+++++[>+++++<-]";
+    bf(src, storage[0..]);
+    assert(storage[0] == 0);
+    assert(storage[1] == 25);
+}
+```
+
+```zig
+']' => if (storage[memptr] != 0) {
+    while (src[srcptr] != '[')
+        srcptr -= 1;
+},
+```
+
+You might see where this is going... the naive solution to both brackets has a
+fatal flaw in it completely breaks when there are nested loops of any kind. Consider:
+
+```brainfuck
+++>[>++[-]++<-]
+```
+
+This should result in `{ 2, 0 }`, but the first opening bracket will dumbly
+jump to the first available closing bracket, and then get all confused. I need
+it to be able to jump to the _next closing bracket at the same nesting depth_.
+This is a fiddly operation but it's easy to add a depth count and keep track of
+it while going through the src string.
+
+```zig
+'[' => if (storage[memptr] == 0) {
+    var depth:u16 = 1;
+    srcptr += 1;
+    while (depth > 0) {
+        switch(src[srcptr]) {
+            '[' => depth += 1,
+            ']' => depth -= 1,
+            else => undefined
+        }
+        srcptr += 1;
+    }
+},
+```
+
+> something about how long everything is.
+
+TODO:
+
+now refactoring.
+
+now make a literal stack, then a generic stack.
+
+swap warns for stdout
+
+see about explaining @cimport for `getc` and supporting `,`
+
+make main take a filepath and build in some examples: serpinsky, echo, and fizzbuzz.
