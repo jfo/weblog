@@ -290,7 +290,7 @@ about memory allocation, cursors, and logic gates. All in all, now that I have
 a couple of weeks between it and me, it was worth the time.
 
 > Update, Sep 2017: totally using all of those words wrong, but they're sort of in
-> the same balpark as reality, so I'll keep them around.TBH I didn't really
+> the same ballpark as reality, so I'll keep them around.TBH I didn't really
 > know wtf I was doing back then.
 
 Next time in the brainfuck series maybe: <a
@@ -298,6 +298,8 @@ href="https://github.com/urthbound/esoteric/blob/master/brainfuckint.rb"
 target="_blank">writing a compiler / interpreter for brainfuck in
 ruby. </a> Sometime. But don't hold your breath. All you brainfuck fans out
 there. In Ukraine. Don't think I don't see your ip's.
+
+<div id="never-going-to-happen"></div>
 
 > Update, Sep 2017: This never happened also it never will happen probably
 > either.
