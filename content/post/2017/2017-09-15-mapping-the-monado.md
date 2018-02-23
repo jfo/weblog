@@ -419,7 +419,7 @@ I'll start by implementing the same thing from above, the `identity` monad.
   (cons x '() )))
 ```
 
-I have no way of creating objects other than lists,, or types of any kind at
+I have no way of creating objects other than lists, or types of any kind at
 all, in Sild, but let's call a  "`Thing`" simply something that is wrapped in a
 list. Remember, it doesn't really matter what the _structure of the type_ is,
 only that these particular interfaces are satisfied.
