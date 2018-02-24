@@ -5,38 +5,35 @@ date: 2018-02-22
 scripts: ["zighl.js"]
 ---
 
-Hello, good morning or whatever! Let's write a brainfuck interpreter. "Why
-are you doing this?" you might say. You won't find that answer here.
+Hello and good morning or whatever! Let's write a brainfuck interpreter. "Why
+are you doing this?" you might say, but you won't find that answer here.
 
-Carpe something! The time is now! Let's make it in [Zig](http://ziglang.org/).
+Let's make it in [Zig](http://ziglang.org/).
 
 Zig is....
 --------
 
 ...new, still very much in beta, and moving quickly. If you've seen any Zig
-previously, the code in this post might look different. It is different! Zig
-0.2.0 has just been released, coinciding with LLVM 6, and includes a lot of
+previously, the code in this post might look quite different. It is different!
+[Zig 0.2.0 has just been released](dfjio), coinciding with LLVM 6, and includes a lot of
 changes to the syntax. Most notably, many of the sigils have been replaced by
-keywords. See [here]() for a more in depth explanation.
+keywords. See [here](dfji) for a more in depth explanations of all the changes.
 
-For more on how brainfuck works, [look
-here](https://blog.jfo.click/how-brainfuck-works/).
+Zig is [designed to be readable](dfjio), and as such it's relatively intuitive
+if you are familiar with similarly compiled, (~)typed languages like C, C++,
+and in some cases Rust.
 
-say a thing about wrapping around the memory etc.
-
-Zig is designed to be readable (link), and as such it's fairly intuitive if you
-are familiar with similarly compiled, (~)typed languages like C, C++, and even
-in some cases, Rust.
-
-Getting Zig
-------------
-
-This code was all compiled and tested with [Zig 0.2.0](), which is available
-right now, via different channels, including [homebrew]() if you're on a mac.
+This code was all compiled and tested with Zig 0.2.0, which is available
+right now, via different channels, including [homebrew](djfi) if you're on a OSX.
 
 
 Ok, here we go.
 --------------
+
+For more on how brainfuck works, [look
+here](https://blog.jfo.click/how-brainfuck-works/). There's almost nothing to
+it, but it _is_ turing complete, which means you can [write fizzbuzz at
+least](http://localhost:1313/fizzbuzz-in-brainfuck-part-one/).
 
 Zig is a compiled language. When you compile a program, the resulting binary
 (if you are building an executable binary, as opposed to a library) needs a
@@ -89,8 +86,8 @@ This does not compile.
 ```
 
 Zig forces me to make this decision at the declaration site. Often, I don't
-care what the memory is. I can state this intent clearly by initializing to
-`undefined`.
+care what the memory has in it, but I have to say so. I can state this intent
+clearly by initializing to `undefined`.
 
 ```zig
 // main.zig
@@ -101,12 +98,11 @@ pub fn main() void {
 
 Initializing a variable to `undefined` offers no guarantees about the values
 that may or may not be in the memory. This is just like an uninitialized
-declaration in C, except it _forces me_ to explicitly state that it is
-undefined.
+declaration in C.
 
 But maybe I _do_ care what this memory is initialized to. Maybe I want to
 guarantee that it is zeroed out, or start it all off at some arbitrary value or
-something? In that case I must be explicit about that:
+something. In that case I can be explicit about _that_:
 
 ```zig
 // main.zig
@@ -115,14 +111,14 @@ pub fn main() void {
 }
 ```
 
-This might look a little funny, but `**` is an operator used for array
+This might look a little odd, but `**` is an operator used for array
 multiplication. I'm defining an array of a single `0` byte and then multiplying
-it by `30000` to get my final initialization value of an array of 30000 zeroes.
-This operation happens once, at _compile time_. `comptime` is one of Zig's main
-Big Ideas, and I'll come back to it later.
+it by `30000` to get my final initialization value of an array of 30000 zeroed
+out bytes.  This operation happens once, at _compile time_.  `comptime` is one
+of Zig's main Big Ideas, and I'll come back to it later.
 
-Now, let's write a brainfuck program that doesn't do anything!
-
+Now to write a brainfuck program that doesn't do anything except increment the
+first memory slot 5 times!
 
 ```zig
 pub fn main() void {
@@ -151,7 +147,7 @@ will not.
 main.zig:5:22: error: expected type '[6]u8', found '[5]u8'
 ```
 
-`for (the_love_of) |pete| { }`
+`for` goodness's sake
 --------------------------------
 
 I want to do _something_ for each character in the source. I can do that!
@@ -177,7 +173,7 @@ straight to stderr with `warn`, here imported from the standard library.
 
 `warn` takes a format string, just like `printf` does! The above prints:
 
-```
+```bash
 4343434343
 ```
 
@@ -189,12 +185,12 @@ warn("{c}", c);
 
 and wouldn't you know it:
 
-```
+```zig
 +++++
 ```
 
 So, I've initialized the memory space, and written a program. Next, I must
-implement the language. Let's start with `+`! I'll replace the body of the
+implement the language. I'll start with `+`, I'll replace the body of the
 `for` to `switch` on the character.
 
 ```zig
@@ -205,7 +201,7 @@ for (src) |c| {
 }
 ```
 
-I get two errors from this program!
+I get two errors from this program:
 
 ```shell
 /main.zig:10:7: error: switch must handle all possibilities
@@ -219,7 +215,7 @@ I get two errors from this program!
 Of course, I can't assign a new value to a variable that's been declared
 `const`ant! `mem` needs to be `var`...
 
-```
+```zig
 var mem = []u8{0} ** 30000;
 ```
 
@@ -228,7 +224,7 @@ statement](http://ziglang.org/documentation/master/#switch) needs to know what
 to do for everything that's not a `+`, even if it's nothing. In my case, that's
 exactly what I want.
 
-```
+```zig
 for (src) |c| {
     switch(c) {
         '+' => mem[0] += 1,
@@ -300,6 +296,10 @@ Now, instead of indexing `mem[0]` for everything, I can use this variable.
 
 Great. We can write "real" programs with this sort of!
 
+
+Testing 1,2,3
+---------
+
 Zig has a simple built in testing apparatus. Anywhere in any file I can write a
 test block:
 
@@ -320,11 +320,11 @@ Look at this:
 test "testing tests" {}
 ```
 
-```
+```txt
 zig test test.zig
 ```
 
-```
+```nothing
 Test 1/1 testing tests...OK
 ```
 
@@ -343,20 +343,37 @@ test "test false" {
 }
 ```
 
+```txt
+zig test test.zig
 ```
+
+```zig
+"thing.zig" 10L, 127C written
+:!zig test thing.zig
+
 Test 1/2 test true...OK
 Test 2/2 test false...assertion failure
-Unable to open debug info: TodoSupportMachoDebugInfo
+ [37;1m_panic.7 [0m:  [2m0x0000000105260f34 in ??? (???) [0m
+ [37;1m_panic [0m:  [2m0x0000000105260d6b in ??? (???) [0m
+ [37;1m_assert [0m:  [2m0x0000000105260619 in ??? (???) [0m
+ [37;1m_test false [0m:  [2m0x0000000105260cfb in ??? (???) [0m
+ [37;1m_main.0 [0m:  [2m0x00000001052695ea in ??? (???) [0m
+ [37;1m_callMain [0m:  [2m0x0000000105269379 in ??? (???) [0m
+ [37;1m_callMainWithArgs [0m:  [2m0x00000001052692f9 in ??? (???) [0m
+ [37;1m_main [0m:  [2m0x0000000105269184 in ??? (???) [0m
+ [37;1m??? [0m:  [2m0x00007fff5c75c115 in ??? (???) [0m
+ [37;1m??? [0m:  [2m0x0000000000000001 in ??? (???) [0m
 
 Tests failed. Use the following command to reproduce the failure:
 ./zig-cache/test
 ```
 
-[We don't have traces on Mac yet, unfortunately.](https://github.com/zig-lang/zig/blob/44d8d654a0ba463a1d4cf34d435c8422bfcd1c81/std/debug/index.zig#L268)
+[Stack traces on Mac are currently a WIP.](https://github.com/zig-lang/zig/pull/780)
 
-In order to test this effectively, I need to break it up. Let's start with this;
+In order to test this effectively, I need to break it up. Let's start with
+this;
 
-```
+```zig
 fn bf(src: []const u8, mem: [30000]u8) void {
     var memptr: u16 = 0;
     for (src) |c| {
@@ -384,6 +401,7 @@ and yet...
 ```zig
 /main.zig:1:29: error: type '[30000]u8' is not copyable; cannot pass by value
 ```
+> this is addressed by https://github.com/zig-lang/zig/issues/733
 
 Zig is very strict about this. Complex types, basically anything that can
 possibly be variable in size, can't be passed by value. This makes stack
@@ -404,7 +422,7 @@ fn bf(src: []const u8, mem: []u8) void { ... }
 
 and this at the call site:
 
-```
+```zig
 bf(src, mem[0..mem.len]);
 ```
 
@@ -414,8 +432,6 @@ simply referencing the length of the array. There is a shorthand for this:
 ```
 bf(src, mem[0..]);
 ```
-
-> maybe something about []const u8 and how that works for src but not mem and why.
 
 Now I can start writing tests in earnest, unit testing the `bf()` function
 directly. I can just put test blocks at the bottom of this file, for now...
@@ -454,16 +470,25 @@ But this fails! When I try to subtract `1` from `0` I get...
 Test 2/2 -...integer overflow
 ```
 
-Once again, Zig is forcing me to consider this possibility explicitly. In this
-case, it so happens that I don't care about this overflow- in fact I want it to
-default to overflow as per the [brainfuck spec](dfji), such as it is. Zig has a set
-of auxiliary arithmetic operators that offer ["guaranteed wrap around
+`mem` is an array of _unsigned bytes_, so subtracting 1 from 0 overflows the
+type. Once again, Zig is forcing me to consider this possibility explicitly.
+In this case, it so happens that I don't care about this overflow- in fact I
+want it to default to dealing with it via [modular
+arithmetic](https://en.wikipedia.org/wiki/Modular_arithmetic) as per the
+[brainfuck spec](https://en.wikipedia.org/wiki/Brainfuck), such as it is. This
+means that decrementing a cell at `0` will give me `255`, and incrementing a
+value of `255` will give me `0`.
+
+Zig has a set of auxiliary arithmetic operators that offer ["guaranteed wrap
+around
 semantics"](http://ziglang.org/documentation/master/#Wrapping-Operations)
 
 ```zig
 '+' => mem[memptr] +%= 1,
 '-' => mem[memptr] -%= 1,
 ```
+
+This solves my integer overflow problem and does what I expect it to.
 
 For `<` and `>`, I'll navigate a small array and then check the value of an
 incremented cell:
@@ -492,7 +517,7 @@ test "<" {
 
 For this last one, I can directly compare the result to a static array using...
 
-```
+```zig
 const mem = std.mem;
 ```
 
@@ -505,9 +530,8 @@ test "<" {
 }
 ```
 
-
 ...and remember, string literals are just `u8` arrays in zig, and I can put in
-hexadecimal literals inside them ,so the following will work in the exact same
+hexadecimal literals inside them ,so the following would work in the exact same
 way!
 
 ```zig
@@ -522,9 +546,10 @@ this later to properly handle `stdout` here.
 '.' => warn("{c}", storage[memptr]),
 ```
 
-> how do I test this?
+> how do I test this? meh.
 
-For now, I'll ignore `,`. // come back to that.
+For now, I'll ignore `,` as it's very simple conceptually but a little trickier
+to implement. I'll come back to it later maybe!
 
 Loops
 -----
@@ -561,7 +586,7 @@ and I'll stub out the switch case:
 Now, _what goes here_? A naive approach presents itself. I will simply advance
 the src index forward until I find a `]`! But I cannot do this in a zig `for`,
 which is designed simply to iterate over elements of a collection, never to
-skip around them. The appropriate construct here is `while`
+skip around them. The appropriate construct then here is `while`
 
 from:
 
@@ -626,25 +651,294 @@ fatal flaw in it completely breaks when there are nested loops of any kind. Cons
 This should result in `{ 2, 0 }`, but the first opening bracket will dumbly
 jump to the first available closing bracket, and then get all confused. I need
 it to be able to jump to the _next closing bracket at the same nesting depth_.
-This is a fiddly operation but it's easy to add a depth count and keep track of
-it while going through the src string.
+This is a bit fiddly but it's easy to add a depth count and keep track of it
+while going through the src string. Here, for both directions:
 
 ```zig
 '[' => if (storage[memptr] == 0) {
     var depth:u16 = 1;
     srcptr += 1;
     while (depth > 0) {
+        srcptr += 1;
         switch(src[srcptr]) {
             '[' => depth += 1,
             ']' => depth -= 1,
             else => {}
         }
-        srcptr += 1;
+    }
+},
+']' => if (storage[memptr] != 0) {
+    var depth:u16 = 1;
+    srcptr -= 1;
+    while (depth > 0) {
+        srcptr -= 1;
+        switch(src[srcptr]) {
+            '[' => depth -= 1,
+            ']' => depth += 1,
+            else => {}
+        }
     }
 },
 ```
 
-> something about how long everything is.
+and the corresponding tests- notice the `src` in both of these includes an
+internal loop.
+
+```
+test "[] skips execution with internal braces and exits" {
+    var storage = []u8{0} ** 2;
+    const src = "++>[>++[-]++<-]";
+    try bf(src, storage[0..]);
+    assert(storage[0] == 2);
+    assert(storage[1] == 0);
+}
+
+test "[] executes with internal braces and exits" {
+    var storage = []u8{0} ** 2;
+    const src = "++[>++[-]++<-]";
+    try bf(src, storage[0..]);
+    assert(storage[0] == 0);
+    assert(storage[1] == 2);
+}
+```
+
+> As an aside, `[-]` is a brainfuck idiom that means "zero out this cell". You
+> can see that no matter the value of the cell you're on, it will decrement it
+> until you get down to 0, then go on.
+
+the unhappy path
+------------
+
+I've not accounted for possibly broken bf programs yet. What happens if I feed
+my interpreter malformed input? Like just
+
+```nothing
+[
+```
+
+... with no matching closing brace, or
+
+```nothing
+<
+```
+which immediately goes out of bounds of the memory space? (I could wrap this
+around, but I'd rather consider it an error.)
+
+I'm going to jump ahead a bit and explain all the pertinent differences in this
+code. I'll pull the `bf` interpreter function into its own file and also pull
+out the seekBack and seekForward functionalities into their own little
+functions.
+
+```zig
+const warn = @import("std").debug.warn;
+const sub = @import("std").math.sub;
+
+fn seekBack(src: []const u8, srcptr: u16) !u16 {
+    var depth:u16 = 1;
+    var ptr: u16 = srcptr;
+    while (depth > 0) {
+        ptr = sub(u16, ptr, 1) catch return error.OutOfBounds;
+        switch(src[ptr]) {
+            '[' => depth -= 1,
+            ']' => depth += 1,
+            else => {}
+        }
+    }
+    return ptr;
+}
+
+fn seekForward(src: []const u8, srcptr: u16) !u16 {
+    var depth:u16 = 1;
+    var ptr: u16 = srcptr;
+    while (depth > 0) {
+        ptr += 1;
+        if (ptr >= src.len) return error.OutOfBounds;
+        switch(src[ptr]) {
+            '[' => depth += 1,
+            ']' => depth -= 1,
+            else => {}
+        }
+    }
+    return ptr;
+}
+
+pub fn bf(src: []const u8, storage: []u8) !void {
+    var memptr: u16 = 0;
+    var srcptr: u16 = 0;
+    while (srcptr < src.len) {
+        switch(src[srcptr]) {
+            '+' => storage[memptr] +%= 1,
+            '-' => storage[memptr] -%= 1,
+            '>' => memptr += 1,
+            '<' => memptr -= 1,
+            '[' => if (storage[memptr] == 0) srcptr = try seekForward(src, srcptr),
+            ']' => if (storage[memptr] != 0) srcptr = try seekBack(src, srcptr),
+            '.' => warn("{c}", storage[memptr]),
+            else => {}
+        }
+        srcptr += 1;
+    }
+}
+```
+
+This makes the switch statement much easier to read, in my opinion.
+
+I've added a few important things, though! Notice that all three of these
+functions now return a `!` type. This is new syntax for what used to be a `%T`
+error union type. It's saying that the function can either return a specified
+type, or some type of error. Whenever I attempt to call a function like this, I
+must _either_ `try` it (with `try` in front of the function call), which will
+propogate the error up the call stack if it encounters one, or `catch` it like:
+
+```zig
+const x = functionCall() catch {}
+```
+
+Where I deal with the error appropriately in the catch block. As written, this
+catch would swallow any error into the void. This is Bad Practice, but once
+again I'll point out that Zig _makes me do this explicitly._ If I've caught an
+error with an empty block, I'm saying that I don't think I'll ever see an error
+or that I don't need to deal with it.
+
+So what are the errors that I could be returning from seekBack or seekForward?
+
+In seekBack:
+
+```
+ptr = sub(u16, ptr, 1) catch return error.OutOfBounds;
+```
+
+I've changed this pointer decrement to use the std lib function `sub` which
+will throw a `Overflow` error if overflow does occur. I want to catch that
+error and instead return an `OutOfBounds` error, which I am instantiating here
+simply by using it.
+
+> Zig errors are basically a global array of error codes that are generated by
+> the compiler when you use `error.Whatever`. They are guaranteed to be unique.
+
+I want to treat this as `OutOfBounds` because, semantically, if the memory
+pointer goes under zero, it means I've ask the runtime to point outside of the
+memory space I've alloted on the low end.
+
+Similarly, in the seekForward function:
+
+```zig
+if (ptr >= src.len) return error.OutOfBounds;
+```
+
+In the case that the pointer is larger than the src.len is, I can catch that
+here and return the same error.
+
+at the call site:
+
+```zig
+'[' => if (storage[memptr] == 0) srcptr = try seekForward(src, srcptr),
+']' => if (storage[memptr] != 0) srcptr = try seekBack(src, srcptr),
+```
+
+I `try` these functions. If they succeed, they have executed correctly and have
+returned the new srcptr value. If they fail, `try` returns the error to the
+called _of `bf` itself_.
+
+That would be `main`, now!
+
+
+```zig
+const bf = @import("./bf.zig").bf;
+
+// yes, hello
+const hello_world = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
+
+pub fn main() void {
+    storage = []u8{0} ** 30000;
+    bf(serpinsky, storage[0..]) catch {};
+}
+```
+
+I'm swallowing this error for now, I'll come back to how to deal with it later,
+the important point to note is how easy zig makes it to properly handle errors
+up the call stack. It is not the reponsibility of the caller to check for any
+particular error state, but the compiler enforces calling any errorable
+function with try and annotating the correct return values up the call stack.
+
+> This new syntax also gets rid of a lot of `%%` and `%` sigils, which people
+> didn't like much.
+
+
+
+
+I've now implemented 7 of the 8 symbols in brainfuck, and all the ones i need
+to run "meaningful" programs.
+
+"Meaningful" programs
+-------------------
+
+I've got a few programs here:
+
+```zig
+// yes, hello
+const hello_world = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
+
+// prints the serpinsky triangle
+const serpinsky = "++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[ -<<<[ ->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<< ]>.>+[>>]>+ ] ";
+
+// our friend, the fizzbuzz
+const cracklepop = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<+>+>+++>>>+++++>>>+>++++++++++>++++++++++>++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>>>+++++<<<>>>>>>>>>>>>>>>>>+++++++[<<<<<++++++++++>>>>>-]<<<<<--->>>>>++++++++++++[<<<<++++++++++>>>>-]<<<<------>>>>++++++++++[<<<++++++++++>>>-]<<<--->>>++++++++++[<<++++++++++>>-]<<->>+++++++++++[<++++++++++>-]<--->>+++++++++++[<++++++++++>-]<-->>++++++++++[<++++++++++>-]<+>>++++++++[<++++++++++>-]<>>+++++++++++[<++++++++++>-]<+>>+++++++++++[<++++++++++>-]<++><<<<<<<<<<<<<<<<<<<<<<<<<<<<[>>><<[>><[><<<<<<<<<>[-]+>[-]<<[>>>>>>>>><<<<<<>[-]>[-]<<[>+>+<<-]>[<+>-]>[>>>>>>>>>[<<<<<.>>>>>>>[-]>[-]<<[>+>+<<-]>[<+>-]+>[<->[-]]<[<<<<<.>>>>><+>-]<-><<<<.<<<>>>>>[-]]+<<<<<<<<<[-]]>>>><<<<<<<<<>-<[>>+<<-]]>>[<<+>>-]<[>>>>>>>>.>>>>>>>>>>>>>>>.>.>.>.>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<>[-]>[-]<<[>+>+<<-]>[<+>-]+>[<->[-]]<[>>>>>>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<[-]>>>>>>>>>>><<<<<-]>>>>><<<<<<<<<+++<++++++++++[-]+>>>>>>>>>><<<<<<<<-]>>>>>>>><<<<<<>[-]+>[-]<<[>-<[>>+<<-]]>>[<<+>>-]<[<+++++>>>>>><<<<<<<<<<[<[>>>>>>>>>>>.>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-]+>-]+>>>>>>>>>><<<<<-]>>>>>>>>+<<<<<<<<<<<<->>>>>>>>><<<<<<->>>>>><->>>>>-<<<<<]++++++++++>>>>----------<+<<<<-]++++++++++>>>>----------<+<<<<-]>>>.>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<";
+
+// our old friend, the fibonacci sequence.
+const fib = "++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++>++++++++++++++++>>+<<[>>>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>[<+>-]>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]<[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]<<<++++++++++++++++++++++++++++++++++++++++++++++++.[-]<<<<<<<.>.>>[>>+<<-]>[>+<<+>-]>[<+>-]<<<-]<<++...";
+```
+
+> I have this memory that always comes back to me when I think about the
+> fibonacci sequence... I learned it from PBS in the 80's, and I've always
+> remembered that. I thought it was lost to time but [Youtube is
+> amazing.](https://youtu.be/bv8O456bNa8?t=3m46s)
+
+let me run one...
+
+```zig
+pub fn main() void {
+    storage = []u8{0} ** 30000;
+    bf(serpinsky, storage[0..]) catch {};
+}
+```
+
+voila!
+
+```nothing
+                               *
+                              * *
+                             *   *
+                            * * * *
+                           *       *
+                          * *     * *
+                         *   *   *   *
+                        * * * * * * * *
+                       *               *
+                      * *             * *
+                     *   *           *   *
+                    * * * *         * * * *
+                   *       *       *       *
+                  * *     * *     * *     * *
+                 *   *   *   *   *   *   *   *
+                * * * * * * * * * * * * * * * *
+               *                               *
+              * *                             * *
+             *   *                           *   *
+            * * * *                         * * * *
+           *       *                       *       *
+          * *     * *                     * *     * *
+         *   *   *   *                   *   *   *   *
+        * * * * * * * *                 * * * * * * * *
+       *               *               *               *
+      * *             * *             * *             * *
+     *   *           *   *           *   *           *   *
+    * * * *         * * * *         * * * *         * * * *
+   *       *       *       *       *       *       *       *
+  * *     * *     * *     * *     * *     * *     * *     * *
+ *   *   *   *   *   *   *   *   *   *   *   *   *   *   *   *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+```
 
 TODO:
 
@@ -658,6 +952,10 @@ see about explaining @cimport for `getc` and supporting `,`
 
 make main take a filepath and build in some examples: serpinsky, echo, and fizzbuzz.
 
+
+...........................
+-------------------------
+
 > Actually, I was reading some of my old blog posts and I came across
 > [this](/fizzbuzz-in-brainfuck-part-3/#never-going-to-happen).
 
@@ -666,4 +964,6 @@ You actually can make a u15 like this:
 `const u15 = @IntType(false, 15);`
 > Actually, all I _really_ need is an unsigned _15 bit_ number, which would be
 > enough for 32,767. Zig allows for fairly [arbitrarily wide types](http://ziglang.org/documentation/master/#Primitive-Types), but not a u15 just yet.
+it's proposed to allow any [iu]\d+  type to be an integer type: https://github.com/zig-lang/zig/issues/745
+(I guess it wasn't, so I just made the above sentence be true)
 
