@@ -1,6 +1,7 @@
 ---
 title: How Zig do?
 draft: true
+date: 2018-02-22
 scripts: ["zighl.js"]
 ---
 
