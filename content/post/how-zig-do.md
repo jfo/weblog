@@ -5,42 +5,37 @@ scripts: ["zighl.js"]
 ---
 
 Hello, good morning or whatever! Let's write a brainfuck interpreter. "Why
-would one do such a thing?" I hear you asking. You won't find that answer here.
+are you doing this?" you might say. You won't find that answer here.
 
-> Actually, I was reading some of my old blog posts and I came across
-> [this](/fizzbuzz-in-brainfuck-part-3/#never-going-to-happen).
-
-The time is now! Let's do it in [Zig](http://ziglang.org/).
+Carpe something! The time is now! Let's make it in [Zig](http://ziglang.org/).
 
 Zig is....
 --------
 
-new, still very much in beta, and moving quickly. `master` has already
-changed a lot since the [`0.1.1`](http://ziglang.org/download/) release a few
-months ago, so if you notice discrepencies from zig code you might have seen
-somewhere else, this is why.
-
-This code was all compiled and tested with Zig
-[`0.1.1.4d8d654`](https://github.com/zig-lang/zig/tree/44d8d654a0ba463a1d4cf34d435c8422bfcd1c81)
+...new, still very much in beta, and moving quickly. If you've seen any Zig
+previously, the code in this post might look different. It is different! Zig
+0.2.0 has just been released, coinciding with LLVM 6, and includes a lot of
+changes to the syntax. Most notably, many of the sigils have been replaced by
+keywords. See [here]() for a more in depth explanation.
 
 For more on how brainfuck works, [look
 here](https://blog.jfo.click/how-brainfuck-works/).
 
 say a thing about wrapping around the memory etc.
 
-This is as much a small zig tutorial as anything. Zig is designed to be
-readable (link), and as such it's fairly intuitive if you are familiar with
-similarly compiled, (~)typed languages like C, C++, and even in some cases,
-Rust.
+Zig is designed to be readable (link), and as such it's fairly intuitive if you
+are familiar with similarly compiled, (~)typed languages like C, C++, and even
+in some cases, Rust.
 
 Getting Zig
 ------------
 
-Homebrew, compile from source.
+This code was all compiled and tested with [Zig 0.2.0](), which is available
+right now, via different channels, including [homebrew]() if you're on a mac.
 
 
 Ok, here we go.
---------
+--------------
 
 Zig is a compiled language. When you compile a program, the resulting binary
 (if you are building an executable binary, as opposed to a library) needs a
@@ -66,8 +61,7 @@ $ zig build-exe main.zig
 /zigfuck/main.zig:2:1: note: declared here
 ```
 
-`main` must be declared public in order to be visible outside of its
-compilation unit...
+`main` must be declared public in order to be visible outside of its module...
 
 ```zig
 // main.zig
@@ -176,7 +170,7 @@ pub fn main() void {
 
 During debugging and initial development and testing, I just want to print
 something to the screen. Zig is [fastidious about error
-handline](http://ziglang.org/documentation/master/#Hello-World) and stdout is
+handling](http://ziglang.org/documentation/master/#Hello-World) and stdout is
 error prone. I don't want to mess around with that right now, so I can print
 straight to stderr with `warn`, here imported from the standard library.
 
@@ -237,7 +231,7 @@ exactly what I want.
 for (src) |c| {
     switch(c) {
         '+' => mem[0] += 1,
-        else => undefined
+        else => {}
     }
 }
 ```
@@ -254,7 +248,7 @@ pub fn main() void {
   for (src) |c| {
       switch(c) {
           '+' => mem[0] += 1,
-          else => undefined
+          else => {}
       }
   }
 
@@ -275,7 +269,7 @@ It becomes straightforward to support `-`.
 switch(c) {
     '+' => mem[0] += 1,
     '-' => mem[0] -= 1,
-    else => undefined
+    else => {}
 }
 ```
 
@@ -288,9 +282,6 @@ var memptr: u16 = 0;
 
 an unsigned 16 bit number can be a maximum of 65,535, much more than enough to
 index the entire 30,000 byte address space.
-
-> Actually, all I _really_ need is an unsigned _15 bit_ number, which would be
-> enough for 32,767. Zig allows for fairly [arbitrarily wide types](http://ziglang.org/documentation/master/#Primitive-Types), but not a u15 just yet.
 
 Now, instead of indexing `mem[0]` for everything, I can use this variable.
 
@@ -373,7 +364,7 @@ fn bf(src: []const u8, mem: [30000]u8) void {
             '-' => mem[memptr] -= 1,
             '>' => memptr += 1,
             '<' => memptr -= 1,
-            else => undefined
+            else => {}
         }
     }
 }
@@ -645,7 +636,7 @@ it while going through the src string.
         switch(src[srcptr]) {
             '[' => depth += 1,
             ']' => depth -= 1,
-            else => undefined
+            else => {}
         }
         srcptr += 1;
     }
@@ -665,3 +656,13 @@ swap warns for stdout
 see about explaining @cimport for `getc` and supporting `,`
 
 make main take a filepath and build in some examples: serpinsky, echo, and fizzbuzz.
+
+> Actually, I was reading some of my old blog posts and I came across
+> [this](/fizzbuzz-in-brainfuck-part-3/#never-going-to-happen).
+
+
+You actually can make a u15 like this:
+`const u15 = @IntType(false, 15);`
+> Actually, all I _really_ need is an unsigned _15 bit_ number, which would be
+> enough for 32,767. Zig allows for fairly [arbitrarily wide types](http://ziglang.org/documentation/master/#Primitive-Types), but not a u15 just yet.
+
