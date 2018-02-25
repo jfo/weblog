@@ -782,6 +782,11 @@ pub fn bf(src: []const u8, storage: []u8) !void {
 ```
 
 This makes the switch statement much easier to read, in my opinion.
+`seekForward` and `seekBack` look _very similar_, and I am tempted to refactor
+them into something cleverer and more compact, but in the end, they are doing
+different things, and deal with their error cases slightly differently. It is
+easier to copy paste and tweak here, and it is clearer. Also I will be
+factoring out `seekForward` later.
 
 I've added a few important things, though! Notice that all three of these
 functions now return a `!` type. This is new syntax for what used to be a `%T`
