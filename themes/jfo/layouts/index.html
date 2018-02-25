@@ -9,7 +9,7 @@
         </ul>
         <div>
           <i> a recent thing: </i>
-          {{ range first 1 (where .Pages "Type" "post") }}
+          {{ range first 1 (where (where .Pages "Draft" false) "Type" "post") }}
           <div><a href="{{ .Permalink }}">{{ .Title }}</a></div>
           {{ end }}
         </div>
