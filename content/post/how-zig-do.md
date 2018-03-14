@@ -1024,6 +1024,7 @@ specific about memory usage and management. In constrained systems
 environments, this is a feature not a bug. Zig is deterministic, it's
 non-ambiguous.
 
-There are a lot of exciting changes coming to the language in 0.2.0 and beyond!
-I have been continuously impressed with the velocity and direction of Zig's
-development and I'm really excited to see where it goes.
+I've only covered a small amount of Zig's syntax and features here, there are a
+lot of exciting changes coming to the language in 0.2.0 and beyond!  I have
+been continuously impressed with the velocity and direction of Zig's
+development and I'm really excited to see where it goes. Give it a try!
