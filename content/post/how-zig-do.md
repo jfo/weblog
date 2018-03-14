@@ -19,7 +19,7 @@ previously, the code in this post might look quite different. It is different!
 6](http://releases.llvm.org/6.0.0/docs/ReleaseNotes.html) a few weeks ago,
 and includes a lot of changes to the syntax and general improvements to the
 language. Most notably, many of the sigils have been replaced by keywords. See
-[here](dfji) for a more in depth explanations of all the changes!
+[here]() for a more in depth explanations of all the changes!
 
 Zig is [designed to be
 readable](http://andrewkelley.me/post/zig-already-more-knowable-than-c.html),
@@ -38,6 +38,9 @@ here](/how-brainfuck-works/). There's almost nothing to
 it, but it _is_ [turing
 complete](https://en.wikipedia.org/wiki/Turing_completeness), which means you
 can use it to [write anything](/fizzbuzz-in-brainfuck-part-one/).
+
+I've [committed this code here](https://github.com/jfo/zigf) if you want to see
+the finished product or dig into earlier commits.
 
 Zig is a compiled language. When you compile a program, the resulting binary
 (if you are building an executable binary, as opposed to a library) needs a
@@ -917,7 +920,7 @@ let me run it...
 ```zig
 pub fn main() void {
     storage = []u8{0} ** 30000;
-    bf(serpinsky, storage[0..]) catch {};
+    bf(fib, storage[0..]) catch {};
 }
 ```
 
