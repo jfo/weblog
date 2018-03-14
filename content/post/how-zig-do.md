@@ -1,39 +1,43 @@
 ---
 title: How Zig do?
 draft: true
-date: 2018-02-22
+date: 2018-03-15
 scripts: ["zighl.js"]
 ---
 
 Hello and good morning or whatever! Let's write a brainfuck interpreter. "Why
 are you doing this?" you might say, but you won't find that answer here.
 
-Let's make it in [Zig](http://ziglang.org/).
+I'm going to make it in [Zig](http://ziglang.org/).
 
 Zig is....
 --------
 
 ...new, still very much in beta, and moving quickly. If you've seen any Zig
 previously, the code in this post might look quite different. It is different!
-[Zig 0.2.0 has just been released](dfjio), coinciding with LLVM 6, and includes a lot of
-changes to the syntax. Most notably, many of the sigils have been replaced by
-keywords. See [here](dfji) for a more in depth explanations of all the changes.
+[Zig 0.2.0 has just been released](), coinciding with the release of [LLVM
+6](http://releases.llvm.org/6.0.0/docs/ReleaseNotes.html) a few weeks ago,
+and includes a lot of changes to the syntax and general improvements to the
+language. Most notably, many of the sigils have been replaced by keywords. See
+[here](dfji) for a more in depth explanations of all the changes!
 
-Zig is [designed to be readable](dfjio), and as such it's relatively intuitive
-if you are familiar with similarly compiled, (~)typed languages like C, C++,
-and in some cases Rust.
+Zig is [designed to be
+readable](http://andrewkelley.me/post/zig-already-more-knowable-than-c.html),
+and as such it's relatively intuitive if you are familiar with similarly
+compiled, (~)typed languages like C, C++, and in some cases Rust.
 
 This code was all compiled and tested with Zig 0.2.0, which is available
-right now, via different channels, including [homebrew](djfi) if you're on a OSX.
-
+right now, [via different channels](https://ziglang.org/download/), including
+[homebrew](djfi) if you're on a OSX.
 
 Ok, here we go.
 --------------
 
-For more on how brainfuck works, [look
-here](https://blog.jfo.click/how-brainfuck-works/). There's almost nothing to
-it, but it _is_ turing complete, which means you can [write fizzbuzz at
-least](http://localhost:1313/fizzbuzz-in-brainfuck-part-one/).
+For info about how brainfuck works, [look
+here](/how-brainfuck-works/). There's almost nothing to
+it, but it _is_ [turing
+complete](https://en.wikipedia.org/wiki/Turing_completeness), which means you
+can use it to [write anything](/fizzbuzz-in-brainfuck-part-one/).
 
 Zig is a compiled language. When you compile a program, the resulting binary
 (if you are building an executable binary, as opposed to a library) needs a
@@ -85,9 +89,10 @@ This does not compile.
 /main.zig:3:5: error: variables must be initialized
 ```
 
-Zig forces me to make this decision at the declaration site. Often, I don't
-care what the memory has in it, but I have to say so. I can state this intent
-clearly by initializing to `undefined`.
+The equivalent C would compile fine: I can declare a variable without
+initializing it, but Zig forces me to make this decision now, at the
+declaration site. Often, I don't care what the memory has in it, but I have to
+_say that_. I can state this intent clearly by initializing to `undefined`.
 
 ```zig
 // main.zig
@@ -98,11 +103,11 @@ pub fn main() void {
 
 Initializing a variable to `undefined` offers no guarantees about the values
 that may or may not be in the memory. This is just like an uninitialized
-declaration in C.
+declaration in C except the clarity of intent is enforced.
 
 But maybe I _do_ care what this memory is initialized to. Maybe I want to
 guarantee that it is zeroed out, or start it all off at some arbitrary value or
-something. In that case I can be explicit about _that_:
+something. In that case I can be explicit about _that_ as well:
 
 ```zig
 // main.zig
@@ -114,8 +119,8 @@ pub fn main() void {
 This might look a little odd, but `**` is an operator used for array
 multiplication. I'm defining an array of a single `0` byte and then multiplying
 it by `30000` to get my final initialization value of an array of 30000 zeroed
-out bytes.  This operation happens once, at _compile time_.  `comptime` is one
-of Zig's main Big Ideas, and I'll come back to it later.
+out bytes.  This operation happens only once, at _compile time_.  `comptime` is
+one of Zig's main Big Ideas, and I'll come back to it later.
 
 Now to write a brainfuck program that doesn't do anything except increment the
 first memory slot 5 times!
@@ -147,10 +152,19 @@ will not.
 main.zig:5:22: error: expected type '[6]u8', found '[5]u8'
 ```
 
+An additional note: as strings are just simple byte arrays, they are _not null
+terminated_. You can easily declare C style null terminated strings though! As
+literals, they look like this:
+
+```zig
+c"Hello I am a null terminated string";
+```
+
 `for` goodness's sake
 --------------------------------
 
-I want to do _something_ for each character in the source. I can do that!
+I want to do _something_ for each character in the source string. I can do
+that!
 
 ```zig
 const warn = @import("std").debug.warn;
@@ -169,15 +183,15 @@ During debugging and initial development and testing, I just want to print
 something to the screen. Zig is [fastidious about error
 handling](http://ziglang.org/documentation/master/#Hello-World) and stdout is
 error prone. I don't want to mess around with that right now, so I can print
-straight to stderr with `warn`, here imported from the standard library.
+straight to stderr with `warn`, above imported from the standard library.
 
-`warn` takes a format string, just like `printf` does! The above prints:
+`warn` takes a format string, just like `printf` in C does! The above prints:
 
 ```bash
 4343434343
 ```
 
-43 being the ascii code for the `+` char. I can also go:
+43 is the ascii code for the `+` char. I can also go:
 
 ```zig
 warn("{c}", c);
@@ -190,8 +204,8 @@ and wouldn't you know it:
 ```
 
 So, I've initialized the memory space, and written a program. Next, I must
-implement the language. I'll start with `+`, I'll replace the body of the
-`for` to `switch` on the character.
+implement the language itself. I'll start with `+`, I'll replace the body of
+the `for` to `switch` on the character.
 
 ```zig
 for (src) |c| {
@@ -222,7 +236,7 @@ var mem = []u8{0} ** 30000;
 as for the other error, my [`switch`
 statement](http://ziglang.org/documentation/master/#switch) needs to know what
 to do for everything that's not a `+`, even if it's nothing. In my case, that's
-exactly what I want.
+exactly what I want. I'll fulfill that case with an empty block:
 
 ```zig
 for (src) |c| {
@@ -257,7 +271,7 @@ I get `5` printed to
 [stderr](https://en.wikipedia.org/wiki/Standard_streams#Standard_error_(stderr)),
 like I would expect.
 
-From here
+From here...
 -------
 
 It becomes straightforward to support `-`.
@@ -280,6 +294,20 @@ var memptr: u16 = 0;
 an unsigned 16 bit number can be a maximum of 65,535, much more than enough to
 index the entire 30,000 byte address space.
 
+> Actually, all I _really_ need is an unsigned _15 bit_ number, which would be
+> enough for 32,767. Zig allows for fairly [arbitrarily wide
+> types](http://ziglang.org/documentation/master/#Primitive-Types), but not a
+> u15 just yet.
+
+>> Andy says: "You actually can make a u15 like this:
+```zig
+const u15 = @IntType(false, 15):
+```
+>> it's [proposed to allow any [iu]\d+  type to be an integer
+>> type](https://github.com/zig-lang/zig/issues/745)
+>> (I guess it wasn't, so I just made the above sentence be true)"
+
+
 Now, instead of indexing `mem[0]` for everything, I can use this variable.
 
 ```zig
@@ -294,7 +322,7 @@ Now, instead of indexing `mem[0]` for everything, I can use this variable.
 '<' => memptr -= 1,
 ```
 
-Great. We can write "real" programs with this sort of!
+Great. We can write "real" programs with this, sort of!
 
 
 Testing 1,2,3
@@ -310,7 +338,7 @@ test "Name of Test" {
 ```
 
 And then run the tests from the command line with `zig test $FILENAME`. There
-is nothing special about test blocks except that they are executed only under
+is nothing special about test blocks, except that they are executed only under
 these circumstances.
 
 Look at this:
@@ -546,10 +574,10 @@ this later to properly handle `stdout` here.
 '.' => warn("{c}", storage[memptr]),
 ```
 
-> how do I test this? meh.
-
 For now, I'll ignore `,` as it's very simple conceptually but a little trickier
 to implement. I'll come back to it later maybe!
+
+> Reader, he did not.
 
 Loops
 -----
@@ -821,7 +849,7 @@ simply by using it.
 
 > Zig errors are basically a global array of error codes that are generated by
 > the compiler when you use `error.Whatever`. They are guaranteed to be unique,
-> and can be `switched` on.
+> and can be `switched` on in switch blocks.
 
 I want to treat this as `OutOfBounds` because, semantically, if the memory
 pointer goes under zero, it means I've ask the runtime to point outside of the
@@ -857,21 +885,21 @@ const hello_world = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+
 
 pub fn main() void {
     storage = []u8{0} ** 30000;
-    bf(serpinsky, storage[0..]) catch {};
+    bf(hello_world, storage[0..]) catch {};
 }
 ```
 
-I'm swallowing this error for now, I'll come back to how to deal with it later,
-the important point to note is how easy zig makes it to properly handle errors
-up the call stack. It is not the reponsibility of the caller to check for any
+I'm swallowing this error here now, which I should not be doing, but the
+important point to note is how easy zig makes it to properly handle errors up
+the call stack. It is not the reponsibility of the caller to check for any
 particular error state, but the compiler enforces calling any errorable
 function with try and annotating the correct return values all the way up. It
-has to be dealt with eventually!
+has to be dealt with eventually, _even if it's being ignored_!
 
-> This new syntax also gets rid of a lot of `%%` and `%` sigils, which people
+> This new `try`/`catch` syntax also gets rid of a lot of `%%` and `%` sigils, which people
 > [really didn't like much](https://github.com/zig-lang/zig/issues/632#issue-277801769).
 
-I've now implemented 7 of the 8 symbols in brainfuck, all the ones i need
+I've now implemented 7 of the 8 symbols in brainfuck, all the ones I need
 to run "meaningful" programs.
 
 "Meaningful" programs
@@ -908,31 +936,94 @@ voila!
 How can I improve this?
 -----------------------
 
-swap warns for stdout, swap code for file readers
+I've already alluded to a few `TODO`s. I shouldn't be using stderr for output,
+I want to be using stdout.
 
-implement `,`
+Whenever I invoke the interpreter, I'll open up a stream to stdout and print to that instead:
 
-use a stack for seekBack
+```zig
+const io = std.io;
+...
+pub fn bf(src: []const u8, storage: []u8) !void {
+    const stdout = &(io.FileOutStream.init(&(io.getStdOut() catch unreachable)).stream);
+    ...
+            '.' => try stdout.print("{c}", storage[memptr]),
+            ...
+```
 
-now make a literal stack, then a generic stack.
+What is happening here? I call `io.getStdOut()`, which is failable (and again I
+am explicitly swallowing that possible error with `catch unreachable`- if this
+function failed my program would crash!). I call `stream` on that result to
+initialize a stream, take a pointer to it, and initialize it as an outstream.
+This outstream is what I assign to stdout, and what I can write to by calling
+`print` on it. `print` accepts a formatted string just like warn, so that swap
+is straightforward.
 
-see about explaining @cimport for `getc` and supporting `,`
+In a proper program, I should account for the potential failure of opening up
+stdout here. I am not doing that, but I am made to say that I am not doing
+that.
 
-use the stdlib for both getc and stack
+Hello Zig
+---------
 
-make main take a filepath and build in some examples: serpinsky, echo, and fizzbuzz.
+With the current implementation I can run non trivial (is there such a thing?)
+brainfuck programs. Here are a few:
 
-andy comments
--------------------------
+```zig
+const bf = @import("./bf.zig").bf;
+const warn = @import("std").debug.warn;
 
-> Actually, I was reading some of my old blog posts and I came across
-> [this](/fizzbuzz-in-brainfuck-part-3/#never-going-to-happen).
+const serpinsky = "++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[ -<<<[ ->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<< ]>.>+[>>]>+ ] ";
 
+const hello_world = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
 
-You actually can make a u15 like this:
-`const u15 = @IntType(false, 15);`
-> Actually, all I _really_ need is an unsigned _15 bit_ number, which would be
-> enough for 32,767. Zig allows for fairly [arbitrarily wide types](http://ziglang.org/documentation/master/#Primitive-Types), but not a u15 just yet.
-it's proposed to allow any [iu]\d+  type to be an integer type: https://github.com/zig-lang/zig/issues/745
-(I guess it wasn't, so I just made the above sentence be true)
+const cracklepop = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<+>+>+++>>>+++++>>>+>++++++++++>++++++++++>++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>>>+++++<<<>>>>>>>>>>>>>>>>>+++++++[<<<<<++++++++++>>>>>-]<<<<<--->>>>>++++++++++++[<<<<++++++++++>>>>-]<<<<------>>>>++++++++++[<<<++++++++++>>>-]<<<--->>>++++++++++[<<++++++++++>>-]<<->>+++++++++++[<++++++++++>-]<--->>+++++++++++[<++++++++++>-]<-->>++++++++++[<++++++++++>-]<+>>++++++++[<++++++++++>-]<>>+++++++++++[<++++++++++>-]<+>>+++++++++++[<++++++++++>-]<++><<<<<<<<<<<<<<<<<<<<<<<<<<<<[>>><<[>><[><<<<<<<<<>[-]+>[-]<<[>>>>>>>>><<<<<<>[-]>[-]<<[>+>+<<-]>[<+>-]>[>>>>>>>>>[<<<<<.>>>>>>>[-]>[-]<<[>+>+<<-]>[<+>-]+>[<->[-]]<[<<<<<.>>>>><+>-]<-><<<<.<<<>>>>>[-]]+<<<<<<<<<[-]]>>>><<<<<<<<<>-<[>>+<<-]]>>[<<+>>-]<[>>>>>>>>.>>>>>>>>>>>>>>>.>.>.>.>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<>[-]>[-]<<[>+>+<<-]>[<+>-]+>[<->[-]]<[>>>>>>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<[-]>>>>>>>>>>><<<<<-]>>>>><<<<<<<<<+++<++++++++++[-]+>>>>>>>>>><<<<<<<<-]>>>>>>>><<<<<<>[-]+>[-]<<[>-<[>>+<<-]]>>[<<+>>-]<[<+++++>>>>>><<<<<<<<<<[<[>>>>>>>>>>>.>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-]+>-]+>>>>>>>>>><<<<<-]>>>>>>>>+<<<<<<<<<<<<->>>>>>>>><<<<<<->>>>>><->>>>>-<<<<<]++++++++++>>>>----------<+<<<<-]++++++++++>>>>----------<+<<<<-]>>>.>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<";
 
+const fib = "++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++>++++++++++++++++>>+<<[>>>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>[<+>-]>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]<[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]<<<++++++++++++++++++++++++++++++++++++++++++++++++.[-]<<<<<<<.>.>>[>>+<<-]>[>+<<+>-]>[<+>-]<<<-]<<++...";
+
+pub fn main() void {
+    var storage = []u8{0} ** 30000;
+    bf(cracklepop, storage[0..]) catch {};
+
+    warn("\n");
+    storage = []u8{0} ** 30000;
+    bf(serpinsky, storage[0..]) catch {};
+
+    warn("\n");
+    storage = []u8{0} ** 30000;
+    bf(hello_world, storage[0..]) catch {};
+
+    warn("\n");
+    storage = []u8{0} ** 30000;
+    bf(fib, storage[0..]) catch {};
+}
+```
+
+Todo
+----
+
+There are plenty of improvements I could make to this interpreter! I need to
+properly handle all error cases, obviously, and I need to implement `,`, which
+is brainfuck's `getc` function to allow for input into the program runtime. I
+also should probably make it possible to read a sourcefile into a buffer and
+interpret that, instead of hard coding all of the bf source code. There are
+also some improvements I have in mind that aren't strictly necessary but would
+illuminate some more of Zig itself. Instead of cramming all of that onto the
+end of this post, I'm going to try splitting them into some upcoming posts that
+may be smaller and more easily digestible. Stay tuned!
+
+Conclusion
+----------
+
+I hope this little half finished miniature project has given you some insight
+into how Zig code looks and what it could be used for. Zig is not a swiss army
+knife language, it is not the perfect tool for every job, it has a particular
+focus in mind, to be a pragmatic systems language that can be used along with
+and in lieu of the likes of C and C++. It forces you to be meticulous and
+specific about memory usage and management. In constrained systems
+environments, this is a feature not a bug. Zig is deterministic, it's
+non-ambiguous.
+
+There are a lot of exciting changes coming to the language in 0.2.0 and beyond!
+I have been continuously impressed with the velocity and direction of Zig's
+development and I'm really excited to see where it goes.
