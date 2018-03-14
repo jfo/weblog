@@ -1006,14 +1006,14 @@ Todo
 ----
 
 There are plenty of improvements I could make to this interpreter! I need to
-properly handle all error cases, obviously, and I need to implement `,`, which
-is brainfuck's `getc` function to allow for input into the program runtime. I
-also should probably make it possible to read a sourcefile into a buffer and
-interpret that, instead of hard coding all of the bf source code. There are
-also some improvements I have in mind that aren't strictly necessary but would
-illuminate some more of Zig itself. Instead of cramming all of that onto the
-end of this post, I'm going to try splitting them into some upcoming posts that
-may be smaller and more easily digestible. Stay tuned!
+properly handle all error cases, obviously, and I need to implement the comma
+operator "," , which is brainfuck's `getc` function to allow for input into the
+program runtime. I also should probably make it possible to read a sourcefile
+into a buffer and interpret that, instead of hard coding all of the bf source
+code. There are also some improvements I have in mind that aren't strictly
+necessary but would illuminate some more of Zig itself. Instead of cramming all
+of that onto the end of this post, I'm going to try splitting them into some
+upcoming posts that may be smaller and more easily digestible. Stay tuned!
 
 Conclusion
 ----------
