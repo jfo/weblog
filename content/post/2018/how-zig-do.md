@@ -1,5 +1,5 @@
 ---
-title: How Zig do?
+title: How Zig Do?
 date: 2018-03-15
 scripts: ["zighl.js"]
 ---
