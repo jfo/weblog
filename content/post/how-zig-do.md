@@ -1142,8 +1142,10 @@ are a lot of exciting changes coming to the language in 0.2.0 and beyond! It's
 also worht noting that Zig has wildly diverging compile modes that optimize for
 different things... all of the compilations I've done here have been in debug
 mode, which optimizes for safety checks and fast compile times to make
-iterating easy! There is also `--release-fast` mode, and `--release-safe` mode,
-For more about these differences and the rationale behind them, [see
+iterating easy! There are also currently `--release-fast` mode, and
+`--release-safe` mode, and there could potentially be [more in the
+future](https://github.com/zig-lang/zig/issues/531) For more about these
+differences and the original rationale behind them, [see
 here](http://andrewkelley.me/post/intro-to-zig.html#debug-release).
 
 I have been continuously impressed with the velocity and direction of Zig's
