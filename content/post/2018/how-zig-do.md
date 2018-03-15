@@ -126,7 +126,7 @@ This might look a little odd, but `**` is an operator used for array
 multiplication. I'm defining an array of a single `0` byte and then multiplying
 it by `30000` to get my final initialization value of an array of 30000 zeroed
 out bytes.  This operation happens only once, at _compile time_.  `comptime` is
-one of Zig's main Big Ideas, and I'll come back to it later.
+one of Zig's main Big Ideas, and I'll come back to it in a later post.
 
 Now to write a brainfuck program that doesn't do anything except increment the
 first memory slot 5 times!
