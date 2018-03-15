@@ -594,15 +594,17 @@ Loops
 ```
 
 I'll _start_ with the test case this time, testing them together (as it doesn't
-make sense to test them in isolation).
+make sense to test them in isolation). The first test case- `storage[2]` should
+end up being empty even though the loop would increment it if it ran:
 
 ```zig
 test "[] skips execution and exits" {
-    var storage = []u8{0} ** 2;
+    var storage = []u8{0} ** 3;
     const src = "+++++>[>+++++<-]";
     bf(src, storage[0..]);
     assert(storage[0] == 5);
     assert(storage[1] == 0);
+    assert(storage[2] == 0);
 }
 ```
 
