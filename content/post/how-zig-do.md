@@ -15,11 +15,11 @@ Zig is....
 
 ...new, still very much in beta, and moving quickly. If you've seen any Zig
 previously, the code in this post might look quite different. It is different!
-[Zig 0.2.0 has just been released](), coinciding with the release of [LLVM
+Zig 0.2.0 has just been released, coinciding with the release of [LLVM
 6](http://releases.llvm.org/6.0.0/docs/ReleaseNotes.html) a few weeks ago,
 and includes a lot of changes to the syntax and general improvements to the
 language. Most notably, many of the sigils have been replaced by keywords. See
-[here]() for a more in depth explanations of all the changes!
+[here](https://ziglang.org/download/0.2.0/release-notes.html) for a more in depth explanations of all the changes!
 
 Zig is [designed to be
 readable](http://andrewkelley.me/post/zig-already-more-knowable-than-c.html),
@@ -28,7 +28,10 @@ compiled, (~)typed languages like C, C++, and in some cases Rust.
 
 This code was all compiled and tested with Zig 0.2.0, which is available
 right now, [via different channels](https://ziglang.org/download/), including
-[homebrew](djfi) if you're on a OSX.
+[homebrew](http://brewformulas.org/Zig) if you're on a OSX.
+
+> 0.2.0 will be the default Zig formula very [soon!]() Currently `brew install
+> zig` will get you 0.1.1.
 
 Ok, here we go.
 --------------
@@ -140,7 +143,7 @@ array because the compiler infers it. It is unneccesary to do so, but I am free
 to be explicit about that, too:
 
 ```zig
-const src: [5]u8= "+++++";
+const src: [5]u8 = "+++++";
 ```
 
 This will compile just fine. This, however...
@@ -813,11 +816,12 @@ pub fn bf(src: []const u8, storage: []u8) !void {
 ```
 
 This makes the switch statement much easier to read, in my opinion.
-`seekForward` and `seekBack` look _very similar_, and I am tempted to refactor
-them into something cleverer and more compact, but in the end, they are doing
-different things, and deal with their error cases slightly differently. It is
-easier to copy paste and tweak here, and it is clearer. Also I will be
-factoring out `seekForward` later.
+`seekForward` and `seekBack` look and act _very similar_, and I am tempted to
+refactor them into something cleverer and more compact, but in the end, they
+are doing different things, and deal with their error cases slightly
+differently. It is easier to copy paste and tweak here, and it is clearer. Also
+I will be factoring out `seekForward` later, at some point, probably in a
+follow up post.
 
 I've added a few important things, though! Notice that all three of these
 functions now return a `!` type. This is new syntax for what used to be a `%T`
@@ -835,7 +839,15 @@ catch would swallow any error into the void. This is Bad Practice, but once
 again I'll point out that Zig _makes me do this explicitly._ If I've caught an
 error with an empty block, I'm saying that I don't think I'll ever see an error
 or that I don't need to deal with it. In practice, this should probably always
-be like a `TODO`, but it's a perfectly acceptable placeholder while I'm iterating.
+be like a `TODO`, and in fact it is quite easy to make that explicit, too!
+
+```zig
+const x = functionCall() catch { @panic("TODO") }
+```
+
+Recall that _this case should never happen in production code._ I'm essentially
+assuring the compiler that I know what I'm doing, here. If it _could_ happen, I
+should add _proper_ error handling.
 
 So what are the errors that I could be returning from seekBack or seekForward?
 
@@ -932,8 +944,7 @@ voila!
 
 > I have this memory that always comes back to me when I think about the
 > fibonacci sequence... I learned it from PBS in the 80's, and I've always
-> remembered that. I thought it was lost to time but [Youtube is
-> amazing.](https://youtu.be/bv8O456bNa8?t=3m46s)
+> remembered that. I thought it was lost to time but [Youtube is amazing.](https://youtu.be/bv8O456bNa8?t=3m46s)
 
 
 How can I improve this?
@@ -950,7 +961,7 @@ const io = std.io;
 pub fn bf(src: []const u8, storage: []u8) !void {
     const stdout = &(io.FileOutStream.init(&(io.getStdOut() catch unreachable)).stream);
     ...
-            '.' => try stdout.print("{c}", storage[memptr]),
+            '.' => stdout.print("{c}", storage[memptr]) catch unreachable,
             ...
 ```
 
@@ -960,17 +971,22 @@ function failed my program would crash!). I call `stream` on that result to
 initialize a stream, take a pointer to it, and initialize it as an outstream.
 This outstream is what I assign to stdout, and what I can write to by calling
 `print` on it. `print` accepts a formatted string just like warn, so that swap
-is straightforward.
+is straightforward. `print` can also fail, and I am also swallowing those
+errors here.
 
 In a proper program, I should account for the potential failure of opening up
-stdout here. I am not doing that, but I am made to say that I am not doing
-that.
+stdout here, and also the possible errors of trying to write to stdout. I am
+not doing that, but I am made to say that I am not doing that. Zig makes it
+easy to ignore these errors as long as you promise you _know that you're
+ignoring them_.
 
-Hello Zig
----------
+What happens when I decide I want to turn my prototype into a proper release?
+Do I sit down with a cup of coffee and start the thankless work of error
+handling, relying on my decades of experience and knowledge to enumerate every
+possible error case and how I want to deal with it? What if I don't have
+decades of experience and knowledge? That's ok, Zig does!
 
-With the current implementation I can run non trivial (is there such a thing?)
-brainfuck programs. Here are a few:
+I want to demonstrate a power feature now, error inference!
 
 ```zig
 const bf = @import("./bf.zig").bf;
@@ -978,35 +994,128 @@ const warn = @import("std").debug.warn;
 
 const serpinsky = "++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[ -<<<[ ->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<< ]>.>+[>>]>+ ] ";
 
-const hello_world = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.";
+pub fn main() void {
+    var storage = []u8{0} ** 30000;
+    bf(serpinsky, storage[0..]) catch unreachable;
+}
+```
 
-const cracklepop = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<+>+>+++>>>+++++>>>+>++++++++++>++++++++++>++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++++++++++++++++++>>>+++++<<<>>>>>>>>>>>>>>>>>+++++++[<<<<<++++++++++>>>>>-]<<<<<--->>>>>++++++++++++[<<<<++++++++++>>>>-]<<<<------>>>>++++++++++[<<<++++++++++>>>-]<<<--->>>++++++++++[<<++++++++++>>-]<<->>+++++++++++[<++++++++++>-]<--->>+++++++++++[<++++++++++>-]<-->>++++++++++[<++++++++++>-]<+>>++++++++[<++++++++++>-]<>>+++++++++++[<++++++++++>-]<+>>+++++++++++[<++++++++++>-]<++><<<<<<<<<<<<<<<<<<<<<<<<<<<<[>>><<[>><[><<<<<<<<<>[-]+>[-]<<[>>>>>>>>><<<<<<>[-]>[-]<<[>+>+<<-]>[<+>-]>[>>>>>>>>>[<<<<<.>>>>>>>[-]>[-]<<[>+>+<<-]>[<+>-]+>[<->[-]]<[<<<<<.>>>>><+>-]<-><<<<.<<<>>>>>[-]]+<<<<<<<<<[-]]>>>><<<<<<<<<>-<[>>+<<-]]>>[<<+>>-]<[>>>>>>>>.>>>>>>>>>>>>>>>.>.>.>.>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<>[-]>[-]<<[>+>+<<-]>[<+>-]+>[<->[-]]<[>>>>>>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<[-]>>>>>>>>>>><<<<<-]>>>>><<<<<<<<<+++<++++++++++[-]+>>>>>>>>>><<<<<<<<-]>>>>>>>><<<<<<>[-]+>[-]<<[>-<[>>+<<-]]>>[<<+>>-]<[<+++++>>>>>><<<<<<<<<<[<[>>>>>>>>>>>.>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-]+>-]+>>>>>>>>>><<<<<-]>>>>>>>>+<<<<<<<<<<<<->>>>>>>>><<<<<<->>>>>><->>>>>-<<<<<]++++++++++>>>>----------<+<<<<-]++++++++++>>>>----------<+<<<<-]>>>.>>>>>>>>>>>>>>>>>>>>>>.>.>.<<<<<<<<<<<<<<<<<<<<";
+I know that `bf` can fail, because it returns `!void`. I am swallowing that
+error at the call site here in `main`. When I am ready to accept my fate and do
+the right thing, I can catch that possible error like this:
 
-const fib = "++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++>++++++++++++++++>>+<<[>>>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>[<+>-]>[-]>>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]<[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]<<<++++++++++++++++++++++++++++++++++++++++++++++++.[-]<<<<<<<.>.>>[>>+<<-]>[>+<<+>-]>[<+>-]<<<-]<<++...";
+```zig
+const bf = @import("./bf.zig").bf;
+const warn = @import("std").debug.warn;
+
+const serpinsky = "++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[ -<<<[ ->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<< ]>.>+[>>]>+ ] ";
 
 pub fn main() void {
     var storage = []u8{0} ** 30000;
-    bf(cracklepop, storage[0..]) catch {};
-
-    warn("\n");
-    storage = []u8{0} ** 30000;
-    bf(serpinsky, storage[0..]) catch {};
-
-    warn("\n");
-    storage = []u8{0} ** 30000;
-    bf(hello_world, storage[0..]) catch {};
-
-    warn("\n");
-    storage = []u8{0} ** 30000;
-    bf(fib, storage[0..]) catch {};
+    bf(serpinsky, storage[0..]) catch |err| switch (err) {
+    };
 }
 ```
+
+The compiler is my friend now!
+
+```
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.OutOfBounds not handled in switch
+shell returned 1
+```
+
+This error should be familiar as the one that is bubbling up from `bf` and it's
+helper functions! _But wait there's more_. Let's say I'm looking at the
+`stdout` related error handling that I've been swallowing in `bf`. Instead of
+swallowing them, I'm going to kick them up the chain by using `try`. Remember,
+used without a catch block on a failable call, try will abort if it encounters
+an error, forcing _its_ caller to deal with any potential errors.
+
+So, instead of:
+
+```zig
+const io = std.io;
+...
+pub fn bf(src: []const u8, storage: []u8) !void {
+    const stdout = &(io.FileOutStream.init(&(io.getStdOut() catch unreachable)).stream);
+    ...
+            '.' => stdout.print("{c}", storage[memptr]) catch unreachable,
+            ...
+```
+
+I do:
+
+```zig
+const io = std.io;
+...
+pub fn bf(src: []const u8, storage: []u8) !void {
+    const stdout = &(io.FileOutStream.init(&(try io.getStdOut())).stream);
+    ...
+            '.' => try stdout.print("{c}", storage[memptr]),
+            ...
+```
+
+Now, compiling
+
+```zig
+const bf = @import("./bf.zig").bf;
+const warn = @import("std").debug.warn;
+
+const serpinsky = "++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[ -<<<[ ->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<< ]>.>+[>>]>+ ] ";
+
+pub fn main() void {
+    var storage = []u8{0} ** 30000;
+    bf(serpinsky, storage[0..]) catch |err| switch (err) {
+    };
+}
+```
+
+Provides me with an enumerated list of _all the possible errors I could get from calling this function!_
+
+```nothing
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.SystemResources not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.OperationAborted not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.IoPending not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.BrokenPipe not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.Unexpected not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.WouldBlock not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.FileClosed not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.DestinationAddressRequired not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.DiskQuota not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.FileTooBig not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.InputOutput not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.NoSpaceLeft not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.AccessDenied not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.OutOfBounds not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.NoStdHandles not handled in switch
+shell returned 1
+```
+
+Zig empowers me to handle these cases meticulously if I need or want to! I
+switch on that `err` value, handle cases I want to, and can fall through if I
+want to.
+
+```
+pub fn main() void {
+    var storage = []u8{0} ** 30000;
+    bf(serpinsky, storage[0..]) catch |err| switch (err) {
+        error.OutOfBounds => @panic("Out Of Bounds!"),
+        else => @panic("IO error")
+    };
+}
+```
+
+This is still not _proper_ error handling, stricly speaking, but I just wanted
+to demonstrate how clever Zig is about reporting possible error cases to the
+callsite! And when you encounter an error, you'll get an [_error return
+trace_](https://ziglang.org/download/0.2.0/release-notes.html#errorreturntraces)
+instead of just a stack trace! Cool stuff!
 
 Todo
 ----
 
 There are plenty of improvements I could make to this interpreter! I need to
-properly handle all error cases, obviously, and I need to implement the comma
+actually properly handle all error cases, obviously, and I need to implement the comma
 operator "," , which is brainfuck's `getc` function to allow for input into the
 program runtime. I also should probably make it possible to read a sourcefile
 into a buffer and interpret that, instead of hard coding all of the bf source
@@ -1019,15 +1128,28 @@ Conclusion
 ----------
 
 I hope this little half finished miniature project has given you some insight
-into how Zig code looks and what it could be used for. Zig is not a swiss army
+into how Zig code looks and what it might be used for. Zig is not a swiss army
 knife language, it is not the perfect tool for every job, it has a particular
 focus in mind, to be a pragmatic systems language that can be used along with
 and in lieu of the likes of C and C++. It forces you to be meticulous and
-specific about memory usage and management. In constrained systems
-environments, this is a feature not a bug. Zig is deterministic, it's
-non-ambiguous.
+specific about memory usage, memory management, and error handling. In
+constrained systems environments, this is a feature not a bug. Zig is
+deterministic, it's non-ambiguous, it's trying to make it easy to write robust
+code in environments where that has traditionlly been difficult to do.
 
-I've only covered a small amount of Zig's syntax and features here, there are a
-lot of exciting changes coming to the language in 0.2.0 and beyond!  I have
-been continuously impressed with the velocity and direction of Zig's
-development and I'm really excited to see where it goes. Give it a try!
+I've only covered a very small amount of Zig's syntax and features here, there
+are a lot of exciting changes coming to the language in 0.2.0 and beyond! It's
+also worht noting that Zig has wildly diverging compile modes that optimize for
+different things... all of the compilations I've done here have been in debug
+mode, which optimizes for safety checks and fast compile times to make
+iterating easy! There is also `--release-fast` mode, and `--release-safe` mode,
+For more about these differences and the rationale behind them, [see
+here](http://andrewkelley.me/post/intro-to-zig.html#debug-release).
+
+I have been continuously impressed with the velocity and direction of Zig's
+development! It's very much in flux, and will be so until 1.0.0, so if you opt
+to give it a try just keep that in mind. There will likely be plenty of
+breaking changes coming up, and there will certainly be many bugs too, but
+there are a lot of good ideas in there, and I'm excited to see where it goes!
+
+Give it a try, and pop into `#zig` on freenode anytime if you have questions!
