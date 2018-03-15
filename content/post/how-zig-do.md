@@ -30,11 +30,12 @@ This code was all compiled and tested with Zig 0.2.0, which is available
 right now, [via different channels](https://ziglang.org/download/), including
 [homebrew](http://brewformulas.org/Zig) if you're on a OSX.
 
-> 0.2.0 will be the default Zig formula very [soon!]() Currently `brew install
-> zig` will get you 0.1.1.
+> 0.2.0 will be the default Zig formula very
+> [soon!](https://github.com/Homebrew/homebrew-core/pull/25320) Currently `brew
+> install zig` will get you 0.1.1.
 
-Ok, here we go.
---------------
+Ok go
+-----
 
 For info about how brainfuck works, [look
 here](/how-brainfuck-works/). There's almost nothing to
@@ -463,7 +464,7 @@ bf(src, mem[0..mem.len]);
 It resembles taking a sliced index! Notice that I'm defining the upper bound by
 simply referencing the length of the array. There is a shorthand for this:
 
-```
+```zig
 bf(src, mem[0..]);
 ```
 
@@ -581,9 +582,7 @@ this later to properly handle `stdout` here.
 ```
 
 For now, I'll ignore `,` as it's very simple conceptually but a little trickier
-to implement. I'll come back to it later maybe!
-
-> Reader, he did not.
+to implement. I'll come back to it later!
 
 Loops
 -----
@@ -624,7 +623,7 @@ skip around them. The appropriate construct then here is `while`
 
 from:
 
-```
+```zig
 var memptr: u16 = 0;
 for (src) |c| {
     switch(c) {
@@ -633,7 +632,9 @@ for (src) |c| {
 }
 ```
 
-```
+to...
+
+```zig
 var memptr: u16 = 0;
 var srcptr: u16 = 0;
 while (srcptr < src.len) {
@@ -653,7 +654,7 @@ Now, I am free to reassign the `srcptr` index mid block, and I will do so.
 },
 ```
 
-This satisfies the test "[] skips execution and exits", albeit flimsily, as
+This satisfies the test "`[] skips execution and exits`", albeit flimsily, as
 we'll see.
 
 What about the closing brace? I suppose the analog will be simple enough:
@@ -718,7 +719,7 @@ while going through the src string. Here, for both directions:
 and the corresponding tests- notice the `src` in both of these includes an
 internal loop.
 
-```
+```zig
 test "[] skips execution with internal braces and exits" {
     var storage = []u8{0} ** 2;
     const src = "++>[>++[-]++<-]";
@@ -853,7 +854,7 @@ So what are the errors that I could be returning from seekBack or seekForward?
 
 In seekBack:
 
-```
+```zig
 ptr = sub(u16, ptr, 1) catch return error.OutOfBounds;
 ```
 
@@ -1019,7 +1020,7 @@ pub fn main() void {
 
 The compiler is my friend now!
 
-```
+```nothing
 /Users/jfo/code/zigfuck/main.zig:7:46: error: error.OutOfBounds not handled in switch
 shell returned 1
 ```
@@ -1095,7 +1096,7 @@ Zig empowers me to handle these cases meticulously if I need or want to! I
 switch on that `err` value, handle cases I want to, and can fall through if I
 want to.
 
-```
+```zig
 pub fn main() void {
     var storage = []u8{0} ** 30000;
     bf(serpinsky, storage[0..]) catch |err| switch (err) {
@@ -1129,7 +1130,7 @@ Conclusion
 
 I hope this little half finished miniature project has given you some insight
 into how Zig code looks and what it might be used for. Zig is not a swiss army
-knife language, it is not the perfect tool for every job, it has a particular
+knife language, it is not the perfect tool for every job... it has a particular
 focus in mind, to be a pragmatic systems language that can be used along with
 and in lieu of the likes of C and C++. It forces you to be meticulous and
 specific about memory usage, memory management, and error handling. In
@@ -1139,7 +1140,7 @@ code in environments where that has traditionlly been difficult to do.
 
 I've only covered a very small amount of Zig's syntax and features here, there
 are a lot of exciting changes coming to the language in 0.2.0 and beyond! It's
-also worht noting that Zig has wildly diverging compile modes that optimize for
+also worth noting that Zig has wildly diverging compile modes that optimize for
 different things... all of the compilations I've done here have been in debug
 mode, which optimizes for safety checks and fast compile times to make
 iterating easy! There are also currently `--release-fast` mode, and
@@ -1154,4 +1155,4 @@ to give it a try just keep that in mind. There will likely be plenty of
 breaking changes coming up, and there will certainly be many bugs too, but
 there are a lot of good ideas in there, and I'm excited to see where it goes!
 
-Give it a try, and pop into `#zig` on freenode anytime if you have questions!
+Give it a try, and pop into `#zig` on freenode anytime if you have questions.
