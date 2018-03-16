@@ -27,11 +27,7 @@ compiled, (~)typed languages like C, C++, and in some cases Rust.
 
 This code was all compiled and tested with Zig 0.2.0, which is available
 right now, [via different channels](https://ziglang.org/download/), including
-[homebrew](http://brewformulas.org/Zig) if you're on a OSX.
-
-> 0.2.0 will be the default Zig formula very
-> [soon!](https://github.com/Homebrew/homebrew-core/pull/25320) Currently `brew
-> install zig` will get you 0.1.1.
+homebrew if you're on a OSX with `brew install zig`.
 
 Ok go
 -----
