@@ -166,7 +166,28 @@ c"Hello I am a null terminated string";
 --------------------------------
 
 I want to do _something_ for each character in the source string. I can do
-that!
+that! At the top of `main.zig`, I can import some functionality from the
+standard library like so:
+
+```zig
+const warn = @import("std").debug.warn;
+```
+
+`@import`, and in fact anything that begins with an `@` sign, is a [_compiler
+builtin
+function_](https://ziglang.org/documentation/master/#Builtin-Functions). These
+functions are always available globally. Imports here actually feel quite a lot
+like javascript imports- you can simply assign anything to whatever, digging
+into a namespace to get at any publically exposed functions or variables. In
+the above example, I'm directly importing the warn function and assigning it
+to, surprise, the const `warn`. This is now callable. It is a common pattern to
+import the `std` namespace directly and then you may call `std.debug.warn()`
+_or_ assign warn off of that. That looks like:
+
+```zig
+const std = @import("std").debug.warn;
+const warn = std.debug.warn;
+```
 
 ```zig
 const warn = @import("std").debug.warn;
@@ -550,6 +571,9 @@ For this last one, I can directly compare the result to a static array using...
 ```zig
 const mem = std.mem;
 ```
+
+Remember that I have imported `std` already. In the below example, I am calling
+into that namespace to use `mem.eql`:
 
 ```zig
 test "<" {
