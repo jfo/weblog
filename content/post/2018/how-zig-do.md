@@ -185,7 +185,7 @@ import the `std` namespace directly and then you may call `std.debug.warn()`
 _or_ assign warn off of that. That looks like:
 
 ```zig
-const std = @import("std").debug.warn;
+const std = @import("std");
 const warn = std.debug.warn;
 ```
 
