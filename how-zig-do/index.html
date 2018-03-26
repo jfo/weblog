@@ -157,7 +157,7 @@ the above example, I&rsquo;m directly importing the warn function and assigning 
 to, surprise, the const <code>warn</code>. This is now callable. It is a common pattern to
 import the <code>std</code> namespace directly and then you may call <code>std.debug.warn()</code>
 <em>or</em> assign warn off of that. That looks like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const std = @import(&#34;std&#34;).debug.warn;
+<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const std = @import(&#34;std&#34;);
 const warn = std.debug.warn;</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const warn = @import(&#34;std&#34;).debug.warn;
 // main.zig
 pub fn main() void {
