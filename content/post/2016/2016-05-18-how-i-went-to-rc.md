@@ -4,7 +4,7 @@ title: How I went to the Recurse Center
 url: how-i-went-to-rc
 ---
 
-I wrote a [post](/corridor) about going to the [Recurse
+I wrote a [post](/it-is-as-a-long-corridor/) about going to the [Recurse
 Center](https://www.recurse.com/) (née Hacker School) the night before I
 started my batch. I stand behind it, there were some good feels in there.  But
 I never wrote about _how I got there_. Which, if I were me reading my own post
