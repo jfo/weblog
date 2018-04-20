@@ -1205,7 +1205,7 @@ children on the fly. Step one is to recognize that I can return _an array of
 React elements_ inside of a jsx curly brace block. This will be munged and
 rendered as if I had written them by hand as before.
 
-```
+```js
 const Row = (props) => {
     return <div style={{
         height: props.height,
