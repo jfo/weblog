@@ -1058,21 +1058,19 @@ dimension values, and compute the absolute height and width values of these
 children on the fly. Step one is to recognize that I can return <em>an array of
 React elements</em> inside of a jsx curly brace block. This will be munged and
 rendered as if I had written them by hand as before.</p>
-
-<pre><code>const Row = (props) =&gt; {
-    return &lt;div style={{
-        height: props.height,
-        width: props.width
-    }}&gt;{[
-        &lt;Box height={props.height} width={props.width / props.count} /&gt;,
-        &lt;Box height={props.height} width={props.width / props.count} /&gt;,
-        &lt;Box height={props.height} width={props.width / props.count} /&gt;,
-        &lt;Box height={props.height} width={props.width / props.count} /&gt;,
-        &lt;Box height={props.height} width={props.width / props.count} /&gt;
-    ]}&lt;/div&gt;
-}
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">const</span> <span class="nx">Row</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=</span><span class="p">{{</span>
+        <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
+        <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
+    <span class="p">}}</span><span class="o">&gt;</span><span class="p">{[</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span>
+    <span class="p">]}</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
+<span class="p">}</span>
+</code></pre></div>
 <p>A wild error message appears!</p>
 
 <pre><code>react.js:20483 Warning: Each child in an array or iterator should have a unique
