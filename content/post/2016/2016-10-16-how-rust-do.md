@@ -49,7 +49,7 @@ Table of Contents
 - [passing locks](#passinglocks)
 - [not just stdout, pls](#notjust)
 - [the borrow checker](#borrowchecker)
-- [&](#&)
+- [&](#ampersand)
 - [two sound producing functions](#twofuncs)
 - [you said we were going to come back to those warnings](#comebacktowarnings)
 - [result returns vs exceptions](#resultsvsexceptions)
@@ -751,7 +751,7 @@ data chunk_. Let's pretend we're going to make one second of sound... at a
 sample rate of 44100Hz, this means we're going to need 44100 samples to fill
 one second, so once again:
 
-```
+```rust
 // subchunk2size == numsamples * numchannels * bitspersample / 8
 stdout().write(&[ 0x44, 0xac, 0x00, 0x00 ]);
 ```
@@ -821,7 +821,7 @@ random value between 0 and 255. No computation necessary!
 
 We need 44100 of these values. It will look something like this!
 
-```
+```rust
 for x in 0..44100 {
     stdout().write(&[ random() ]);
 }
@@ -834,20 +834,20 @@ Using a crate is pretty easy! We just need to add it to our `Cargo.toml` file
 under `[dependencies]`, along with a version annotation. This glob means I
 don't care which version I get.
 
-```
+```toml
 [dependencies]
 rand = "*"
 ```
 
 At the top of the file, we'll import the library.
 
-```
+```rust
 extern crate rand;
 ```
 
 And we'll have access to that namespacing and all of its functions and traits!
 
-```
+```rust
 for x in 0..44100 {
     stdout().write(&[ rand::random::<u8>() ]);
 }
@@ -863,7 +863,8 @@ way.](https://github.com/urthbound/rav/commit/cf20c195d94a01b0edf70ef21d10118d39
 
 
 <sub><a href='#toc'>toc</a></sub>
-<a name=runit />
+<div id="runit"></div>
+
 run it
 -----
 
@@ -1087,7 +1088,8 @@ handles around!
 
 
 <sub><a href='#toc'>toc</a></sub>
-<a name=byteorder />
+<div id='byteorder'></div>
+
 Byteorder
 ---------
 
@@ -1118,7 +1120,7 @@ solve this problem... [Byteorder](https://crates.io/crates/byteorder).
 
 I pull in the crate in my Cargo.toml:
 
-```
+```toml
 [dependencies]
 rand = "*"
 byteorder = "0.5.3"
@@ -1127,7 +1129,7 @@ byteorder = "0.5.3"
 And add the import `use` statement specifying what I'm actually using in my
 preamble.
 
-```
+```rust
 use byteorder::{ LittleEndian, WriteBytesExt };
 ```
 
@@ -1135,7 +1137,7 @@ This library includes some utilities (WriteBytesExt) for writing different
 sized numerical types into anything that uses the `Write` trait. So instead of
 the cryptic thing above, I can write this:
 
-```
+```rust
 handle.write_u32::<LittleEndian>(44100);
 ```
 
@@ -1403,7 +1405,8 @@ I'm a little fuzzy on the terminology here, but I find it useful to think about
 it this way.
 
 <sub><a href='#toc'>toc</a></sub>
-<a name=& />
+<div id="ampersand"></div>
+
 &
 -
 ```
@@ -1478,14 +1481,14 @@ fn make_some_noise<T: Write>(seconds: u32, handle: &mut T) {
 
 > How about this one?
 >
-> ```rust
-> #[allow(unused_must_use)]
-> fn make_a_random_ass_sawtooth<T: Write>(seconds: u32, handle: &mut T) -> Result<(), Error > {
->     for x in 0..seconds * SAMPLE_RATE {
->         try!(handle.write(&[ ((x + 1) % 255) 1as u8 ]));
->     }
-> }
-> ```
+```rust
+ #[allow(unused_must_use)]
+ fn make_a_random_ass_sawtooth<T: Write>(seconds: u32, handle: &mut T) -> Result<(), Error > {
+     for x in 0..seconds * SAMPLE_RATE {
+         try!(handle.write(&[ ((x + 1) % 255) 1as u8 ]));
+     }
+ }
+```
 >
 > The period of this [waveform](https://en.wikipedia.org/wiki/Sawtooth_wave) is
 > SAMPLE_RATE / [u8::MAX](https://doc.rust-lang.org/std/u8/constant.MAX.html).
@@ -1602,7 +1605,7 @@ fail, the program will do weird things!
 
 Check this one out:
 
-```
+```rust
 use std::fs::File;
 
 fn main() {
