@@ -13,6 +13,10 @@
     text-align:right;
 }
 
+.site-header h5 {
+  display: inline;
+}
+
 body {
     background: #fffffa;
     font-family: etbook;
