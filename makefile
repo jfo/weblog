@@ -1,8 +1,3 @@
-# TODO: make a setup command that initializes the subtree for gh-pages from scratch.
-
-serve:
-	HUGO_ENV=development hugo serve -D
-
 deploy: syncs3 push
 
 push: build
