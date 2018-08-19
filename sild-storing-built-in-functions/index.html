@@ -24,6 +24,7 @@
     <body>
         <div id="content">
             <header class="site-header">
+    <h5>jfo</h5> &mdash;
     <a href="https://blog.jfo.click/">archive</a> &mdash;
     <a href="https://blog.jfo.click/about">about</a> &mdash;
     <a href="https://blog.jfo.click/feed.xml">rss</a>
@@ -61,7 +62,7 @@ is bonkers!</em></p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">void</span> <span class="nf">happy_birthday_mom</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;happy birthday, Mom!&#34;</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="s">&#34;happy birthday, Mom!&#34;</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -77,7 +78,7 @@ that takes up memory space!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">void</span> <span class="nf">happy_birthday_mom</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;happy birthday, Mom!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;happy birthday, Mom!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
 <span class="p">}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -92,7 +93,7 @@ assigning a variable to a function pointer looks like!</p>
 <span class="o">//^</span><span class="k">return</span> <span class="n">type</span>                   <span class="o">^</span><span class="n">arg</span> <span class="n">type</span> <span class="n">signature</span></code></pre></div>
 <p>If the function looked like this;</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">happy_birthday_mom</span><span class="p">(</span><span class="kt">int</span> <span class="n">age1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age2</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;happy birthday, Mom! You don&#39;t look a day over %i%i!!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">age1</span><span class="p">,</span> <span class="n">age2</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;happy birthday, Mom! You don&#39;t look a day over %i%i!!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">age1</span><span class="p">,</span> <span class="n">age2</span><span class="p">);</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>then the function pointer declaration would look like this:</p>
@@ -104,9 +105,9 @@ declared function pointer like this:</p>
 <p>I am not sure why this is, or why dereferencing it gives the same address, but
 it does. Indeed, all three of these print the same address (which will of
 course be different each time the program is run):</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">meta_happy_birthday_mom</span><span class="p">);</span> <span class="c1">// 0x107401ea0
-</span><span class="c1"></span><span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">happy_birthday_mom</span><span class="p">);</span>      <span class="c1">// 0x107401ea0
-</span><span class="c1"></span><span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">happy_birthday_mom</span><span class="p">);</span>     <span class="o">//</span> <span class="mh">0x107401ea0</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">meta_happy_birthday_mom</span><span class="p">);</span> <span class="c1">// 0x107401ea0
+</span><span class="c1"></span><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">happy_birthday_mom</span><span class="p">);</span>      <span class="c1">// 0x107401ea0
+</span><span class="c1"></span><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">happy_birthday_mom</span><span class="p">);</span>     <span class="o">//</span> <span class="mh">0x107401ea0</span></code></pre></div>
 <p>I will assume it is conventional <em>not</em> to use the dereference operator, since
 it is, strictly speaking, unneccessary.</p>
 
@@ -145,14 +146,14 @@ the <code>read</code> function. Here is what it looks like right now:</p>
     <span class="n">verify</span><span class="p">(</span><span class="n">current_char</span><span class="p">);</span>
 
     <span class="k">switch</span><span class="p">(</span><span class="n">current_char</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;)&#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;\0&#39;</span><span class="o">:</span>
+        <span class="k">case</span> <span class="sc">&#39;)&#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sc">&#39;\0&#39;</span><span class="o">:</span>
             <span class="n">list_depth</span><span class="o">--</span><span class="p">;</span>
             <span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
             <span class="k">return</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
-        <span class="k">case</span> <span class="sa"></span><span class="sc">&#39; &#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;\n&#39;</span><span class="o">:</span>
+        <span class="k">case</span> <span class="sc">&#39; &#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sc">&#39;\n&#39;</span><span class="o">:</span>
             <span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
             <span class="k">return</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-        <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;(&#39;</span><span class="o">:</span>
+        <span class="k">case</span> <span class="sc">&#39;(&#39;</span><span class="o">:</span>
             <span class="n">list_depth</span><span class="o">++</span><span class="p">;</span>
             <span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
             <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="n">LIST</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){.</span><span class="n">list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">)},</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
@@ -174,13 +175,13 @@ tests to see if the string is in fact a <code>BUILTIN</code> or just a regular, 
 function I had been writing before!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span><span class="o">*</span> <span class="nf">categorize</span><span class="p">(</span><span class="kt">char</span> <span class="o">**</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">char</span> <span class="o">*</span><span class="n">token</span> <span class="o">=</span> <span class="n">read_substring</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;quote&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;quote&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">quote</span> <span class="p">},</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;car&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;car&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">car</span> <span class="p">},</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;cdr&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;cdr&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">cdr</span> <span class="p">},</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;cons&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;cons&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">cons</span> <span class="p">},</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="n">LABEL</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="n">token</span> <span class="p">},</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
@@ -251,7 +252,7 @@ member:</p>
 <span class="p">.</span>
 <span class="p">.</span>
 <span class="k">case</span> <span class="nl">BUILTIN</span><span class="p">:</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;BUILTIN- Address: %p, func: %p Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">func</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;BUILTIN- Address: %p, func: %p Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">func</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
     <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
     <span class="k">break</span><span class="p">;</span>
 <span class="p">.</span>
@@ -262,10 +263,10 @@ member:</p>
 <span class="p">.</span>
 <span class="p">.</span>
 <span class="k">case</span> <span class="nl">BUILTIN</span><span class="p">:</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%p&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">func</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%p&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">func</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-        <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34; &#34;</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
 
     <span class="n">print_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
     <span class="k">break</span><span class="p">;</span>
@@ -291,13 +292,13 @@ member:</p>
     <span class="k">switch</span> <span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span> <span class="p">{</span>
             <span class="n">C</span> <span class="o">*</span><span class="n">outcell</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;quote&#34;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="s">&#34;quote&#34;</span><span class="p">))</span> <span class="p">{</span>
                 <span class="n">outcell</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;car&#34;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="s">&#34;car&#34;</span><span class="p">))</span> <span class="p">{</span>
                 <span class="n">outcell</span> <span class="o">=</span> <span class="n">car</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;cdr&#34;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="s">&#34;cdr&#34;</span><span class="p">))</span> <span class="p">{</span>
                 <span class="n">outcell</span> <span class="o">=</span> <span class="n">cdr</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;cons&#34;</span><span class="p">))</span> <span class="p">{</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="s">&#34;cons&#34;</span><span class="p">))</span> <span class="p">{</span>
                 <span class="n">outcell</span> <span class="o">=</span> <span class="n">cons</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
             <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>

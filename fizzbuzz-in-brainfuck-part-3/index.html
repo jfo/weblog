@@ -24,6 +24,7 @@
     <body>
         <div id="content">
             <header class="site-header">
+    <h5>jfo</h5> &mdash;
     <a href="https://blog.jfo.click/">archive</a> &mdash;
     <a href="https://blog.jfo.click/about">about</a> &mdash;
     <a href="https://blog.jfo.click/feed.xml">rss</a>
@@ -86,10 +87,10 @@ target="_blank">before</a>. Just keep that in mind. Lets write the inverted
 program in psuedo-code and then fill it all in with the specifics&hellip;</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">number</span> <span class="o">=</span> <span class="mi">0</span>
 
-<span class="o"></span><span class="k">until</span> <span class="n">number</span> <span class="o">==</span> <span class="mi">100</span> <span class="o"></span><span class="k">do</span>
+<span class="k">until</span> <span class="n">number</span> <span class="o">==</span> <span class="mi">100</span> <span class="k">do</span>
   <span class="k">if</span> <span class="n">number</span>   <span class="sx">% 3 </span> <span class="o">!=</span> <span class="mi">0</span>
-    <span class="o"></span><span class="k">if</span> <span class="n">number</span> <span class="sx">% 5 </span> <span class="o">!=</span> <span class="mi">0</span>
-      <span class="o"></span><span class="nb">print</span> <span class="n">number</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="sx">% 5 </span> <span class="o">!=</span> <span class="mi">0</span>
+      <span class="nb">print</span> <span class="n">number</span>
     <span class="k">else</span>
       <span class="nb">print</span> <span class="s2">&#34;Buzz&#34;</span>
     <span class="k">end</span>
@@ -98,12 +99,12 @@ program in psuedo-code and then fill it all in with the specifics&hellip;</p>
     <span class="nb">print</span> <span class="s2">&#34;Fizz&#34;</span>
 
     <span class="k">if</span> <span class="n">number</span> <span class="sx">% 5 </span> <span class="o">==</span> <span class="mi">0</span>
-      <span class="o"></span><span class="nb">print</span> <span class="s2">&#34;Buzz&#34;</span>
+      <span class="nb">print</span> <span class="s2">&#34;Buzz&#34;</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
 <span class="n">number</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="o"></span><span class="k">end</span></code></pre></div>
+<span class="k">end</span></code></pre></div>
 <p>Keep in mind that we&rsquo;ve taken care of all the variable assignments and memory
 allocation in the last post, so this really is all we have left.</p>
 

@@ -24,6 +24,7 @@
     <body>
         <div id="content">
             <header class="site-header">
+    <h5>jfo</h5> &mdash;
     <a href="https://blog.jfo.click/">archive</a> &mdash;
     <a href="https://blog.jfo.click/about">about</a> &mdash;
     <a href="https://blog.jfo.click/feed.xml">rss</a>
@@ -55,7 +56,7 @@ ok.  Foreign Function Interface. Ok.</p>
 <span class="p">}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <pre><code>clang main.c
@@ -78,7 +79,7 @@ ok.  Foreign Function Interface. Ok.</p>
 </span><span class="cp">#include</span> <span class="cpf">&#34;doubler.c&#34;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>This also &ldquo;just works&rdquo;</p>
@@ -104,7 +105,7 @@ this, simply stating the function signature of <code>doubler</code>:</p>
 </span><span class="cp">#include</span> <span class="cpf">&#34;doubler.h&#34;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <pre><code>clang main.c

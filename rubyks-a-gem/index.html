@@ -24,6 +24,7 @@
     <body>
         <div id="content">
             <header class="site-header">
+    <h5>jfo</h5> &mdash;
     <a href="https://blog.jfo.click/">archive</a> &mdash;
     <a href="https://blog.jfo.click/about">about</a> &mdash;
     <a href="https://blog.jfo.click/feed.xml">rss</a>
@@ -103,7 +104,7 @@ fairly straightforward. there are only 6 basic moves- each face can be turned
 clockwise once (turning a face counterclockwise is the same as turning it
 clockwise three times). here is the method for turning the top face clockwise
 once:</p>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">u</span>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">u</span>
     <span class="n">cubetemp</span> <span class="o">=</span> <span class="no">Marshal</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="no">Marshal</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="vi">@cube</span><span class="p">))</span>
 
     <span class="n">cubetemp</span><span class="o">[</span><span class="mi">1</span><span class="o">][</span><span class="mi">4</span><span class="o">]</span> <span class="o">=</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">4</span><span class="o">][</span><span class="mi">2</span><span class="o">]</span>

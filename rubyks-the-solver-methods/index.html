@@ -24,6 +24,7 @@
     <body>
         <div id="content">
             <header class="site-header">
+    <h5>jfo</h5> &mdash;
     <a href="https://blog.jfo.click/">archive</a> &mdash;
     <a href="https://blog.jfo.click/about">about</a> &mdash;
     <a href="https://blog.jfo.click/feed.xml">rss</a>
@@ -56,7 +57,7 @@ easy. Using those methods in series to build helper methods that perform even
 complex algorithms was as simple as stringing them together on a single Cube
 object and then returning that object. Like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="c1">#Re-orients cubies of [0][4], [0][6], and [0][8] without affecting anything else.</span>
-<span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">last_move</span>
+<span class="k">def</span> <span class="nf">last_move</span>
     <span class="nb">self</span><span class="o">.</span><span class="n">rr</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">fr</span><span class="o">.</span><span class="n">ur</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">fr</span><span class="o">.</span><span class="n">rr</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">u</span>
     <span class="nb">self</span>
 <span class="k">end</span></code></pre></div>
@@ -77,33 +78,33 @@ final cubies to their proper faces.</p>
 repeats a set of motions that don&rsquo;t change the effects of the previous step
 until some condition is satisfied. Here is the top cross method for an example:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="c1">##Solves for cross on first layer. Affects all other layers.</span>
-<span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">cross_solve</span>
+<span class="k">def</span> <span class="nf">cross_solve</span>
     <span class="n">downcross</span> <span class="o">=</span> <span class="o">[]</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="o"></span><span class="k">until</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">1</span><span class="o">]</span> <span class="o">==</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">3</span><span class="o">]</span> <span class="o">==</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">5</span><span class="o">]</span> <span class="o">==</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">7</span><span class="o">]</span> <span class="o">==</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
+    <span class="k">until</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">1</span><span class="o">]</span> <span class="o">==</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">3</span><span class="o">]</span> <span class="o">==</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">5</span><span class="o">]</span> <span class="o">==</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">7</span><span class="o">]</span> <span class="o">==</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
 
         <span class="k">until</span> <span class="n">downcross</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span><span class="p">)</span>
             <span class="n">downcross</span> <span class="o">=</span> <span class="o">[]</span>
             <span class="nb">self</span><span class="o">.</span><span class="n">rr</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">l</span><span class="o">.</span><span class="n">dr</span><span class="o">.</span><span class="n">lr</span><span class="o">.</span><span class="n">turn</span>
             <span class="n">downcross</span> <span class="o">=</span> <span class="o">[</span><span class="vi">@cube</span><span class="o">[</span><span class="mi">5</span><span class="o">][</span><span class="mi">1</span><span class="o">]</span><span class="p">,</span><span class="vi">@cube</span><span class="o">[</span><span class="mi">5</span><span class="o">][</span><span class="mi">3</span><span class="o">]</span><span class="p">,</span><span class="vi">@cube</span><span class="o">[</span><span class="mi">5</span><span class="o">][</span><span class="mi">5</span><span class="o">]</span><span class="p">,</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">5</span><span class="o">][</span><span class="mi">7</span><span class="o">]]</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="o"></span><span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">10</span>
-                <span class="o"></span><span class="nb">self</span><span class="o">.</span><span class="n">turn</span> <span class="k">until</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">1</span><span class="o">]</span> <span class="o">!=</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">10</span>
+                <span class="nb">self</span><span class="o">.</span><span class="n">turn</span> <span class="k">until</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">1</span><span class="o">]</span> <span class="o">!=</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
                 <span class="nb">self</span><span class="o">.</span><span class="n">l</span><span class="o">.</span><span class="n">b</span>
                 <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="o"></span><span class="k">end</span>
+            <span class="k">end</span>
         <span class="k">end</span>
 
         <span class="k">until</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">5</span><span class="o">][</span><span class="mi">3</span><span class="o">]</span> <span class="o">==</span> <span class="n">cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
             <span class="n">i</span> <span class="o">=</span><span class="mi">0</span>
-            <span class="o"></span><span class="nb">self</span><span class="o">.</span><span class="n">d</span>
+            <span class="nb">self</span><span class="o">.</span><span class="n">d</span>
 
             <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">59</span>
-                <span class="o"></span><span class="nb">self</span><span class="o">.</span><span class="n">print</span>
+                <span class="nb">self</span><span class="o">.</span><span class="n">print</span>
                 <span class="nb">gets</span>
             <span class="k">end</span>
             <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
-        <span class="o"></span><span class="k">end</span>
+        <span class="k">end</span>
 
         <span class="k">until</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">7</span><span class="o">]</span> <span class="o">!=</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
             <span class="nb">self</span><span class="o">.</span><span class="n">u</span>
@@ -119,10 +120,10 @@ until some condition is satisfied. Here is the top cross method for an example:<
         <span class="nb">self</span><span class="o">.</span><span class="n">turn</span> <span class="k">if</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">4</span><span class="o">][</span><span class="mi">3</span><span class="o">]</span> <span class="o">!=</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">4</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="o"></span><span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">10</span>
-            <span class="o"></span><span class="nb">self</span><span class="o">.</span><span class="n">cross_swap</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">10</span>
+            <span class="nb">self</span><span class="o">.</span><span class="n">cross_swap</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="o"></span><span class="k">end</span>
+        <span class="k">end</span>
     <span class="k">end</span>
 
     <span class="k">if</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">2</span><span class="o">][</span><span class="mi">7</span><span class="o">]</span> <span class="o">!=</span> <span class="vi">@cube</span><span class="o">[</span><span class="mi">2</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span>
@@ -141,12 +142,12 @@ causing the loop to lock up.</p>
 <p>The final method to call all of these layers in sequence looks something like
 this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="c1">#solve invokes all layer solving methods in sequence, solving from any legal state</span>
-<span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">simple_solve</span>
+<span class="k">def</span> <span class="nf">simple_solve</span>
     <span class="n">testarray</span> <span class="o">=</span> <span class="o">[]</span>
     <span class="vi">@cube</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">side</span><span class="o">|</span> <span class="n">testarray</span> <span class="o">&lt;&lt;</span> <span class="n">side</span><span class="o">.</span><span class="n">uniq</span><span class="p">}</span>
     <span class="k">return</span> <span class="nb">self</span> <span class="k">if</span> <span class="n">testarray</span><span class="o">.</span><span class="n">flatten</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">6</span>
 
-    <span class="o"></span><span class="nb">self</span><span class="o">.</span><span class="n">cross_solve</span><span class="o">.</span><span class="n">corners_solve</span><span class="o">.</span><span class="n">second_layer_solve</span><span class="o">.</span><span class="n">top_cross</span><span class="o">.</span><span class="n">top_corners</span>
+    <span class="nb">self</span><span class="o">.</span><span class="n">cross_solve</span><span class="o">.</span><span class="n">corners_solve</span><span class="o">.</span><span class="n">second_layer_solve</span><span class="o">.</span><span class="n">top_cross</span><span class="o">.</span><span class="n">top_corners</span>
     <span class="nb">self</span>
 <span class="k">end</span></code></pre></div>
 <p>Note that it always checks to see if the cube is ALREADY solved before mucking

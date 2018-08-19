@@ -24,6 +24,7 @@
     <body>
         <div id="content">
             <header class="site-header">
+    <h5>jfo</h5> &mdash;
     <a href="https://blog.jfo.click/">archive</a> &mdash;
     <a href="https://blog.jfo.click/about">about</a> &mdash;
     <a href="https://blog.jfo.click/feed.xml">rss</a>
@@ -74,7 +75,7 @@ in. To see that this is actually working, I&rsquo;ll change all the <code>LABEL<
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">eval</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;chicken&#34;</span><span class="p">;</span>
+            <span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&#34;chicken&#34;</span><span class="p">;</span>
             <span class="c1">// falling through
 </span><span class="c1"></span>        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
             <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
@@ -88,7 +89,7 @@ here. I still do want to evaluate the next cell after a label.  It is good form
 to note when this kind of situation arises, because it is <em>very</em> easy to miss
 that it&rsquo;s happening, and can result in pretty insidious bugs.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;a b c&#34;</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="s">&#34;a b c&#34;</span><span class="p">;</span>
     <span class="n">C</span> <span class="o">*</span><span class="n">a_list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a_string</span><span class="p">);</span>
     <span class="n">debug_list</span><span class="p">(</span><span class="n">eval</span><span class="p">(</span><span class="n">a_list</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
@@ -106,7 +107,7 @@ reading in a string of atoms like that gives us an <em>internal</em> representat
 a linked list of atoms, but is <em>not</em> a LIST in the context of the language
 space. You can see that the three atoms are linked in the same way, but the enclosing linked list is not itself the <code>val.list</code> member of a <code>LIST</code> cell. This is a subtle but important distinction. For example, how &lsquo;bout this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;a b (hi mom) c&#34;</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="s">&#34;a b (hi mom) c&#34;</span><span class="p">;</span>
     <span class="n">C</span> <span class="o">*</span><span class="n">a_list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a_string</span><span class="p">);</span>
     <span class="n">debug_list</span><span class="p">(</span><span class="n">eval</span><span class="p">(</span><span class="n">a_list</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
@@ -127,7 +128,7 @@ and <code>LABEL</code> types differently now.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">eval</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;chicken&#34;</span><span class="p">;</span>
+            <span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&#34;chicken&#34;</span><span class="p">;</span>
             <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
             <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
@@ -153,7 +154,7 @@ and <code>LABEL</code> types differently now.</p>
 <code>LABEL</code> will be evaluated to &lsquo;chicken&rsquo;.</p>
 
 <p>What about</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="sa"></span><span class="s">&#34;(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t(u (v (w (x) y (and) (z)))))))&#34;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="s">&#34;(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t(u (v (w (x) y (and) (z)))))))&#34;</span></code></pre></div>
 <p>?</p>
 
 <p>You guessed it.</p>
@@ -241,18 +242,18 @@ initial depth of <code>0</code>):</p>
     <span class="n">printtabs</span><span class="p">(</span><span class="n">depth</span><span class="p">);</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;LABEL- Address: %p, Value: %s Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;LABEL- Address: %p, Value: %s Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
             <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;LIST- Address: %p, List_Value: %p Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;LIST- Address: %p, List_Value: %p Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
             <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
             <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;NIL- Address: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;NIL- Address: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
             <span class="n">printtabs</span><span class="p">(</span><span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;-------------------------------------------------------</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;-------------------------------------------------------</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
@@ -268,22 +269,22 @@ initial depth of <code>0</code>):</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
             <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;(&#34;</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;(&#34;</span><span class="p">);</span>
             <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">);</span>
             <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;)&#34;</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;)&#34;</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 <p>Let&rsquo;s try it!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;(a b c d)&#34;</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="s">&#34;(a b c d)&#34;</span><span class="p">;</span>
     <span class="n">C</span> <span class="o">*</span><span class="n">a_list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a_string</span><span class="p">);</span>
     <span class="n">print_list</span><span class="p">(</span><span class="n">a_list</span><span class="p">);</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
@@ -298,25 +299,25 @@ trailing closing paren, as well! First, for the spaces, I simply need to print a
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-                <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34; &#34;</span><span class="p">);</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
 
             <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;(&#34;</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;(&#34;</span><span class="p">);</span>
             <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">);</span>
 
             <span class="c1">// also adding here to print space after a list ends!
 </span><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-                <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34; &#34;</span><span class="p">);</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
 
             <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;)&#34;</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;)&#34;</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
@@ -330,7 +331,7 @@ trailing closing paren, as well! First, for the spaces, I simply need to print a
 <p>Now, as for that trailing paren! If we look back at the read function, you can see that it is treating <code>')'</code> and <code>'\0'</code> the same way:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">etc</span><span class="p">...</span>
     <span class="k">switch</span><span class="p">(</span><span class="n">current_char</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;)&#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;\0&#39;</span><span class="o">:</span>
+        <span class="k">case</span> <span class="sc">&#39;)&#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sc">&#39;\0&#39;</span><span class="o">:</span>
             <span class="n">list_depth</span><span class="o">--</span><span class="p">;</span>
             <span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
             <span class="k">return</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
@@ -343,25 +344,25 @@ and only print a closing paren if the depth is greater than <code>0</code>, simi
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list_inner</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">depth</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-                <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34; &#34;</span><span class="p">);</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
 
             <span class="n">print_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;(&#34;</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;(&#34;</span><span class="p">);</span>
             <span class="n">print_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-                <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34; &#34;</span><span class="p">);</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
 
             <span class="n">print_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;)&#34;</span><span class="p">);</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;)&#34;</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
     <span class="p">}</span>
@@ -373,7 +374,7 @@ and only print a closing paren if the depth is greater than <code>0</code>, simi
 <p>Just like <code>debug_list</code>, I&rsquo;ve wrapped this in a helper function that always
 starts at 0 depth. This achieves the desired effect!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;(a b c d)&#34;</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="s">&#34;(a b c d)&#34;</span><span class="p">;</span>
     <span class="n">C</span> <span class="o">*</span><span class="n">a_list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a_string</span><span class="p">);</span>
     <span class="n">print_list</span><span class="p">(</span><span class="n">a_list</span><span class="p">);</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
@@ -383,7 +384,7 @@ starts at 0 depth. This achieves the desired effect!</p>
 <p>I&rsquo;m not conviced this is an optimal solution, but it is ok for now!</p>
 
 <p>How about:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="sa"></span><span class="s">&#34;(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t (u (v (w (x) y (and) (z)))))))&#34;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="s">&#34;(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t (u (v (w (x) y (and) (z)))))))&#34;</span></code></pre></div>
 <p>Through the extra special <code>eval()</code> that turns everything into chickens, and
 then through this improved <code>print_list()</code> function</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">(</span><span class="n">chicken</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span><span class="p">)</span> <span class="p">(</span><span class="n">chicken</span><span class="p">)))))))</span></code></pre></div>
