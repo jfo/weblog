@@ -12,7 +12,7 @@ I'm going to make it in [Zig](http://ziglang.org/).
 Zig is....
 --------
 
-...new, still very much in beta, and moving quickly. If you've seen any Zig
+...a new programming language. It is still very much in beta, and moving quickly. If you've seen any Zig
 previously, the code in this post might look quite different. It is different!
 Zig 0.2.0 has just been released, coinciding with the release of [LLVM
 6](http://releases.llvm.org/6.0.0/docs/ReleaseNotes.html) a few weeks ago,
