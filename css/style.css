@@ -1,16 +1,16 @@
 @font-face {
-    font-family: "etbook";
-    src: url("/css/et-book.woff") format('woff');
+  font-family: "etbook";
+  src: url("/css/et-book.woff") format('woff');
 }
 
 @font-face {
-    font-family: "Inconsolata";
-    src: url("/css/inconsolata.woff") format('woff');
+  font-family: "Inconsolata";
+  src: url("/css/inconsolata.woff") format('woff');
 }
 
 .site-header {
-    margin-top: 2em;
-    text-align:right;
+  margin-top: 2em;
+  text-align:right;
 }
 
 .site-header h5 {
@@ -18,13 +18,14 @@
 }
 
 body {
-    background: #fffffa;
-    font-family: etbook;
-    font-size: 1.1em;
+  background: #fffff1;
+  font-family: etbook;
+  color: #494949;
+  font-size: 1.1em;
 }
 
 h1 {
-    font-size: 2em;
+  font-size: 2em;
 }
 .title-thing {
     margin: 0;
@@ -34,56 +35,56 @@ p, li { line-height: 1.4; }
 
 a { text-decoration: none; }
 a:link {
-    color: #0000bb;
-    border-bottom: 1px solid #bbbbff;
+  color: #0000bb;
+  border-bottom: 1px solid #bbbbff;
 }
 a:hover { color: blue; }
 a:visited {
-    color: gray;
-    border-bottom: 1px solid #eeeeee;
+  color: gray;
+  border-bottom: 1px solid #eeeeee;
 }
 
 #content {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 1em 0 1em 0;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1em 0 1em 0;
 }
 
 pre {
-    padding: 16px;
-    overflow: auto;
-    font-size: 0.8em;
-    border: 1px dotted #002b36;
+  padding: 16px;
+  overflow: auto;
+  font-size: 0.8em;
+  border: 1px dotted #002b36;
 }
 
 code {
-    font-family: Inconsolata, monaco;
+  font-family: Inconsolata, monaco;
 }
 
 blockquote {
-    font-style: italic;
-    padding: 0 15px;
-    margin: 2em 0;
-    color: #888;
-    border-left: 4px solid #ddd;
+  font-style: italic;
+  padding: 0 15px;
+  margin: 2em 0;
+  color: #888;
+  border-left: 4px solid #ddd;
 }
 
 img, video, canvas, iframe {
-    max-width: 100%;
-    display: block;
-    margin: 0 auto;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
 }
 
 hr {
-    border: none;
-    border-top: 1px solid gray;
+  border: none;
+  border-top: 1px solid gray;
 }
 
 tr time {
-    font-size: 0.7em;
-    opacity:0.7;
-    font-family: monospace;
-    margin-right: 3em;
+  font-size: 0.7em;
+  opacity:0.7;
+  font-family: monospace;
+  margin-right: 3em;
 }
 
 /* syntax highlighting (chroma) */

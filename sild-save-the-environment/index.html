@@ -199,7 +199,7 @@ for it!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">Env</span> <span class="o">*</span><span class="nf">new_env</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">Env</span> <span class="o">*</span><span class="n">out</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Env</span><span class="p">));</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">};</span>
-    <span class="n">out</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="s">&#34;derp&#34;</span><span class="p">;</span>
+    <span class="n">out</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;derp&#34;</span><span class="p">;</span>
     <span class="n">out</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
@@ -211,9 +211,9 @@ everything else.</p>
 
 <p>Back in eval_file:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">eval_file</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">);</span>
+    <span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;r&#34;</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fp</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Error opening file: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;Error opening file: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
         <span class="n">exit</span> <span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -275,7 +275,7 @@ dictionary!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">Entry</span> <span class="o">*</span><span class="nf">new_entry</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">Entry</span> <span class="o">*</span><span class="n">out</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Entry</span><span class="p">));</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">};</span>
-    <span class="n">out</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="s">&#34;derp&#34;</span><span class="p">;</span>
+    <span class="n">out</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;derp&#34;</span><span class="p">;</span>
     <span class="n">out</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
 <span class="p">}</span>
@@ -306,7 +306,7 @@ have a reference to the next cell in the series:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">Entry</span> <span class="o">*</span><span class="nf">new_entry</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">Entry</span> <span class="o">*</span><span class="n">out</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Entry</span><span class="p">));</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">};</span>
-    <span class="n">out</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="s">&#34;derp&#34;</span><span class="p">;</span>
+    <span class="n">out</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;derp&#34;</span><span class="p">;</span>
     <span class="n">out</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
     <span class="n">out</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
@@ -315,7 +315,7 @@ have a reference to the next cell in the series:</p>
 <span class="k">static</span> <span class="n">Entry</span> <span class="o">*</span><span class="nf">new_entry2</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">Entry</span> <span class="o">*</span><span class="n">out</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Entry</span><span class="p">));</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">};</span>
-    <span class="n">out</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="s">&#34;another&#34;</span><span class="p">;</span>
+    <span class="n">out</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="sa"></span><span class="s">&#34;another&#34;</span><span class="p">;</span>
     <span class="n">out</span><span class="o">-&gt;</span><span class="n">value</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
     <span class="n">out</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">new_entry</span><span class="p">();</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
@@ -552,14 +552,14 @@ strings that also need to be allocated! I can pull this into a helper function
 that allocates some memory, copies a string into it.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="o">*</span><span class="nf">scpy</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">while</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="n">l</span><span class="o">++</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">!=</span> <span class="sa"></span><span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="p">{</span> <span class="n">l</span><span class="o">++</span><span class="p">;</span> <span class="p">}</span>
     <span class="kt">char</span> <span class="o">*</span><span class="n">out</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">l</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">out</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">}</span>
 
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">l</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
     <span class="p">}</span>
-    <span class="n">out</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+    <span class="n">out</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="sa"></span><span class="sc">&#39;\0&#39;</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
 <span class="p">};</span></code></pre></div>
 <p>I&rsquo;ll plop this into <code>utils.c</code> and use it in the <code>env.c</code> file to return a copy instead of the original.</p>
@@ -626,8 +626,8 @@ messaging, but I&rsquo;ll make a sweep on that at some point.</p>
 
 <p>Back in the <code>eval_file</code> function, then, I can do this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">Env</span> <span class="o">*</span><span class="n">env</span> <span class="o">=</span> <span class="n">new_env</span><span class="p">();</span>
-<span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;hi&#34;</span><span class="p">,</span> <span class="n">truth</span><span class="p">());</span>
-<span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;mom&#34;</span><span class="p">,</span> <span class="n">truth</span><span class="p">());</span></code></pre></div>
+<span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;hi&#34;</span><span class="p">,</span> <span class="n">truth</span><span class="p">());</span>
+<span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;mom&#34;</span><span class="p">,</span> <span class="n">truth</span><span class="p">());</span></code></pre></div>
 <p>And I have an env with two entries!</p>
 
 <pre><code>hi
@@ -644,8 +644,8 @@ mom
 
 <p>There&rsquo;s one interesting aspect of this env thing that is implicit in its design! What if I do this?</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">Env</span> <span class="o">*</span><span class="n">env</span> <span class="o">=</span> <span class="n">new_env</span><span class="p">();</span>
-<span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;hi&#34;</span><span class="p">,</span> <span class="n">truth</span><span class="p">());</span>
-<span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s">&#34;hi&#34;</span><span class="p">,</span> <span class="n">empty_list</span><span class="p">());</span></code></pre></div>
+<span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;hi&#34;</span><span class="p">,</span> <span class="n">truth</span><span class="p">());</span>
+<span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;hi&#34;</span><span class="p">,</span> <span class="n">empty_list</span><span class="p">());</span></code></pre></div>
 <p>Two entries with the same key but different values. Now, in sild land, what
 will I get if I evaluate the LABEL <code>hi</code>? How does my <code>get</code> function choose?</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">get</span><span class="p">(</span><span class="n">Env</span><span class="o">*</span> <span class="n">env</span><span class="p">,</span> <span class="n">C</span> <span class="o">*</span><span class="n">key</span><span class="p">)</span> <span class="p">{</span>
@@ -675,24 +675,24 @@ can utilize them! The signature will look like all the builtin functions:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">define</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">);</span></code></pre></div>
 <p>it will take two arguments, a key and a value. (in sild land):</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">define</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">arity_check</span><span class="p">(</span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
+    <span class="n">arity_check</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
 <p>The key <em>must</em> be a label:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">define</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">arity_check</span><span class="p">(</span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
+    <span class="n">arity_check</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">LABEL</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
 <p>Then it will <code>set</code> the arguments to a key value pair inside the given env,
 evalling the 2nd operand.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">define</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">arity_check</span><span class="p">(</span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
+    <span class="n">arity_check</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">LABEL</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">}</span>
     <span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">eval</span><span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">env</span><span class="p">));</span>
 <span class="p">}</span></code></pre></div>
 <p>Then it will free the label! I don&rsquo;t need to free the evalled operand, because
 that will serve as the master copy in the env.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">define</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">arity_check</span><span class="p">(</span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
+    <span class="n">arity_check</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">LABEL</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">}</span>
     <span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">eval</span><span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">env</span><span class="p">));</span>
     <span class="n">free_one_cell</span><span class="p">(</span><span class="n">operand</span><span class="p">);</span>
@@ -700,7 +700,7 @@ that will serve as the master copy in the env.</p>
 <p>And that&rsquo;s really that! It has to return something, so how about nil? I won&rsquo;t
 be doing anything with that return value ever (you will see why soon!)</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">define</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">arity_check</span><span class="p">(</span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
+    <span class="n">arity_check</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;define&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">LABEL</span><span class="p">)</span> <span class="p">{</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="p">}</span>
     <span class="n">set</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">eval</span><span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">env</span><span class="p">));</span>
     <span class="n">free_one_cell</span><span class="p">(</span><span class="n">operand</span><span class="p">);</span>
@@ -784,9 +784,9 @@ forms.</p>
 the reader step by throwing an error if the reader encounters a <code>define</code>
 keyword when the depth is greater than 1!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">...</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;define&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;define&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Error: define found in inner form.&#34;</span><span class="p">);</span>
+            <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;Error: define found in inner form.&#34;</span><span class="p">);</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">,</span> <span class="n">define</span><span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
@@ -818,7 +818,7 @@ done with it, or I&rsquo;ll have a memory leak.</p>
 <p>Just as I free the results of an evaluation of a form after I don&rsquo;t need it anymore in <code>eval_file</code></p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">eval_file</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">)</span> <span class="p">{</span>
 
-        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Error opening file: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;Error opening file: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
         <span class="n">exit</span> <span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -835,9 +835,9 @@ done with it, or I&rsquo;ll have a memory leak.</p>
 <p>So too will I free the environment I created for that file after I&rsquo;m done
 reading the file! It will go here:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">eval_file</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">);</span>
+    <span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;r&#34;</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fp</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Error opening file: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;Error opening file: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
         <span class="n">exit</span> <span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 

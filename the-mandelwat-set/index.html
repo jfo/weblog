@@ -79,11 +79,11 @@ html5 land, that thing is a <code>&lt;canvas&gt;</code></p>
 <p>That looks like this:</p>
 
 <canvas></canvas>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">canvas</span><span class="p">&gt;&lt;/</span><span class="nt">canvas</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">canvas</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">canvas</span><span class="p">&gt;</span></code></pre></div>
 <p>Here, let me put a border on it so you can see where it is:</p>
 
 <canvas style="border: 1px solid black;"></canvas>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">canvas</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;border: 1px solid black;&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">canvas</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">canvas</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;border: 1px solid black;&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">canvas</span><span class="p">&gt;</span></code></pre></div>
 <p>By default, the dimensions of a canvas element will be 150 pixels tall by 300
 pixels wide. This is a funny size, and I&rsquo;m not sure why it&rsquo;s the default, but
 in any case you&rsquo;re almost always going to want to set the width and height
@@ -95,9 +95,9 @@ and because I don&rsquo;t intend to resize the canvas dynamically in the JS code
 I&rsquo;ll just set the attributes directly.</p>
 
 <canvas style="border: 1px solid black;" width="200px" height="200px"></canvas>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">canvas</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;border: 1px solid black;&#34;</span> <span class="na">width</span><span class="o">=</span><span class="s">&#34;200px&#34;</span> <span class="na">height</span><span class="o">=</span><span class="s">&#34;200px&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">canvas</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">canvas</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;border: 1px solid black;&#34;</span> <span class="na">width</span><span class="o">=</span><span class="s">&#34;200px&#34;</span> <span class="na">height</span><span class="o">=</span><span class="s">&#34;200px&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">canvas</span><span class="p">&gt;</span></code></pre></div>
 <p>Now we just need to slap an <code>id</code> in there and we can grab it from the JavaScriptville.</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">canvas</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;ex0&#34;</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;border: 1px solid black;&#34;</span> <span class="na">width</span><span class="o">=</span><span class="s">&#34;200px&#34;</span> <span class="na">height</span><span class="o">=</span><span class="s">&#34;200px&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">canvas</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">canvas</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;ex0&#34;</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;border: 1px solid black;&#34;</span> <span class="na">width</span><span class="o">=</span><span class="s">&#34;200px&#34;</span> <span class="na">height</span><span class="o">=</span><span class="s">&#34;200px&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">canvas</span><span class="p">&gt;</span></code></pre></div>
 <p>That&rsquo;s it from the HTML side. All the rest of the canvases will look the same
 except with incrementing ids!</p>
 

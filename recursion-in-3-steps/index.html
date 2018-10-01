@@ -66,13 +66,13 @@
 <p>A recursive function MUST have a way to know when to stop calling itself. This is called a &ldquo;base case&rdquo; and it looks something like this&hellip; if we pass in a number and evaluate against that:</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">myfunc</span><span class="p">(</span><span class="n">some_number</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">some_number</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&#34;Base case&#34;</span>
+        <span class="k">return</span> <span class="sa"></span><span class="s2">&#34;Base case&#34;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">myfunc</span><span class="p">(</span><span class="n">some_number</span><span class="p">)</span></code></pre></div>
 <p>But here is the tricky part. Each new call to the function is passing in the same number. If we start at 0, it will not reach the recursive call. But if we do not start at 0, we have the same problem as before. Every time you call the function inside of itself, therfore, you want to change the value that you are passing into it.</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">myfunc</span><span class="p">(</span><span class="n">some_number</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">some_number</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&#34;Base case&#34;</span>
+        <span class="k">return</span> <span class="sa"></span><span class="s2">&#34;Base case&#34;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">myfunc</span><span class="p">(</span><span class="n">some_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></code></pre></div>
 <p>This will cause the function calls to move towards the base case. Assuming you have enough space on your table to stack up all of those instructions, the variable will eventually reach 0 and propogate back through the stack of instructions that you had set aside.</p>
@@ -80,9 +80,9 @@
 <p>Astute readers, of course, may ask what would happen if you start from a negative number. Clearly, subtracting one will never reach 0. The function also needs a way to exit if it finds itelf pursuing a line of instructions that will never reach a base case&hellip;</p>
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">myfunc</span><span class="p">(</span><span class="n">some_number</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">some_number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">StandardError</span><span class="p">(</span><span class="s1">&#39;Value will never reach base case&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">StandardError</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;Value will never reach base case&#39;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">some_number</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s2">&#34;Base case&#34;</span>
+        <span class="k">print</span> <span class="sa"></span><span class="s2">&#34;Base case&#34;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">myfunc</span><span class="p">(</span><span class="n">some_number</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></code></pre></div>
 <p>This function has &ldquo;knowledge&rdquo; about a situation that would cause it to enter an infinite recursive loop. It moves towards a base case and will eventually reach it, provided it has enough space to store the stack of instructions as it is executing them. What if it doesn&rsquo;t?</p>
@@ -93,12 +93,12 @@
 <div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">myiter</span><span class="p">(</span><span class="n">some_number</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">some_number</span> <span class="o">&lt;</span> <span class="mi">0</span>
-      <span class="k">raise</span> <span class="ne">StandardError</span><span class="p">(</span><span class="s1">&#39;This will subtract forever&#39;</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="ne">StandardError</span><span class="p">(</span><span class="sa"></span><span class="s1">&#39;This will subtract forever&#39;</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="n">some_number</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
       <span class="n">some_number</span> <span class="o">=</span> <span class="n">some_number</span> <span class="o">-</span> <span class="mi">1</span>
 
-    <span class="k">print</span> <span class="s2">&#34;You made it!&#34;</span></code></pre></div>
+    <span class="k">print</span> <span class="sa"></span><span class="s2">&#34;You made it!&#34;</span></code></pre></div>
 <p>This does not have to keep track of how many instructions it has set aside. It simply mutates the given variable in the specified way until it reaches the condition set. Once again, we have caught numbers that would never reach 0 before they reach the loop&hellip; (errors cut off the code evaluation at the point at which they were raised.)</p>
 
 <p>Languages like Python and Ruby implicitly discourage recursiveness through their design decisions. Functional languages like Scheme and Clojure (from the lisp lineage) have built in optimizations to make recursion less brittle. Hilariously, a common technique is tail call optimization, which under certain circumstances turns a recursive function into an iterative one at the machine level.</p>

@@ -170,7 +170,7 @@ notice.</p>
 </code></pre>
 
 <p>That consists of a single, simple line:</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://s3-us-west-2.amazonaws.com/blog.jfo.click/images/{{ .Get 0 }}&#34;</span> <span class="p">/&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://s3-us-west-2.amazonaws.com/blog.jfo.click/images/{{ .Get 0 }}&#34;</span> <span class="p">/</span><span class="p">&gt;</span></code></pre></div>
 <p>You&rsquo;ll notice an interpolated variable here, or at least a method that looks
 like it is accessing same:</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="p">{{</span> <span class="p">.</span><span class="nx">Get</span> <span class="mi">0</span> <span class="p">}}</span></code></pre></div>

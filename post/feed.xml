@@ -19,7 +19,7 @@
       <guid>https://blog.jfo.click/how-zig-do/</guid>
       <description>Hello and good morning or whatever! Let&amp;rsquo;s write a brainfuck interpreter. &amp;ldquo;Why are you doing this?&amp;rdquo; you might say, but you won&amp;rsquo;t find that answer here.
 I&amp;rsquo;m going to make it in Zig.
-Zig is&amp;hellip;. &amp;hellip;new, still very much in beta, and moving quickly. If you&amp;rsquo;ve seen any Zig previously, the code in this post might look quite different. It is different! Zig 0.2.0 has just been released, coinciding with the release of LLVM 6 a few weeks ago, and includes a lot of changes to the syntax and general improvements to the language.</description>
+Zig is&amp;hellip;. &amp;hellip;a new programming language. It is still very much in beta, and moving quickly. If you&amp;rsquo;ve seen any Zig previously, the code in this post might look quite different. It is different! Zig 0.2.0 has just been released, coinciding with the release of LLVM 6 a few weeks ago, and includes a lot of changes to the syntax and general improvements to the language.</description>
     </item>
     
     <item>
