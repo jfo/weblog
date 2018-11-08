@@ -299,6 +299,15 @@ rustc main.rs -l doubler.o -L .
 
 This works!! And produces a `main` execuatable, that when run, gives me:
 
+> Note: This no longer works! The `-l` flag is really only for system
+> libraries, and at the time I wrote this I think it functioned by a fluke of how
+> the linker was looking for them. Alas, no more! A proper linking script or
+> configuration is likely necessary to do this now, refer to the links below
+> for more coherent information about that. This post describes the process of
+> trying to understand how objects are linked into the final executable in
+> general, and was never intended to be a tutorial on best practices.
+
+
 ```
 2
 ```
@@ -308,7 +317,7 @@ This works!! And produces a `main` execuatable, that when run, gives me:
 This is a trivial example, yes! Also, I'm pretty sure this is most definitely
 _not_ the recommended way to do this.  Read
 [this](https://doc.rust-lang.org/book/ffi.html)
-and [this](https://doc.rust-lang.org/book/advanced-linking.html) for more
+and [this](https://doc.rust-lang.org/1.9.0/book/advanced-linking.html) for more
 thorough, idiomatic info. Afaict, the more normal way to do this kind of
 thing would be to link against installed libraries or use [cargo and a
 build script](http://doc.crates.io/build-script.html) to codify how the
