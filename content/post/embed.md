@@ -5,6 +5,8 @@ draft: true
 
 Light on, not blink.
 
+both the arduino and the teensy are atmega32u4 chips
+
 from the arduino ide to the uno
 from the arduino ide to the hex to the uno
 avr-gcc to the hex to the uno
