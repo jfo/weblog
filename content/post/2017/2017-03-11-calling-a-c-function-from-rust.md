@@ -299,6 +299,10 @@ rustc main.rs -l doubler.o -L .
 
 This works!! And produces a `main` execuatable, that when run, gives me:
 
+```
+2
+```
+
 > Note: This no longer works! The `-l` flag is really only for system
 > libraries, and at the time I wrote this I think it functioned by a fluke of how
 > the linker was looking for them. Alas, no more! A proper linking script or
@@ -306,11 +310,8 @@ This works!! And produces a `main` execuatable, that when run, gives me:
 > for more coherent information about that. This post describes the process of
 > trying to understand how objects are linked into the final executable in
 > general, and was never intended to be a tutorial on best practices.
+> - 11/2018
 
-
-```
-2
-```
 
 <hr>
 
