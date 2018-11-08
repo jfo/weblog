@@ -9,15 +9,6 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-77907408-1', 'auto');
-        ga('send', 'pageview');
-    </script>
 </head>
 
 
@@ -56,7 +47,7 @@ ok.  Foreign Function Interface. Ok.</p>
 <span class="p">}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <pre><code>clang main.c
@@ -79,7 +70,7 @@ ok.  Foreign Function Interface. Ok.</p>
 </span><span class="cp">#include</span> <span class="cpf">&#34;doubler.c&#34;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>This also &ldquo;just works&rdquo;</p>
@@ -105,7 +96,7 @@ this, simply stating the function signature of <code>doubler</code>:</p>
 </span><span class="cp">#include</span> <span class="cpf">&#34;doubler.h&#34;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <pre><code>clang main.c
@@ -166,7 +157,8 @@ symbol I actually want to link to.</p>
 <div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// main.rs
 </span><span class="c1"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w">
-</span><span class="w"></span><span class="p">}</span></code></pre></div>
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span></code></pre></div>
 <p>If I try to compile this with <code>rustc main.rs</code>, I get an obvious error:</p>
 
 <pre><code>error[E0425]: unresolved name `doubler`
@@ -192,7 +184,8 @@ exists in the C header file, just the function signature.</p>
 </span><span class="w">
 </span><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w">
-</span><span class="w"></span><span class="p">}</span></code></pre></div>
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span></code></pre></div>
 <blockquote>
 <p>I am using <code>u32</code> here because on my machine <code>sizeof(int)</code> returns <code>4</code>, which
 is 4 bytes, so 4 * 8 bits = 32 bits.</p>
@@ -219,7 +212,8 @@ do to the data passed into it, I need to wrap this in an unsafe block.</p>
 </span><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">        </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w">
 </span><span class="w">    </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="p">}</span></code></pre></div>
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span></code></pre></div>
 <pre><code>error: linking with `cc` failed: exit code: 1
   |
   = note: Undefined symbols for architecture x86_64:
@@ -282,6 +276,16 @@ path.</p>
 
 <p>This works!! And produces a <code>main</code> execuatable, that when run, gives me:</p>
 
+<blockquote>
+<p>Note: This no longer works! The <code>-l</code> flag is really only for system
+libraries, and at the time I wrote this I think it functioned by a fluke of how
+the linker was looking for them. Alas, no more! A proper linking script or
+configuration is likely necessary to do this now, refer to the links below
+for more coherent information about that. This post describes the process of
+trying to understand how objects are linked into the final executable in
+general, and was never intended to be a tutorial on best practices.</p>
+</blockquote>
+
 <pre><code>2
 </code></pre>
 
@@ -290,7 +294,7 @@ path.</p>
 <p>This is a trivial example, yes! Also, I&rsquo;m pretty sure this is most definitely
 <em>not</em> the recommended way to do this.  Read
 <a href="https://doc.rust-lang.org/book/ffi.html">this</a>
-and <a href="https://doc.rust-lang.org/book/advanced-linking.html">this</a> for more
+and <a href="https://doc.rust-lang.org/1.9.0/book/advanced-linking.html">this</a> for more
 thorough, idiomatic info. Afaict, the more normal way to do this kind of
 thing would be to link against installed libraries or use <a href="http://doc.crates.io/build-script.html">cargo and a
 build script</a> to codify how the

@@ -9,15 +9,6 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-77907408-1', 'auto');
-        ga('send', 'pageview');
-    </script>
 </head>
 
 
@@ -73,42 +64,42 @@ to 100 without any of the divisor logic.</p>
 need a 1 in the hundreds loop counter, a 10 in the tens loop counter, and a 10
 in the ones loop counter to start with:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">seven</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="o"></span><span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="o"></span><span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span><span class="o"></span></code></pre></div>
+<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span></code></pre></div>
 <p>Those are the indices; they are going to be going down. Now I need the memory
 slots holding the actual numerals that are going to be printed&hellip; including one
 slot that holds a new line character I can access so not everything comes out
 all smashed together, because I can&rsquo;t use <code>puts</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">ten</span> <span class="o">=</span> <span class="s2">&#34;/n&#34;</span>
 <span class="n">eleven</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o"></span><span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o"></span><span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span><span class="o"></span></code></pre></div>
+<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span></code></pre></div>
 <p>Now I&rsquo;ll just create some nested loops to do the counting (up in the printed
 slots&rsquo; case and down in the index slots&rsquo; case):</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby">  <span class="k">until</span> <span class="n">seven</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="o"></span><span class="k">until</span> <span class="n">eight</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="o"></span><span class="k">until</span> <span class="n">nine</span> <span class="o">==</span> <span class="mi">0</span>
-            <span class="o"></span><span class="nb">print</span> <span class="n">ten</span>       <span class="c1">#prints the newline</span>
+    <span class="k">until</span> <span class="n">eight</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">until</span> <span class="n">nine</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="nb">print</span> <span class="n">ten</span>       <span class="c1">#prints the newline</span>
             <span class="nb">print</span> <span class="n">eleven</span>    <span class="c1">#prints the hundreds place</span>
             <span class="nb">print</span> <span class="n">twelve</span>    <span class="c1">#prints the tens place</span>
             <span class="nb">print</span> <span class="n">thirteen</span>  <span class="c1">#prints the ones place</span>
 
-            <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-            <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+            <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+            <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
         <span class="k">end</span>
 
-        <span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>           <span class="o"></span><span class="c1">#resets the ones place index slot</span>
-        <span class="n">eight</span> <span class="o">-=</span><span class="mi">1</span>           <span class="o"></span><span class="c1">#decrements the tens place index slot</span>
+        <span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1">#resets the ones place index slot</span>
+        <span class="n">eight</span> <span class="o">-=</span><span class="mi">1</span>           <span class="c1">#decrements the tens place index slot</span>
 
-        <span class="n">twelve</span> <span class="o">+=</span> <span class="mi">1</span>         <span class="o"></span><span class="c1">#increments the tens place print slot</span>
-        <span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>        <span class="o"></span><span class="c1">#resets the ones place print slot</span>
+        <span class="n">twelve</span> <span class="o">+=</span> <span class="mi">1</span>         <span class="c1">#increments the tens place print slot</span>
+        <span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>        <span class="c1">#resets the ones place print slot</span>
     <span class="k">end</span>
 
-  <span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="o"></span><span class="c1">#resets the tens place index slot</span>
-  <span class="n">seven</span> <span class="o">-=</span> <span class="mi">1</span>                  <span class="o"></span><span class="c1">#decrements the hundreds place index slot</span>
+  <span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="c1">#resets the tens place index slot</span>
+  <span class="n">seven</span> <span class="o">-=</span> <span class="mi">1</span>                  <span class="c1">#decrements the hundreds place index slot</span>
 
-  <span class="n">eleven</span> <span class="o">+=</span> <span class="mi">1</span>                 <span class="o"></span><span class="c1">#increments the hundreds place print slot</span>
-  <span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="o"></span><span class="c1">#resets the tens place print slot</span>
+  <span class="n">eleven</span> <span class="o">+=</span> <span class="mi">1</span>                 <span class="c1">#increments the hundreds place print slot</span>
+  <span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="c1">#resets the tens place print slot</span>
 <span class="k">end</span></code></pre></div>
 <p>Okay- still Ruby&hellip; ugly, non-Rubyish Ruby, but now it is nothing I can&rsquo;t do in
 brainfuck.</p>
@@ -125,7 +116,7 @@ triggered by a &ldquo;0&rdquo; in the memory slot that is being evaluated, anywa
 <p>This one took a little bit of thought, but a solution was forthcoming. I add
 two more index cells:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">five</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="o"></span><span class="n">six</span> <span class="o">=</span> <span class="mi">5</span><span class="o"></span></code></pre></div>
+<span class="n">six</span> <span class="o">=</span> <span class="mi">5</span></code></pre></div>
 <p>and decrement both of those each time I print a number out- when the &ldquo;3&rdquo; index
 slot reaches zero, I know I have found a multiple of 3 and can use that spot to
 trigger the code to print &ldquo;Fizz&rdquo; (and to reset the index back to 3- or rather 2
@@ -135,61 +126,61 @@ by one</a>) instead of the code to print the number. Ditto for &ldquo;Buzz.&rdqu
 
 <p>Here is what all this looks like&hellip;</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">five</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="o"></span><span class="n">six</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">six</span> <span class="o">=</span> <span class="mi">5</span>
 
-<span class="o"></span><span class="n">seven</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="o"></span><span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="o"></span><span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">seven</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>
 
-<span class="o"></span><span class="n">ten</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
+<span class="n">ten</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
 <span class="n">eleven</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o"></span><span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o"></span><span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>
 
- <span class="o"></span><span class="k">until</span> <span class="n">seven</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="o"></span><span class="k">until</span> <span class="n">eight</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="o"></span><span class="k">until</span> <span class="n">nine</span> <span class="o">==</span> <span class="mi">0</span>
+ <span class="k">until</span> <span class="n">seven</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">until</span> <span class="n">eight</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">until</span> <span class="n">nine</span> <span class="o">==</span> <span class="mi">0</span>
 
-            <span class="o"></span><span class="k">if</span> <span class="n">five</span> <span class="o">==</span> <span class="mi">0</span>
-                <span class="o"></span><span class="nb">print</span> <span class="n">ten</span>      <span class="c1">#don&#39;t forget the newline!</span>
+            <span class="k">if</span> <span class="n">five</span> <span class="o">==</span> <span class="mi">0</span>
+                <span class="nb">print</span> <span class="n">ten</span>      <span class="c1">#don&#39;t forget the newline!</span>
                 <span class="nb">print</span> <span class="s2">&#34;Fizz&#34;</span>
                 <span class="n">five</span> <span class="o">=</span> <span class="mi">2</span>
-                <span class="o"></span><span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>
-                <span class="o"></span><span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
             <span class="k">elsif</span> <span class="n">six</span> <span class="o">==</span> <span class="mi">0</span>
-                <span class="o"></span><span class="nb">print</span> <span class="n">ten</span>
+                <span class="nb">print</span> <span class="n">ten</span>
                 <span class="nb">print</span> <span class="s2">&#34;Buzz&#34;</span>
                 <span class="n">six</span> <span class="o">=</span> <span class="mi">4</span>
-                <span class="o"></span><span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>
-                <span class="o"></span><span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
             <span class="k">else</span>
                 <span class="nb">print</span> <span class="n">ten</span>       <span class="c1">#prints the newline</span>
                 <span class="nb">print</span> <span class="n">eleven</span>    <span class="c1">#prints the hundreds place</span>
                 <span class="nb">print</span> <span class="n">twelve</span>    <span class="c1">#prints the tens place</span>
                 <span class="nb">print</span> <span class="n">thirteen</span>  <span class="c1">#prints the ones place</span>
 
-                <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
 
-                <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the multiple of 3 tracker</span>
-                <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>        <span class="o"></span><span class="c1">#decrements the multiple of 5 tracker</span>
+                <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the multiple of 3 tracker</span>
+                <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>        <span class="c1">#decrements the multiple of 5 tracker</span>
             <span class="k">end</span>
         <span class="k">end</span>
 
-        <span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>           <span class="o"></span><span class="c1">#resets the ones place index slot</span>
-        <span class="n">eight</span> <span class="o">-=</span><span class="mi">1</span>           <span class="o"></span><span class="c1">#decrements the tens place index slot</span>
+        <span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1">#resets the ones place index slot</span>
+        <span class="n">eight</span> <span class="o">-=</span><span class="mi">1</span>           <span class="c1">#decrements the tens place index slot</span>
 
-        <span class="n">twelve</span> <span class="o">+=</span> <span class="mi">1</span>         <span class="o"></span><span class="c1">#increments the tens place print slot</span>
-        <span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>        <span class="o"></span><span class="c1">#resets the ones place print slot</span>
+        <span class="n">twelve</span> <span class="o">+=</span> <span class="mi">1</span>         <span class="c1">#increments the tens place print slot</span>
+        <span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>        <span class="c1">#resets the ones place print slot</span>
     <span class="k">end</span>
 
-<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="o"></span><span class="c1">#resets the tens place index slot</span>
-<span class="n">seven</span> <span class="o">-=</span> <span class="mi">1</span>                  <span class="o"></span><span class="c1">#decrements the hundreds place index slot</span>
+<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="c1">#resets the tens place index slot</span>
+<span class="n">seven</span> <span class="o">-=</span> <span class="mi">1</span>                  <span class="c1">#decrements the hundreds place index slot</span>
 
-<span class="n">eleven</span> <span class="o">+=</span> <span class="mi">1</span>                 <span class="o"></span><span class="c1">#increments the hundreds place print slot</span>
-<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="o"></span><span class="c1">#resets the tens place print slot</span>
+<span class="n">eleven</span> <span class="o">+=</span> <span class="mi">1</span>                 <span class="c1">#increments the hundreds place print slot</span>
+<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="c1">#resets the tens place print slot</span>
 <span class="k">end</span>
 
 <span class="c1">#since the above loop is set to terminate at the top after it reaches 100, that</span>
@@ -215,40 +206,40 @@ do that evaluation in series as two nested if/else statements, which is all
 elsif is shorthand for anyway&hellip; and I can deal with those! Now it looks
 like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">five</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="o"></span><span class="n">six</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">six</span> <span class="o">=</span> <span class="mi">5</span>
 
-<span class="o"></span><span class="n">seven</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="o"></span><span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="o"></span><span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">seven</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>
 
-<span class="o"></span><span class="n">ten</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
+<span class="n">ten</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
 <span class="n">eleven</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o"></span><span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o"></span><span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>
 
- <span class="o"></span><span class="k">until</span> <span class="n">seven</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="o"></span><span class="k">until</span> <span class="n">eight</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="o"></span><span class="k">until</span> <span class="n">nine</span> <span class="o">==</span> <span class="mi">0</span>
+ <span class="k">until</span> <span class="n">seven</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">until</span> <span class="n">eight</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">until</span> <span class="n">nine</span> <span class="o">==</span> <span class="mi">0</span>
 
-            <span class="o"></span><span class="k">if</span> <span class="n">five</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">five</span> <span class="o">==</span> <span class="mi">0</span>
 
-                <span class="o"></span><span class="nb">print</span> <span class="n">ten</span>      <span class="c1">#don&#39;t forget the newline!</span>
+                <span class="nb">print</span> <span class="n">ten</span>      <span class="c1">#don&#39;t forget the newline!</span>
                 <span class="nb">print</span> <span class="s2">&#34;Fizz&#34;</span>
                 <span class="n">five</span> <span class="o">=</span> <span class="mi">2</span>
-                <span class="o"></span><span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>
-                <span class="o"></span><span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
 
             <span class="k">else</span>
 
                 <span class="k">if</span> <span class="n">six</span> <span class="o">==</span> <span class="mi">0</span>
 
-                    <span class="o"></span><span class="nb">print</span> <span class="n">ten</span>
+                    <span class="nb">print</span> <span class="n">ten</span>
                     <span class="nb">print</span> <span class="s2">&#34;Buzz&#34;</span>
                     <span class="n">six</span> <span class="o">=</span> <span class="mi">4</span>
-                    <span class="o"></span><span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>
-                    <span class="o"></span><span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                    <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                    <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>
+                    <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                    <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
 
                 <span class="k">else</span>
 
@@ -257,27 +248,27 @@ like this:</p>
                     <span class="nb">print</span> <span class="n">twelve</span>    <span class="c1">#prints the tens place</span>
                     <span class="nb">print</span> <span class="n">thirteen</span>  <span class="c1">#prints the ones place</span>
 
-                    <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                    <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                    <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                    <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
 
-                    <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the multiple of 3 tracker</span>
-                    <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>        <span class="o"></span><span class="c1">#decrements the multiple of 5 tracker</span>
+                    <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the multiple of 3 tracker</span>
+                    <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>        <span class="c1">#decrements the multiple of 5 tracker</span>
                 <span class="k">end</span>
             <span class="k">end</span>
         <span class="k">end</span>
 
-        <span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>           <span class="o"></span><span class="c1">#resets the ones place index slot</span>
-        <span class="n">eight</span> <span class="o">-=</span><span class="mi">1</span>           <span class="o"></span><span class="c1">#decrements the tens place index slot</span>
+        <span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1">#resets the ones place index slot</span>
+        <span class="n">eight</span> <span class="o">-=</span><span class="mi">1</span>           <span class="c1">#decrements the tens place index slot</span>
 
-        <span class="n">twelve</span> <span class="o">+=</span> <span class="mi">1</span>         <span class="o"></span><span class="c1">#increments the tens place print slot</span>
-        <span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>        <span class="o"></span><span class="c1">#resets the ones place print slot</span>
+        <span class="n">twelve</span> <span class="o">+=</span> <span class="mi">1</span>         <span class="c1">#increments the tens place print slot</span>
+        <span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>        <span class="c1">#resets the ones place print slot</span>
     <span class="k">end</span>
 
-<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="o"></span><span class="c1">#resets the tens place index slot</span>
-<span class="n">seven</span> <span class="o">-=</span> <span class="mi">1</span>                  <span class="o"></span><span class="c1">#decrements the hundreds place index slot</span>
+<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="c1">#resets the tens place index slot</span>
+<span class="n">seven</span> <span class="o">-=</span> <span class="mi">1</span>                  <span class="c1">#decrements the hundreds place index slot</span>
 
-<span class="n">eleven</span> <span class="o">+=</span> <span class="mi">1</span>                 <span class="o"></span><span class="c1">#increments the hundreds place print slot</span>
-<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="o"></span><span class="c1">#resets the tens place print slot</span>
+<span class="n">eleven</span> <span class="o">+=</span> <span class="mi">1</span>                 <span class="c1">#increments the hundreds place print slot</span>
+<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="c1">#resets the tens place print slot</span>
 <span class="k">end</span>
 
 <span class="c1">#since the above loop is set to terminate at the top after it reaches 100, that</span>
@@ -304,46 +295,46 @@ dirty fraud. YOLO####33<a href="http://knowyourmeme.com/memes/the-1-phenomenon"
 target="_blank">3</a>. Also because it will always end up on a multiple of 100,
 so at least the &ldquo;Buzz&rdquo; part will be right. Screw you, 300, 600, and 900!!</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">five</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="o"></span><span class="n">six</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">six</span> <span class="o">=</span> <span class="mi">5</span>
 
-<span class="o"></span><span class="n">seven</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="o"></span><span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="o"></span><span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">seven</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>
 
-<span class="o"></span><span class="n">ten</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
+<span class="n">ten</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span>
 <span class="n">eleven</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o"></span><span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o"></span><span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>
 
- <span class="o"></span><span class="k">until</span> <span class="n">seven</span> <span class="o">==</span> <span class="mi">0</span>
-    <span class="o"></span><span class="k">until</span> <span class="n">eight</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="o"></span><span class="k">until</span> <span class="n">nine</span> <span class="o">==</span> <span class="mi">0</span>
+ <span class="k">until</span> <span class="n">seven</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">until</span> <span class="n">eight</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">until</span> <span class="n">nine</span> <span class="o">==</span> <span class="mi">0</span>
 
-            <span class="o"></span><span class="k">if</span> <span class="n">five</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">five</span> <span class="o">==</span> <span class="mi">0</span>
 
-                <span class="o"></span><span class="nb">print</span> <span class="n">ten</span>      <span class="c1">#don&#39;t forget the newline!</span>
+                <span class="nb">print</span> <span class="n">ten</span>      <span class="c1">#don&#39;t forget the newline!</span>
                 <span class="nb">print</span> <span class="s2">&#34;Fizz&#34;</span>
 
                 <span class="k">if</span> <span class="n">six</span> <span class="o">==</span> <span class="mi">0</span>
-                    <span class="o"></span><span class="nb">print</span> <span class="s2">&#34;Buzz&#34;</span>
+                    <span class="nb">print</span> <span class="s2">&#34;Buzz&#34;</span>
                     <span class="n">six</span> <span class="o">=</span> <span class="mi">5</span>
-                <span class="o"></span><span class="k">end</span>
+                <span class="k">end</span>
 
                 <span class="n">five</span> <span class="o">=</span> <span class="mi">2</span>
-                <span class="o"></span><span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>
-                <span class="o"></span><span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
 
             <span class="k">else</span>
 
                 <span class="k">if</span> <span class="n">six</span> <span class="o">==</span> <span class="mi">0</span>
 
-                    <span class="o"></span><span class="nb">print</span> <span class="n">ten</span>
+                    <span class="nb">print</span> <span class="n">ten</span>
                     <span class="nb">print</span> <span class="s2">&#34;Buzz&#34;</span>
                     <span class="n">six</span> <span class="o">=</span> <span class="mi">4</span>
-                    <span class="o"></span><span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>
-                    <span class="o"></span><span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                    <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                    <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>
+                    <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                    <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
 
                 <span class="k">else</span>
 
@@ -352,27 +343,27 @@ so at least the &ldquo;Buzz&rdquo; part will be right. Screw you, 300, 600, and 
                     <span class="nb">print</span> <span class="n">twelve</span>    <span class="c1">#prints the tens place</span>
                     <span class="nb">print</span> <span class="n">thirteen</span>  <span class="c1">#prints the ones place</span>
 
-                    <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the ones index slot</span>
-                    <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="o"></span><span class="c1">#increments the ones print slot</span>
+                    <span class="n">nine</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the ones index slot</span>
+                    <span class="n">thirteen</span> <span class="o">+=</span> <span class="mi">1</span>   <span class="c1">#increments the ones print slot</span>
 
-                    <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="o"></span><span class="c1">#decrements the multiple of 3 tracker</span>
-                    <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>        <span class="o"></span><span class="c1">#decrements the multiple of 5 tracker</span>
+                    <span class="n">five</span> <span class="o">-=</span> <span class="mi">1</span>       <span class="c1">#decrements the multiple of 3 tracker</span>
+                    <span class="n">six</span> <span class="o">-=</span> <span class="mi">1</span>        <span class="c1">#decrements the multiple of 5 tracker</span>
                 <span class="k">end</span>
             <span class="k">end</span>
         <span class="k">end</span>
 
-        <span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>           <span class="o"></span><span class="c1">#resets the ones place index slot</span>
-        <span class="n">eight</span> <span class="o">-=</span><span class="mi">1</span>           <span class="o"></span><span class="c1">#decrements the tens place index slot</span>
+        <span class="n">nine</span> <span class="o">=</span> <span class="mi">10</span>           <span class="c1">#resets the ones place index slot</span>
+        <span class="n">eight</span> <span class="o">-=</span><span class="mi">1</span>           <span class="c1">#decrements the tens place index slot</span>
 
-        <span class="n">twelve</span> <span class="o">+=</span> <span class="mi">1</span>         <span class="o"></span><span class="c1">#increments the tens place print slot</span>
-        <span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>        <span class="o"></span><span class="c1">#resets the ones place print slot</span>
+        <span class="n">twelve</span> <span class="o">+=</span> <span class="mi">1</span>         <span class="c1">#increments the tens place print slot</span>
+        <span class="n">thirteen</span> <span class="o">=</span> <span class="mi">0</span>        <span class="c1">#resets the ones place print slot</span>
     <span class="k">end</span>
 
-<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="o"></span><span class="c1">#resets the tens place index slot</span>
-<span class="n">seven</span> <span class="o">-=</span> <span class="mi">1</span>                  <span class="o"></span><span class="c1">#decrements the hundreds place index slot</span>
+<span class="n">eight</span> <span class="o">=</span> <span class="mi">10</span>                  <span class="c1">#resets the tens place index slot</span>
+<span class="n">seven</span> <span class="o">-=</span> <span class="mi">1</span>                  <span class="c1">#decrements the hundreds place index slot</span>
 
-<span class="n">eleven</span> <span class="o">+=</span> <span class="mi">1</span>                 <span class="o"></span><span class="c1">#increments the hundreds place print slot</span>
-<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="o"></span><span class="c1">#resets the tens place print slot</span>
+<span class="n">eleven</span> <span class="o">+=</span> <span class="mi">1</span>                 <span class="c1">#increments the hundreds place print slot</span>
+<span class="n">twelve</span> <span class="o">=</span> <span class="mi">0</span>                  <span class="c1">#resets the tens place print slot</span>
 <span class="k">end</span>
 
 <span class="c1"># Since the above loop is set to terminate at the top after it reaches 100, that</span>

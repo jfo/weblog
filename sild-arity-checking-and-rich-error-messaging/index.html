@@ -9,15 +9,6 @@
     <link rel="stylesheet" href="/css/style.css">
     <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-77907408-1', 'auto');
-        ga('send', 'pageview');
-    </script>
 </head>
 
 
@@ -80,13 +71,13 @@ generic code. #itstime for real error messaging. To do this, I could just print 
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">arity_check</span><span class="p">(</span><span class="kt">int</span> <span class="n">args</span><span class="p">,</span> <span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">args</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">==</span> <span class="n">NIL</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;something happened, you didn&#39;t have enough args&#34;</span><span class="p">);</span>
+            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;something happened, you didn&#39;t have enough args&#34;</span><span class="p">);</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="n">arity_check</span><span class="p">(</span><span class="n">args</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">args</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">){</span>
-        <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;something happened, you had too many args&#34;</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;something happened, you had too many args&#34;</span><span class="p">);</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
@@ -96,13 +87,13 @@ message. It&rsquo;s an error message, so it should be directed to standard error
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">arity_check</span><span class="p">(</span><span class="kt">int</span> <span class="n">args</span><span class="p">,</span> <span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">args</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">==</span> <span class="n">NIL</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;something happened, you didn&#39;t have enough args&#34;</span><span class="p">);</span>
+            <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;something happened, you didn&#39;t have enough args&#34;</span><span class="p">);</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
             <span class="n">arity_check</span><span class="p">(</span><span class="n">args</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">args</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">){</span>
-        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;something happened, you had too many args&#34;</span><span class="p">);</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;something happened, you had too many args&#34;</span><span class="p">);</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></div>
@@ -113,15 +104,15 @@ of the caller like this:</p>
     <span class="k">if</span> <span class="p">(</span><span class="n">args</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">==</span> <span class="n">NIL</span><span class="p">)</span> <span class="p">{</span>
             <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
-            <span class="sa"></span><span class="s">&#34;something happened, you didn&#39;t have enough args to %s&#34;</span><span class="p">,</span>
+            <span class="s">&#34;something happened, you didn&#39;t have enough args to %s&#34;</span><span class="p">,</span>
             <span class="n">caller_name</span><span class="p">);</span>
             <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="n">arity_check</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;quote&#34;</span><span class="p">,</span> <span class="n">args</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
+            <span class="n">arity_check</span><span class="p">(</span><span class="s">&#34;quote&#34;</span><span class="p">,</span> <span class="n">args</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">args</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">){</span>
         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
-        <span class="sa"></span><span class="s">&#34;something happened, you had too many args to %s&#34;</span><span class="p">,</span>
+        <span class="s">&#34;something happened, you had too many args to %s&#34;</span><span class="p">,</span>
         <span class="n">caller_name</span><span class="p">);</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
@@ -139,7 +130,7 @@ number that was passed in. That&rsquo;s much easier!</p>
     <span class="p">}</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">passed_in</span> <span class="o">!=</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
-        <span class="sa"></span><span class="s">&#34;ArityError: %s expected %d, got %d&#34;</span><span class="p">,</span>
+        <span class="s">&#34;ArityError: %s expected %d, got %d&#34;</span><span class="p">,</span>
         <span class="n">caller_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">passed_in</span>
         <span class="p">);</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
@@ -157,7 +148,7 @@ the counting loop.</p>
     <span class="p">}</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">passed_in</span> <span class="o">!=</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
-        <span class="sa"></span><span class="s">&#34;ArityError: %s expected %d, got %d&#34;</span><span class="p">,</span>
+        <span class="s">&#34;ArityError: %s expected %d, got %d&#34;</span><span class="p">,</span>
         <span class="n">caller_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">passed_in</span>
         <span class="p">);</span>
         <span class="n">print_list</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
