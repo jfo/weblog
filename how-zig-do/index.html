@@ -409,7 +409,7 @@ into that namespace to use <code>mem.eql</code>:</p>
     var storage = []u8{0} ** 5;
     const src = &#34;&gt;&gt;&gt;+++&lt;++&lt;+&#34;;
     bf(src, storage[0..]);
-    assert(mem.eql(u8, storage, []u8{ 0, 1, 2, 3, 0 }));
+    assert(std.mem.eql(u8, storage, []u8{ 0, 1, 2, 3, 0 }));
 }</code></pre></div>
 <p>&hellip;and remember, string literals are just <code>u8</code> arrays in zig, and I can put in
 hexadecimal literals inside them ,so the following would work in the exact same
