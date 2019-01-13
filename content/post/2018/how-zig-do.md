@@ -6,7 +6,7 @@ scripts: ["zighl.js"]
 
 > 1/13/19 Update: This post was written using Zig 0.2.0, and some of the code is
 > out of date. The [repository](https://github.com/jfo/zigf) has been updated to
-> work with 0.3.0x, inculding trunk. Refer to that to see a [simplified use of stdout](https://github.com/jfo/zigf/commit/7b1c563a9bd20e084243bfa0c7435e3cb468ccf2).
+> work with 0.3.0, inculding (for the moment) trunk. Refer to that to see a [simplified use of stdout](https://github.com/jfo/zigf/commit/7b1c563a9bd20e084243bfa0c7435e3cb468ccf2).
 
 Hello and good morning or whatever! Let's write a brainfuck interpreter. "Why
 are you doing this?" you might say, but you won't find that answer here.
