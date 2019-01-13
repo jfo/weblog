@@ -412,7 +412,7 @@ into that namespace to use <code>mem.eql</code>:</p>
     assert(std.mem.eql(u8, storage, []u8{ 0, 1, 2, 3, 0 }));
 }</code></pre></div>
 <p>&hellip;and remember, string literals are just <code>u8</code> arrays in zig, and I can put in
-hexadecimal literals inside them ,so the following would work in the exact same
+hexadecimal literals inside them, so the following would work in the exact same
 way!</p>
 <div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">assert(mem.eql(u8, storage, &#34;\x00\x01\x02\x03\x00&#34;));</code></pre></div>
 <p>Let&rsquo;s add <code>.</code>! This simply prints the byte value as a character in the cell
