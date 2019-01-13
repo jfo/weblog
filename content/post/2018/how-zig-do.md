@@ -585,7 +585,7 @@ test "<" {
 ```
 
 ...and remember, string literals are just `u8` arrays in zig, and I can put in
-hexadecimal literals inside them ,so the following would work in the exact same
+hexadecimal literals inside them, so the following would work in the exact same
 way!
 
 ```zig
