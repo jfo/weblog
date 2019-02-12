@@ -96,14 +96,14 @@ from <code>mkdir</code>. The repo of all the code is
 <p>I&rsquo;ll start with an <code>index.html</code> file that can look like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 
-<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="p">/</span><span class="nt">head</span><span class="p">&gt;</span>
 
-    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>Hello World!<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p"></span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span><span class="p"></span><span class="p">&gt;</span>Hello World!<span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="p">/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
 <p>Since this is completely static, you can simply open the <code>index.html</code> file in a
 browser and it will act exactly as if it&rsquo;s been served to you.</p>
 
@@ -122,9 +122,9 @@ opening the file in the browser.</p>
 </code></pre>
 
 <p>And in the <code>head</code> tag of the index file:</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span><span class="p"></span><span class="p">&gt;</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;Hello Warld!&#34;</span><span class="p">);</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
 <p>Now reloading the page gives me both &ldquo;Hello World!&rdquo; in the browser window and
 &ldquo;Hello Warld!&rdquo; in the console. All is right with the world.</p>
 
@@ -142,12 +142,12 @@ my page. This is almost definitely not the best way to do this.</p>
 2003, and also console.log the two objects I get back. I know these are the
 objects I get back from those calls because
 <a href="https://facebook.github.io/react/docs/package-management.html">this</a>.</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react@15.3.1/dist/react.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react@15.3.1/dist/react.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p"></span><span class="p">&gt;</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">React</span><span class="p">);</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">ReactDOM</span><span class="p">);</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
 <p>&hellip;which yields in the console:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="o">&gt;</span> <span class="nb">Object</span> <span class="p">{</span><span class="nx">__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED</span><span class="o">:</span> <span class="nb">Object</span><span class="p">,</span> <span class="nx">__SECRET_DOM_SERVER_DO_NOT_USE_OR_YOU_WILL_BE_FIRED</span><span class="o">:</span> <span class="nb">Object</span><span class="p">,</span> <span class="nx">Children</span><span class="o">:</span> <span class="nb">Object</span><span class="p">,</span> <span class="nx">PropTypes</span><span class="o">:</span> <span class="nx">Obj</span><span class="p">...</span> <span class="c1">// etc
 </span><span class="c1"></span><span class="o">&gt;</span> <span class="nb">Object</span> <span class="p">{</span><span class="nx">version</span><span class="o">:</span> <span class="s2">&#34;15.3.1&#34;</span><span class="p">}</span>
@@ -165,19 +165,20 @@ a reference to a container that already exists in the dom. Let&rsquo;s see if I 
 get one this way:</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 
-<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react@15.3.1/dist/react.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p"></span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react@15.3.1/dist/react.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p"></span><span class="p">&gt;</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;example&#34;</span><span class="p">));</span>
-        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+        
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="p">/</span><span class="nt">head</span><span class="p">&gt;</span>
 
-    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p"></span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="p">/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
 <p>This logs <code>null</code> to the console, and is just the kind of garbage javascript
 that ruins lives and families. <em>of course</em> I can&rsquo;t access that div yet, it
 hasn&rsquo;t been rendered at the time the script is trying to access it. This is
@@ -194,19 +195,20 @@ loading all the javascript dependencies in random script tags (react is ~20,000
 lines, after all!)</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 
-<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="p">/</span><span class="nt">head</span><span class="p">&gt;</span>
 
-    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react@15.3.1/dist/react.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p"></span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react@15.3.1/dist/react.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p"></span><span class="p">&gt;</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;example&#34;</span><span class="p">));</span>
-        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
+        
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="p">/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
 <p>This logs:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="o">&gt;</span> <span class="nx">div</span><span class="err">#</span><span class="nx">example</span>
 </code></pre></div>
@@ -220,32 +222,33 @@ is what I wanted hooray.</p>
 know that I have access to the ReactDOM object there, after all.</p>
 <div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
 
-<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="p">/</span><span class="nt">head</span><span class="p">&gt;</span>
 
-    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p"></span><span class="p">&gt;</span>
 
-        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
 
-        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react@15.3.1/dist/react.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-        <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react@15.3.1/dist/react.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">script</span><span class="p"></span><span class="p">&gt;</span>
             <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
                 <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Hello</span><span class="p">,</span> <span class="nx">world</span><span class="o">!&lt;</span><span class="err">/h1&gt;,</span>
                 <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
             <span class="p">);</span>
-        <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+        
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="p">/</span><span class="nt">body</span><span class="p">&gt;</span>
 
-<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></div>
 <p>This won&rsquo;t work! I get a syntax error in the console:</p>
 
 <pre><code>index.html:13 Uncaught SyntaxError: Unexpected token &lt;
 </code></pre>
 
 <p>Astute readers will notice that I did not include <code>babel</code> like in the facebook example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/babel-core@5.8.38/browser.min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/babel-core@5.8.38/browser.min.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
 <p>Wtf is <a href="https://babeljs.io/">babel</a>? Do I want to use it? Eventually, yes I do.
 In this case, it&rsquo;s turning <code>&lt;h1&gt;Hello, world!&lt;/h1&gt;,</code> from inlined <code>JSX</code> into
 vanilla javascript.</p>
@@ -279,9 +282,9 @@ see what that would get turned into, try this <a href="https://babeljs.io/repl/#
 </code></pre></div>
 <p>No errors! It isn&rsquo;t immediately apparent what this does, but if you inspect the
 DOM now you&rsquo;ll see something new added to it:</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">data-reactroot</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">data-reactroot</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></div>
 <p>That <code>data-reactroot</code> div is the element I created! Interesting to note, but
 you can pass any string into that <code>createElement()</code> and you will get a tag of
 that name. What the rendering browser does with that is up to it, but the React
@@ -294,9 +297,9 @@ arbitrary tags</a>.</p>
 <span class="p">);</span>
 </code></pre></div>
 <p>yields</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">thingamadoodad</span> <span class="na">data-reactroot</span><span class="p">&gt;&lt;/</span><span class="nt">thingamadoodad</span><span class="p">&gt;</span>
-<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;example&#34;</span><span class="p"></span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">thingamadoodad</span> <span class="na">data-reactroot</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">thingamadoodad</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">div</span><span class="p">&gt;</span></code></pre></div>
 <p>If we check out the <code>React.createElement</code> in the console we can see a few lines
 of the source, including the argument list:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="o">&gt;</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span>
@@ -388,7 +391,7 @@ underpins your systems, that&rsquo;s what I always say!</p>
 <span class="p">);</span>
 </code></pre></div>
 <p>Does indeed give me:</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">thingy</span> <span class="na">data-reactroot</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;doodad&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">thingy</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">thingy</span> <span class="na">data-reactroot</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;doodad&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">thingy</span><span class="p">&gt;</span></code></pre></div>
 <p>Woot Woot!</p>
 
 <p>Here&rsquo;s a classy classic React gotcha! Let&rsquo;s make an element with a class on
@@ -417,7 +420,7 @@ for <code>for</code>, which mapes to <code>htmlFor</code> in react land. <a href
     document.getElementById('example')
 );
 </code></pre>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">whatsit</span> <span class="na">data-reactroot</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;hoohaa&#34;</span> <span class="na">for</span><span class="o">=</span><span class="s">&#34;derp&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">whatsit</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">whatsit</span> <span class="na">data-reactroot</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;hoohaa&#34;</span> <span class="na">for</span><span class="o">=</span><span class="s">&#34;derp&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">whatsit</span><span class="p">&gt;</span></code></pre></div>
 <p><sub><a href='#toc'>toc</a></sub>
 <div id="children"></div></p>
 
@@ -439,9 +442,9 @@ elements and/or strings and/or numbers and/or arrays you want to be rendered!</p
 <span class="p">);</span>
 </code></pre></div>
 <p>This yields this html, basically:</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">h1</span> <span class="na">data-reactroot</span><span class="p">&gt;</span>
-    string<span class="p">&lt;</span><span class="nt">sup</span><span class="p">&gt;</span>UPP<span class="p">&lt;/</span><span class="nt">sup</span><span class="p">&gt;</span>123<span class="p">&lt;</span><span class="nt">sub</span><span class="p">&gt;</span>little doooown<span class="p">&lt;/</span><span class="nt">sub</span><span class="p">&gt;</span>what78
-<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">h1</span> <span class="na">data-reactroot</span><span class="p"></span><span class="p">&gt;</span>
+    string<span class="p">&lt;</span><span class="nt">sup</span><span class="p"></span><span class="p">&gt;</span>UPP<span class="p">&lt;</span><span class="p">/</span><span class="nt">sup</span><span class="p">&gt;</span>123<span class="p">&lt;</span><span class="nt">sub</span><span class="p"></span><span class="p">&gt;</span>little doooown<span class="p">&lt;</span><span class="p">/</span><span class="nt">sub</span><span class="p">&gt;</span>what78
+<span class="p">&lt;</span><span class="p">/</span><span class="nt">h1</span><span class="p">&gt;</span></code></pre></div>
 <p>Notice some things&hellip; the array was flattened and each element was just treated
 like it was passed in individually. Some of these children are themselves React
 Elements. Also, I haven&rsquo;t passed in an array of things, I&rsquo;ve just passed in an
@@ -455,7 +458,7 @@ by the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Referenc
     <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&#34;h1&#34;</span><span class="p">,</span> <span class="p">{},</span> <span class="s2">&#34;Hello, &#34;</span><span class="p">,</span> <span class="s2">&#34;World!&#34;</span><span class="p">),</span>
     <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
 <span class="p">);</span>
-</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">h1</span> <span class="na">data-reactroot</span><span class="p">&gt;</span>Hello, World!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span></code></pre></div>
+</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">h1</span> <span class="na">data-reactroot</span><span class="p"></span><span class="p">&gt;</span>Hello, World!<span class="p">&lt;</span><span class="p">/</span><span class="nt">h1</span><span class="p">&gt;</span></code></pre></div>
 <p>And we&rsquo;re back where we started, but with React in the mix. This Single Page
 App is going to be so sweeeeeeeet!</p>
 
@@ -469,7 +472,7 @@ App is going to be so sweeeeeeeet!</p>
 
 <p>Ok this inline JS thing is cute and all but let&rsquo;s put that in its own file, in
 the same directory as the index.html file.</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;./index.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// index.js
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;./index.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="c1">// index.js
 </span><span class="c1"></span><span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
     <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&#34;h1&#34;</span><span class="p">,</span> <span class="p">{},</span> <span class="s2">&#34;Hello, &#34;</span><span class="p">,</span> <span class="s2">&#34;World!&#34;</span><span class="p">),</span>
     <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
@@ -477,8 +480,8 @@ the same directory as the index.html file.</p>
 </code></pre></div>
 <p>Also, now that we know what JSX renders into (just a plain old javascript
 function call, as it turn out!) I can see the great benefit of it.</p>
-<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/babel-core@5.8.38/browser.min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/babel&#34;</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;./index.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://unpkg.com/babel-core@5.8.38/browser.min.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;text/babel&#34;</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;./index.js&#34;</span><span class="p"></span><span class="p">&gt;&lt;</span><span class="p">/</span><span class="nt">script</span><span class="p">&gt;</span></code></pre></div>
 <p>This fails when loaded directly as a file (on chrome at least) because of cross
 site scripting safeties! I can however run that little web server I mentioned
 earlier with</p>

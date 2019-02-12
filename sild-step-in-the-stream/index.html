@@ -113,11 +113,11 @@ and then exits.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s">&#34;test.txt&#34;</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">);</span>
+    <span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;test.txt&#34;</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;r&#34;</span><span class="p">);</span>
     <span class="kt">char</span> <span class="n">current_char</span><span class="p">;</span>
 
     <span class="k">while</span> <span class="p">((</span><span class="n">current_char</span> <span class="o">=</span> <span class="n">getc</span><span class="p">(</span><span class="n">fp</span><span class="p">))</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">)</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="n">current_char</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="n">current_char</span><span class="p">);</span>
 
     <span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
 
@@ -279,19 +279,19 @@ and only if it is inside of a list, which we&rsquo;ll know if the list_depth is 
     <span class="kt">char</span> <span class="o">*</span><span class="n">token</span> <span class="o">=</span> <span class="n">read_substring</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
     <span class="n">C</span> <span class="o">*</span><span class="n">out</span><span class="p">;</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;quote&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;quote&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">,</span> <span class="n">quote</span><span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;car&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;car&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">,</span> <span class="n">car</span><span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;cdr&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;cdr&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">,</span> <span class="n">cdr</span><span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;cons&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;cons&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">,</span> <span class="n">cons</span><span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;atom&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;atom&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">,</span> <span class="n">atom</span><span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;eq&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;eq&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">,</span> <span class="n">eq</span><span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s">&#34;cond&#34;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scmp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;cond&#34;</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">BUILTIN</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">func</span> <span class="o">=</span> <span class="p">{</span><span class="n">token</span><span class="p">,</span> <span class="n">cond</span><span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">makecell</span><span class="p">(</span><span class="n">LABEL</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="n">token</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
@@ -317,13 +317,13 @@ the C stack to keep track of local depth for me!</p>
     <span class="n">verify</span><span class="p">(</span><span class="n">current_char</span><span class="p">,</span> <span class="n">list_depth</span><span class="p">);</span>
 
     <span class="k">switch</span><span class="p">(</span><span class="n">current_char</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="sc">&#39;\0&#39;</span><span class="o">:</span> <span class="k">case</span> <span class="nl">EOF</span><span class="p">:</span>
+        <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;\0&#39;</span><span class="o">:</span> <span class="k">case</span> <span class="nl">EOF</span><span class="p">:</span>
             <span class="k">return</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
-        <span class="k">case</span> <span class="sc">&#39;)&#39;</span><span class="o">:</span>
+        <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;)&#39;</span><span class="o">:</span>
             <span class="k">return</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
-        <span class="k">case</span> <span class="sc">&#39; &#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sc">&#39;\n&#39;</span><span class="o">:</span>
+        <span class="k">case</span> <span class="sa"></span><span class="sc">&#39; &#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;\n&#39;</span><span class="o">:</span>
             <span class="k">return</span> <span class="n">read_inner</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">list_depth</span><span class="p">);</span>
-        <span class="k">case</span> <span class="sc">&#39;(&#39;</span><span class="o">:</span>
+        <span class="k">case</span> <span class="sa"></span><span class="sc">&#39;(&#39;</span><span class="o">:</span>
             <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span>
                     <span class="n">LIST</span><span class="p">,</span>
                     <span class="p">(</span><span class="n">V</span><span class="p">){.</span><span class="n">list</span> <span class="o">=</span> <span class="n">read_inner</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">list_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)},</span>
@@ -346,7 +346,7 @@ depth of 0.</p>
 the forms in a file, evaluates them, and frees the result before moving on to
 the next one!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">eval_file</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">);</span>
+    <span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;r&#34;</span><span class="p">);</span>
 
     <span class="n">C</span> <span class="o">*</span> <span class="n">c</span><span class="p">;</span>
     <span class="k">while</span><span class="p">((</span><span class="n">c</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">fp</span><span class="p">))</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">)</span> <span class="p">{</span>
@@ -359,7 +359,7 @@ the next one!</p>
 <span class="p">}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">eval_file</span><span class="p">(</span><span class="s">&#34;./test.sld&#34;</span><span class="p">);</span>
+    <span class="n">eval_file</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;./test.sld&#34;</span><span class="p">);</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>Notice that <code>eval_file</code> knows to terminate on <code>read</code> returning a <code>&amp;nil</code> cell,
@@ -402,7 +402,7 @@ to the program.</p>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
 
     <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mh">0x0</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
     <span class="p">}</span>
 
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
@@ -446,7 +446,7 @@ repl to the language, but I haven&rsquo;t implemented that yet, so I&rsquo;ll ex
 error if the argument count is equal to only 1.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Error, no file names given and repl not yet implemented.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;Error, no file names given and repl not yet implemented.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 

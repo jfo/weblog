@@ -47,7 +47,7 @@ ok.  Foreign Function Interface. Ok.</p>
 <span class="p">}</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <pre><code>clang main.c
@@ -70,7 +70,7 @@ ok.  Foreign Function Interface. Ok.</p>
 </span><span class="cp">#include</span> <span class="cpf">&#34;doubler.c&#34;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>This also &ldquo;just works&rdquo;</p>
@@ -96,7 +96,7 @@ this, simply stating the function signature of <code>doubler</code>:</p>
 </span><span class="cp">#include</span> <span class="cpf">&#34;doubler.h&#34;</span><span class="cp">
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <pre><code>clang main.c
@@ -157,8 +157,7 @@ symbol I actually want to link to.</p>
 <div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// main.rs
 </span><span class="c1"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span><span class="w"></span></code></pre></div>
+</span><span class="w"></span><span class="p">}</span></code></pre></div>
 <p>If I try to compile this with <code>rustc main.rs</code>, I get an obvious error:</p>
 
 <pre><code>error[E0425]: unresolved name `doubler`
@@ -184,8 +183,7 @@ exists in the C header file, just the function signature.</p>
 </span><span class="w">
 </span><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span><span class="w"></span></code></pre></div>
+</span><span class="w"></span><span class="p">}</span></code></pre></div>
 <blockquote>
 <p>I am using <code>u32</code> here because on my machine <code>sizeof(int)</code> returns <code>4</code>, which
 is 4 bytes, so 4 * 8 bits = 32 bits.</p>
@@ -212,8 +210,7 @@ do to the data passed into it, I need to wrap this in an unsafe block.</p>
 </span><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w">
 </span><span class="w">        </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">doubler</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span><span class="w">
 </span><span class="w">    </span><span class="p">}</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span><span class="w"></span></code></pre></div>
+</span><span class="w"></span><span class="p">}</span></code></pre></div>
 <pre><code>error: linking with `cc` failed: exit code: 1
   |
   = note: Undefined symbols for architecture x86_64:

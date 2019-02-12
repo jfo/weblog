@@ -476,8 +476,8 @@ Identity monad implemented in a more object oriented way, This time using PHP.</
 <p>First, I&rsquo;ll define an interface that any monadic class will need to implement.</p>
 <div class="highlight"><pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?</span>
 <span class="k">interface</span> <span class="nx">Monad</span> <span class="p">{</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">unit</span><span class="p">(</span><span class="nv">$x</span><span class="p">);</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">bind</span><span class="p">(</span><span class="nx">callable</span> <span class="nv">$fn</span><span class="p">);</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="o"></span><span class="nf">unit</span><span class="p">(</span><span class="nv">$x</span><span class="p">);</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="o"></span><span class="nf">bind</span><span class="p">(</span><span class="nx">callable</span> <span class="nv">$fn</span><span class="p">);</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Now, I&rsquo;ll make one!</p>
@@ -487,19 +487,19 @@ Identity monad implemented in a more object oriented way, This time using PHP.</
 
     <span class="k">private</span> <span class="nv">$value</span><span class="p">;</span>
 
-    <span class="k">private</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$n</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">function</span> <span class="o"></span><span class="fm">__construct</span><span class="p">(</span><span class="nv">$n</span><span class="p">)</span> <span class="p">{</span>
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">value</span> <span class="o">=</span> <span class="nv">$n</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">unit</span><span class="p">(</span><span class="nv">$x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="o"></span><span class="nf">unit</span><span class="p">(</span><span class="nv">$x</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">ID</span><span class="p">(</span><span class="nv">$x</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">bind</span><span class="p">(</span><span class="nx">callable</span> <span class="nv">$fn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="o"></span><span class="nf">bind</span><span class="p">(</span><span class="nx">callable</span> <span class="nv">$fn</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nv">$fn</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">);</span>
     <span class="p">}</span>
 
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">compose</span><span class="p">(</span><span class="nx">callable</span> <span class="nv">$g</span><span class="p">,</span> <span class="nx">callable</span> <span class="nv">$f</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="o"></span><span class="nf">compose</span><span class="p">(</span><span class="nx">callable</span> <span class="nv">$g</span><span class="p">,</span> <span class="nx">callable</span> <span class="nv">$f</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nv">$g</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">value</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">bind</span><span class="p">(</span><span class="nv">$f</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -542,21 +542,21 @@ language, this is pretty easy. Here&rsquo;s one way to do so in some Ruby:</p>
 <div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Whatever</span>
     <span class="kp">attr_reader</span> <span class="ss">:history</span><span class="p">,</span> <span class="ss">:value</span>
 
-    <span class="k">def</span> <span class="nf">initialize</span>
+    <span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">initialize</span>
         <span class="vi">@history</span> <span class="o">=</span> <span class="o">[]</span>
         <span class="vi">@value</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">end</span>
+    <span class="o"></span><span class="k">end</span>
 
-    <span class="k">def</span> <span class="nf">inc</span>
+    <span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">inc</span>
         <span class="vi">@history</span> <span class="o">&lt;&lt;</span> <span class="s1">&#39;inc&#39;</span>
         <span class="vi">@value</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="nb">self</span>
+        <span class="o"></span><span class="nb">self</span>
     <span class="k">end</span>
 
-    <span class="k">def</span> <span class="nf">dec</span>
+    <span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">dec</span>
         <span class="vi">@history</span> <span class="o">&lt;&lt;</span> <span class="s1">&#39;dec&#39;</span>
         <span class="vi">@value</span> <span class="o">-=</span> <span class="mi">1</span>
-        <span class="nb">self</span>
+        <span class="o"></span><span class="nb">self</span>
     <span class="k">end</span>
 <span class="k">end</span>
 

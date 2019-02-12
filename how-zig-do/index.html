@@ -276,7 +276,7 @@ these circumstances.</p>
 
 <p>Look at this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">// test.zig
-test &#34;testing tests&#34; {}</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">zig test test.zig</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-nothing" data-lang="nothing">Test 1/1 testing tests...OK</code></pre></div>
+test &#34;testing tests&#34; {}</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">zig test test<span class="p">.</span>zig</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-nothing" data-lang="nothing">Test 1/1 testing tests...OK</code></pre></div>
 <p>Of course, an empty test is not useful. I can use <code>assert</code> to actually assert
 test cases.</p>
 <div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const assert = @import(&#34;std&#34;).debug.assert;
@@ -287,7 +287,7 @@ test &#34;test true&#34; {
 
 test &#34;test false&#34; {
     assert(false);
-}</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">zig test test.zig</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#34;thing.zig&#34; 10L, 127C written
+}</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">zig test test<span class="p">.</span>zig</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#34;thing.zig&#34; 10L, 127C written
 :!zig test thing.zig
 
 Test 1/2 test true...OK

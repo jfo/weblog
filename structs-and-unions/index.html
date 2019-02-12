@@ -40,7 +40,7 @@ bytes, since 8 * 8 = 64.</p>
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="kt">long</span> <span class="kt">long</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>Sure enough, this outputs:</p>
@@ -62,7 +62,7 @@ be drastically more accurate to call that type a <code>byte</code>, but here we 
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="kt">char</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>yields:</p>
@@ -87,7 +87,7 @@ value. A <code>Point</code> struct might look like this:</p>
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <pre><code>4
@@ -103,7 +103,7 @@ value. A <code>Point</code> struct might look like this:</p>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">struct</span> <span class="n">Point</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>And indeed it is.</p>
@@ -125,7 +125,7 @@ specify such a point, right?</p>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">struct</span> <span class="n">Point</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>If you&rsquo;re guessing this is 20 bytes long, well pat yourself on the back!</p>
@@ -177,7 +177,7 @@ byte) plus a <code>long long</code> (8 bytes), so 9 bytes.</p>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">struct</span> <span class="n">Thingy</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>Outputs:</p>
@@ -212,7 +212,7 @@ would, and it would need to be as big as two ints to hold both of them! But
 since this is a union, it will only ever need to hold one or the other.</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">union</span> <span class="n">Thingy</span> <span class="n">myunion</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">myunion</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">myunion</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>Will output: <code>4</code>! In fact, so will this:</p>
@@ -229,7 +229,7 @@ since this is a union, it will only ever need to hold one or the other.</p>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">union</span> <span class="n">Thingy</span> <span class="n">myunion</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">myunion</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">myunion</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>You get the idea!</p>
@@ -246,8 +246,8 @@ since this is a union, it will only ever need to hold one or the other.</p>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">union</span> <span class="n">Thingy</span> <span class="n">myunion</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">156</span> <span class="p">};</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>Outputs:</p>
@@ -264,7 +264,7 @@ space</em>. Because they are both <code>int</code>s, this is fine!</p>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">union</span> <span class="n">Thingy</span> <span class="n">myunion</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">myunion</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lu&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">myunion</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>No surprise this time! Because a <code>long long</code> is by far the largest member of
@@ -285,13 +285,13 @@ this <code>union</code>, an instance of this type will have a size that is the s
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">union</span> <span class="n">Thingy</span> <span class="n">myunion</span><span class="p">;</span>
 
-    <span class="n">myunion</span> <span class="o">=</span> <span class="p">(</span><span class="k">union</span> <span class="n">Thingy</span><span class="p">){</span> <span class="p">.</span><span class="n">letter</span> <span class="o">=</span> <span class="sc">&#39;!&#39;</span> <span class="p">};</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%c</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">letter</span><span class="p">);</span>  <span class="c1">// !
-</span><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lli</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">number</span><span class="p">);</span> <span class="c1">// 33
+    <span class="n">myunion</span> <span class="o">=</span> <span class="p">(</span><span class="k">union</span> <span class="n">Thingy</span><span class="p">){</span> <span class="p">.</span><span class="n">letter</span> <span class="o">=</span> <span class="sa"></span><span class="sc">&#39;!&#39;</span> <span class="p">};</span>
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%c</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">letter</span><span class="p">);</span>  <span class="c1">// !
+</span><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lli</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">number</span><span class="p">);</span> <span class="c1">// 33
 </span><span class="c1"></span>
     <span class="n">myunion</span> <span class="o">=</span> <span class="p">(</span><span class="k">union</span> <span class="n">Thingy</span><span class="p">){</span> <span class="p">.</span><span class="n">number</span> <span class="o">=</span> <span class="mi">33</span> <span class="p">};</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%c</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">letter</span><span class="p">);</span>  <span class="c1">// !
-</span><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%lli</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">number</span><span class="p">);</span> <span class="c1">// 33
+    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%c</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">letter</span><span class="p">);</span>  <span class="c1">// !
+</span><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%lli</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">myunion</span><span class="p">.</span><span class="n">number</span><span class="p">);</span> <span class="c1">// 33
 </span><span class="c1"></span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
