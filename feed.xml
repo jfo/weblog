@@ -6,9 +6,38 @@
     <description>Recent content on blog.jfo.click</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Thu, 15 Mar 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://blog.jfo.click/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>How Zig Do?</title>
+      <link>https://blog.jfo.click/how-zig-do/</link>
+      <pubDate>Thu, 15 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.jfo.click/how-zig-do/</guid>
+      <description>1/13/19 Update: This post was written using Zig 0.2.0, and some of the code is out of date. The repository has been updated to work with 0.3.0, inculding (for the moment) trunk. Refer to that to see a simplified use of stdout.
+ Hello and good morning or whatever! Let&amp;rsquo;s write a brainfuck interpreter. &amp;ldquo;Why are you doing this?&amp;rdquo; you might say, but you won&amp;rsquo;t find that answer here.</description>
+    </item>
+    
+    <item>
+      <title>s3, Hugo, and static asset hosting</title>
+      <link>https://blog.jfo.click/s3-hugo-and-static-asset-hosting/</link>
+      <pubDate>Fri, 29 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.jfo.click/s3-hugo-and-static-asset-hosting/</guid>
+      <description>I&amp;rsquo;ve been writing this blog for a while now, and put it through several different blogging engines and style changes. Wordpress, Middleman, Jekyll&amp;hellip; and finally to Hugo, which I&amp;rsquo;m using currently. I feel it should be really easy to switch platforms (where &amp;ldquo;really easy&amp;rdquo; means like, a week or two of fiddly work), and I fully expect to do so again when it becomes worth the trouble to do it, whenever and whyever that may be.</description>
+    </item>
+    
+    <item>
+      <title>Mapping the Monado</title>
+      <link>https://blog.jfo.click/mapping-the-monado/</link>
+      <pubDate>Fri, 15 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.jfo.click/mapping-the-monado/</guid>
+      <description>I have recently come into possession of a reasonably sound understanding of monads. Tradition dictates that I now have an obligation to write a blog post/tutorial/thing about them, wherein I attempt to gracefully share this nascent knowledge through the judicious use of carefully chosen metaphors and examples. Legend has it that I will inevitably fail in this, and then be raked over the coals for my sins by both category theorists and Haskellers alike.</description>
+    </item>
     
   </channel>
 </rss>
