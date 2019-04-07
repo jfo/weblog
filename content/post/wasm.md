@@ -479,7 +479,9 @@ sustainable workflow for a lot of really obvious reasons.
 Luckily, the WebAssembly spec includes a _textual encoding_ using
 [s-expressions](https://en.wikipedia.org/wiki/S-expression). This format is
 much easier to both read and to write, and also the file suffix is `wat`, which
-is terrific.
+is terrific. `wat` uses s-expressions, but it is not a lisp. Lisps are also
+based around s-expressions, but the things that make a lisp a lisp are how the
+s-expressions are stored and evaluated.
 
 The (WebAssembly binary toolkit)[https://github.com/WebAssembly/wabt] includes
 among its many tools a couple of utilities to translate between wasm and wat in
@@ -504,7 +506,7 @@ bytecode with a couple of small exceptions.
 preamble with the magic number and version number does.
 
 You'll also notice `(;0;)`, which is a comment that `wasm2wat` has inserted to help
-with identifying the memory address of the global declaration. See thatit is
+with identifying the memory address of the global declaration. See that it is
 referred to in the `export` section as `0`.  Globals are always referred to by
 their memory address in the order they were declared, so you could see how this
 would become unwieldy with a lot of them. If you run `wat2wasm` on this output,
