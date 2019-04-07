@@ -18,20 +18,21 @@
 }
 
 body {
-  background: #fffffa;
+  background: #fefefe;
   font-family: etbook;
   color: #494949;
-  font-size: 1.1em;
+  font-size: 1.2em;
 }
 
 h1 {
   font-size: 2em;
 }
+
 .title-thing {
     margin: 0;
 }
 
-p, li { line-height: 1.4; }
+p, li { line-height: 1.6; }
 
 a { text-decoration: none; }
 a:link {
