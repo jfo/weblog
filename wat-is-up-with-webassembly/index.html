@@ -223,13 +223,11 @@ file back into a <code>test.wasm</code> binary file with the <code>-r</code> fla
 
 <p>Now, back in my node script, the source is no longer valid, and attempting to
 compile the source yields a verbose error:</p>
-
-<pre><code>const fs = require('fs');
-const buf = fs.readFileSync('./test.wasm');
-console.log(WebAssembly.validate(buf)); // false
-WebAssembly.instantiate(buf);
-</code></pre>
-
+<div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+<span class="k">const</span> <span class="nx">buf</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="s1">&#39;./test.wasm&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">WebAssembly</span><span class="p">.</span><span class="nx">validate</span><span class="p">(</span><span class="nx">buf</span><span class="p">));</span> <span class="c1">// false
+</span><span class="c1"></span><span class="nx">WebAssembly</span><span class="p">.</span><span class="nx">instantiate</span><span class="p">(</span><span class="nx">buf</span><span class="p">);</span>
+</code></pre></div>
 <pre><code>(node:10392) UnhandledPromiseRejectionWarning: CompileError: AsyncCompile: Wasm decoding failed: expected magic word 00 61 73 6d, found 01 61 73 6d @+0
 </code></pre>
 
@@ -433,7 +431,7 @@ is terrific. <code>wat</code> uses s-expressions, but it is not a lisp. Lisps ar
 based around s-expressions, but the things that make a lisp a lisp are how the
 s-expressions are stored and evaluated, not the format alone.</p>
 
-<p>The (WebAssembly binary toolkit)[<a href="https://github.com/WebAssembly/wabt">https://github.com/WebAssembly/wabt</a>] includes
+<p>The <a href="https://github.com/WebAssembly/wabt">WebAssembly binary toolkit</a> includes
 among its many tools a couple of utilities to translate between wasm and wat in
 both directions. They are unceremoniously named <code>wasm2wat</code> and <code>wat2wasm</code>.</p>
 
