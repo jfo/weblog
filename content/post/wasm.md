@@ -232,7 +232,7 @@ xxd -r test.hex > test.wasm
 Now, back in my node script, the source is no longer valid, and attempting to
 compile the source yields a verbose error:
 
-```
+```js
 const fs = require('fs');
 const buf = fs.readFileSync('./test.wasm');
 console.log(WebAssembly.validate(buf)); // false
@@ -487,7 +487,7 @@ is terrific. `wat` uses s-expressions, but it is not a lisp. Lisps are also
 based around s-expressions, but the things that make a lisp a lisp are how the
 s-expressions are stored and evaluated, not the format alone.
 
-The (WebAssembly binary toolkit)[https://github.com/WebAssembly/wabt] includes
+The [WebAssembly binary toolkit](https://github.com/WebAssembly/wabt) includes
 among its many tools a couple of utilities to translate between wasm and wat in
 both directions. They are unceremoniously named `wasm2wat` and `wat2wasm`.
 
