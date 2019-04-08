@@ -114,7 +114,7 @@ on Google's V8 engine, which is also used in Chrome, which has WebAssembly
 support, so naturally, Node does too, since around version 7 I believe.
 
 Let's say that I've downloaded that `addTwo` wasm
-[example](https://www.youtube.com/watch?v=a_siGG35f7Y&pbjreload=10) from
+[example](https://cdn.rawgit.com/WebAssembly/sexpr-wasm-prototype/2bb13aa785be9908b95d0e2e09950b39a26004fa/demo/index.html) from
 earlier and saved it in a file called `addTwo.wasm`. First, I'll read that local
 wasm file into a variable in a node script, using the blocking synchronous
 `readFileSync` for simplicity's sake:
