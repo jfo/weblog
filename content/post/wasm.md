@@ -24,10 +24,13 @@ concepts, get a hook in, get some purchase, and then build up from there. So
 let's do that. This post starts from almost nothing and builds up to slightly
 more than nothing.
 
-<h2>In my various halfhearted attempts</h2> to understand wasm basics, I haven't had
-much luck. I get as far as setting up the
-[emscripten](https://github.com/kripken/emscripten) toolchain, and
-compiling a [hello world](https://github.com/kripken/emscripten/blob/incoming/tests/hello_world.c).
+In my various halfhearted attempts
+-------------------------------
+
+to understand wasm basics, I haven't had much luck. I get as far as setting up
+the [emscripten](https://github.com/kripken/emscripten) toolchain, and
+compiling a [hello
+world](https://github.com/kripken/emscripten/blob/incoming/tests/hello_world.c).
 
 But alas, even the simplest thing comes out the other side of emscripten with a
 dense glob of glue code all over and around it. The javascript calling context
@@ -40,7 +43,7 @@ compile existing projects (specifically c/c++ projects) to
 behind the scenes to facilitate that.
 
 I'm interested in starting with a more stripped down and basic view of
-webassembly. How can I understand the simplest things about it? How does it
+WebAssembly. How can I understand the simplest things about it? How does it
 run? Where does it run? How can I interoperate with the calling context whether
 it's in a browser or a node process?
 
@@ -99,23 +102,26 @@ hexdumps.
 00000040: 0100 0200 0001 00                        .......
 ```
 
-I'm looking at the wasm code now, those are web assembly instructions that are
+I'm looking at the wasm code now, those are WebAssembly instructions that are
 laid out in the specification. How can I validate that this is really a
-webassembly module? I can actually try to use it.
+WebAssembly module? I can actually try to use it.
 
 Since late 2017, [all the major browsers have implemented
-webassembly](https://blog.mozilla.org/blog/2017/11/13/webassembly-in-browsers/)
+WebAssembly](https://blog.mozilla.org/blog/2017/11/13/webassembly-in-browsers/)
 but I'd like to avoid the complications of running these small examples in a
 browser just yet, so for now, I will use Node locally for this. Node is built
 on Google's V8 engine, which is also used in Chrome, which has WebAssembly
 support, so naturally, Node does too, since around version 7 I believe.
 
-First, I'll read the local wasm file into a variable in a node script, using
-the blocking synchronous `readFileSync` for simplicity's sake:
+Let's say that I've downloaded that `addTwo` wasm
+[example](https://www.youtube.com/watch?v=a_siGG35f7Y&pbjreload=10) from
+earlier and saved it in a file called `addTwo.wasm`. First, I'll read that local
+wasm file into a variable in a node script, using the blocking synchronous
+`readFileSync` for simplicity's sake:
 
 ```js
 const fs = require('fs');
-const buffer = fs.readFileSync('./min.wasm');
+const buffer = fs.readFileSync('./addTwo.wasm');
 ```
 
 This returns a `Buffer` containing the bytes read from the file. I can use the
@@ -124,8 +130,8 @@ specification.
 
 
 ```js
-const wasmBuffer = WebAssembly.validate(buffer);
-console.log(wasmBuffer);
+const isValid = WebAssembly.validate(buffer);
+console.log(isValid);
 ```
 ```
 true
@@ -248,7 +254,7 @@ Well, that makes sense.
 The smallest thing
 ------------------
 
-Forget `addTwo`. What's the absolute smallest valid webassembly binary?
+Forget `addTwo`. What's the absolute smallest valid WebAssembly binary?
 
 First of all, let's make it easier to edit these hexdumps. `xxd -p test.wasm > test.hex` will remove
 the extra information and leave us with only the "bytes."
@@ -267,7 +273,7 @@ I'm going to remove _everything_ except for the first 8 bytes.
 ```
 
 This is the smallest possible valid wasm binary, consisting of the magic number
-`\x00asm` and the webassembly version number (version 1) in [little
+`\x00asm` and the WebAssembly version number (version 1) in [little
 endian](https://en.wikipedia.org/wiki/Endianness) format.
 
 `xxd -r -p test.hex > test.wasm`
