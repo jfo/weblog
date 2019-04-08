@@ -185,7 +185,7 @@ that cell. This pattern will look familiar, it is the same as all the other
 builtin functions!</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">lambda</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// check arity for only two things- arg list and function body
-</span><span class="c1"></span>    <span class="n">arity_check</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;lambda&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
+</span><span class="c1"></span>    <span class="n">arity_check</span><span class="p">(</span><span class="s">&#34;lambda&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
 
     <span class="c1">// separating them from each other.
 </span><span class="c1"></span>    <span class="n">C</span> <span class="o">*</span><span class="n">operand2</span> <span class="o">=</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
@@ -194,7 +194,7 @@ builtin functions!</p>
 
     <span class="c1">// type checking the arg list
 </span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">LIST</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;lambda expected a LIST as its first argument and did not get one</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;lambda expected a LIST as its first argument and did not get one</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -212,19 +212,19 @@ switch statements that operate on cell types.</p>
 <p>In <code>debug_list</code>, I&rsquo;ll simply output the new procval struct in the same way as
 the others:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">case</span> <span class="nl">PROC</span><span class="p">:</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;PROC- Address: %p, Next: %p</span><span class="se">\n</span><span class="s">| Args: </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;PROC- Address: %p, Next: %p</span><span class="se">\n</span><span class="s">| Args: </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
     <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">args</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;| Body: </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;| Body: </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
     <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
     <span class="k">break</span><span class="p">;</span></code></pre></div>
 <p>similarly, in <code>print</code>:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">case</span> <span class="nl">PROC</span><span class="p">:</span>
-    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;(PROC &#34;</span><span class="p">);</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="s">&#34;(PROC &#34;</span><span class="p">);</span>
     <span class="n">print_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">args</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">output_stream</span><span class="p">);</span>
-    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34; &#34;</span><span class="p">);</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="s">&#34; &#34;</span><span class="p">);</span>
     <span class="n">print_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">output_stream</span><span class="p">);</span>
-    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="sa"></span><span class="s">&#34;)&#34;</span><span class="p">);</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="s">&#34;)&#34;</span><span class="p">);</span>
     <span class="k">break</span><span class="p">;</span></code></pre></div>
 <p>In <code>eval</code>, a <code>PROC</code> should evaluate to itself, just like a <code>BUILTIN</code>, or <code>NIL</code></p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">...</span>
@@ -268,7 +268,7 @@ and then compare them. Remember that the form will be:</p>
     <span class="kt">int</span> <span class="n">numpassed</span> <span class="o">=</span> <span class="n">count_list</span><span class="p">(</span><span class="n">curarg</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">arity</span> <span class="o">!=</span> <span class="n">numpassed</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;arity error on proc application</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;arity error on proc application</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 
@@ -369,7 +369,7 @@ local frame environment. All that is left is to clean up after ourselves.</p>
     <span class="kt">int</span> <span class="n">numpassed</span> <span class="o">=</span> <span class="n">count_list</span><span class="p">(</span><span class="n">curarg</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">arity</span> <span class="o">!=</span> <span class="n">numpassed</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;arity error on proc application</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;arity error on proc application</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
         <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
     <span class="p">}</span>
 

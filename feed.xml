@@ -6,7 +6,7 @@
     <description>Recent content on blog.jfo.click</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 08 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 08 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://blog.jfo.click/feed.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Wat is up with WebAssembly</title>
       <link>https://blog.jfo.click/wat-is-up-with-webassembly/</link>
-      <pubDate>Mon, 08 Apr 2019 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 08 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>https://blog.jfo.click/wat-is-up-with-webassembly/</guid>
       <description>I&amp;rsquo;ve always been bullish on WebAssembly, and I still am. I think it has a lot of potential to change the way we develop web applications over the long term, and indeed to change what we consider a web application to begin with.

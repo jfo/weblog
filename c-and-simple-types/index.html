@@ -162,7 +162,7 @@ is 1 less than 2<sup>8</sup>!)</p>
 </span><span class="cp"></span>
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span></code></pre></div>
 <p>Notice the variable declaration <code>int x;</code>. This program sets aside some space in
@@ -221,16 +221,16 @@ just above- if I kept counting up like that, <code>33</code> would end up being 
 <code>C</code>, you can represent a binary number like that by prefacing it with <code>0b</code> as a
 bare string in the code. That would look like <code>0b100001</code>. That means that the
 following two lines are exactly the same.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="n">b100001</span><span class="p">);</span> <span class="c1">// 33
-</span><span class="c1"></span><span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="mi">33</span><span class="p">);</span> <span class="o">//</span> <span class="mi">33</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="n">b100001</span><span class="p">);</span> <span class="c1">// 33
+</span><span class="c1"></span><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="mi">33</span><span class="p">);</span> <span class="o">//</span> <span class="mi">33</span></code></pre></div>
 <p><code>printf</code> takes a string of text and some arguments, and interpolates the
 arguments into the string where there are &lsquo;embedded format tags&rsquo; like <code>%i</code>.
 These tags are typed so that <code>printf</code> knows how to interpret what it is being
 given. <code>%i</code> means <code>int</code>. What do you suppose <code>%c</code> means? How about this program:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="n">b100001</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="n">b100001</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="n">b100001</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="n">b100001</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
 <p>This program prints out:</p>
 
@@ -247,8 +247,8 @@ table</a>, <code>33</code> is equal to <code>!</code>! The value of the number h
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">33</span><span class="p">;</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
 <p>Still outputs:</p>
 
@@ -257,9 +257,9 @@ table</a>, <code>33</code> is equal to <code>!</code>! The value of the number h
 
 <p>It doesn&rsquo;t matter that <code>x</code> is an <code>int</code>, because the value of that data can be
 interpreted any way we want. Can we add two <code>chars</code> together, I wonder? <code>! + !</code> would be <code>66</code>, right?</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="sa"></span><span class="sc">&#39;!&#39;</span> <span class="o">+</span> <span class="sa"></span><span class="sc">&#39;!&#39;</span><span class="p">);</span> <span class="o">//</span> <span class="mi">66</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="sc">&#39;!&#39;</span> <span class="o">+</span> <span class="sc">&#39;!&#39;</span><span class="p">);</span> <span class="o">//</span> <span class="mi">66</span></code></pre></div>
 <p>Can we print an int directly as a character?</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="mi">33</span><span class="p">);</span> <span class="o">//</span> <span class="o">!</span></code></pre></div>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;%c&#34;</span><span class="p">,</span> <span class="mi">33</span><span class="p">);</span> <span class="o">//</span> <span class="o">!</span></code></pre></div>
 <p>Well I&rsquo;ll be.</p>
 
                 </div>

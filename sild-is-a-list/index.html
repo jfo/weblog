@@ -76,8 +76,8 @@ here</a>.</p>
 </span><span class="c1"></span>    <span class="n">a_cell</span><span class="p">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>   <span class="c1">// initialize the Cell&#39;s value
 </span><span class="c1"></span>    <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span> <span class="o">=</span> <span class="mh">0x0</span><span class="p">;</span>  <span class="c1">// point to the next Cell (in this case, the null pointer)
 </span><span class="c1"></span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;a_cell&#39;s value is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;the next cell after a_cell is: %p&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;a_cell&#39;s value is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;the next cell after a_cell is: %p&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
 <p>That dot notation is used to access the <code>members</code> of the struct. In this case,
 there is no next cell, so <code>a_cell.next</code> is the <code>NULL</code> pointer, which is
@@ -91,10 +91,10 @@ zero. This is a <em>list</em> of one cell. Let&rsquo;s make a second cell.</p>
     <span class="n">a_cell</span><span class="p">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">another_cell</span><span class="p">;</span>
 
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;a_cell&#39;s value is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;the next cell after a_cell is: %p, which is called another_cell</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;another_cell&#39;s value is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">another_cell</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;the next cell after another_cell is: %p&#34;</span><span class="p">,</span> <span class="n">another_cell</span><span class="p">.</span><span class="n">next</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;a_cell&#39;s value is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;the next cell after a_cell is: %p, which is called another_cell</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;another_cell&#39;s value is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">another_cell</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;the next cell after another_cell is: %p&#34;</span><span class="p">,</span> <span class="n">another_cell</span><span class="p">.</span><span class="n">next</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
 <p>Now, <code>a_cell.next</code> is being assigned to <code>&amp;another_cell</code>. Which is taking the
 address of <code>another_cell</code>. There is now a reference to <code>another_cell</code> contained
@@ -103,27 +103,28 @@ called a <code>linked list</code>. It consists of cells that are <em>linked</em>
 
 <p>I should be able to get to <code>another_cell</code>&rsquo;s values <em>through</em> the first
 cell, and I can, and it looks like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;another_cell&#39;s value is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">);</span>
-<span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;the next cell after another_cell is: %p&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span></code></pre></div>
-<p>Notice how that is different&hellip; I say &ldquo;tell me where the next cell after
-<code>a_cell</code> lives&rdquo; with <code>a_cell.next</code>, and I say &ldquo;give me its value&rdquo; with
-<code>-&gt;value</code></p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">printf</span><span class="p">(</span><span class="s">&#34;another_cell&#39;s value is: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">);</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">&#34;the next cell after another_cell is: %p&#34;</span><span class="p">,</span> <span class="n">a_cell</span><span class="p">.</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span></code></pre></div>
+<p>Notice how that is different&hellip; I say &ldquo;tell me where the next cell after</p>
+<div class="highlight"><pre class="chroma"><code class="language-a_cell``` lives" with ```a_cell.next```, and I say "give me its value" with" data-lang="a_cell``` lives" with ```a_cell.next```, and I say "give me its value" with">`-&gt;value`
 
-<p>We use the <code>.</code> notation when we are operating directly on structs, and we use
-the <code>-&gt;</code> notation when we are operating on a <em>pointer</em> to a struct. The reasons
-for this are historic, and <a href="http://stackoverflow.com/questions/13366083/why-does-the-arrow-operator-in-c-exist">this fantastic stack overflow
-    answer</a>
-explains why in great detail, if you are interested.</p>
+We use the `.` notation when we are operating directly on structs, and we use
+the `-&gt;` notation when we are operating on a _pointer_ to a struct. The reasons
+for this are historic, and [this fantastic stack overflow
+    answer](http://stackoverflow.com/questions/13366083/why-does-the-arrow-operator-in-c-exist)
+explains why in great detail, if you are interested.
 
-<p>This linked list of cells is a very simple data structure, but you can do a
-whole lot with it! Here is a function that takes a cell and prints it&rsquo;s value:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_cell</span><span class="p">(</span><span class="k">struct</span> <span class="n">Cell</span> <span class="n">car</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
+This linked list of cells is a very simple data structure, but you can do a
+whole lot with it! Here is a function that takes a cell and prints it&#39;s value:
+
+```c
+void print_cell(struct Cell car) {
+    printf(&#34;%d &#34;, car.value);
+}</code></pre></div>
 <p>But this only prints a single cell. What If I want to print a whole list? I could
 do something like this:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="k">struct</span> <span class="n">Cell</span> <span class="n">car</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
     <span class="n">print_list</span><span class="p">(</span><span class="o">*</span><span class="n">car</span><span class="p">.</span><span class="n">next</span><span class="p">);</span>
 <span class="p">}</span></code></pre></div>
 <p>Notice that <code>car.next</code> is a pointer, and <code>print_list</code> is expecting not a
@@ -136,7 +137,7 @@ succeeds in passing the first  two cells through the function, when it tries to
 dereference the null pointer (<code>0x0</code>) that the second cell is still pointing to, it blows
 up. I can fix this for now by wrapping that recursive call in a null pointer check:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="k">struct</span> <span class="n">Cell</span> <span class="n">car</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">car</span><span class="p">.</span><span class="n">next</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">print_list</span><span class="p">(</span><span class="o">*</span><span class="n">car</span><span class="p">.</span><span class="n">next</span><span class="p">);</span>
     <span class="p">}</span>
@@ -337,7 +338,7 @@ at that address for as long as I like.</p>
 of an object, but everything pretty much stays the same other than adding some
 <code>*</code>&rsquo;s and changing dots to arrows:</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="k">struct</span> <span class="n">Cell</span> <span class="o">*</span><span class="n">car</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">car</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">print_list</span><span class="p">(</span><span class="n">car</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
     <span class="p">}</span>
@@ -367,7 +368,7 @@ again, but for now, here&rsquo;s how the whole program looks so far, notice I&rs
 
 
 <span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">car</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d &#34;</span><span class="p">,</span> <span class="n">car</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">car</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">print_list</span><span class="p">(</span><span class="n">car</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
     <span class="p">}</span>
