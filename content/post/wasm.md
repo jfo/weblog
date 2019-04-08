@@ -1,6 +1,6 @@
 ---
 title:  "Wat is up with WebAssembly"
-date: 2018-04-08
+date: 2019-04-08
 ---
 
 I've always been bullish on WebAssembly, and I still am. I think it has a lot
