@@ -6,10 +6,20 @@
     <description>Recent content on blog.jfo.click</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Mar 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 08 Apr 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://blog.jfo.click/feed.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Wat is up with WebAssembly</title>
+      <link>https://blog.jfo.click/wat-is-up-with-webassembly/</link>
+      <pubDate>Sun, 08 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.jfo.click/wat-is-up-with-webassembly/</guid>
+      <description>I&amp;rsquo;ve always been bullish on WebAssembly, and I still am. I think it has a lot of potential to change the way we develop web applications over the long term, and indeed to change what we consider a web application to begin with.
+Wasm is really quite simple, in its way. The specification defines only four numerical types and a handful of operations upon them, plus standards for importing and exporting interfaces and shared memory buffers from and to the surrounding context, whether that is a browser or node, and a few other things.</description>
+    </item>
     
     <item>
       <title>How Zig Do?</title>
@@ -28,15 +38,6 @@
       
       <guid>https://blog.jfo.click/s3-hugo-and-static-asset-hosting/</guid>
       <description>I&amp;rsquo;ve been writing this blog for a while now, and put it through several different blogging engines and style changes. Wordpress, Middleman, Jekyll&amp;hellip; and finally to Hugo, which I&amp;rsquo;m using currently. I feel it should be really easy to switch platforms (where &amp;ldquo;really easy&amp;rdquo; means like, a week or two of fiddly work), and I fully expect to do so again when it becomes worth the trouble to do it, whenever and whyever that may be.</description>
-    </item>
-    
-    <item>
-      <title>Mapping the Monado</title>
-      <link>https://blog.jfo.click/mapping-the-monado/</link>
-      <pubDate>Fri, 15 Sep 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://blog.jfo.click/mapping-the-monado/</guid>
-      <description>I have recently come into possession of a reasonably sound understanding of monads. Tradition dictates that I now have an obligation to write a blog post/tutorial/thing about them, wherein I attempt to gracefully share this nascent knowledge through the judicious use of carefully chosen metaphors and examples. Legend has it that I will inevitably fail in this, and then be raked over the coals for my sins by both category theorists and Haskellers alike.</description>
     </item>
     
   </channel>
