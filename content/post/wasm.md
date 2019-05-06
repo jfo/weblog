@@ -13,23 +13,26 @@ of each type of possible section. All of this is culled from the [normative
 docs](https://webassembly.github.io/spec/core/syntax/modules.html#), which is
 thorough and complete but is sometimes hard to read without context.
 
-types
+globals
 -------
+exports
+-------
+
 funcs
+-------
+
+types
 -------
 tables
 -------
 mems
 -------
-globals
--------
 elem
 -------
 data
 -------
-start
--------
 imports
 -------
-exports
+
+start
 -------
