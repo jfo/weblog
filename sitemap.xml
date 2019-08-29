@@ -423,9 +423,4 @@
     <loc>https://blog.jfo.click/about/</loc>
   </url>
   
-  <url>
-    <loc>https://blog.jfo.click/</loc>
-    <priority>0</priority>
-  </url>
-  
 </urlset>
