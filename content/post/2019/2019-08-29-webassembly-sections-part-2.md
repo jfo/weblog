@@ -1,34 +1,62 @@
 ---
-title: wasm again
-draft: true
+title: Webassembly sections, part 2
+date: 2019-08-29
 ---
 
-Strap in I guess time for more about WebAssembly.
-
-[Last time](#waht) I started from the binary format and made a couple of really
-simple modules that don't do anything, but a WebAssembly module can be made
-from a number of very specific sections. There are only 10 of them; in this
-post I'll start from nothing and end with a wasm module that has a tiny version
-of each type of possible section. All of this is culled from the [normative
-docs](https://webassembly.github.io/spec/core/syntax/modules.html#), which are
-thorough and complete but is sometimes hard to read without context.
+[Last time](/wat-is-up-with-webassembly) I started from the binary format and made a little
+module that doesn't do anything.
 
 This is how the rest of this series of posts is going to go... a bunch of
-iterative examples building up to a small wat program that does some useless
-stuff but uses all of the possible sections that can appear in a webassembly
-program. I won't be exhaustively listing all the instructions or every single
-thing that can go in any place in the file, as you are free to pore over the
-[ur-spec]() for that, as I have attempted to do. Hopefully by the end, we'll
-both have a better idea of how a wasm module is or can be structured, and why.
-Doing useful things with that comes later, but stick with me, and maybe we'll
+iterative examples building up to a small webassembly program in text format
+that does some useless stuff but uses all of the possible sections that can
+appear in a webassembly program. Of course, I won't be exhaustively listing all the
+instructions or every single thing that can go in any place in the file, as you
+are free to pore over the
+[ur-docs](https://webassembly.github.io/spec/core/index.html) for
+that, as I have attempted to do in part here.  Hopefully by the end, we'll both
+have a better idea of how a wasm module is or can be structured, and why.
+
+Doing useful things with that comes later, but stick with me; maybe we'll
 get there.
 
-> list types of sections
+Like in the last post, I'll just be compiling these examples with `wat2wasm`,
+which is part of the web assembly binary toolkit (wabt), which you can get
+[here](https://github.com/WebAssembly/wabt). There is apparently a [node module
+port](https://www.npmjs.com/package/wabt) of these tools, that might work too.
 
-I'll do all of this in WAT. The `web assembly text` format.
+A little test script might look something like this:
 
-> you'll probably need the toolchain and here's a script to run to compile and
-> run it in the browser or whatever.
+```js
+const { execSync } = require('child_process');
+const { readFileSync } = require('fs');
+
+execSync('wat2wasm test.wat -o out.wasm');
+const buf = readFileSync('out.wasm');
+
+WebAssembly.instantiate(buf).then(e => {
+  console.log(
+    e.instance.exports
+  );
+});
+```
+
+I'm just using synchronous blocking io functions, because who cares, and you'll
+notice the interesting stuff happens in the promise resolution where right now
+I'm just logging the exports.
+
+Webassembly programs are composed of some combination of the following
+sections, arranged here in not really any particular order:
+
+- global
+- export
+- functions
+- types
+- tables
+- memory
+- elements
+- data
+- import
+- start
 
 I ended the last time with this program:
 
@@ -38,7 +66,8 @@ I ended the last time with this program:
   (export "x" (global 0)))
 ```
 
-so the first two sections, globals and exports, have already been covered. Let's move on!
+so the first two sections, globals and exports, have already been covered.
+Let's move on!
 
 
 Functions
@@ -120,7 +149,8 @@ Also it doesn't matter what order these modules are declared in:
   (export "x" (global $theMeaningOfLife)))
 ```
 
-> You may also see `get_global`, I think that's an old way to do that. TODO: find why
+> You may also see `get_global`, I think that's an older way to do that, I'm
+> not sure.
 
 Maybe we give it a parameter?
 
@@ -142,19 +172,19 @@ You can also assign a name to parameters instead of referring to them by their i
   (export "x" (global $theMeaningOfLife)))
 ```
 
-Here's a good place to talk about what a stack machine is; really this is
+Here's a good place to talk about what a stack machine _is_; really this is
 the business end of wasm computation. I won't enumerate all the instructions,
-of course, but this is where most of them go. A stack machine is a pretty
-simple model of computation, things get loaded into a FILO stack (first in,
-last out), and when instructions are applied to them, they pull out the number
-of arguments they need.
+of course, but this is where most of them would go. A stack machine is a pretty
+simple model, things get loaded into a FILO stack (first in, last out), and
+when instructions are applied to them, they pull out the number of arguments
+they need.
 
 ```
 (module
   (global $theMeaningOfLife i32 (i32.const 42))
   (func (param $n i32) (result i32)
-    get_local $n
-    get_global $theMeaningOfLife
+    local.get $n
+    global.get $theMeaningOfLife
     i32.add)
   (export "x" (global $theMeaningOfLife)))
 ```
@@ -162,10 +192,11 @@ of arguments they need.
 The body of this function has three lines, after this line:
 
 ```
-get_local $n
+local.get $n
 ```
 
-the stack looks like this (let's pretend we called this function in javascript with `10`):
+`local` here refers to the parameter passed in; now the stack looks like this
+(let's pretend we called this function in javascript with `10`):
 
 ```
 [10]
@@ -174,7 +205,7 @@ the stack looks like this (let's pretend we called this function in javascript w
 Then after this line:
 
 ```
-get_global $theMeaningOfLife
+global.get $theMeaningOfLife
 ```
 
 ```
@@ -194,8 +225,8 @@ stack, so in the end, it looks like this
 [52]
 ```
 
-The function then "returns" this value by leaving it in the stack. If the stack
-doesn't match the result type, you'll get an error.
+The function then "returns" this value by leaving it in the stack. If what's in
+the stack doesn't match the result type, you'll get an error.
 
 Of course, we may like to export the function the same way we exported the global:
 
@@ -203,14 +234,31 @@ Of course, we may like to export the function the same way we exported the globa
 (module
   (global $theMeaningOfLife i32 (i32.const 42))
   (func (param $n i32) (result i32)
-    get_local $n
-    get_global $theMeaningOfLife
+    local.get $n
+    global.get $theMeaningOfLife
     i32.add)
   (export "x" (global $theMeaningOfLife))
   (export "aFunction" (func 0)))
 ```
 
-And we can name it as well.
+In this way we can call it from javascript land, which might look like:
+
+```js
+const { execSync } = require('child_process');
+const { readFileSync } = require('fs');
+
+execSync('wat2wasm test.wat -o out.wasm');
+const buf = readFileSync('out.wasm');
+
+WebAssembly.instantiate(buf).then(e => {
+  console.log(
+    e.instance.exports.aFunction(10)
+  );
+});
+```
+
+And we can name it as well, although again, this name is only textual; it
+still needs to be exported explicitly.
 
 ```
 (module
@@ -228,7 +276,6 @@ And we can name it as well.
 ```
 (module
   (global (;0;) i32 (i32.const 42))
-  (type (;0;) (func (param i32) (result i32)))
   (func (;0;) (type 0) (param i32) (result i32)
     local.get 0
     global.get 0
@@ -237,6 +284,27 @@ And we can name it as well.
   (export "aFunction" (func 0)))
 ```
 >
+
+If you have two functions, you could call one from the other... maybe one of
+them is a helper and the other is exported. You call this internally with `call`, like so
+
+```
+(module
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func $addOne (param $x i32) (result i32)
+        i32.const 1
+        local.get $x
+        i32.add)
+  (func $aFunction (param $x i32) (result i32)
+        local.get $x
+        call $addOne
+        i32.const 42
+        i32.add)
+  (export "x" (global $theMeaningOfLife))
+  (export "aFunction" (func $aFunction)))
+```
+
+Here I am gettingcdd
 
 
 types
@@ -250,13 +318,18 @@ alias.
 ```
 (module
   (type $ourFriend (func (param i32) (result i32)))
-  (func $aFunction (type $ourFriend)
-    get_local 0
-    get_global $theMeaningOfLife
-    i32.add)
   (global $theMeaningOfLife i32 (i32.const 42))
+  (func $addOne (type $ourFriend)
+        i32.const 1
+        local.get $x
+        i32.add)
+  (func $aFunction (type $ourFriend)
+        local.get $x
+        call $addOne
+        i32.const 42
+        i32.add)
   (export "x" (global $theMeaningOfLife))
-  (export "aFunction" (func 0)))
+  (export "aFunction" (func $aFunction)))
 ```
 
 It should be noted that the current spec only allows results of a single value,
@@ -281,4 +354,4 @@ test.wat:2:4: error: multiple result values not currently supported.
 I take this to mean that it is likely to be supported in the future, if I had
 to bet.
 
-
+More to come.
