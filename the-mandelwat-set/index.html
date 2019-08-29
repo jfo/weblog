@@ -142,13 +142,13 @@ To run this example, press this button labeled &ldquo;Run&rdquo;, right here: <s
 <span class="nx">context</span><span class="p">.</span><span class="nx">strokeStyle</span> <span class="o">=</span> <span class="nx">randColor</span><span class="p">();</span>
 
 <span class="nx">context</span><span class="p">.</span><span class="nx">beginPath</span><span class="p">();</span>
-<span class="nx">context</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="err">/2, 0);</span>
-<span class="nx">context</span><span class="p">.</span><span class="nx">lineTo</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="err">/2, canvas.height);</span>
+<span class="nx">context</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="nx">context</span><span class="p">.</span><span class="nx">lineTo</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
 <span class="nx">context</span><span class="p">.</span><span class="nx">stroke</span><span class="p">();</span>
 
 <span class="nx">context</span><span class="p">.</span><span class="nx">beginPath</span><span class="p">();</span>
-<span class="nx">context</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="err">/2);</span>
-<span class="nx">context</span><span class="p">.</span><span class="nx">lineTo</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="err">/2);</span>
+<span class="nx">context</span><span class="p">.</span><span class="nx">moveTo</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
+<span class="nx">context</span><span class="p">.</span><span class="nx">lineTo</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
 <span class="nx">context</span><span class="p">.</span><span class="nx">stroke</span><span class="p">();</span>
 </code></pre></div>
 <script>
@@ -257,7 +257,7 @@ interact directly with the pixels in a canvas by using a representation called
 return an ImageData object that contains three things:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">context</span><span class="p">.</span><span class="nx">createImageData</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="c1">// ImageData { data: Uint8ClampedArray[400], width: 10, height: 10 }
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>There is the <code>width</code> and <code>height</code> that I expected to see. What is the other
 thing? It&rsquo;s just a 1-dimensional array of bytes! 10 x 10 = 100, it seems like a
 10 x 10 ImageData should contain 100 items since it represents 100 pixels, but
@@ -301,7 +301,7 @@ pixel. <span><button id="ex5button">RGB Noise</button></span></p>
     <span class="nx">imageData</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">255</span><span class="p">;</span>
 <span class="p">}</span>
 <span class="nx">context</span><span class="p">.</span><span class="nx">putImageData</span><span class="p">(</span><span class="nx">imageData</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">//  0, 0 is the offset to start putting the imageDate into the actual canvas. I won&#39;t use any other values for that in this article..
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <script>
     (function() {
         var canvasId = "ex5"
@@ -384,14 +384,14 @@ for that index in that imageData object. Note that <code>canvas</code> must be i
     <span class="c1">// first, we&#39;ll divide by 4 to get an absolute pixel. This number
 </span><span class="c1"></span>    <span class="c1">// represents the pixel location where 0 is the upper left and the highest
 </span><span class="c1"></span>    <span class="c1">// index is in the lower right.
-</span><span class="c1"></span>    <span class="nx">index</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="err">/ 4);</span>
+</span><span class="c1"></span>    <span class="nx">index</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="o">/</span> <span class="mi">4</span><span class="p">);</span>
 
     <span class="c1">// now we&#39;ll make a little coordinate object that has two attributes: x and y
 </span><span class="c1"></span>    <span class="nx">coord</span> <span class="o">=</span>  <span class="p">{</span>
         <span class="c1">// x is the modulo of the index and the width of the canvas.
 </span><span class="c1"></span>        <span class="nx">x</span><span class="o">:</span> <span class="nx">index</span> <span class="o">%</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
         <span class="c1">// y is the floored index divided by the canvas width.
-</span><span class="c1"></span>        <span class="nx">y</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="err">/ canvas.width)</span>
+</span><span class="c1"></span>        <span class="nx">y</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span>
     <span class="p">}</span>
     <span class="c1">// returning that coordinate will let us use it later on
 </span><span class="c1"></span>    <span class="k">return</span> <span class="nx">coord</span><span class="p">;</span>
@@ -430,21 +430,21 @@ whatever range I want. That scaling value is going to be an &ldquo;r&rdquo; valu
 <p>Let&rsquo;s say that I want the coordinate plane to go from -2 to 2 on both axes.
 (Just, you know, for example.)</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">indexToCoord</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">index</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="err">/ 4);</span>
+    <span class="nx">index</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="o">/</span> <span class="mi">4</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
 
     <span class="nx">coord</span> <span class="o">=</span>  <span class="p">{</span>
         <span class="nx">x</span><span class="o">:</span> <span class="nx">index</span> <span class="o">%</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="nx">y</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="err">/ 10)</span>
+        <span class="nx">y</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
     <span class="p">}</span>
 
     <span class="c1">// coord * 4 (which is the distance from -2 to 2) divided by the axis in pixels.
 </span><span class="c1"></span>    <span class="c1">// this gives us a value between 0 and 4 that is equal to the coordinate
 </span><span class="c1"></span>    <span class="c1">// pixel from earlier.
-</span><span class="c1"></span>    <span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="p">((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="nx">r</span> <span class="err">/ canvas.height) - r/2);</span>
+</span><span class="c1"></span>    <span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="p">((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="nx">r</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span> <span class="o">-</span> <span class="nx">r</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
 
     <span class="c1">// the y value needs its sign flipped since the positive side is above the origin.
-</span><span class="c1"></span>    <span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="p">((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="nx">r</span> <span class="err">/ canvas.width) - r/2) * -1 ;</span>
+</span><span class="c1"></span>    <span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="p">((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="nx">r</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span> <span class="o">-</span> <span class="nx">r</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span> <span class="p">;</span>
 
     <span class="k">return</span> <span class="nx">coord</span><span class="p">;</span>
 <span class="p">}</span>
@@ -461,7 +461,7 @@ scale of -2 to 2, then, yields something very close to what you&rsquo;d expect:<
 </span><span class="c1"></span><span class="nx">indexToCoord</span><span class="p">(</span><span class="mi">159999</span><span class="p">);</span> <span class="c1">// { x: 1.98,  y: -1.98 }
 </span><span class="c1"></span><span class="nx">indexToCoord</span><span class="p">(</span><span class="mi">132987</span><span class="p">);</span> <span class="c1">// { x: -1.08, y: -1.3199999999999998 }
 </span><span class="c1"></span><span class="nx">indexToCoord</span><span class="p">(</span><span class="mi">54</span><span class="p">));</span>    <span class="c1">// { x: -1.74, y: 2 }
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>This is just begging to be abstracted, so that&rsquo;s what I&rsquo;m going to do.</p>
 
 <p>First, the constructor will take one thing, a string that represents the canvas
@@ -488,7 +488,7 @@ rendering, which will always be 1:1.</p>
     <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">canvasId</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s2">&#34;2d&#34;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">imageData</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">createImageData</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">aspectRatio</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="err">/ canvas.width</span>
+    <span class="kd">var</span> <span class="nx">aspectRatio</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">=</span> <span class="mi">4</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">center</span> <span class="o">=</span> <span class="p">{</span>
@@ -497,13 +497,13 @@ rendering, which will always be 1:1.</p>
     <span class="p">};</span>
 
     <span class="kd">var</span> <span class="nx">indexToCoord</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">index</span> <span class="err">/= 4;</span>
+        <span class="nx">index</span> <span class="o">/=</span> <span class="mi">4</span><span class="p">;</span>
         <span class="nx">coord</span> <span class="o">=</span>  <span class="p">{</span>
             <span class="nx">x</span><span class="o">:</span> <span class="nx">index</span> <span class="o">%</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
-            <span class="nx">y</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="err">/ canvas.width)</span>
+            <span class="nx">y</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span>
         <span class="p">}</span>
-        <span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="p">(((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="sr">/ canvas.width) - this.r /</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">center</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="nx">aspectRatio</span><span class="p">))</span> <span class="err">/ aspectRatio;</span>
-        <span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="p">((((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="sr">/ canvas.height) - this.r /</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">center</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+        <span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="p">(((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">center</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="nx">aspectRatio</span><span class="p">))</span> <span class="o">/</span> <span class="nx">aspectRatio</span><span class="p">;</span>
+        <span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="p">((((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">center</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">coord</span><span class="p">;</span>
     <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
 
@@ -753,7 +753,7 @@ dream up, <code>x</code> will either be in this set, or not.</p>
 </span><span class="c1"></span><span class="nx">mySet</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="mi">88</span><span class="p">)</span>     <span class="c1">// false
 </span><span class="c1"></span><span class="nx">mySet</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="mi">397376</span><span class="p">)</span> <span class="c1">// true
 </span><span class="c1"></span><span class="nx">mySet</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>    <span class="c1">// false
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>Will this work??</p>
 
 <canvas id="ex9" style="border: 1px solid black;" width="200px" height="200px"></canvas>
@@ -796,7 +796,7 @@ compared to each other by value. To whit, these are falsy:</p>
 </span><span class="c1"></span><span class="p">{</span> <span class="nx">thing</span><span class="o">:</span> <span class="mi">7</span> <span class="p">}</span> <span class="o">==</span> <span class="p">{</span> <span class="nx">thing</span><span class="o">:</span> <span class="mi">7</span> <span class="p">}</span> <span class="c1">// false
 </span><span class="c1"></span><span class="p">{</span> <span class="nx">thing</span><span class="o">:</span> <span class="mi">7</span> <span class="p">}</span> <span class="o">===</span> <span class="p">{</span> <span class="nx">thing</span><span class="o">:</span> <span class="mi">7</span> <span class="p">}</span> <span class="c1">// false
 </span><span class="c1">// etc...
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>Objects instead are equal if they are <em>actually the same object</em>, meaning the
 two sides of the double or triple equals refer to the same memory.</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">thing1</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">whatever</span><span class="o">:</span> <span class="s2">&#34;whatevar&#34;</span> <span class="p">};</span>
@@ -807,7 +807,7 @@ two sides of the double or triple equals refer to the same memory.</p>
 
 <span class="nx">thing1</span> <span class="o">==</span> <span class="nx">thing2</span> <span class="c1">// true
 </span><span class="c1"></span><span class="nx">thing1</span> <span class="o">===</span> <span class="nx">thing2</span> <span class="c1">// true
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>You get the idea. Now, I <em>could</em> write a deep checking set class for these
 coordinates, or build the coordinates into a real object that has a function
 that can do that, but I don&rsquo;t really want to. Instead I&rsquo;m going to talk
@@ -1306,7 +1306,7 @@ much looks like you would expect.</p>
     <span class="kd">var</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">canvasId</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s2">&#34;2d&#34;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">imageData</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">createImageData</span><span class="p">(</span><span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">aspectRatio</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="err">/ canvas.width</span>
+    <span class="kd">var</span> <span class="nx">aspectRatio</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span>
 
     <span class="k">this</span><span class="p">.</span><span class="nx">iterations</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">=</span> <span class="mi">4</span>
@@ -1316,13 +1316,13 @@ much looks like you would expect.</p>
     <span class="p">};</span>
 
     <span class="kd">var</span> <span class="nx">indexToCoord</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">index</span> <span class="err">/= 4;</span>
+        <span class="nx">index</span> <span class="o">/=</span> <span class="mi">4</span><span class="p">;</span>
         <span class="nx">coord</span> <span class="o">=</span>  <span class="p">{</span>
             <span class="nx">x</span><span class="o">:</span> <span class="nx">index</span> <span class="o">%</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
-            <span class="nx">y</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="err">/ canvas.width)</span>
+            <span class="nx">y</span><span class="o">:</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">index</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span>
         <span class="p">}</span>
-        <span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="p">(((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="sr">/ canvas.width) - this.r /</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">center</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="nx">aspectRatio</span><span class="p">))</span> <span class="err">/ aspectRatio;</span>
-        <span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="p">((((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="sr">/ canvas.height) - this.r /</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">center</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+        <span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="p">(((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">center</span><span class="p">.</span><span class="nx">x</span> <span class="o">*</span> <span class="nx">aspectRatio</span><span class="p">))</span> <span class="o">/</span> <span class="nx">aspectRatio</span><span class="p">;</span>
+        <span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="p">((((</span><span class="nx">coord</span><span class="p">.</span><span class="nx">y</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span> <span class="o">-</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">center</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
         <span class="k">return</span> <span class="nx">coord</span><span class="p">;</span>
     <span class="p">}.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
 
@@ -1525,7 +1525,7 @@ pixel according to it&rsquo;s iteration score!</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">this</span><span class="p">.</span><span class="nx">render</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">*</span> <span class="mi">4</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">thing</span> <span class="o">=</span> <span class="nx">isMandlebrot</span><span class="p">(</span><span class="nx">indexToCoord</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
-        <span class="nx">set</span> <span class="o">=</span>  <span class="nx">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">?</span>  <span class="mi">0</span><span class="o">:</span> <span class="p">(</span><span class="nx">thing</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="err">/ this.iterations) * 0xffffff;</span>
+        <span class="nx">set</span> <span class="o">=</span>  <span class="nx">thing</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">?</span>  <span class="mi">0</span><span class="o">:</span> <span class="p">(</span><span class="nx">thing</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">iterations</span><span class="p">)</span> <span class="o">*</span> <span class="mh">0xffffff</span><span class="p">;</span>
         <span class="nx">imageData</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>     <span class="o">=</span> <span class="p">(</span><span class="nx">set</span> <span class="o">&amp;</span> <span class="mh">0xff0000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">;</span>
         <span class="nx">imageData</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nx">set</span> <span class="o">&amp;</span> <span class="mh">0x00ff00</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">;</span>
         <span class="nx">imageData</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nx">set</span> <span class="o">&amp;</span> <span class="mh">0x0000ff</span><span class="p">;</span>

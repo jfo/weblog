@@ -3,6 +3,23 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blog.jfo.click/post/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.jfo.click/webassembly-sections-part-2/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.jfo.click/</loc>
+    <lastmod>2019-08-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.jfo.click/wat-is-up-with-webassembly/</loc>
     <lastmod>2019-04-08T00:00:00+00:00</lastmod>
   </url>
@@ -223,7 +240,7 @@
   </url>
   
   <url>
-    <loc>https://blog.jfo.click/into-the-cloud--a-quick-aws-primer/</loc>
+    <loc>https://blog.jfo.click/into-the-cloud-a-quick-aws-primer/</loc>
     <lastmod>2014-04-26T00:00:00+00:00</lastmod>
   </url>
   
@@ -383,43 +400,23 @@
   </url>
   
   <url>
-    <loc>https://blog.jfo.click/</loc>
+    <loc>https://blog.jfo.click/index.html</loc>
     <priority>0</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://blog.jfo.click/"
-                />
   </url>
   
   <url>
-    <loc>https://blog.jfo.click/</loc>
+    <loc>https://blog.jfo.click/index.html</loc>
     <priority>0</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://blog.jfo.click/"
-                />
   </url>
   
   <url>
-    <loc>https://blog.jfo.click/</loc>
+    <loc>https://blog.jfo.click/index.html</loc>
     <priority>0</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://blog.jfo.click/"
-                />
   </url>
   
   <url>
-    <loc>https://blog.jfo.click/</loc>
+    <loc>https://blog.jfo.click/index.html</loc>
     <priority>0</priority>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://blog.jfo.click/"
-                />
   </url>
   
   <url>
@@ -427,14 +424,7 @@
   </url>
   
   <url>
-    <loc>https://blog.jfo.click/post/</loc>
-    <lastmod>2019-04-08T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>https://blog.jfo.click/</loc>
-    <lastmod>2019-04-08T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

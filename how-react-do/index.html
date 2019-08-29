@@ -305,7 +305,7 @@ of the source, including the argument list:</p>
     <span class="kd">var</span> <span class="nx">validType</span> <span class="o">=</span> <span class="k">typeof</span> <span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">;</span>
     <span class="c1">// We warn in this case but don&#39;t throw. We expect the element creation to
 </span><span class="c1"></span>    <span class="c1">// suc…
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>We can see the whole source by calling <code>toString</code> on the function:</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="o">&gt;</span> <span class="nx">React</span><span class="p">.</span><span class="nx">createElement</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
 <span class="o">&lt;</span> <span class="s2">&#34;function (type, props, children) {
@@ -378,7 +378,7 @@ like that&hellip; like try it in the console!:</p>
 <span class="nx">thing</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
 <span class="nx">thing</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
 <span class="c1">// etc...
-</span><span class="c1"></span></code></pre></div>
+</span></code></pre></div>
 <p>That&rsquo;s a guess anyway, but it doesn&rsquo;t matter right now! We&rsquo;re experimenting!
 Move fast and maintain a cursory understanding of the architecture that
 underpins your systems, that&rsquo;s what I always say!</p>
@@ -765,10 +765,10 @@ Object (the last two).</p>
 <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
         <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-            <span class="o">&lt;</span><span class="nx">ExampleOne</span> <span class="nx">text</span><span class="o">=</span><span class="s2">&#34;it came from a stabby proc function!&#34;</span> <span class="nx">color</span><span class="o">=</span><span class="p">{</span><span class="nx">randColor</span><span class="p">()}</span> <span class="err">/&gt;</span>
-            <span class="o">&lt;</span><span class="nx">ExampleTwo</span> <span class="nx">text</span><span class="o">=</span><span class="s2">&#34;it came from a function!&#34;</span> <span class="nx">color</span><span class="o">=</span><span class="p">{</span><span class="nx">randColor</span><span class="p">()}</span> <span class="err">/&gt;</span>
-            <span class="o">&lt;</span><span class="nx">ExampleThree</span> <span class="nx">text</span><span class="o">=</span><span class="s2">&#34;it came from React.createClass!&#34;</span> <span class="nx">color</span><span class="o">=</span><span class="p">{</span><span class="nx">randColor</span><span class="p">()}</span> <span class="err">/&gt;</span>
-            <span class="o">&lt;</span><span class="nx">ExampleFour</span> <span class="nx">text</span><span class="o">=</span><span class="s2">&#34;it came from an ES6 class that extends React.Component&#34;</span> <span class="nx">color</span><span class="o">=</span><span class="p">{</span><span class="nx">randColor</span><span class="p">()}</span> <span class="err">/&gt;</span>
+            <span class="o">&lt;</span><span class="nx">ExampleOne</span> <span class="nx">text</span><span class="o">=</span><span class="s2">&#34;it came from a stabby proc function!&#34;</span> <span class="nx">color</span><span class="o">=</span><span class="p">{</span><span class="nx">randColor</span><span class="p">()}</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="nx">ExampleTwo</span> <span class="nx">text</span><span class="o">=</span><span class="s2">&#34;it came from a function!&#34;</span> <span class="nx">color</span><span class="o">=</span><span class="p">{</span><span class="nx">randColor</span><span class="p">()}</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="nx">ExampleThree</span> <span class="nx">text</span><span class="o">=</span><span class="s2">&#34;it came from React.createClass!&#34;</span> <span class="nx">color</span><span class="o">=</span><span class="p">{</span><span class="nx">randColor</span><span class="p">()}</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="nx">ExampleFour</span> <span class="nx">text</span><span class="o">=</span><span class="s2">&#34;it came from an ES6 class that extends React.Component&#34;</span> <span class="nx">color</span><span class="o">=</span><span class="p">{</span><span class="nx">randColor</span><span class="p">()}</span> <span class="o">/&gt;</span>
         <span class="o">&lt;</span><span class="err">/div&gt;,</span>
         <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
     <span class="p">);</span>
@@ -811,12 +811,12 @@ thing at the end of the day. JavaScript!</p>
         <span class="nx">background</span><span class="o">:</span> <span class="nx">randColor</span><span class="p">(),</span>
         <span class="nx">width</span><span class="o">:</span> <span class="s2">&#34;100px&#34;</span><span class="p">,</span>
         <span class="nx">height</span><span class="o">:</span> <span class="s2">&#34;100px&#34;</span>
-    <span class="p">}}</span> <span class="err">/&gt;;</span>
+    <span class="p">}}</span> <span class="o">/&gt;</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nx">setInterval</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
     <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span><span class="p">,</span>
         <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
     <span class="p">);</span>
 <span class="p">},</span> <span class="mi">100</span><span class="p">)</span>
@@ -830,8 +830,8 @@ thing at the end of the day. JavaScript!</p>
 <h1 id="let-s-make-two-boxes">Let&rsquo;s make two boxes</h1>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
     <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;,</span>
     <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
 <span class="p">);</span>
@@ -844,7 +844,7 @@ a classic styling thinger! Divs are <code>block</code> elements, and by default 
         <span class="nx">background</span><span class="o">:</span> <span class="nx">randColor</span><span class="p">(),</span>
         <span class="nx">width</span><span class="o">:</span> <span class="s2">&#34;100px&#34;</span><span class="p">,</span>
         <span class="nx">height</span><span class="o">:</span> <span class="s2">&#34;100px&#34;</span>
-    <span class="p">}}</span> <span class="err">/&gt;;</span>
+    <span class="p">}}</span> <span class="o">/&gt;</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>It feels really weird to me to have all this styling directly on the element
@@ -867,11 +867,11 @@ that.</a></p>
 composes 5 of them side by side!</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">const</span> <span class="nx">Row</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -884,11 +884,11 @@ composes 5 of them side by side!</p>
 <p>I can do a very similar thing by stacking 5 rows together to make a <code>Grid</code> component.</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="k">const</span> <span class="nx">Grid</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -896,7 +896,7 @@ composes 5 of them side by side!</p>
 100x100 pixel boxes!</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">setInterval</span><span class="p">(()=&gt;{</span>
     <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
-        <span class="o">&lt;</span><span class="nx">Grid</span> <span class="err">/&gt;,</span>
+        <span class="o">&lt;</span><span class="nx">Grid</span> <span class="o">/&gt;</span><span class="p">,</span>
         <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
     <span class="p">);</span>
 <span class="p">},</span> <span class="mi">100</span><span class="p">)</span>
@@ -916,17 +916,17 @@ accordingly&hellip;</p>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
     <span class="p">}}</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="err">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 
 <span class="nx">setInterval</span><span class="p">(()=&gt;{</span>
     <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
-        <span class="o">&lt;</span><span class="nx">Grid</span> <span class="nx">height</span><span class="o">=</span><span class="s2">&#34;500px&#34;</span> <span class="nx">width</span><span class="o">=</span><span class="s2">&#34;500px&#34;</span> <span class="err">/&gt;,</span>
+        <span class="o">&lt;</span><span class="nx">Grid</span> <span class="nx">height</span><span class="o">=</span><span class="s2">&#34;500px&#34;</span> <span class="nx">width</span><span class="o">=</span><span class="s2">&#34;500px&#34;</span> <span class="o">/&gt;</span><span class="p">,</span>
         <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
     <span class="p">);</span>
 <span class="p">},</span> <span class="mi">100</span><span class="p">)</span>
@@ -938,11 +938,11 @@ like to cascade that value down through the hierarchy.</p>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
     <span class="p">}}</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="err">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 
@@ -952,11 +952,11 @@ like to cascade that value down through the hierarchy.</p>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
     <span class="p">}}</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ 5} width={props.width} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ 5} width={props.width} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ 5} width={props.width} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ 5} width={props.width} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ 5} width={props.width} /</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -973,7 +973,7 @@ know. Feels like it though.</p>
         <span class="nx">background</span><span class="o">:</span> <span class="nx">randColor</span><span class="p">(),</span>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
-    <span class="p">}}</span> <span class="err">/&gt;;</span>
+    <span class="p">}}</span> <span class="o">/&gt;</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">const</span> <span class="nx">Row</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
@@ -981,11 +981,11 @@ know. Feels like it though.</p>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
     <span class="p">}}</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ 5} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ 5} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ 5} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ 5} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ 5} /</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">5</span><span class="p">}</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1005,7 +1005,7 @@ know. Feels like it though.</p>
         <span class="nx">background</span><span class="o">:</span> <span class="nx">randColor</span><span class="p">(),</span>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
-    <span class="p">}}</span> <span class="err">/&gt;;</span>
+    <span class="p">}}</span> <span class="o">/&gt;</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="k">const</span> <span class="nx">Row</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
@@ -1013,11 +1013,11 @@ know. Feels like it though.</p>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
     <span class="p">}}</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 
@@ -1027,17 +1027,17 @@ know. Feels like it though.</p>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
     <span class="p">}}</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ props.dimensions.y} width={props.width} count={props.dimensions.y}/</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ props.dimensions.y} width={props.width} count={props.dimensions.y}/</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ props.dimensions.y} width={props.width} count={props.dimensions.y}/</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ props.dimensions.y} width={props.width} count={props.dimensions.y}/</span><span class="o">&gt;</span>
-        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="sr">/ props.dimensions.y} width={props.width} count={props.dimensions.y}/</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span> <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span><span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 
 <span class="nx">setInterval</span><span class="p">(()=&gt;{</span>
     <span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
-        <span class="o">&lt;</span><span class="nx">Grid</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="mi">500</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="mi">500</span><span class="p">}</span> <span class="nx">dimensions</span><span class="o">=</span><span class="p">{{</span><span class="nx">x</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">5</span><span class="p">}}</span> <span class="err">/&gt;,</span>
+        <span class="o">&lt;</span><span class="nx">Grid</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="mi">500</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="mi">500</span><span class="p">}</span> <span class="nx">dimensions</span><span class="o">=</span><span class="p">{{</span><span class="nx">x</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="nx">y</span><span class="o">:</span> <span class="mi">5</span><span class="p">}}</span> <span class="o">/&gt;</span><span class="p">,</span>
         <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;example&#39;</span><span class="p">)</span>
     <span class="p">);</span>
 <span class="p">},</span> <span class="mi">100</span><span class="p">)</span>
@@ -1052,11 +1052,11 @@ rendered as if I had written them by hand as before.</p>
         <span class="nx">height</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
         <span class="nx">width</span><span class="o">:</span> <span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
     <span class="p">}}</span><span class="o">&gt;</span><span class="p">{[</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span><span class="p">,</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span><span class="p">,</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span><span class="p">,</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span><span class="p">,</span>
-        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="sr">/ props.count} /</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">,</span>
+        <span class="o">&lt;</span><span class="nx">Box</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">}</span> <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">count</span><span class="p">}</span> <span class="o">/&gt;</span>
     <span class="p">]}</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1086,11 +1086,11 @@ look something like this:</p>
     <span class="kd">let</span> <span class="nx">out</span> <span class="o">=</span> <span class="p">[];</span>
     <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">count</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">out</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">Row</span>
-                    <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="err">/ props.dimensions.y}</span>
+                    <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span>
                     <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span>
                     <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">x</span><span class="p">}</span>
                     <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">i</span><span class="p">}</span>
-                    <span class="err">/&gt;</span>
+                    <span class="o">/&gt;</span>
         <span class="p">);</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="nx">out</span><span class="p">;</span>
@@ -1130,10 +1130,10 @@ to be unique amongst their siblings, so this won&rsquo;t interfere with other ro
 keys boxes, for example.)</p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nb">Array</span><span class="p">(</span><span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">).</span><span class="nx">fill</span><span class="p">().</span><span class="nx">map</span><span class="p">((</span><span class="nx">_</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="o">&lt;</span><span class="nx">Row</span>
-            <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="err">/ props.dimensions.y}</span>
+            <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span>
             <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span>
             <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">dimensions</span><span class="p">.</span><span class="nx">x</span><span class="p">}</span>
-            <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">i</span><span class="p">}</span> <span class="err">/&gt;;</span>
+            <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">i</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">;</span>
 <span class="p">})</span>
 </code></pre></div>
 <p>And Robert&rsquo;s your sister&rsquo;s husband&rsquo;s father-in-law&rsquo;s cousin&rsquo;s cousin!</p>
@@ -1165,7 +1165,7 @@ function doesn&rsquo;t maintain a reference to itself.</p>
             <span class="nx">background</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">color</span><span class="p">,</span>
             <span class="nx">height</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span>
             <span class="nx">width</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span>
-        <span class="p">}}</span> <span class="nx">onMouseOver</span><span class="o">=</span><span class="p">{()=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">color</span><span class="o">:</span> <span class="nx">randColor</span><span class="p">()})}</span><span class="err">/&gt;;</span>
+        <span class="p">}}</span> <span class="nx">onMouseOver</span><span class="o">=</span><span class="p">{()=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">color</span><span class="o">:</span> <span class="nx">randColor</span><span class="p">()})}</span><span class="o">/&gt;</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -1178,7 +1178,7 @@ single call, once, to <code>ReactDOM.render()</code></p>
 <div class="highlight"><pre class="chroma"><code class="language-js" data-lang="js"><span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
     <span class="o">&lt;</span><span class="nx">Grid</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">}</span>
           <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span><span class="p">}</span>
-          <span class="err">/&gt;,</span>
+          <span class="o">/&gt;</span><span class="p">,</span>
     <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;grid&#39;</span><span class="p">)</span>
 <span class="p">);</span>
 </code></pre></div>
@@ -1212,8 +1212,8 @@ rerendered! This is amaze and I think I really like it.</p>
             <span class="nx">position</span><span class="o">:</span> <span class="s2">&#34;fixed&#34;</span><span class="p">,</span>
             <span class="nx">padding</span><span class="o">:</span> <span class="s2">&#34;6px&#34;</span>
         <span class="p">}}</span><span class="o">&gt;</span>
-            <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;range&#34;</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">x</span><span class="p">}</span> <span class="nx">min</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span> <span class="nx">max</span><span class="o">=</span><span class="p">{</span><span class="mi">25</span><span class="p">}</span> <span class="nx">onChange</span><span class="o">=</span><span class="p">{(</span><span class="nx">e</span><span class="p">)=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">x</span><span class="o">:</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)})}</span> <span class="err">/&gt;</span>
-            <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;range&#34;</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span> <span class="nx">min</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span> <span class="nx">max</span><span class="o">=</span><span class="p">{</span><span class="mi">25</span><span class="p">}</span> <span class="nx">onChange</span><span class="o">=</span><span class="p">{(</span><span class="nx">e</span><span class="p">)=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">y</span><span class="o">:</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)})}</span> <span class="err">/&gt;</span>
+            <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;range&#34;</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">x</span><span class="p">}</span> <span class="nx">min</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span> <span class="nx">max</span><span class="o">=</span><span class="p">{</span><span class="mi">25</span><span class="p">}</span> <span class="nx">onChange</span><span class="o">=</span><span class="p">{(</span><span class="nx">e</span><span class="p">)=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">x</span><span class="o">:</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)})}</span> <span class="o">/&gt;</span>
+            <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;range&#34;</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span> <span class="nx">min</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span> <span class="nx">max</span><span class="o">=</span><span class="p">{</span><span class="mi">25</span><span class="p">}</span> <span class="nx">onChange</span><span class="o">=</span><span class="p">{(</span><span class="nx">e</span><span class="p">)=&gt;</span><span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">y</span><span class="o">:</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)})}</span> <span class="o">/&gt;</span>
         <span class="o">&lt;</span><span class="err">/div&gt;</span>
         <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=</span><span class="p">{{</span>
             <span class="nx">display</span><span class="o">:</span> <span class="s2">&#34;inline-block&#34;</span><span class="p">,</span>
@@ -1221,10 +1221,10 @@ rerendered! This is amaze and I think I really like it.</p>
             <span class="nx">width</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span>
         <span class="p">}}</span><span class="o">&gt;</span><span class="p">{</span>
             <span class="nb">Array</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">y</span><span class="p">).</span><span class="nx">fill</span><span class="p">().</span><span class="nx">map</span><span class="p">((</span><span class="nx">_</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="err">/ this.state.y}</span>
+                <span class="k">return</span> <span class="o">&lt;</span><span class="nx">Row</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">y</span><span class="p">}</span>
                             <span class="nx">width</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">width</span><span class="p">}</span>
                             <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">x</span><span class="p">}</span>
-                            <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">i</span><span class="p">}</span> <span class="err">/&gt;;</span>
+                            <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">i</span><span class="p">}</span> <span class="o">/&gt;</span><span class="p">;</span>
             <span class="p">})</span>
         <span class="p">}</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
         <span class="o">&lt;</span><span class="err">/div&gt;</span>
