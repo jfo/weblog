@@ -87,7 +87,7 @@ bunch of code and functions and stuff, which is just data, which is numbers,
 basically, running on a _real_ machine, which is a bunch of transistors and
 chips and hoobledy gock and whatsits that redirect electricity really quickly
 in different ways that we read back to get answers to math problems? So we're
-just _harnessing lightening to do math?_
+just _harnessing lightning to do math?_ That's amazing!
 
 
 yeah, it's really simple, it's just a function.
