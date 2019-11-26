@@ -1,293 +1,310 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
-    <head>
+  <head>
     <title>How Zig Do?</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" href="/images/jeff.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
+    <link href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs=" rel=icon>
+    <link href="/hljs.css" type="text/css" rel="stylesheet" />
+    <link href="/style.css" type="text/css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+  </head>
 
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;">archive</a> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;about">about</a>
+      </header>
 
-    <body>
-        <div id="content">
-            <header class="site-header">
-    <h5>jfo</h5> &mdash;
-    <a href="https://blog.jfo.click/">archive</a> &mdash;
-    <a href="https://blog.jfo.click/about">about</a> &mdash;
-    <a href="https://blog.jfo.click/feed.xml">rss</a>
-</header>
-
-            <article>
-                <p>
-                    <h1 class="title-thing">How Zig Do?</h1>
-                    <sub>March 15, 2018 </sub>
-                <p>
-                <div>
-                    
-
-<blockquote>
+      <article>
+        <p></p>
+        <h1 class="title-thing">How Zig Do?</h1>
+        <sub>March 15, 2018</sub>
+        <p></p>
+        <div>
+          <blockquote>
 <p>1/13/19 Update: This post was written using Zig 0.2.0, and some of the code is
 out of date. The <a href="https://github.com/jfo/zigf">repository</a> has been updated to
 work with 0.3.0, inculding (for the moment) trunk. Refer to that to see a <a href="https://github.com/jfo/zigf/commit/7b1c563a9bd20e084243bfa0c7435e3cb468ccf2">simplified use of stdout</a>.</p>
 </blockquote>
-
-<p>Hello and good morning or whatever! Let&rsquo;s write a brainfuck interpreter. &ldquo;Why
-are you doing this?&rdquo; you might say, but you won&rsquo;t find that answer here.</p>
-
-<p>I&rsquo;m going to make it in <a href="http://ziglang.org/">Zig</a>.</p>
-
-<h2 id="zig-is">Zig is&hellip;.</h2>
-
-<p>&hellip;a new programming language. It is still very much in beta, and moving quickly. If you&rsquo;ve seen any Zig
+<p>Hello and good morning or whatever! Let's write a brainfuck interpreter. &quot;Why
+are you doing this?&quot; you might say, but you won't find that answer here.</p>
+<p>I'm going to make it in <a href="http://ziglang.org/">Zig</a>.</p>
+<h2>Zig is....</h2>
+<p>...a new programming language. It is still very much in beta, and moving quickly. If you've seen any Zig
 previously, the code in this post might look quite different. It is different!
 Zig 0.2.0 has just been released, coinciding with the release of <a href="http://releases.llvm.org/6.0.0/docs/ReleaseNotes.html">LLVM
 6</a> a few weeks ago,
 and includes a lot of changes to the syntax and general improvements to the
 language. Most notably, many of the sigils have been replaced by keywords. See
 <a href="https://ziglang.org/download/0.2.0/release-notes.html">here</a> for a more in depth explanations of all the changes!</p>
-
 <p>Zig is <a href="http://andrewkelley.me/post/zig-already-more-knowable-than-c.html">designed to be
 readable</a>,
-and as such it&rsquo;s relatively intuitive if you are familiar with similarly
+and as such it's relatively intuitive if you are familiar with similarly
 compiled, (~)typed languages like C, C++, and in some cases Rust.</p>
-
 <p>This code was all compiled and tested with Zig 0.2.0, which is available
 right now, <a href="https://ziglang.org/download/">via different channels</a>, including
-homebrew if you&rsquo;re on a OSX with <code>brew install zig</code>.</p>
-
-<h2 id="ok-go">Ok go</h2>
-
+homebrew if you're on a OSX with <code>brew install zig</code>.</p>
+<h2>Ok go</h2>
 <p>For info about how brainfuck works, <a href="/how-brainfuck-works/">look
-here</a>. There&rsquo;s almost nothing to
+here</a>. There's almost nothing to
 it, but it <em>is</em> <a href="https://en.wikipedia.org/wiki/Turing_completeness">turing
 complete</a>, which means you
 can use it to <a href="/fizzbuzz-in-brainfuck-part-one/">write anything</a>.</p>
-
-<p>I&rsquo;ve <a href="https://github.com/jfo/zigf">committed this code here</a> if you want to see
+<p>I've <a href="https://github.com/jfo/zigf">committed this code here</a> if you want to see
 the finished product or dig into earlier commits.</p>
-
 <p>Zig is a compiled language. When you compile a program, the resulting binary
 (if you are building an executable binary, as opposed to a library) needs a
 <code>main</code> function that denotes the entry point.</p>
-
-<p>So&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">// main.zig
-fn main() void { }</code></pre></div>
-<p>&hellip;and running&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ zig build-exe main.zig</code></pre></div>
-<p>&hellip;gives me&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">/zig/std/special/bootstrap.zig:70:33: error: <span class="s1">&#39;main&#39;</span> is private
-/zigfuck/main.zig:2:1: note: declared here</code></pre></div>
-<p><code>main</code> must be declared public in order to be visible outside of its module&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">// main.zig
-pub fn main() void { }</code></pre></div>
-<p>A brainfuck program is supposed to use a 30,000 byte array of memory, so I&rsquo;ll
+<p>So...</p>
+<pre><code class="language-zig">// main.zig
+fn main() void { }
+</code></pre>
+<p>...and running...</p>
+<pre><code class="language-shell"><span class="hljs-meta">$</span><span class="bash"> zig build-exe main.zig</span>
+</code></pre>
+<p>...gives me...</p>
+<pre><code class="language-shell">/zig/std/special/bootstrap.zig:70:33: error: 'main' is private
+/zigfuck/main.zig:2:1: note: declared here
+</code></pre>
+<p><code>main</code> must be declared public in order to be visible outside of its module...</p>
+<pre><code class="language-zig">// main.zig
+pub fn main() void { }
+</code></pre>
+<p>A brainfuck program is supposed to use a 30,000 byte array of memory, so I'll
 make one.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">// main.zig
+<pre><code class="language-zig">// main.zig
 pub fn main() void {
   const mem: [30000]u8;
-}</code></pre></div>
-<p>I can make a variable <code>const</code> or <code>var</code>. Here, I&rsquo;m declaring <code>mem</code> as an array
+}
+</code></pre>
+<p>I can make a variable <code>const</code> or <code>var</code>. Here, I'm declaring <code>mem</code> as an array
 of <code>30000</code> unsigned (<code>u</code>) bytes (<code>8</code> bits).</p>
-
 <p>This does not compile.</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">/main.zig:3:5: error: variables must be initialized</code></pre></div>
+<pre><code class="language-shell">/main.zig:3:5: error: variables must be initialized
+</code></pre>
 <p>The equivalent C would compile fine: I can declare a variable without
 initializing it, but Zig forces me to make this decision now, at the
-declaration site. Often, I don&rsquo;t care what the memory has in it, but I have to
+declaration site. Often, I don't care what the memory has in it, but I have to
 <em>say that</em>. I can state this intent clearly by initializing to <code>undefined</code>.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">// main.zig
+<pre><code class="language-zig">// main.zig
 pub fn main() void {
   const mem: [30000]u8 = undefined;
-}</code></pre></div>
+}
+</code></pre>
 <p>Initializing a variable to <code>undefined</code> offers no guarantees about the values
 that may or may not be in the memory. This is just like an uninitialized
 declaration in C except the clarity of intent is enforced.</p>
-
 <p>But maybe I <em>do</em> care what this memory is initialized to. Maybe I want to
 guarantee that it is zeroed out, or start it all off at some arbitrary value or
 something. In that case I can be explicit about <em>that</em> as well:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">// main.zig
+<pre><code class="language-zig">// main.zig
 pub fn main() void {
   const mem = []u8{0} ** 30000;
-}</code></pre></div>
+}
+</code></pre>
 <p>This might look a little odd, but <code>**</code> is an operator used for array
-multiplication. I&rsquo;m defining an array of a single <code>0</code> byte and then multiplying
+multiplication. I'm defining an array of a single <code>0</code> byte and then multiplying
 it by <code>30000</code> to get my final initialization value of an array of 30000 zeroed
 out bytes.  This operation happens only once, at <em>compile time</em>.  <code>comptime</code> is
-one of Zig&rsquo;s main Big Ideas, and I&rsquo;ll come back to it in a later post.</p>
-
-<p>Now to write a brainfuck program that doesn&rsquo;t do anything except increment the
+one of Zig's main Big Ideas, and I'll come back to it in a later post.</p>
+<p>Now to write a brainfuck program that doesn't do anything except increment the
 first memory slot 5 times!</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">pub fn main() void {
+<pre><code class="language-zig">pub fn main() void {
   const mem = []u8{0} ** 30000;
-  const src = &#34;+++++&#34;;
-}</code></pre></div>
-<p>In Zig, strings are just byte arrays. I don&rsquo;t have to declare <code>src</code> as a byte
+  const src = &quot;+++++&quot;;
+}
+</code></pre>
+<p>In Zig, strings are just byte arrays. I don't have to declare <code>src</code> as a byte
 array because the compiler infers it. It is unneccesary to do so, but I am free
 to be explicit about that, too:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const src: [5]u8 = &#34;+++++&#34;;</code></pre></div>
-<p>This will compile just fine. This, however&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const src: [6]u8= &#34;+++++&#34;;</code></pre></div>
+<pre><code class="language-zig">const src: [5]u8 = &quot;+++++&quot;;
+</code></pre>
+<p>This will compile just fine. This, however...</p>
+<pre><code class="language-zig">const src: [6]u8= &quot;+++++&quot;;
+</code></pre>
 <p>will not.</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">main.zig:5:22: error: expected <span class="nb">type</span> <span class="s1">&#39;[6]u8&#39;</span>, found <span class="s1">&#39;[5]u8&#39;</span></code></pre></div>
+<pre><code class="language-shell">main.zig:5:22: error: expected type '[6]u8', found '[5]u8'
+</code></pre>
 <p>An additional note: as strings are just simple byte arrays, they are <em>not null
 terminated</em>. You can easily declare C style null terminated strings though! As
 literals, they look like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">c&#34;Hello I am a null terminated string&#34;;</code></pre></div>
-<h2 id="for-goodness-s-sake"><code>for</code> goodness&rsquo;s sake</h2>
-
+<pre><code class="language-zig">c&quot;Hello I am a null terminated string&quot;;
+</code></pre>
+<h2><code>for</code> goodness's sake</h2>
 <p>I want to do <em>something</em> for each character in the source string. I can do
 that! At the top of <code>main.zig</code>, I can import some functionality from the
 standard library like so:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const warn = @import(&#34;std&#34;).debug.warn;</code></pre></div>
+<pre><code class="language-zig">const warn = @import(&quot;std&quot;).debug.warn;
+</code></pre>
 <p><code>@import</code>, and in fact anything that begins with an <code>@</code> sign, is a <a href="https://ziglang.org/documentation/master/#Builtin-Functions"><em>compiler
 builtin
 function</em></a>. These
 functions are always available globally. Imports here actually feel quite a lot
 like javascript imports- you can simply assign anything to whatever, digging
 into a namespace to get at any publically exposed functions or variables. In
-the above example, I&rsquo;m directly importing the warn function and assigning it
+the above example, I'm directly importing the warn function and assigning it
 to, surprise, the const <code>warn</code>. This is now callable. It is a common pattern to
 import the <code>std</code> namespace directly and then you may call <code>std.debug.warn()</code>
 <em>or</em> assign warn off of that. That looks like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const std = @import(&#34;std&#34;);
-const warn = std.debug.warn;</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const warn = @import(&#34;std&#34;).debug.warn;
+<pre><code class="language-zig">const std = @import(&quot;std&quot;);
+const warn = std.debug.warn;
+</code></pre>
+<pre><code class="language-zig">const warn = @import(&quot;std&quot;).debug.warn;
 // main.zig
 pub fn main() void {
   const mem = []u8{0} ** 30000;
-  const src = &#34;+++++&#34;;
+  const src = &quot;+++++&quot;;
 
   for (src) |c| {
-      warn(&#34;{}&#34;, c);
+      warn(&quot;{}&quot;, c);
   }
-}</code></pre></div>
+}
+</code></pre>
 <p>During debugging and initial development and testing, I just want to print
 something to the screen. Zig is <a href="http://ziglang.org/documentation/master/#Hello-World">fastidious about error
 handling</a> and stdout is
-error prone. I don&rsquo;t want to mess around with that right now, so I can print
+error prone. I don't want to mess around with that right now, so I can print
 straight to stderr with <code>warn</code>, above imported from the standard library.</p>
-
 <p><code>warn</code> takes a format string, just like <code>printf</code> in C does! The above prints:</p>
-<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">4343434343</span></code></pre></div>
+<pre><code class="language-bash">4343434343
+</code></pre>
 <p>43 is the ascii code for the <code>+</code> char. I can also go:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">warn(&#34;{c}&#34;, c);</code></pre></div>
-<p>and wouldn&rsquo;t you know it:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">+++++</code></pre></div>
-<p>So, I&rsquo;ve initialized the memory space, and written a program. Next, I must
-implement the language itself. I&rsquo;ll start with <code>+</code>, I&rsquo;ll replace the body of
+<pre><code class="language-zig">warn(&quot;{c}&quot;, c);
+</code></pre>
+<p>and wouldn't you know it:</p>
+<pre><code class="language-zig">+++++
+</code></pre>
+<p>So, I've initialized the memory space, and written a program. Next, I must
+implement the language itself. I'll start with <code>+</code>, I'll replace the body of
 the <code>for</code> to <code>switch</code> on the character.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">for (src) |c| {
+<pre><code class="language-zig">for (src) |c| {
     switch(c) {
-        &#39;+&#39; =&gt; mem[0] += 1
+        '+' =&gt; mem[0] += 1
     }
-}</code></pre></div>
+}
+</code></pre>
 <p>I get two errors from this program:</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">/main.zig:10:7: error: switch must handle all possibilities
-      switch<span class="o">(</span>c<span class="o">)</span> <span class="o">{</span>
+<pre><code class="language-shell">/main.zig:10:7: error: switch must handle all possibilities
+      switch(c) {
       ^
 /main.zig:11:25: error: cannot assign to constant
-          <span class="s1">&#39;+&#39;</span> <span class="o">=</span>&gt; mem<span class="o">[</span><span class="m">0</span><span class="o">]</span> +<span class="o">=</span> <span class="m">1</span>
-                        ^</code></pre></div>
-<p>Of course, I can&rsquo;t assign a new value to a variable that&rsquo;s been declared
-<code>const</code>ant! <code>mem</code> needs to be <code>var</code>&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">var mem = []u8{0} ** 30000;</code></pre></div>
+          '+' =&gt; mem[0] += 1
+                        ^
+</code></pre>
+<p>Of course, I can't assign a new value to a variable that's been declared
+<code>const</code>ant! <code>mem</code> needs to be <code>var</code>...</p>
+<pre><code class="language-zig">var mem = []u8{0} ** 30000;
+</code></pre>
 <p>as for the other error, my <a href="http://ziglang.org/documentation/master/#switch"><code>switch</code>
 statement</a> needs to know what
-to do for everything that&rsquo;s not a <code>+</code>, even if it&rsquo;s nothing. In my case, that&rsquo;s
-exactly what I want. I&rsquo;ll fulfill that case with an empty block:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">for (src) |c| {
+to do for everything that's not a <code>+</code>, even if it's nothing. In my case, that's
+exactly what I want. I'll fulfill that case with an empty block:</p>
+<pre><code class="language-zig">for (src) |c| {
     switch(c) {
-        &#39;+&#39; =&gt; mem[0] += 1,
+        '+' =&gt; mem[0] += 1,
         else =&gt; {}
     }
-}</code></pre></div>
+}
+</code></pre>
 <p>Now, I can compile the program. If I run it with a warn on the end of it,</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const warn = @import(&#34;std&#34;).debug.warn;
+<pre><code class="language-zig">const warn = @import(&quot;std&quot;).debug.warn;
 
 pub fn main() void {
   var mem = []u8{0} ** 30000;
-  const src = &#34;+++++&#34;;
+  const src = &quot;+++++&quot;;
 
   for (src) |c| {
       switch(c) {
-          &#39;+&#39; =&gt; mem[0] += 1,
+          '+' =&gt; mem[0] += 1,
           else =&gt; {}
       }
   }
 
-  warn(&#34;{}&#34;, mem[0]);
-}</code></pre></div>
+  warn(&quot;{}&quot;, mem[0]);
+}
+</code></pre>
 <p>I get <code>5</code> printed to
 <a href="https://en.wikipedia.org/wiki/Standard_streams#Standard_error_(stderr)">stderr</a>,
 like I would expect.</p>
-
-<h2 id="from-here">From here&hellip;</h2>
-
+<h2>From here...</h2>
 <p>It becomes straightforward to support <code>-</code>.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">switch(c) {
-    &#39;+&#39; =&gt; mem[0] += 1,
-    &#39;-&#39; =&gt; mem[0] -= 1,
+<pre><code class="language-zig">switch(c) {
+    '+' =&gt; mem[0] += 1,
+    '-' =&gt; mem[0] -= 1,
     else =&gt; {}
-}</code></pre></div>
-<p>To use <code>&gt;</code> and <code>&lt;</code>, I&rsquo;ll need a helper variable that represents a &ldquo;pointer&rdquo;
-into the memory I&rsquo;ve allocated for brainfuck&rsquo;s &ldquo;user space&rdquo;.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">var memptr: u16 = 0;</code></pre></div>
+}
+</code></pre>
+<p>To use <code>&gt;</code> and <code>&lt;</code>, I'll need a helper variable that represents a &quot;pointer&quot;
+into the memory I've allocated for brainfuck's &quot;user space&quot;.</p>
+<pre><code class="language-zig">var memptr: u16 = 0;
+</code></pre>
 <p>an unsigned 16 bit number can be a maximum of 65,535, much more than enough to
 index the entire 30,000 byte address space.</p>
-
 <blockquote>
 <p>Actually, all I <em>really</em> need is an unsigned <em>15 bit</em> number, which would be
 enough for 32,767. Zig allows for fairly <a href="http://ziglang.org/documentation/master/#Primitive-Types">arbitrarily wide
 types</a>, but not a
 u15 just yet.</p>
-
+</blockquote>
 <blockquote>
-<p>Andy says: &ldquo;You actually can make a u15 like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const u15 = @IntType(false, 15):</code></pre></div>
-<p>it&rsquo;s <a href="https://github.com/zig-lang/zig/issues/745">proposed to allow any [iu]\d+  type to be an integer
+<blockquote>
+<p>Andy says: &quot;You actually can make a u15 like this:</p>
+</blockquote>
+</blockquote>
+<pre><code class="language-zig">const u15 = @IntType(false, 15):
+</code></pre>
+<blockquote>
+<blockquote>
+<p>it's <a href="https://github.com/zig-lang/zig/issues/745">proposed to allow any [iu]\d+  type to be an integer
 type</a>
-(I guess it wasn&rsquo;t, so I just made the above sentence be true)&rdquo;</p>
+(I guess it wasn't, so I just made the above sentence be true)&quot;</p>
 </blockquote>
 </blockquote>
-
 <p>Now, instead of indexing <code>mem[0]</code> for everything, I can use this variable.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;+&#39; =&gt; mem[memptr] += 1,
-&#39;-&#39; =&gt; mem[memptr] -= 1,</code></pre></div>
+<pre><code class="language-zig">'+' =&gt; mem[memptr] += 1,
+'-' =&gt; mem[memptr] -= 1,
+</code></pre>
 <p><code>&lt;</code> and <code>&gt;</code>, then, are simply incrementing and decrementing that pointer.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;&gt;&#39; =&gt; memptr += 1,
-&#39;&lt;&#39; =&gt; memptr -= 1,</code></pre></div>
-<p>Great. We can write &ldquo;real&rdquo; programs with this, sort of!</p>
-
-<h2 id="testing-1-2-3">Testing 1,2,3</h2>
-
+<pre><code class="language-zig">'&gt;' =&gt; memptr += 1,
+'&lt;' =&gt; memptr -= 1,
+</code></pre>
+<p>Great. We can write &quot;real&quot; programs with this, sort of!</p>
+<h2>Testing 1,2,3</h2>
 <p>Zig has a simple built in testing apparatus. Anywhere in any file I can write a
 test block:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;Name of Test&#34; {
+<pre><code class="language-zig">test &quot;Name of Test&quot; {
   // test code
-}</code></pre></div>
+}
+</code></pre>
 <p>And then run the tests from the command line with <code>zig test $FILENAME</code>. There
 is nothing special about test blocks, except that they are executed only under
 these circumstances.</p>
-
 <p>Look at this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">// test.zig
-test &#34;testing tests&#34; {}</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">zig test test.zig</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-nothing" data-lang="nothing">Test 1/1 testing tests...OK</code></pre></div>
+<pre><code class="language-zig">// test.zig
+test &quot;testing tests&quot; {}
+</code></pre>
+<pre><code class="language-txt">zig test test.zig
+</code></pre>
+<pre><code class="language-nothing">Test 1/1 testing tests...OK
+</code></pre>
 <p>Of course, an empty test is not useful. I can use <code>assert</code> to actually assert
 test cases.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const assert = @import(&#34;std&#34;).debug.assert;
+<pre><code class="language-zig">const assert = @import(&quot;std&quot;).debug.assert;
 
-test &#34;test true&#34; {
+test &quot;test true&quot; {
     assert(true);
 }
 
-test &#34;test false&#34; {
+test &quot;test false&quot; {
     assert(false);
-}</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-txt" data-lang="txt">zig test test.zig</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#34;thing.zig&#34; 10L, 127C written
+}
+</code></pre>
+<pre><code class="language-txt">zig test test.zig
+</code></pre>
+<pre><code class="language-zig">&quot;thing.zig&quot; 10L, 127C written
 :!zig test thing.zig
 
 Test 1/2 test true...OK
@@ -304,19 +321,19 @@ Test 2/2 test false...assertion failure
  [37;1m??? [0m:  [2m0x0000000000000001 in ??? (???) [0m
 
 Tests failed. Use the following command to reproduce the failure:
-./zig-cache/test</code></pre></div>
+./zig-cache/test
+</code></pre>
 <p><a href="https://github.com/zig-lang/zig/pull/780">Stack traces on Mac are currently a WIP.</a></p>
-
-<p>In order to test this effectively, I need to break it up. Let&rsquo;s start with
+<p>In order to test this effectively, I need to break it up. Let's start with
 this;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">fn bf(src: []const u8, mem: [30000]u8) void {
+<pre><code class="language-zig">fn bf(src: []const u8, mem: [30000]u8) void {
     var memptr: u16 = 0;
     for (src) |c| {
         switch(c) {
-            &#39;+&#39; =&gt; mem[memptr] += 1,
-            &#39;-&#39; =&gt; mem[memptr] -= 1,
-            &#39;&gt;&#39; =&gt; memptr += 1,
-            &#39;&lt;&#39; =&gt; memptr -= 1,
+            '+' =&gt; mem[memptr] += 1,
+            '-' =&gt; mem[memptr] -= 1,
+            '&gt;' =&gt; memptr += 1,
+            '&lt;' =&gt; memptr -= 1,
             else =&gt; {}
         }
     }
@@ -324,242 +341,260 @@ this;</p>
 
 pub fn main() void {
     var mem = []u8{0} ** 30000;
-    const src = &#34;+++++&#34;;
+    const src = &quot;+++++&quot;;
     bf(src, mem);
-}</code></pre></div>
+}
+</code></pre>
 <p>This looks like it will work! All the types line up and everything, right?</p>
-
-<p>and yet&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">/main.zig:1:29: error: type &#39;[30000]u8&#39; is not copyable; cannot pass by value</code></pre></div>
+<p>and yet...</p>
+<pre><code class="language-zig">/main.zig:1:29: error: type '[30000]u8' is not copyable; cannot pass by value
+</code></pre>
 <blockquote>
-<p>this is addressed by <a href="https://github.com/zig-lang/zig/issues/733">https://github.com/zig-lang/zig/issues/733</a></p>
+<p>this is addressed by https://github.com/zig-lang/zig/issues/733</p>
 </blockquote>
-
 <p>Zig is very strict about this. Complex types, basically anything that can
-possibly be variable in size, can&rsquo;t be passed by value. This makes stack
+possibly be variable in size, can't be passed by value. This makes stack
 allocations incredibly predictible and consistent, and can avoid unneccessary
 copying. If you want the semantics of pass by value in your program, you are
 free to implement them in user space using a custom allocation strategy, but
 the language itself is designed to discourage this under normal circumstances.</p>
-
 <p>The natural way to get around this would be to pass a pointer instead (passing
 by reference). Zig prefers a different strategy, though,
 <a href="http://ziglang.org/documentation/master/#Slices">slices</a>. A slice is sort of
 just a souped up pointer with bounds checking and a <code>len</code> property attached to
 it. The syntax looks like this in the function signiture:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">fn bf(src: []const u8, mem: []u8) void { ... }</code></pre></div>
+<pre><code class="language-zig">fn bf(src: []const u8, mem: []u8) void { ... }
+</code></pre>
 <p>and this at the call site:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">bf(src, mem[0..mem.len]);</code></pre></div>
-<p>It resembles taking a sliced index! Notice that I&rsquo;m defining the upper bound by
+<pre><code class="language-zig">bf(src, mem[0..mem.len]);
+</code></pre>
+<p>It resembles taking a sliced index! Notice that I'm defining the upper bound by
 simply referencing the length of the array. There is a shorthand for this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">bf(src, mem[0..]);</code></pre></div>
+<pre><code class="language-zig">bf(src, mem[0..]);
+</code></pre>
 <p>Now I can start writing tests in earnest, unit testing the <code>bf()</code> function
-directly. I can just put test blocks at the bottom of this file, for now&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;+&#34; {
+directly. I can just put test blocks at the bottom of this file, for now...</p>
+<pre><code class="language-zig">test &quot;+&quot; {
     var mem = []u8{0};
-    const src = &#34;+++&#34;;
+    const src = &quot;+++&quot;;
     bf(src, mem[0..]);
     assert(mem[0] == 3);
-}</code></pre></div>
-<p>I&rsquo;m operating on the mem byte array (of a single byte) and then asserting that
+}
+</code></pre>
+<p>I'm operating on the mem byte array (of a single byte) and then asserting that
 what I thought was going to happen (the byte is incremented three times)
 happened. It did!</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Test <span class="m">1</span>/1 +...OK</code></pre></div>
+<pre><code class="language-shell">Test 1/1 +...OK
+</code></pre>
 <p>The <code>-</code> case is similar:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;-&#34; {
+<pre><code class="language-zig">test &quot;-&quot; {
     var mem = []u8{0};
-    const src = &#34;---&#34;;
+    const src = &quot;---&quot;;
     bf(src, mem[0..]);
     assert(mem[0] == 253);
-}</code></pre></div>
-<p>But this fails! When I try to subtract <code>1</code> from <code>0</code> I get&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">Test <span class="m">2</span>/2 -...integer overflow</code></pre></div>
+}
+</code></pre>
+<p>But this fails! When I try to subtract <code>1</code> from <code>0</code> I get...</p>
+<pre><code class="language-shell">Test 2/2 -...integer overflow
+</code></pre>
 <p><code>mem</code> is an array of <em>unsigned bytes</em>, so subtracting 1 from 0 overflows the
 type. Once again, Zig is forcing me to consider this possibility explicitly.
-In this case, it so happens that I don&rsquo;t care about this overflow- in fact I
+In this case, it so happens that I don't care about this overflow- in fact I
 want it to default to dealing with it via <a href="https://en.wikipedia.org/wiki/Modular_arithmetic">modular
 arithmetic</a> as per the
 <a href="https://en.wikipedia.org/wiki/Brainfuck">brainfuck spec</a>, such as it is. This
 means that decrementing a cell at <code>0</code> will give me <code>255</code>, and incrementing a
 value of <code>255</code> will give me <code>0</code>.</p>
-
-<p>Zig has a set of auxiliary arithmetic operators that offer <a href="http://ziglang.org/documentation/master/#Wrapping-Operations">&ldquo;guaranteed wrap
+<p>Zig has a set of auxiliary arithmetic operators that offer <a href="http://ziglang.org/documentation/master/#Wrapping-Operations">&quot;guaranteed wrap
 around
-semantics&rdquo;</a></p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;+&#39; =&gt; mem[memptr] +%= 1,
-&#39;-&#39; =&gt; mem[memptr] -%= 1,</code></pre></div>
+semantics&quot;</a></p>
+<pre><code class="language-zig">'+' =&gt; mem[memptr] +%= 1,
+'-' =&gt; mem[memptr] -%= 1,
+</code></pre>
 <p>This solves my integer overflow problem and does what I expect it to.</p>
-
-<p>For <code>&lt;</code> and <code>&gt;</code>, I&rsquo;ll navigate a small array and then check the value of an
+<p>For <code>&lt;</code> and <code>&gt;</code>, I'll navigate a small array and then check the value of an
 incremented cell:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;&gt;&#34; {
+<pre><code class="language-zig">test &quot;&gt;&quot; {
     var mem = []u8{0} ** 5;
-    const src = &#34;&gt;&gt;&gt;+++&#34;;
+    const src = &quot;&gt;&gt;&gt;+++&quot;;
     bf(src, mem[0..]);
     assert(mem[3] == 3);
-}</code></pre></div>
-<p>and&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;&lt;&#34; {
+}
+</code></pre>
+<p>and...</p>
+<pre><code class="language-zig">test &quot;&lt;&quot; {
     var mem = []u8{0} ** 5;
-    const src = &#34;&gt;&gt;&gt;+++&lt;++&lt;+&#34;;
+    const src = &quot;&gt;&gt;&gt;+++&lt;++&lt;+&quot;;
     bf(src, mem[0..]);
     assert(mem[3] == 3);
     assert(mem[2] == 2);
     assert(mem[1] == 1);
-}</code></pre></div>
-<p>For this last one, I can directly compare the result to a static array using&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const mem = std.mem;</code></pre></div>
+}
+</code></pre>
+<p>For this last one, I can directly compare the result to a static array using...</p>
+<pre><code class="language-zig">const mem = std.mem;
+</code></pre>
 <p>Remember that I have imported <code>std</code> already. In the below example, I am calling
 into that namespace to use <code>mem.eql</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;&lt;&#34; {
+<pre><code class="language-zig">test &quot;&lt;&quot; {
     var storage = []u8{0} ** 5;
-    const src = &#34;&gt;&gt;&gt;+++&lt;++&lt;+&#34;;
+    const src = &quot;&gt;&gt;&gt;+++&lt;++&lt;+&quot;;
     bf(src, storage[0..]);
     assert(std.mem.eql(u8, storage, []u8{ 0, 1, 2, 3, 0 }));
-}</code></pre></div>
-<p>&hellip;and remember, string literals are just <code>u8</code> arrays in zig, and I can put in
+}
+</code></pre>
+<p>...and remember, string literals are just <code>u8</code> arrays in zig, and I can put in
 hexadecimal literals inside them, so the following would work in the exact same
 way!</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">assert(mem.eql(u8, storage, &#34;\x00\x01\x02\x03\x00&#34;));</code></pre></div>
-<p>Let&rsquo;s add <code>.</code>! This simply prints the byte value as a character in the cell
-that is currently being pointed to. For now, I&rsquo;ll abuse <code>warn</code>, and revisit
+<pre><code class="language-zig">assert(mem.eql(u8, storage, &quot;\x00\x01\x02\x03\x00&quot;));
+</code></pre>
+<p>Let's add <code>.</code>! This simply prints the byte value as a character in the cell
+that is currently being pointed to. For now, I'll abuse <code>warn</code>, and revisit
 this later to properly handle <code>stdout</code> here.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;.&#39; =&gt; warn(&#34;{c}&#34;, storage[memptr]),</code></pre></div>
-<p>For now, I&rsquo;ll ignore <code>,</code> as it&rsquo;s very simple conceptually but a little trickier
-to implement. I&rsquo;ll come back to it later!</p>
-
-<h2 id="loops">Loops</h2>
-
-<p><code>[</code> and <code>]</code> are where the magic happens&hellip;.</p>
-<div class="highlight"><pre class="chroma"><code class="language-brainfuck" data-lang="brainfuck"><span class="k">[</span><span class="c">   if the value of current cell is zero skip to the matching bracket without executing the code
-</span><span class="c"></span><span class="k">]</span><span class="c">   if the value of the current cell is NOT zero go back to the opening bracket and execute the code again</span></code></pre></div>
-<p>I&rsquo;ll <em>start</em> with the test case this time, testing them together (as it doesn&rsquo;t
+<pre><code class="language-zig">'.' =&gt; warn(&quot;{c}&quot;, storage[memptr]),
+</code></pre>
+<p>For now, I'll ignore <code>,</code> as it's very simple conceptually but a little trickier
+to implement. I'll come back to it later!</p>
+<h2>Loops</h2>
+<p><code>[</code> and <code>]</code> are where the magic happens....</p>
+<pre><code class="language-brainfuck"><span class="hljs-title">[</span>   <span class="hljs-comment">if</span> <span class="hljs-comment">the</span> <span class="hljs-comment">value</span> <span class="hljs-comment">of</span> <span class="hljs-comment">current</span> <span class="hljs-comment">cell</span> <span class="hljs-comment">is</span> <span class="hljs-comment">zero</span> <span class="hljs-comment">skip</span> <span class="hljs-comment">to</span> <span class="hljs-comment">the</span> <span class="hljs-comment">matching</span> <span class="hljs-comment">bracket</span> <span class="hljs-comment">without</span> <span class="hljs-comment">executing</span> <span class="hljs-comment">the</span> <span class="hljs-comment">code</span>
+<span class="hljs-title">]</span>   <span class="hljs-comment">if</span> <span class="hljs-comment">the</span> <span class="hljs-comment">value</span> <span class="hljs-comment">of</span> <span class="hljs-comment">the</span> <span class="hljs-comment">current</span> <span class="hljs-comment">cell</span> <span class="hljs-comment">is</span> <span class="hljs-comment">NOT</span> <span class="hljs-comment">zero</span> <span class="hljs-comment">go</span> <span class="hljs-comment">back</span> <span class="hljs-comment">to</span> <span class="hljs-comment">the</span> <span class="hljs-comment">opening</span> <span class="hljs-comment">bracket</span> <span class="hljs-comment">and</span> <span class="hljs-comment">execute</span> <span class="hljs-comment">the</span> <span class="hljs-comment">code</span> <span class="hljs-comment">again</span>
+</code></pre>
+<p>I'll <em>start</em> with the test case this time, testing them together (as it doesn't
 make sense to test them in isolation). The first test case- <code>storage[2]</code> should
 end up being empty even though the loop would increment it if it ran:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;[] skips execution and exits&#34; {
+<pre><code class="language-zig">test &quot;[] skips execution and exits&quot; {
     var storage = []u8{0} ** 3;
-    const src = &#34;+++++&gt;[&gt;+++++&lt;-]&#34;;
+    const src = &quot;+++++&gt;[&gt;+++++&lt;-]&quot;;
     bf(src, storage[0..]);
     assert(storage[0] == 5);
     assert(storage[1] == 0);
     assert(storage[2] == 0);
-}</code></pre></div>
-<p>and I&rsquo;ll stub out the switch case:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;[&#39; =&gt; if (storage[memptr] == 0) {
+}
+</code></pre>
+<p>and I'll stub out the switch case:</p>
+<pre><code class="language-zig">'[' =&gt; if (storage[memptr] == 0) {
 },
-&#39;]&#39; =&gt; if (storage[memptr] == 0) {
-},</code></pre></div>
+']' =&gt; if (storage[memptr] == 0) {
+},
+</code></pre>
 <p>Now, <em>what goes here</em>? A naive approach presents itself. I will simply advance
 the src index forward until I find a <code>]</code>! But I cannot do this in a zig <code>for</code>,
 which is designed simply to iterate over elements of a collection, never to
 skip around them. The appropriate construct then here is <code>while</code></p>
-
 <p>from:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">var memptr: u16 = 0;
+<pre><code class="language-zig">var memptr: u16 = 0;
 for (src) |c| {
     switch(c) {
       ...
     }
-}</code></pre></div>
-<p>to&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">var memptr: u16 = 0;
+}
+</code></pre>
+<p>to...</p>
+<pre><code class="language-zig">var memptr: u16 = 0;
 var srcptr: u16 = 0;
 while (srcptr &lt; src.len) {
     switch(src[srcptr]) {
       ...
     }
     srcptr += 1;
-}</code></pre></div>
+}
+</code></pre>
 <p>Now, I am free to reassign the <code>srcptr</code> index mid block, and I will do so.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;[&#39; =&gt; if (storage[memptr] == 0) {
-    while (src[srcptr] != &#39;]&#39;)
+<pre><code class="language-zig">'[' =&gt; if (storage[memptr] == 0) {
+    while (src[srcptr] != ']')
         srcptr += 1;
-},</code></pre></div>
-<p>This satisfies the test &ldquo;<code>[] skips execution and exits</code>&rdquo;, albeit flimsily, as
-we&rsquo;ll see.</p>
-
+},
+</code></pre>
+<p>This satisfies the test &quot;<code>[] skips execution and exits</code>&quot;, albeit flimsily, as
+we'll see.</p>
 <p>What about the closing brace? I suppose the analog will be simple enough:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;[] executes and exits&#34; {
+<pre><code class="language-zig">test &quot;[] executes and exits&quot; {
     var storage = []u8{0} ** 2;
-    const src = &#34;+++++[&gt;+++++&lt;-]&#34;;
+    const src = &quot;+++++[&gt;+++++&lt;-]&quot;;
     bf(src, storage[0..]);
     assert(storage[0] == 0);
     assert(storage[1] == 25);
-}</code></pre></div><div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;]&#39; =&gt; if (storage[memptr] != 0) {
-    while (src[srcptr] != &#39;[&#39;)
+}
+</code></pre>
+<pre><code class="language-zig">']' =&gt; if (storage[memptr] != 0) {
+    while (src[srcptr] != '[')
         srcptr -= 1;
-},</code></pre></div>
-<p>You might see where this is going&hellip; the naive solution to both brackets has a
+},
+</code></pre>
+<p>You might see where this is going... the naive solution to both brackets has a
 fatal flaw in it completely breaks when there are nested loops of any kind. Consider:</p>
-<div class="highlight"><pre class="chroma"><code class="language-brainfuck" data-lang="brainfuck"><span class="nb">++</span><span class="nv">&gt;</span><span class="k">[</span><span class="nv">&gt;</span><span class="nb">++</span><span class="k">[</span><span class="nb">-</span><span class="k">]</span><span class="nb">++</span><span class="nv">&lt;</span><span class="nb">-</span><span class="k">]</span></code></pre></div>
+<pre><code class="language-brainfuck">++&gt;<span class="hljs-title">[</span>&gt;++<span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span>++&lt;<span class="hljs-literal">-</span><span class="hljs-title">]</span>
+</code></pre>
 <p>This should result in <code>{ 2, 0 }</code>, but the first opening bracket will dumbly
 jump to the first available closing bracket, and then get all confused. I need
 it to be able to jump to the <em>next closing bracket at the same nesting depth</em>.
-This is a bit fiddly but it&rsquo;s easy to add a depth count and keep track of it
+This is a bit fiddly but it's easy to add a depth count and keep track of it
 while going through the src string. Here, for both directions:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;[&#39; =&gt; if (storage[memptr] == 0) {
+<pre><code class="language-zig">'[' =&gt; if (storage[memptr] == 0) {
     var depth:u16 = 1;
     srcptr += 1;
     while (depth &gt; 0) {
         srcptr += 1;
         switch(src[srcptr]) {
-            &#39;[&#39; =&gt; depth += 1,
-            &#39;]&#39; =&gt; depth -= 1,
+            '[' =&gt; depth += 1,
+            ']' =&gt; depth -= 1,
             else =&gt; {}
         }
     }
 },
-&#39;]&#39; =&gt; if (storage[memptr] != 0) {
+']' =&gt; if (storage[memptr] != 0) {
     var depth:u16 = 1;
     srcptr -= 1;
     while (depth &gt; 0) {
         srcptr -= 1;
         switch(src[srcptr]) {
-            &#39;[&#39; =&gt; depth -= 1,
-            &#39;]&#39; =&gt; depth += 1,
+            '[' =&gt; depth -= 1,
+            ']' =&gt; depth += 1,
             else =&gt; {}
         }
     }
-},</code></pre></div>
+},
+</code></pre>
 <p>and the corresponding tests- notice the <code>src</code> in both of these includes an
 internal loop.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">test &#34;[] skips execution with internal braces and exits&#34; {
+<pre><code class="language-zig">test &quot;[] skips execution with internal braces and exits&quot; {
     var storage = []u8{0} ** 2;
-    const src = &#34;++&gt;[&gt;++[-]++&lt;-]&#34;;
+    const src = &quot;++&gt;[&gt;++[-]++&lt;-]&quot;;
     try bf(src, storage[0..]);
     assert(storage[0] == 2);
     assert(storage[1] == 0);
 }
 
-test &#34;[] executes with internal braces and exits&#34; {
+test &quot;[] executes with internal braces and exits&quot; {
     var storage = []u8{0} ** 2;
-    const src = &#34;++[&gt;++[-]++&lt;-]&#34;;
+    const src = &quot;++[&gt;++[-]++&lt;-]&quot;;
     try bf(src, storage[0..]);
     assert(storage[0] == 0);
     assert(storage[1] == 2);
-}</code></pre></div>
+}
+</code></pre>
 <blockquote>
-<p>As an aside, <code>[-]</code> is a brainfuck idiom that means &ldquo;zero out this cell&rdquo;. You
-can see that no matter the value of the cell you&rsquo;re on, it will decrement it
+<p>As an aside, <code>[-]</code> is a brainfuck idiom that means &quot;zero out this cell&quot;. You
+can see that no matter the value of the cell you're on, it will decrement it
 until you get down to 0, then go on.</p>
 </blockquote>
-
-<h2 id="the-unhappy-path">the unhappy path</h2>
-
-<p>I&rsquo;ve not accounted for possibly broken bf programs yet. What happens if I feed
+<h2>the unhappy path</h2>
+<p>I've not accounted for possibly broken bf programs yet. What happens if I feed
 my interpreter malformed input? Like just</p>
-<div class="highlight"><pre class="chroma"><code class="language-nothing" data-lang="nothing">[</code></pre></div>
-<p>&hellip; with no matching closing brace, or</p>
-<div class="highlight"><pre class="chroma"><code class="language-nothing" data-lang="nothing">&lt;</code></pre></div>
+<pre><code class="language-nothing">[
+</code></pre>
+<p>... with no matching closing brace, or</p>
+<pre><code class="language-nothing">&lt;
+</code></pre>
 <p>which immediately goes out of bounds of the memory space? (I could wrap this
-around, but I&rsquo;d rather consider it an error.)</p>
-
-<p>I&rsquo;m going to jump ahead a bit and explain all the pertinent differences in this
-code. I&rsquo;ll pull the <code>bf</code> interpreter function into its own file and also pull
+around, but I'd rather consider it an error.)</p>
+<p>I'm going to jump ahead a bit and explain all the pertinent differences in this
+code. I'll pull the <code>bf</code> interpreter function into its own file and also pull
 out the seekBack and seekForward functionalities into their own little
 functions.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const warn = @import(&#34;std&#34;).debug.warn;
-const sub = @import(&#34;std&#34;).math.sub;
+<pre><code class="language-zig">const warn = @import(&quot;std&quot;).debug.warn;
+const sub = @import(&quot;std&quot;).math.sub;
 
 fn seekBack(src: []const u8, srcptr: u16) !u16 {
     var depth:u16 = 1;
@@ -567,8 +602,8 @@ fn seekBack(src: []const u8, srcptr: u16) !u16 {
     while (depth &gt; 0) {
         ptr = sub(u16, ptr, 1) catch return error.OutOfBounds;
         switch(src[ptr]) {
-            &#39;[&#39; =&gt; depth -= 1,
-            &#39;]&#39; =&gt; depth += 1,
+            '[' =&gt; depth -= 1,
+            ']' =&gt; depth += 1,
             else =&gt; {}
         }
     }
@@ -582,8 +617,8 @@ fn seekForward(src: []const u8, srcptr: u16) !u16 {
         ptr += 1;
         if (ptr &gt;= src.len) return error.OutOfBounds;
         switch(src[ptr]) {
-            &#39;[&#39; =&gt; depth += 1,
-            &#39;]&#39; =&gt; depth -= 1,
+            '[' =&gt; depth += 1,
+            ']' =&gt; depth -= 1,
             else =&gt; {}
         }
     }
@@ -595,18 +630,19 @@ pub fn bf(src: []const u8, storage: []u8) !void {
     var srcptr: u16 = 0;
     while (srcptr &lt; src.len) {
         switch(src[srcptr]) {
-            &#39;+&#39; =&gt; storage[memptr] +%= 1,
-            &#39;-&#39; =&gt; storage[memptr] -%= 1,
-            &#39;&gt;&#39; =&gt; memptr += 1,
-            &#39;&lt;&#39; =&gt; memptr -= 1,
-            &#39;[&#39; =&gt; if (storage[memptr] == 0) srcptr = try seekForward(src, srcptr),
-            &#39;]&#39; =&gt; if (storage[memptr] != 0) srcptr = try seekBack(src, srcptr),
-            &#39;.&#39; =&gt; warn(&#34;{c}&#34;, storage[memptr]),
+            '+' =&gt; storage[memptr] +%= 1,
+            '-' =&gt; storage[memptr] -%= 1,
+            '&gt;' =&gt; memptr += 1,
+            '&lt;' =&gt; memptr -= 1,
+            '[' =&gt; if (storage[memptr] == 0) srcptr = try seekForward(src, srcptr),
+            ']' =&gt; if (storage[memptr] != 0) srcptr = try seekBack(src, srcptr),
+            '.' =&gt; warn(&quot;{c}&quot;, storage[memptr]),
             else =&gt; {}
         }
         srcptr += 1;
     }
-}</code></pre></div>
+}
+</code></pre>
 <p>This makes the switch statement much easier to read, in my opinion.
 <code>seekForward</code> and <code>seekBack</code> look and act <em>very similar</em>, and I am tempted to
 refactor them into something cleverer and more compact, but in the end, they
@@ -614,112 +650,107 @@ are doing different things, and deal with their error cases slightly
 differently. It is easier to copy paste and tweak here, and it is clearer. Also
 I will be factoring out <code>seekForward</code> later, at some point, probably in a
 follow up post.</p>
-
-<p>I&rsquo;ve added a few important things, though! Notice that all three of these
+<p>I've added a few important things, though! Notice that all three of these
 functions now return a <code>!</code> type. This is new syntax for what used to be a <code>%T</code>
-error union type. It&rsquo;s saying that the function can either return a specified
+error union type. It's saying that the function can either return a specified
 type, or some type of error. Whenever I attempt to call a function like this, I
 must <em>either</em> <code>try</code> it (with <code>try</code> in front of the function call), which will
 propogate the error up the call stack if it encounters one, or <code>catch</code> it like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const x = functionCall() catch {}</code></pre></div>
+<pre><code class="language-zig">const x = functionCall() catch {}
+</code></pre>
 <p>Where I deal with the error appropriately in the catch block. As written, this
 catch would swallow any error into the void. This is Bad Practice, but once
-again I&rsquo;ll point out that Zig <em>makes me do this explicitly.</em> If I&rsquo;ve caught an
-error with an empty block, I&rsquo;m saying that I don&rsquo;t think I&rsquo;ll ever see an error
-or that I don&rsquo;t need to deal with it. In practice, this should probably always
+again I'll point out that Zig <em>makes me do this explicitly.</em> If I've caught an
+error with an empty block, I'm saying that I don't think I'll ever see an error
+or that I don't need to deal with it. In practice, this should probably always
 be like a <code>TODO</code>, and in fact it is quite easy to make that explicit, too!</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const x = functionCall() catch { @panic(&#34;TODO&#34;) }</code></pre></div>
-<p>Recall that <em>this case should never happen in production code.</em> I&rsquo;m essentially
-assuring the compiler that I know what I&rsquo;m doing, here. If it <em>could</em> happen, I
+<pre><code class="language-zig">const x = functionCall() catch { @panic(&quot;TODO&quot;) }
+</code></pre>
+<p>Recall that <em>this case should never happen in production code.</em> I'm essentially
+assuring the compiler that I know what I'm doing, here. If it <em>could</em> happen, I
 should add <em>proper</em> error handling.</p>
-
 <p>So what are the errors that I could be returning from seekBack or seekForward?</p>
-
 <p>In seekBack:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">ptr = sub(u16, ptr, 1) catch return error.OutOfBounds;</code></pre></div>
-<p>I&rsquo;ve changed this pointer decrement to use the std lib function <code>sub</code> which
+<pre><code class="language-zig">ptr = sub(u16, ptr, 1) catch return error.OutOfBounds;
+</code></pre>
+<p>I've changed this pointer decrement to use the std lib function <code>sub</code> which
 will throw a <code>Overflow</code> error if overflow does occur. I want to catch that
 error and instead return an <code>OutOfBounds</code> error, which I am instantiating here
 simply by using it.</p>
-
 <blockquote>
 <p>Zig errors are basically a global array of error codes that are generated by
 the compiler when you use <code>error.Whatever</code>. They are guaranteed to be unique,
 and can be <code>switched</code> on in switch blocks.</p>
 </blockquote>
-
 <p>I want to treat this as <code>OutOfBounds</code> because, semantically, if the memory
-pointer goes under zero, it means I&rsquo;ve ask the runtime to point outside of the
-memory space I&rsquo;ve alloted on the low end.</p>
-
+pointer goes under zero, it means I've ask the runtime to point outside of the
+memory space I've alloted on the low end.</p>
 <p>Similarly, in the seekForward function:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">if (ptr &gt;= src.len) return error.OutOfBounds;</code></pre></div>
+<pre><code class="language-zig">if (ptr &gt;= src.len) return error.OutOfBounds;
+</code></pre>
 <p>In the case that the pointer is larger than the src.len is, I can catch that
 here and return the same error.</p>
-
 <p>at the call site:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">&#39;[&#39; =&gt; if (storage[memptr] == 0) srcptr = try seekForward(src, srcptr),
-&#39;]&#39; =&gt; if (storage[memptr] != 0) srcptr = try seekBack(src, srcptr),</code></pre></div>
+<pre><code class="language-zig">'[' =&gt; if (storage[memptr] == 0) srcptr = try seekForward(src, srcptr),
+']' =&gt; if (storage[memptr] != 0) srcptr = try seekBack(src, srcptr),
+</code></pre>
 <p>I <code>try</code> these functions. If they succeed, they have executed correctly and try
 returns the new srcptr value. If they fail, <code>try</code> aborts the whole function
 and returns the error to the caller <em>of <code>bf</code> itself</em>.</p>
-
 <p>That caller would be <code>main</code>, now!</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const bf = @import(&#34;./bf.zig&#34;).bf;
+<pre><code class="language-zig">const bf = @import(&quot;./bf.zig&quot;).bf;
 
 // yes, hello
-const hello_world = &#34;++++++++++[&gt;+++++++&gt;++++++++++&gt;+++&gt;+&lt;&lt;&lt;&lt;-]&gt;++.&gt;+.+++++++..+++.&gt;++.&lt;&lt;+++++++++++++++.&gt;.+++.------.--------.&gt;+.&gt;.&#34;;
+const hello_world = &quot;++++++++++[&gt;+++++++&gt;++++++++++&gt;+++&gt;+&lt;&lt;&lt;&lt;-]&gt;++.&gt;+.+++++++..+++.&gt;++.&lt;&lt;+++++++++++++++.&gt;.+++.------.--------.&gt;+.&gt;.&quot;;
 
 pub fn main() void {
     storage = []u8{0} ** 30000;
     bf(hello_world, storage[0..]) catch {};
-}</code></pre></div>
-<p>I&rsquo;m swallowing this error here now, which I should not be doing, but the
+}
+</code></pre>
+<p>I'm swallowing this error here now, which I should not be doing, but the
 important point to note is how easy zig makes it to properly handle errors up
 the call stack. It is not the reponsibility of the caller to check for any
 particular error state, but the compiler enforces calling any errorable
 function with try and annotating the correct return values all the way up. It
-has to be dealt with eventually, <em>even if it&rsquo;s being ignored</em>!</p>
-
+has to be dealt with eventually, <em>even if it's being ignored</em>!</p>
 <blockquote>
 <p>This new <code>try</code>/<code>catch</code> syntax also gets rid of a lot of <code>%%</code> and <code>%</code> sigils, which people
-<a href="https://github.com/zig-lang/zig/issues/632#issue-277801769">really didn&rsquo;t like much</a>.</p>
+<a href="https://github.com/zig-lang/zig/issues/632#issue-277801769">really didn't like much</a>.</p>
 </blockquote>
-
-<p>I&rsquo;ve now implemented 7 of the 8 symbols in brainfuck, all the ones I need
-to run &ldquo;meaningful&rdquo; programs.</p>
-
-<h2 id="meaningful-programs">&ldquo;Meaningful&rdquo; programs</h2>
-
-<p>I&rsquo;ve got a program here:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">// our old friend, the fibonacci sequence.
-const fib = &#34;++++++++++++++++++++++++++++++++++++++++++++&gt;++++++++++++++++++++++++++++++++&gt;++++++++++++++++&gt;&gt;+&lt;&lt;[&gt;&gt;&gt;&gt;++++++++++&lt;&lt;[-&gt;+&gt;-[&gt;+&gt;&gt;]&gt;[+[-&lt;+&gt;]&gt;+&gt;&gt;]&lt;&lt;&lt;&lt;&lt;&lt;]&gt;[&lt;+&gt;-]&gt;[-]&gt;&gt;&gt;++++++++++&lt;[-&gt;-[&gt;+&gt;&gt;]&gt;[+[-&lt;+&gt;]&gt;+&gt;&gt;]&lt;&lt;&lt;&lt;&lt;]&gt;[-]&gt;&gt;[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]&lt;[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]&lt;&lt;&lt;++++++++++++++++++++++++++++++++++++++++++++++++.[-]&lt;&lt;&lt;&lt;&lt;&lt;&lt;.&gt;.&gt;&gt;[&gt;&gt;+&lt;&lt;-]&gt;[&gt;+&lt;&lt;+&gt;-]&gt;[&lt;+&gt;-]&lt;&lt;&lt;-]&lt;&lt;++...&#34;;</code></pre></div>
-<p>let me run it&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">pub fn main() void {
+<p>I've now implemented 7 of the 8 symbols in brainfuck, all the ones I need
+to run &quot;meaningful&quot; programs.</p>
+<h2>&quot;Meaningful&quot; programs</h2>
+<p>I've got a program here:</p>
+<pre><code class="language-zig">// our old friend, the fibonacci sequence.
+const fib = &quot;++++++++++++++++++++++++++++++++++++++++++++&gt;++++++++++++++++++++++++++++++++&gt;++++++++++++++++&gt;&gt;+&lt;&lt;[&gt;&gt;&gt;&gt;++++++++++&lt;&lt;[-&gt;+&gt;-[&gt;+&gt;&gt;]&gt;[+[-&lt;+&gt;]&gt;+&gt;&gt;]&lt;&lt;&lt;&lt;&lt;&lt;]&gt;[&lt;+&gt;-]&gt;[-]&gt;&gt;&gt;++++++++++&lt;[-&gt;-[&gt;+&gt;&gt;]&gt;[+[-&lt;+&gt;]&gt;+&gt;&gt;]&lt;&lt;&lt;&lt;&lt;]&gt;[-]&gt;&gt;[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]&lt;[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]&lt;&lt;&lt;++++++++++++++++++++++++++++++++++++++++++++++++.[-]&lt;&lt;&lt;&lt;&lt;&lt;&lt;.&gt;.&gt;&gt;[&gt;&gt;+&lt;&lt;-]&gt;[&gt;+&lt;&lt;+&gt;-]&gt;[&lt;+&gt;-]&lt;&lt;&lt;-]&lt;&lt;++...&quot;;
+</code></pre>
+<p>let me run it...</p>
+<pre><code class="language-zig">pub fn main() void {
     storage = []u8{0} ** 30000;
     bf(fib, storage[0..]) catch {};
-}</code></pre></div>
+}
+</code></pre>
 <p>voila!</p>
-<div class="highlight"><pre class="chroma"><code class="language-nothing" data-lang="nothing">1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 121, 98, 219,</code></pre></div>
+<pre><code class="language-nothing">1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 121, 98, 219,
+</code></pre>
 <blockquote>
 <p>I have this memory that always comes back to me when I think about the
-fibonacci sequence&hellip; I learned it from PBS in the 80&rsquo;s, and I&rsquo;ve always
+fibonacci sequence... I learned it from PBS in the 80's, and I've always
 remembered that. I thought it was lost to time but <a href="https://youtu.be/bv8O456bNa8?t=3m46s">Youtube is amazing.</a></p>
 </blockquote>
-
-<h2 id="how-can-i-improve-this">How can I improve this?</h2>
-
-<p>I&rsquo;ve already alluded to a few <code>TODO</code>s. I shouldn&rsquo;t be using stderr for output,
+<h2>How can I improve this?</h2>
+<p>I've already alluded to a few <code>TODO</code>s. I shouldn't be using stderr for output,
 I want to be using stdout.</p>
-
-<p>Whenever I invoke the interpreter, I&rsquo;ll open up a stream to stdout and print to that instead:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const io = std.io;
+<p>Whenever I invoke the interpreter, I'll open up a stream to stdout and print to that instead:</p>
+<pre><code class="language-zig">const io = std.io;
 ...
 pub fn bf(src: []const u8, storage: []u8) !void {
     const stdout = &amp;(io.FileOutStream.init(&amp;(io.getStdOut() catch unreachable)).stream);
     ...
-            &#39;.&#39; =&gt; stdout.print(&#34;{c}&#34;, storage[memptr]) catch unreachable,
-            ...</code></pre></div>
+            '.' =&gt; stdout.print(&quot;{c}&quot;, storage[memptr]) catch unreachable,
+            ...
+</code></pre>
 <p>What is happening here? I call <code>io.getStdOut()</code>, which is failable (and again I
 am explicitly swallowing that possible error with <code>catch unreachable</code>- if this
 function failed my program would crash!). I call <code>stream</code> on that result to
@@ -728,81 +759,83 @@ This outstream is what I assign to stdout, and what I can write to by calling
 <code>print</code> on it. <code>print</code> accepts a formatted string just like warn, so that swap
 is straightforward. <code>print</code> can also fail, and I am also swallowing those
 errors here.</p>
-
 <p>In a proper program, I should account for the potential failure of opening up
 stdout here, and also the possible errors of trying to write to stdout. I am
 not doing that, but I am made to say that I am not doing that. Zig makes it
-easy to ignore these errors as long as you promise you <em>know that you&rsquo;re
+easy to ignore these errors as long as you promise you <em>know that you're
 ignoring them</em>.</p>
-
 <p>What happens when I decide I want to turn my prototype into a proper release?
 Do I sit down with a cup of coffee and start the thankless work of error
 handling, relying on my decades of experience and knowledge to enumerate every
-possible error case and how I want to deal with it? What if I don&rsquo;t have
-decades of experience and knowledge? That&rsquo;s ok, Zig does!</p>
-
+possible error case and how I want to deal with it? What if I don't have
+decades of experience and knowledge? That's ok, Zig does!</p>
 <p>I want to demonstrate a power feature now, error inference!</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const bf = @import(&#34;./bf.zig&#34;).bf;
-const warn = @import(&#34;std&#34;).debug.warn;
+<pre><code class="language-zig">const bf = @import(&quot;./bf.zig&quot;).bf;
+const warn = @import(&quot;std&quot;).debug.warn;
 
-const serpinsky = &#34;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &#34;;
+const serpinsky = &quot;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &quot;;
 
 pub fn main() void {
     var storage = []u8{0} ** 30000;
     bf(serpinsky, storage[0..]) catch unreachable;
-}</code></pre></div>
+}
+</code></pre>
 <p>I know that <code>bf</code> can fail, because it returns <code>!void</code>. I am swallowing that
 error at the call site here in <code>main</code>. When I am ready to accept my fate and do
 the right thing, I can catch that possible error like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const bf = @import(&#34;./bf.zig&#34;).bf;
-const warn = @import(&#34;std&#34;).debug.warn;
+<pre><code class="language-zig">const bf = @import(&quot;./bf.zig&quot;).bf;
+const warn = @import(&quot;std&quot;).debug.warn;
 
-const serpinsky = &#34;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &#34;;
+const serpinsky = &quot;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &quot;;
 
 pub fn main() void {
     var storage = []u8{0} ** 30000;
     bf(serpinsky, storage[0..]) catch |err| switch (err) {
     };
-}</code></pre></div>
+}
+</code></pre>
 <p>The compiler is my friend now!</p>
-<div class="highlight"><pre class="chroma"><code class="language-nothing" data-lang="nothing">/Users/jfo/code/zigfuck/main.zig:7:46: error: error.OutOfBounds not handled in switch
-shell returned 1</code></pre></div>
-<p>This error should be familiar as the one that is bubbling up from <code>bf</code> and it&rsquo;s
-helper functions! <em>But wait there&rsquo;s more</em>. Let&rsquo;s say I&rsquo;m looking at the
-<code>stdout</code> related error handling that I&rsquo;ve been swallowing in <code>bf</code>. Instead of
-swallowing them, I&rsquo;m going to kick them up the chain by using <code>try</code>. Remember,
+<pre><code class="language-nothing">/Users/jfo/code/zigfuck/main.zig:7:46: error: error.OutOfBounds not handled in switch
+shell returned 1
+</code></pre>
+<p>This error should be familiar as the one that is bubbling up from <code>bf</code> and it's
+helper functions! <em>But wait there's more</em>. Let's say I'm looking at the
+<code>stdout</code> related error handling that I've been swallowing in <code>bf</code>. Instead of
+swallowing them, I'm going to kick them up the chain by using <code>try</code>. Remember,
 used without a catch block on a failable call, try will abort if it encounters
 an error, forcing <em>its</em> caller to deal with any potential errors.</p>
-
 <p>So, instead of:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const io = std.io;
+<pre><code class="language-zig">const io = std.io;
 ...
 pub fn bf(src: []const u8, storage: []u8) !void {
     const stdout = &amp;(io.FileOutStream.init(&amp;(io.getStdOut() catch unreachable)).stream);
     ...
-            &#39;.&#39; =&gt; stdout.print(&#34;{c}&#34;, storage[memptr]) catch unreachable,
-            ...</code></pre></div>
+            '.' =&gt; stdout.print(&quot;{c}&quot;, storage[memptr]) catch unreachable,
+            ...
+</code></pre>
 <p>I do:</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const io = std.io;
+<pre><code class="language-zig">const io = std.io;
 ...
 pub fn bf(src: []const u8, storage: []u8) !void {
     const stdout = &amp;(io.FileOutStream.init(&amp;(try io.getStdOut())).stream);
     ...
-            &#39;.&#39; =&gt; try stdout.print(&#34;{c}&#34;, storage[memptr]),
-            ...</code></pre></div>
+            '.' =&gt; try stdout.print(&quot;{c}&quot;, storage[memptr]),
+            ...
+</code></pre>
 <p>Now, compiling</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">const bf = @import(&#34;./bf.zig&#34;).bf;
-const warn = @import(&#34;std&#34;).debug.warn;
+<pre><code class="language-zig">const bf = @import(&quot;./bf.zig&quot;).bf;
+const warn = @import(&quot;std&quot;).debug.warn;
 
-const serpinsky = &#34;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &#34;;
+const serpinsky = &quot;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &quot;;
 
 pub fn main() void {
     var storage = []u8{0} ** 30000;
     bf(serpinsky, storage[0..]) catch |err| switch (err) {
     };
-}</code></pre></div>
+}
+</code></pre>
 <p>Provides me with an enumerated list of <em>all the possible errors I could get from calling this function!</em></p>
-<div class="highlight"><pre class="chroma"><code class="language-nothing" data-lang="nothing">/Users/jfo/code/zigfuck/main.zig:7:46: error: error.SystemResources not handled in switch
+<pre><code class="language-nothing">/Users/jfo/code/zigfuck/main.zig:7:46: error: error.SystemResources not handled in switch
 /Users/jfo/code/zigfuck/main.zig:7:46: error: error.OperationAborted not handled in switch
 /Users/jfo/code/zigfuck/main.zig:7:46: error: error.IoPending not handled in switch
 /Users/jfo/code/zigfuck/main.zig:7:46: error: error.BrokenPipe not handled in switch
@@ -817,72 +850,63 @@ pub fn main() void {
 /Users/jfo/code/zigfuck/main.zig:7:46: error: error.AccessDenied not handled in switch
 /Users/jfo/code/zigfuck/main.zig:7:46: error: error.OutOfBounds not handled in switch
 /Users/jfo/code/zigfuck/main.zig:7:46: error: error.NoStdHandles not handled in switch
-shell returned 1</code></pre></div>
+shell returned 1
+</code></pre>
 <p>Zig empowers me to handle these cases meticulously if I need or want to! I
 switch on that <code>err</code> value, handle cases I want to, and can fall through if I
 want to.</p>
-<div class="highlight"><pre class="chroma"><code class="language-zig" data-lang="zig">pub fn main() void {
+<pre><code class="language-zig">pub fn main() void {
     var storage = []u8{0} ** 30000;
     bf(serpinsky, storage[0..]) catch |err| switch (err) {
-        error.OutOfBounds =&gt; @panic(&#34;Out Of Bounds!&#34;),
-        else =&gt; @panic(&#34;IO error&#34;)
+        error.OutOfBounds =&gt; @panic(&quot;Out Of Bounds!&quot;),
+        else =&gt; @panic(&quot;IO error&quot;)
     };
-}</code></pre></div>
+}
+</code></pre>
 <p>This is still not <em>proper</em> error handling, stricly speaking, but I just wanted
 to demonstrate how clever Zig is about reporting possible error cases to the
-callsite! And when you encounter an error, you&rsquo;ll get an <a href="https://ziglang.org/download/0.2.0/release-notes.html#errorreturntraces"><em>error return
+callsite! And when you encounter an error, you'll get an <a href="https://ziglang.org/download/0.2.0/release-notes.html#errorreturntraces"><em>error return
 trace</em></a>
 instead of just a stack trace! Cool stuff!</p>
-
-<h2 id="todo">Todo</h2>
-
+<h2>Todo</h2>
 <p>There are plenty of improvements I could make to this interpreter! I need to
 actually properly handle all error cases, obviously, and I need to implement the comma
-operator &ldquo;,&rdquo; , which is brainfuck&rsquo;s <code>getc</code> function to allow for input into the
+operator &quot;,&quot; , which is brainfuck's <code>getc</code> function to allow for input into the
 program runtime. I also should probably make it possible to read a sourcefile
 into a buffer and interpret that, instead of hard coding all of the bf source
-code. There are also some improvements I have in mind that aren&rsquo;t strictly
+code. There are also some improvements I have in mind that aren't strictly
 necessary but would illuminate some more of Zig itself. Instead of cramming all
-of that onto the end of this post, I&rsquo;m going to try splitting them into some
+of that onto the end of this post, I'm going to try splitting them into some
 upcoming posts that may be smaller and more easily digestible. Stay tuned!</p>
-
-<h2 id="conclusion">Conclusion</h2>
-
+<h2>Conclusion</h2>
 <p>I hope this little half finished miniature project has given you some insight
 into how Zig code looks and what it might be used for. Zig is not a swiss army
-knife language, it is not the perfect tool for every job&hellip; it has a particular
+knife language, it is not the perfect tool for every job... it has a particular
 focus in mind, to be a pragmatic systems language that can be used along with
 and in lieu of the likes of C and C++. It forces you to be meticulous and
 specific about memory usage, memory management, and error handling. In
 constrained systems environments, this is a feature not a bug. Zig is
-deterministic, it&rsquo;s non-ambiguous, it&rsquo;s trying to make it easy to write robust
+deterministic, it's non-ambiguous, it's trying to make it easy to write robust
 code in environments where that has traditionlly been difficult to do.</p>
-
-<p>I&rsquo;ve only covered a very small amount of Zig&rsquo;s syntax and features here, there
-are a lot of exciting changes coming to the language in 0.2.0 and beyond! It&rsquo;s
+<p>I've only covered a very small amount of Zig's syntax and features here, there
+are a lot of exciting changes coming to the language in 0.2.0 and beyond! It's
 also worth noting that Zig has wildly diverging compile modes that optimize for
-different things&hellip; all of the compilations I&rsquo;ve done here have been in debug
+different things... all of the compilations I've done here have been in debug
 mode, which optimizes for safety checks and fast compile times to make
 iterating easy! There are also currently <code>--release-fast</code> mode, and
 <code>--release-safe</code> mode, and there could potentially be <a href="https://github.com/zig-lang/zig/issues/531">more in the
 future</a> For more about these
 differences and the original rationale behind them, <a href="http://andrewkelley.me/post/intro-to-zig.html#debug-release">see
 here</a>.</p>
-
-<p>I have been continuously impressed with the velocity and direction of Zig&rsquo;s
-development! It&rsquo;s very much in flux, and will be so until 1.0.0, so if you opt
+<p>I have been continuously impressed with the velocity and direction of Zig's
+development! It's very much in flux, and will be so until 1.0.0, so if you opt
 to give it a try just keep that in mind. There will likely be plenty of
 breaking changes coming up, and there will certainly be many bugs too, but
-there are a lot of good ideas in there, and I&rsquo;m excited to see where it goes!</p>
-
+there are a lot of good ideas in there, and I'm excited to see where it goes!</p>
 <p>Give it a try, and pop into <code>#zig</code> on freenode anytime if you have questions.</p>
 
-                </div>
-            </article>
         </div>
-    </body>
-
-    <script src="https://blog.jfo.click/js/zighl.js"></script>
-
-
+      </article>
+    </div>
+  </body>
 </html>

@@ -1,450 +1,450 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
-    <head>
+  <head>
     <title>Sild; lambdas p.1</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" href="/images/jeff.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
+    <link href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs=" rel=icon>
+    <link href="/hljs.css" type="text/css" rel="stylesheet" />
+    <link href="/style.css" type="text/css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+  </head>
 
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;">archive</a> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;about">about</a>
+      </header>
 
-    <body>
-        <div id="content">
-            <header class="site-header">
-    <h5>jfo</h5> &mdash;
-    <a href="https://blog.jfo.click/">archive</a> &mdash;
-    <a href="https://blog.jfo.click/about">about</a> &mdash;
-    <a href="https://blog.jfo.click/feed.xml">rss</a>
-</header>
-
-            <article>
-                <p>
-                    <h1 class="title-thing">Sild; lambdas p.1</h1>
-                    <sub>July 24, 2016 </sub>
-                <p>
-                <div>
-                    <p>Strap in, it is time for lambdas. If you&rsquo;re just joining us, this is the maybe
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; lambdas p.1</h1>
+        <sub>July 24, 2016</sub>
+        <p></p>
+        <div>
+          <p>Strap in, it is time for lambdas. If you're just joining us, this is the maybe
 penultimate post in a long series that started
 <a href="/sild-is-a-lisp-dialect/">here</a>.</p>
-
 <hr>
-
 <p>A lambda is an anonymous, unnamed function that can be applied to an arbitrary
 set of inputs. Usually it looks something like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="nv">x</span><span class="p">)</span></code></pre></div>
-<p>That&rsquo;s the <a href="https://en.wikipedia.org/wiki/Identity_function">identity
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) x)
+</code></pre>
+<p>That's the <a href="https://en.wikipedia.org/wiki/Identity_function">identity
 function</a>. If we were to want
 to perhaps call it on something, it would look like this.</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">((</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="nv">x</span><span class="p">)</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">((<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) x) '(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
 <p>That call would output:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span></code></pre></div>
-<p>You might be tempted to say, hey wait- that&rsquo;s the same as the builtin quote
+<pre><code class="language-scheme">(<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>)
+</code></pre>
+<p>You might be tempted to say, hey wait- that's the same as the builtin quote
 function! But it is in fact <em>not</em> the same thing, at all! Consider:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="k">quote </span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">quote</span></span> (<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
 <p>Will produce</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>)
+</code></pre>
 <p>But</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">((</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">((<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) x) (<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
 <p>Will produce</p>
-
 <pre><code>Error: unbound label: 1
 </code></pre>
-
-<p>Because the latter attempts to evaluate the list that&rsquo;s being passed to it
+<p>Because the latter attempts to evaluate the list that's being passed to it
 before passing it into the lambda. In this case, that means trying to lookup
-the label 1 in the environment, which doesn&rsquo;t exist. (remember, I haven&rsquo;t yet
+the label 1 in the environment, which doesn't exist. (remember, I haven't yet
 implemented any type of number support, so, to Sild,  <code>1</code> is still just an
 arbitrary character string).</p>
-
 <p>So, they are different. We still do need that built in identity function, after
 all.</p>
-
 <hr>
-
-<p>I&rsquo;m going to draw a distinction now. It took me a long time to figure this out,
+<p>I'm going to draw a distinction now. It took me a long time to figure this out,
 but once I did it made everything a lot simpler.</p>
-
 <p>A lambda is an anonymous function. A function is a procedure. The <a href="http://www.lispworks.com/documentation/HyperSpec/Body/03_ababa.htm"><em>special
 form</em></a>
-&ldquo;lambda&rdquo; denotes an anonymous procedure. But from the implementation&rsquo;s point of
+&quot;lambda&quot; denotes an anonymous procedure. But from the implementation's point of
 view, <code>lambda</code> is a special form that <em>produces a procedure</em> that can <em>then</em> be
 applied to an arbitrary set of arguments.</p>
-
-<p>Let&rsquo;s think about this for a moment. The way the interpreter is written, if I were to write this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">((</span><span class="nv">car</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">car</span><span class="p">))</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span></code></pre></div>
-<p>What am I going to get out of it? Let&rsquo;s walk through it.</p>
-
+<p>Let's think about this for a moment. The way the interpreter is written, if I were to write this:</p>
+<pre><code class="language-scheme">((<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> '(car)) '(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<p>What am I going to get out of it? Let's walk through it.</p>
 <p>The interpreter sees a list, so it tries to apply the first item in that list
 to the remaining items as a function. It sees another list:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">car</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">car</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> '(car))
+</code></pre>
 <p>So it tries to evaluate this list before trying to apply it. What does it get
 out of that evalutation?</p>
-
 <p>Once again, it tries to apply the first item in the list to the remaining
-arguments, but this time, it has more luck. <code>car</code> is not a list, it&rsquo;s a
+arguments, but this time, it has more luck. <code>car</code> is not a list, it's a
 builtin! We know what to do with that one, so the interpreter passes off
 control to the function that the builtin points to. As we already know, <code>car</code>
 expects a list and returns the first thing in that list. What is being passed
 to it?</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="o">&#39;</span><span class="p">(</span><span class="nv">car</span><span class="p">)</span></code></pre></div>
+<pre><code class="language-scheme">'(car)
+</code></pre>
 <p>It needs to evaluate this to see if the result is a list.</p>
-
 <p>Remember that <code>'</code> expands to a quoted form, so what the interpreter is really seeing is:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="k">quote </span><span class="p">(</span><span class="nv">car</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">quote</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">car</span></span>))
+</code></pre>
 <p>Another list! But this one is easy, right? <code>quote</code> is another builtin, it just
 returns its arg unevaluated. So this whole thing returns <code>(car)</code>, which is a
 list with one thing in it, which the original, calling <code>car</code> knows what to do with.</p>
-
 <p>So, that call to <code>car</code> returns <code>car</code>. It could have returned anything- whatever
 was the first thing in that list. So, back to the original:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">((</span><span class="nv">car</span> <span class="o">&#39;</span><span class="p">(</span><span class="nv">car</span><span class="p">))</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">((<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> '(car)) '(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
 <p>ends up looking like</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">car</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> '(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
 <p>Now the interpreter is able to apply the first item to the rest. Once again,
-car returns the first thing in the list that is passed to it. Round and round we go&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">car</span> <span class="p">(</span><span class="k">quote </span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)))</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="mi">1</span></code></pre></div>
+car returns the first thing in the list that is passed to it. Round and round we go...</p>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">quote</span></span> (<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>)))
+</code></pre>
+<pre><code class="language-scheme"><span class="hljs-number">1</span>
+</code></pre>
 <p>This is all familiar!</p>
-
 <hr>
-
 <p>But what about lambdas?</p>
-
-<p>Ok, so&hellip; interpreter sees a list. Tries to apply the first thing in that list.
-Sees another list&hellip; same deal. Now it sees <code>lambda</code>. What is it supposed to
+<p>Ok, so... interpreter sees a list. Tries to apply the first thing in that list.
+Sees another list... same deal. Now it sees <code>lambda</code>. What is it supposed to
 do? It needs to <em>return a procedure</em>. So after it evaluates the lambda, it
 should see something like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">PROC</span> <span class="ss">&#39;9</span><span class="p">)</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name">PROC</span> <span class="hljs-symbol">'9</span>)
+</code></pre>
 <p>That <code>PROC</code> object needs to hold three things inside of it: the argument list,
 for binding labels to the arguments being passed to it, the body of the
 function, and a <em>reference to the environment it was produced in</em>. That
-last one is a little hairy, but very, <em>very</em> important, and I&rsquo;ll come back to
+last one is a little hairy, but very, <em>very</em> important, and I'll come back to
 it in great detail in a later post. For now, just notice that when a lambda
 turns into a PROC, it retains a link to the env that was passed into the
 <code>lambda()</code> C function!</p>
-
 <p>What should that look like?</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="c1">; arg list    function body</span>
-<span class="c1">;       \   /</span>
-<span class="p">(</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="nv">x</span><span class="p">)</span></code></pre></div>
-<p>so, let&rsquo;s say the interpreter produces this <code>PROC</code> and then tries to apply it:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">PROC</span> <span class="ss">&#39;9</span><span class="p">)</span></code></pre></div>
+<pre><code class="language-scheme"><span class="hljs-comment">; arg list    function body</span>
+<span class="hljs-comment">;       \   /</span>
+(<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) x)
+</code></pre>
+<p>so, let's say the interpreter produces this <code>PROC</code> and then tries to apply it:</p>
+<pre><code class="language-scheme">(<span class="hljs-name">PROC</span> <span class="hljs-symbol">'9</span>)
+</code></pre>
 <p>It should first evaluate the arguments passed to it, in this case <code>'9</code>, then it
 needs to bind the result to the argument list, in this case <code>(x)</code>, so duriing
-the evaluationg of this procedure&rsquo;s body, <code>x = 9</code>. Then, it evaluates the
+the evaluationg of this procedure's body, <code>x = 9</code>. Then, it evaluates the
 body in that new, temporary environment, in this case the function
 body is simply <code>x</code>.  So it evaluates <code>x</code> and since <code>x = 9</code>, the whole thing
 returns <code>9</code>. The end, sleep tight.</p>
-
 <p>Some notes to this- for now, I think the arity should match. This should throw
 an error:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">((</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span> <span class="nv">y</span><span class="p">)</span> <span class="nv">x</span><span class="p">)</span> <span class="ss">&#39;1</span><span class="p">)</span></code></pre></div>
+<pre><code class="language-scheme">((<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x y) x) <span class="hljs-symbol">'1</span>)
+</code></pre>
 <p>So should this, I think:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">((</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span> <span class="nv">y</span><span class="p">)</span> <span class="nv">x</span><span class="p">)</span> <span class="ss">&#39;1</span> <span class="ss">&#39;2</span> <span class="ss">&#39;3</span><span class="p">)</span></code></pre></div>
+<pre><code class="language-scheme">((<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x y) x) <span class="hljs-symbol">'1</span> <span class="hljs-symbol">'2</span> <span class="hljs-symbol">'3</span>)
+</code></pre>
 <p>In each case, the number of arguments passed to the function is not equal to
-the number of arguments the function expects. I don&rsquo;t know much about flexible
-variable arity, maybe it&rsquo;s a good idea? But it doesn&rsquo;t make sense to me right
-now, especially since if you want to pass in some number of things, well&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">((</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nv">car</span> <span class="p">(</span><span class="nv">cdr</span> <span class="nv">x</span><span class="p">)))</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span></code></pre></div>
+the number of arguments the function expects. I don't know much about flexible
+variable arity, maybe it's a good idea? But it doesn't make sense to me right
+now, especially since if you want to pass in some number of things, well...</p>
+<pre><code class="language-scheme">((<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) (<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> x))) '(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
 <p>Seems like there is a way to do so already.</p>
-
 <hr>
-
-<p>So what is a <code>PROC</code>, really? Well, it&rsquo;s going to be a new type. We know how
+<p>So what is a <code>PROC</code>, really? Well, it's going to be a new type. We know how
 this goes.</p>
-
-<p>I&rsquo;ll add it here:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">enum</span> <span class="n">CellType</span> <span class="p">{</span> <span class="n">NIL</span><span class="p">,</span> <span class="n">LABEL</span><span class="p">,</span> <span class="n">LIST</span><span class="p">,</span> <span class="n">BUILTIN</span><span class="p">,</span> <span class="n">PROC</span> <span class="p">};</span></code></pre></div>
-<p>And I&rsquo;ll add it here:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">union</span> <span class="n">V</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span> <span class="n">label</span><span class="p">;</span>
-    <span class="k">struct</span> <span class="n">C</span> <span class="o">*</span> <span class="n">list</span><span class="p">;</span>
-    <span class="k">struct</span> <span class="n">funcval</span> <span class="n">func</span><span class="p">;</span>
-    <span class="k">struct</span> <span class="n">procval</span> <span class="n">proc</span><span class="p">;</span> <span class="c1">// here!
-</span><span class="c1"></span><span class="p">}</span> <span class="n">V</span><span class="p">;</span></code></pre></div>
-<p>And I&rsquo;ll need a <code>procval</code> so that makes sense&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">procval</span> <span class="p">{</span>
-    <span class="k">struct</span> <span class="n">C</span> <span class="o">*</span><span class="n">args</span><span class="p">;</span>
-    <span class="k">struct</span> <span class="n">C</span> <span class="o">*</span><span class="n">body</span><span class="p">;</span>
-    <span class="k">struct</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="err">````</span>
-
-<span class="n">This</span> <span class="n">is</span> <span class="n">a</span> <span class="n">little</span> <span class="k">struct</span> <span class="n">to</span> <span class="n">hold</span> <span class="n">those</span> <span class="n">three</span> <span class="n">things</span> <span class="n">I</span> <span class="n">mentioned</span> <span class="n">earlier</span><span class="p">.</span> <span class="n">Back</span> <span class="n">to</span>
-<span class="n">the</span> <span class="n">identity</span> <span class="n">function</span> <span class="n">example</span><span class="p">...</span>
-
-<span class="err">```</span><span class="n">scheme</span>
-<span class="p">(</span><span class="n">lambda</span> <span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">x</span><span class="p">)</span></code></pre></div>
+<p>I'll add it here:</p>
+<pre><code class="language-c"><span class="hljs-keyword">enum</span> CellType { NIL, LABEL, LIST, BUILTIN, PROC };
+</code></pre>
+<p>And I'll add it here:</p>
+<pre><code class="language-c"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">union</span> V {
+    <span class="hljs-keyword">char</span> * label;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">funcval</span> <span class="hljs-title">func</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">procval</span> <span class="hljs-title">proc</span>;</span> <span class="hljs-comment">// here!</span>
+} V;
+</code></pre>
+<p>And I'll need a <code>procval</code> so that makes sense...</p>
+<pre><code class="language-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">procval</span> {</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> *<span class="hljs-title">args</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> *<span class="hljs-title">body</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> *<span class="hljs-title">env</span>;</span>
+};
+</code></pre>
+<p>This is a little struct to hold those three things I mentioned earlier. Back to
+the identity function example...</p>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) x)
+</code></pre>
 <p>when evaluated, should produce this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">makecell</span><span class="p">(</span><span class="n">PROC</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">proc</span> <span class="o">=</span> <span class="p">{</span> <span class="n">operand</span><span class="p">,</span> <span class="n">operand2</span><span class="p">,</span> <span class="n">env</span> <span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span></code></pre></div>
+<pre><code class="language-c">makecell(PROC, (V){ .proc = { operand, operand2, env } }, &amp;nil);
+</code></pre>
 <p>And so, I will make a new builtin function called <code>lambda</code> that will produce
 that cell. This pattern will look familiar, it is the same as all the other
 builtin functions!</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">lambda</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">operand</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// check arity for only two things- arg list and function body
-</span><span class="c1"></span>    <span class="n">arity_check</span><span class="p">(</span><span class="s">&#34;lambda&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">operand</span><span class="p">);</span>
+<pre><code class="language-c"><span class="hljs-function">C *<span class="hljs-title">lambda</span><span class="hljs-params">(C *operand, Env *env)</span> </span>{
+    <span class="hljs-comment">// check arity for only two things- arg list and function body</span>
+    arity_check(<span class="hljs-string">"lambda"</span>, <span class="hljs-number">2</span>, operand);
 
-    <span class="c1">// separating them from each other.
-</span><span class="c1"></span>    <span class="n">C</span> <span class="o">*</span><span class="n">operand2</span> <span class="o">=</span> <span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
-    <span class="n">operand</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
-    <span class="n">operand2</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
+    <span class="hljs-comment">// separating them from each other.</span>
+    C *operand2 = operand-&gt;next;
+    operand-&gt;next = &amp;nil;
+    operand2-&gt;next = &amp;nil;
 
-    <span class="c1">// type checking the arg list
-</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">LIST</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;lambda expected a LIST as its first argument and did not get one</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class="hljs-comment">// type checking the arg list</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type != LIST) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">"lambda expected a LIST as its first argument and did not get one\n"</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
 
-    <span class="c1">// returning a new PROC cell
-</span><span class="c1"></span>    <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="n">PROC</span><span class="p">,</span> <span class="p">(</span><span class="n">V</span><span class="p">){</span> <span class="p">.</span><span class="n">proc</span> <span class="o">=</span> <span class="p">{</span> <span class="n">operand</span><span class="p">,</span> <span class="n">operand2</span><span class="p">,</span> <span class="n">env</span> <span class="p">}</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
-<span class="p">}</span></code></pre></div>
-<p>This function is fairly straightforward, it&rsquo;s when we try to apply that cell as
+    <span class="hljs-comment">// returning a new PROC cell</span>
+    <span class="hljs-keyword">return</span> makecell(PROC, (V){ .proc = { operand, operand2, env } }, &amp;nil);
+}
+</code></pre>
+<p>This function is fairly straightforward, it's when we try to apply that cell as
 a function that things get interesting.</p>
-
 <hr>
-
-<p>Now that I have a new type, I&rsquo;ll have to account for it in all of the various
+<p>Now that I have a new type, I'll have to account for it in all of the various
 switch statements that operate on cell types.</p>
-
-<p>In <code>debug_list</code>, I&rsquo;ll simply output the new procval struct in the same way as
+<p>In <code>debug_list</code>, I'll simply output the new procval struct in the same way as
 the others:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">case</span> <span class="nl">PROC</span><span class="p">:</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;PROC- Address: %p, Next: %p</span><span class="se">\n</span><span class="s">| Args: </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-    <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">args</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;| Body: </span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-    <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
-    <span class="k">break</span><span class="p">;</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-keyword">case</span> PROC:
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"PROC- Address: %p, Next: %p\n| Args: \n"</span>, l, l-&gt;next);
+    debug_list_inner(l-&gt;val.proc.args, depth + <span class="hljs-number">1</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"| Body: \n"</span>);
+    debug_list_inner(l-&gt;val.proc.body, depth + <span class="hljs-number">1</span>);
+    debug_list_inner(l-&gt;next, depth);
+    <span class="hljs-keyword">break</span>;
+</code></pre>
 <p>similarly, in <code>print</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">case</span> <span class="nl">PROC</span><span class="p">:</span>
-    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="s">&#34;(PROC &#34;</span><span class="p">);</span>
-    <span class="n">print_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">args</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">output_stream</span><span class="p">);</span>
-    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="s">&#34; &#34;</span><span class="p">);</span>
-    <span class="n">print_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">output_stream</span><span class="p">);</span>
-    <span class="n">fprintf</span><span class="p">(</span><span class="n">output_stream</span><span class="p">,</span> <span class="s">&#34;)&#34;</span><span class="p">);</span>
-    <span class="k">break</span><span class="p">;</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-keyword">case</span> PROC:
+    <span class="hljs-built_in">fprintf</span>(output_stream, <span class="hljs-string">"(PROC "</span>);
+    print_inner(l-&gt;val.proc.args, depth, output_stream);
+    <span class="hljs-built_in">fprintf</span>(output_stream, <span class="hljs-string">" "</span>);
+    print_inner(l-&gt;val.proc.body, depth, output_stream);
+    <span class="hljs-built_in">fprintf</span>(output_stream, <span class="hljs-string">")"</span>);
+    <span class="hljs-keyword">break</span>;
+</code></pre>
 <p>In <code>eval</code>, a <code>PROC</code> should evaluate to itself, just like a <code>BUILTIN</code>, or <code>NIL</code></p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">...</span>
-<span class="k">case</span> <span class="nl">PROC</span><span class="p">:</span>
-<span class="k">case</span> <span class="nl">BUILTIN</span><span class="p">:</span>
-<span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-<span class="p">...</span></code></pre></div>
-<p>And in <code>apply</code>, well, that&rsquo;s where the action happens.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">case</span> <span class="nl">PROC</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">apply_proc</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">env</span><span class="p">);</span></code></pre></div>
-<p>Looks pretty simple until you remember that we haven&rsquo;t written <code>apply_proc()</code> yet!</p>
-
+<pre><code class="language-c">...
+<span class="hljs-keyword">case</span> PROC:
+<span class="hljs-keyword">case</span> BUILTIN:
+<span class="hljs-keyword">case</span> NIL:
+    <span class="hljs-keyword">return</span> c;
+...
+</code></pre>
+<p>And in <code>apply</code>, well, that's where the action happens.</p>
+<pre><code class="language-c"><span class="hljs-keyword">case</span> PROC:
+    <span class="hljs-keyword">return</span> apply_proc(c, env);
+</code></pre>
+<p>Looks pretty simple until you remember that we haven't written <code>apply_proc()</code> yet!</p>
 <hr>
-
-<p><code>apply_proc</code> is a beast, it&rsquo;s the big kahuna of all the functions in this
-project. It&rsquo;s the heart of the eval/apply loop.</p>
-
+<p><code>apply_proc</code> is a beast, it's the big kahuna of all the functions in this
+project. It's the heart of the eval/apply loop.</p>
 <p>All of the business logic of applying an anonymous procedure has to live in
-this function. Let&rsquo;s take it step by step.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">C</span> <span class="o">*</span><span class="nf">apply_proc</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">proc</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
-<span class="p">}</span></code></pre></div>
+this function. Let's take it step by step.</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">static</span> C *<span class="hljs-title">apply_proc</span><span class="hljs-params">(C* proc, Env *env)</span> </span>{
+}
+</code></pre>
 <p>It will be static, I only need to call it from <code>apply</code>.</p>
-
-<p>First, I&rsquo;ll need to check the arity against the number of arguments that have
-been passed into it. For this, I&rsquo;ll need a function that can count how many
+<p>First, I'll need to check the arity against the number of arguments that have
+been passed into it. For this, I'll need a function that can count how many
 things are in the argument list, then count how many things have been passed,
 and then compare them. Remember that the form will be:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="c1">; arg list    function body</span>
-<span class="c1">;       \   /</span>
-<span class="p">((</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="nv">x</span><span class="p">)</span> <span class="ss">&#39;1</span><span class="p">)</span>
-<span class="c1">;                 \</span>
-<span class="c1">;                   arguments being passed</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">C</span> <span class="o">*</span><span class="nf">apply_proc</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">proc</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
+<pre><code class="language-scheme"><span class="hljs-comment">; arg list    function body</span>
+<span class="hljs-comment">;       \   /</span>
+((<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) x) <span class="hljs-symbol">'1</span>)
+<span class="hljs-comment">;                 \</span>
+<span class="hljs-comment">;                   arguments being passed</span>
+</code></pre>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">static</span> C *<span class="hljs-title">apply_proc</span><span class="hljs-params">(C* proc, Env *env)</span> </span>{
 
-    <span class="c1">// first element in arg list
-</span><span class="c1"></span>    <span class="n">C</span> <span class="o">*</span><span class="n">cur</span> <span class="o">=</span> <span class="n">proc</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">args</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">;</span>
-    <span class="c1">// first argument being passed
-</span><span class="c1"></span>    <span class="n">C</span> <span class="o">*</span><span class="n">curarg</span> <span class="o">=</span> <span class="n">proc</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+    <span class="hljs-comment">// first element in arg list</span>
+    C *cur = proc-&gt;val.proc.args-&gt;val.<span class="hljs-built_in">list</span>;
+    <span class="hljs-comment">// first argument being passed</span>
+    C *curarg = proc-&gt;next;
 
-    <span class="kt">int</span> <span class="n">arity</span> <span class="o">=</span> <span class="n">count_list</span><span class="p">(</span><span class="n">cur</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">numpassed</span> <span class="o">=</span> <span class="n">count_list</span><span class="p">(</span><span class="n">curarg</span><span class="p">);</span>
+    <span class="hljs-keyword">int</span> arity = count_list(cur);
+    <span class="hljs-keyword">int</span> numpassed = count_list(curarg);
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">arity</span> <span class="o">!=</span> <span class="n">numpassed</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;arity error on proc application</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class="hljs-keyword">if</span> (arity != numpassed) {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"arity error on proc application\n"</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
 
-    <span class="o">//</span> <span class="n">etc</span><span class="p">...</span></code></pre></div>
-<p>And I&rsquo;ll need to implement <code>count_list()</code>. This is relatively straightforward,
-and I&rsquo;ll simply do it iteratively&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kt">int</span> <span class="nf">count_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">c</span><span class="p">){</span>
-    <span class="kt">int</span> <span class="n">i</span><span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="c1">// count args until the end of the list!
-</span><span class="c1"></span>    <span class="k">while</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">i</span><span class="o">++</span><span class="p">;</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
-<span class="p">};</span></code></pre></div>
+    <span class="hljs-comment">// etc...</span>
+</code></pre>
+<p>And I'll need to implement <code>count_list()</code>. This is relatively straightforward,
+and I'll simply do it iteratively...</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span> <span class="hljs-title">count_list</span><span class="hljs-params">(C *c)</span></span>{
+    <span class="hljs-keyword">int</span> i= <span class="hljs-number">0</span>;
+    <span class="hljs-comment">// count args until the end of the list!</span>
+    <span class="hljs-keyword">while</span>(c-&gt;type != NIL) {
+        i++;
+        c = c-&gt;next;
+    }
+    <span class="hljs-keyword">return</span> i;
+};
+</code></pre>
 <p>Great! That wraps up a dynamic arity check.</p>
-
 <p>Next, I need to evaluate the arguments being passed and set them to the labels
-designated in the arg list. For this, I&rsquo;ll create a new environment called
+designated in the arg list. For this, I'll create a new environment called
 <code>frame</code> to set them in.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">// make an env just for this procedure application!
-</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">Env</span> <span class="o">*</span><span class="n">frame</span> <span class="o">=</span> <span class="n">new_env</span><span class="p">();</span>
+<pre><code class="language-c">    <span class="hljs-comment">// make an env just for this procedure application!</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> *<span class="hljs-title">frame</span> = <span class="hljs-title">new_env</span>();</span>
 
-    <span class="n">C</span> <span class="o">*</span><span class="n">nextarg</span><span class="p">;</span>
-    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">arity</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// retain a reference to the next arg before disconnecting it
-</span><span class="c1"></span>        <span class="n">nextarg</span> <span class="o">=</span> <span class="n">curarg</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+    C *nextarg;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; arity; i++) {
+        <span class="hljs-comment">// retain a reference to the next arg before disconnecting it</span>
+        nextarg = curarg-&gt;next;
 
-        <span class="c1">// disconnect next arg from curarg
-</span><span class="c1"></span>        <span class="n">curarg</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
+        <span class="hljs-comment">// disconnect next arg from curarg</span>
+        curarg-&gt;next = &amp;nil;
 
-        <span class="c1">// evaluate curarg _in the enclosing environment_ and assign cur to it in the frame
-</span><span class="c1"></span>        <span class="n">set</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cur</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">eval</span><span class="p">(</span><span class="n">curarg</span><span class="p">,</span> <span class="n">env</span><span class="p">));</span>
+        <span class="hljs-comment">// evaluate curarg _in the enclosing environment_ and assign cur to it in the frame</span>
+        <span class="hljs-built_in">set</span>(frame, cur-&gt;val.label, eval(curarg, env));
 
-        <span class="c1">// advance to next label / value pair
-</span><span class="c1"></span>        <span class="n">curarg</span> <span class="o">=</span> <span class="n">nextarg</span><span class="p">;</span>
-        <span class="n">cur</span> <span class="o">=</span> <span class="n">cur</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
-    <span class="p">}</span></code></pre></div>
+        <span class="hljs-comment">// advance to next label / value pair</span>
+        curarg = nextarg;
+        cur = cur-&gt;next;
+    }
+</code></pre>
 <p>Notice a very important point here is that the arguments being passed into the
 lambda are evaluated in the <em>enclosing</em> environment that the lambda is being
 applied <em>inside of</em> BEFORE being passed to the loop that assigns that result to
 a label in the frame. This enables us to <em>shadow</em> variables effectively.</p>
-
 <p>Consider the following:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="k">define </span><span class="nv">thingy</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">))</span>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">define</span></span> thingy '(<span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span>))
 
-<span class="p">(</span><span class="k">define </span><span class="nv">cdrer</span> <span class="p">(</span><span class="k">lambda </span><span class="p">(</span><span class="nv">thingy</span><span class="p">)</span> <span class="p">(</span><span class="nv">cdr</span> <span class="nv">thingy</span><span class="p">)))</span>
+(<span class="hljs-name"><span class="hljs-builtin-name">define</span></span> cdrer (<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (thingy) (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> thingy)))
 
-<span class="p">(</span><span class="nv">display</span>
-    <span class="p">(</span><span class="nv">cdrer</span> <span class="p">(</span><span class="nv">cdr</span> <span class="nv">thingy</span><span class="p">))</span>
-<span class="p">)</span></code></pre></div>
-<p>Here, &ldquo;thingy&rdquo; is being shadowed in the lambda application. It means one thing
+(<span class="hljs-name"><span class="hljs-builtin-name">display</span></span>
+    (<span class="hljs-name">cdrer</span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> thingy))
+)
+</code></pre>
+<p>Here, &quot;thingy&quot; is being shadowed in the lambda application. It means one thing
 in the global env, and another in the frame, but the two definitions are
 effectively isolated from one another.</p>
-
 <p>Look at this expansion:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">cdrer</span> <span class="p">(</span><span class="nv">cdr</span> <span class="nv">thingy</span><span class="p">))</span>
-<span class="p">(</span><span class="nv">cdrer</span> <span class="p">(</span><span class="nv">cdr</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)))</span>
-<span class="p">(</span><span class="nv">cdrer</span> <span class="p">(</span><span class="mi">3</span> <span class="mi">4</span><span class="p">))</span></code></pre></div>
-<p>and internal to the lambda&hellip;</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">cdr</span> <span class="nv">thingy</span><span class="p">)</span>
-<span class="p">(</span><span class="nv">cdr</span> <span class="p">(</span><span class="mi">3</span> <span class="mi">4</span><span class="p">))</span>
-<span class="p">(</span><span class="mi">4</span><span class="p">)</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name">cdrer</span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> thingy))
+(<span class="hljs-name">cdrer</span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> '(<span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span>)))
+(<span class="hljs-name">cdrer</span> (<span class="hljs-name">3</span> <span class="hljs-number">4</span>))
+</code></pre>
+<p>and internal to the lambda...</p>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> thingy)
+(<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> (<span class="hljs-name">3</span> <span class="hljs-number">4</span>))
+(<span class="hljs-name">4</span>)
+</code></pre>
 <p>Which is ultimately what we get returned.</p>
-
 <hr>
-
-<p>Now we&rsquo;re ready to evaluate the body of the function in the frame! Remember,
+<p>Now we're ready to evaluate the body of the function in the frame! Remember,
 the PROC object contains three things: an arg list, a function body, and a
-reference to the enclosing environment that we&rsquo;re not going to worry about just
+reference to the enclosing environment that we're not going to worry about just
 yet.</p>
-
-<p>So far in <code>apply_proc()</code> we&rsquo;ve done some arity and type checking, evaluated the
-passed arguments, and assigned them to their labels in the frame env that we&rsquo;ve
+<p>So far in <code>apply_proc()</code> we've done some arity and type checking, evaluated the
+passed arguments, and assigned them to their labels in the frame env that we've
 created.</p>
-
-<p>Here&rsquo;s the money line:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="n">out</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="n">frame</span><span class="p">);</span></code></pre></div>
-<p>And that&rsquo;s that. We&rsquo;ve evaluated the body of the lambda in the context of its
+<p>Here's the money line:</p>
+<pre><code class="language-c">C *out = eval(proc-&gt;val.proc.body, frame);
+</code></pre>
+<p>And that's that. We've evaluated the body of the lambda in the context of its
 local frame environment. All that is left is to clean up after ourselves.</p>
-
 <p>We free the args:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">free_cell</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">args</span><span class="p">);</span></code></pre></div>
+<pre><code class="language-c">free_cell(proc-&gt;val.proc.args);
+</code></pre>
 <p>We free the proc cell pointer itself:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">free</span><span class="p">(</span><span class="n">proc</span><span class="p">);</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-built_in">free</span>(proc);
+</code></pre>
 <p>and we free the frame</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">free_env</span><span class="p">(</span><span class="n">frame</span><span class="p">);</span></code></pre></div>
+<pre><code class="language-c">free_env(frame);
+</code></pre>
 <p>Then we can return the result that we wanted all along.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">return</span> <span class="n">out</span><span class="p">;</span></code></pre></div>
-<p>That&rsquo;s it! The whole <code>apply_proc()</code> function looks like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">C</span> <span class="o">*</span><span class="nf">apply_proc</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">proc</span><span class="p">,</span> <span class="n">Env</span> <span class="o">*</span><span class="n">env</span><span class="p">)</span> <span class="p">{</span>
+<pre><code class="language-c"><span class="hljs-keyword">return</span> out;
+</code></pre>
+<p>That's it! The whole <code>apply_proc()</code> function looks like this:</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">static</span> C *<span class="hljs-title">apply_proc</span><span class="hljs-params">(C* proc, Env *env)</span> </span>{
 
-    <span class="n">C</span> <span class="o">*</span><span class="n">cur</span> <span class="o">=</span> <span class="n">proc</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">args</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">;</span>
-    <span class="n">C</span> <span class="o">*</span><span class="n">curarg</span> <span class="o">=</span> <span class="n">proc</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+    C *cur = proc-&gt;val.proc.args-&gt;val.<span class="hljs-built_in">list</span>;
+    C *curarg = proc-&gt;next;
 
-    <span class="kt">int</span> <span class="n">arity</span> <span class="o">=</span> <span class="n">count_list</span><span class="p">(</span><span class="n">cur</span><span class="p">);</span>
+    <span class="hljs-keyword">int</span> arity = count_list(cur);
 
-    <span class="kt">int</span> <span class="n">numpassed</span> <span class="o">=</span> <span class="n">count_list</span><span class="p">(</span><span class="n">curarg</span><span class="p">);</span>
+    <span class="hljs-keyword">int</span> numpassed = count_list(curarg);
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">arity</span> <span class="o">!=</span> <span class="n">numpassed</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;arity error on proc application</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class="hljs-keyword">if</span> (arity != numpassed) {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">"arity error on proc application\n"</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
 
-    <span class="k">struct</span> <span class="n">Env</span> <span class="o">*</span><span class="n">frame</span> <span class="o">=</span> <span class="n">new_env</span><span class="p">();</span>
-    <span class="n">C</span> <span class="o">*</span><span class="n">nextarg</span><span class="p">;</span>
-    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">arity</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">nextarg</span> <span class="o">=</span> <span class="n">curarg</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
-        <span class="n">curarg</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
-        <span class="n">set</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cur</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">eval</span><span class="p">(</span><span class="n">curarg</span><span class="p">,</span> <span class="n">env</span><span class="p">));</span>
-        <span class="n">curarg</span> <span class="o">=</span> <span class="n">nextarg</span><span class="p">;</span>
-        <span class="n">cur</span> <span class="o">=</span> <span class="n">cur</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> *<span class="hljs-title">frame</span> = <span class="hljs-title">new_env</span>();</span>
+    C *nextarg;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; arity; i++) {
+        nextarg = curarg-&gt;next;
+        curarg-&gt;next = &amp;nil;
+        <span class="hljs-built_in">set</span>(frame, cur-&gt;val.label, eval(curarg, env));
+        curarg = nextarg;
+        cur = cur-&gt;next;
+    }
 
-    <span class="c1">// eval will free the body, here:
-</span><span class="c1"></span>    <span class="n">C</span> <span class="o">*</span><span class="n">out</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="n">frame</span><span class="p">);</span>
-    <span class="c1">// but the args and the proc cell itself still need to be freed manually
-</span><span class="c1"></span>    <span class="c1">// after application:
-</span><span class="c1"></span>
-    <span class="n">free_cell</span><span class="p">(</span><span class="n">proc</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">proc</span><span class="p">.</span><span class="n">args</span><span class="p">);</span>
-    <span class="n">free</span><span class="p">(</span><span class="n">proc</span><span class="p">);</span>
-    <span class="n">free_env</span><span class="p">(</span><span class="n">frame</span><span class="p">);</span>
+    <span class="hljs-comment">// eval will free the body, here:</span>
+    C *out = eval(proc-&gt;val.proc.body, frame);
+    <span class="hljs-comment">// but the args and the proc cell itself still need to be freed manually</span>
+    <span class="hljs-comment">// after application:</span>
 
-    <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+    free_cell(proc-&gt;val.proc.args);
+    <span class="hljs-built_in">free</span>(proc);
+    free_env(frame);
+
+    <span class="hljs-keyword">return</span> out;
+}
+</code></pre>
 <p>:D</p>
-
 <hr>
-
-<p>This is pretty spectacular, being able to apply procedures! Let&rsquo;s
+<p>This is pretty spectacular, being able to apply procedures! Let's
 look at an easy way to use them!</p>
-
 <p>We have <code>car</code> and <code>cdr</code>, but what if we wanted to <em>second</em> item in a list?</p>
-
 <p>We could go like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">car</span> <span class="p">(</span><span class="nv">cdr</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)))</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> '(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>)))
+</code></pre>
 <pre><code>2
 </code></pre>
-
 <p>If we did that a lot, it would be helpful to have a shortcut:</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="k">define </span><span class="nv">cadr</span> <span class="p">(</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nv">car</span> <span class="p">(</span><span class="nv">cdr</span> <span class="nv">x</span><span class="p">))))</span>
-<span class="p">(</span><span class="nv">cadr</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">))</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="mi">2</span></code></pre></div>
-<p>That&rsquo;s a traditional pattern in a lisp, we could define a whole host of helper functions!</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="k">define </span><span class="nv">caddr</span> <span class="p">(</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nv">car</span> <span class="p">(</span><span class="nv">cdr</span> <span class="p">(</span><span class="nv">cdr</span> <span class="nv">x</span><span class="p">)))))</span>
-<span class="p">(</span><span class="k">define </span><span class="nv">caadr</span> <span class="p">(</span><span class="k">lambda </span><span class="p">(</span><span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nv">car</span> <span class="p">(</span><span class="nv">car</span> <span class="p">(</span><span class="nv">cdr</span> <span class="nv">x</span><span class="p">)))))</span>
-<span class="c1">; etc...</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">define</span></span> cadr (<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) (<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> x))))
+(<span class="hljs-name"><span class="hljs-builtin-name">cadr</span></span> '(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<pre><code class="language-scheme"><span class="hljs-number">2</span>
+</code></pre>
+<p>That's a traditional pattern in a lisp, we could define a whole host of helper functions!</p>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">define</span></span> caddr (<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) (<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> x)))))
+(<span class="hljs-name"><span class="hljs-builtin-name">define</span></span> caadr (<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (x) (<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> x)))))
+<span class="hljs-comment">; etc...</span>
+</code></pre>
 <p>But, much more impressively, we can use control flow introduced by <code>cond</code> to
 write more dynamic procedures!</p>
-
 <p>What if we want the last item in a list?</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="k">define </span><span class="nv">last</span>
-    <span class="p">(</span><span class="k">lambda </span><span class="p">(</span><span class="nv">l</span><span class="p">)</span>
-        <span class="p">(</span><span class="k">cond </span><span class="p">(</span><span class="nv">cdr</span> <span class="nv">l</span><span class="p">)</span> <span class="p">(</span><span class="nv">last</span> <span class="p">(</span><span class="nv">cdr</span> <span class="nv">l</span><span class="p">))</span>
-              <span class="p">(</span><span class="nv">car</span> <span class="nv">l</span><span class="p">))))</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name"><span class="hljs-builtin-name">define</span></span> last
+    (<span class="hljs-name"><span class="hljs-builtin-name">lambda</span></span> (l)
+        (<span class="hljs-name"><span class="hljs-builtin-name">cond</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> l) (<span class="hljs-name">last</span> (<span class="hljs-name"><span class="hljs-builtin-name">cdr</span></span> l))
+              (<span class="hljs-name"><span class="hljs-builtin-name">car</span></span> l))))
+</code></pre>
 <p>Now,</p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">last</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name">last</span> '(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span> <span class="hljs-number">6</span> <span class="hljs-number">7</span>))
+</code></pre>
 <p>is <code>7</code></p>
-<div class="highlight"><pre class="chroma"><code class="language-scheme" data-lang="scheme"><span class="p">(</span><span class="nv">last</span> <span class="o">&#39;</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-scheme">(<span class="hljs-name">last</span> '(<span class="hljs-number">1</span> <span class="hljs-number">2</span>))
+</code></pre>
 <p>is <code>2</code></p>
-
 <p>and furthermore,</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">(</span><span class="n">display</span>
-    <span class="p">(</span><span class="n">last</span> <span class="err">&#39;</span><span class="p">(</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span> <span class="mi">10</span> <span class="mi">11</span> <span class="mi">12</span> <span class="mi">13</span> <span class="mi">14</span> <span class="mi">15</span> <span class="mi">16</span> <span class="mi">17</span> <span class="mi">18</span> <span class="mi">19</span> <span class="mi">20</span> <span class="mi">21</span> <span class="mi">22</span> <span class="mi">23</span> <span class="mi">24</span> <span class="mi">25</span> <span class="mi">26</span> <span class="mi">27</span> <span class="mi">28</span> <span class="mi">29</span> <span class="mi">30</span> <span class="mi">31</span> <span class="mi">32</span> <span class="mi">33</span> <span class="mi">34</span> <span class="mi">35</span> <span class="mi">36</span> <span class="mi">37</span> <span class="mi">38</span> <span class="mi">39</span> <span class="mi">40</span> <span class="mi">41</span> <span class="mi">42</span> <span class="mi">43</span> <span class="mi">44</span> <span class="mi">45</span> <span class="mi">46</span> <span class="mi">47</span> <span class="mi">48</span> <span class="mi">49</span> <span class="mi">50</span> <span class="mi">51</span> <span class="mi">52</span> <span class="mi">53</span> <span class="mi">54</span> <span class="mi">55</span> <span class="mi">56</span> <span class="mi">57</span> <span class="mi">58</span> <span class="mi">59</span> <span class="mi">60</span> <span class="mi">61</span> <span class="mi">62</span> <span class="mi">63</span> <span class="mi">64</span> <span class="mi">65</span> <span class="mi">66</span> <span class="mi">67</span> <span class="mi">68</span> <span class="mi">69</span> <span class="mi">70</span> <span class="mi">71</span> <span class="mi">72</span> <span class="mi">73</span> <span class="mi">74</span> <span class="mi">75</span> <span class="mi">76</span> <span class="mi">77</span> <span class="mi">78</span> <span class="mi">79</span> <span class="mi">80</span> <span class="mi">81</span> <span class="mi">82</span> <span class="mi">83</span> <span class="mi">84</span> <span class="mi">85</span> <span class="mi">86</span> <span class="mi">87</span> <span class="mi">88</span> <span class="mi">89</span> <span class="mi">90</span> <span class="mi">91</span> <span class="mi">92</span> <span class="mi">93</span> <span class="mi">94</span> <span class="mi">95</span> <span class="mi">96</span> <span class="mi">97</span> <span class="mi">98</span> <span class="mi">99</span> <span class="mi">100</span><span class="p">))</span>
-<span class="p">)</span></code></pre></div>
+<pre><code class="language-c">(<span class="hljs-built_in">display</span>
+    (last <span class="hljs-string">'( 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100))
+)
+</span></code></pre>
 <p>is <code>100</code>!</p>
+<p>NOW we're cooking with gas! In the next post I'll address some thorny problems
+inherent in this design and how to fix them, and we'll discover the power of
+what we've wrought, and ... well, we'll sort of be at the end then, won't we?</p>
 
-<p>NOW we&rsquo;re cooking with gas! In the next post I&rsquo;ll address some thorny problems
-inherent in this design and how to fix them, and we&rsquo;ll discover the power of
-what we&rsquo;ve wrought, and &hellip; well, we&rsquo;ll sort of be at the end then, won&rsquo;t we?</p>
-
-                </div>
-            </article>
         </div>
-    </body>
-
-    
-
-
+      </article>
+    </div>
+  </body>
 </html>

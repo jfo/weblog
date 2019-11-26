@@ -1,344 +1,314 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
-    <head>
+  <head>
     <title>Sild; Reading substrings</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" href="/images/jeff.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
+    <link href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs=" rel=icon>
+    <link href="/hljs.css" type="text/css" rel="stylesheet" />
+    <link href="/style.css" type="text/css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+  </head>
 
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;">archive</a> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;about">about</a>
+      </header>
 
-    <body>
-        <div id="content">
-            <header class="site-header">
-    <h5>jfo</h5> &mdash;
-    <a href="https://blog.jfo.click/">archive</a> &mdash;
-    <a href="https://blog.jfo.click/about">about</a> &mdash;
-    <a href="https://blog.jfo.click/feed.xml">rss</a>
-</header>
-
-            <article>
-                <p>
-                    <h1 class="title-thing">Sild; Reading substrings</h1>
-                    <sub>June 8, 2016 </sub>
-                <p>
-                <div>
-                    <p><a href="/sild-is-a-list">In the last post, I made a simple little linked list</a>.</p>
-
-<p>I can&rsquo;t expect to make every single cell in a list by hand, of course. I need a
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; Reading substrings</h1>
+        <sub>June 8, 2016</sub>
+        <p></p>
+        <div>
+          <p><a href="/sild-is-a-list">In the last post, I made a simple little linked list</a>.</p>
+<p>I can't expect to make every single cell in a list by hand, of course. I need a
 way to turn some kind of input into a set of cells that are all semantically
 linked together. I need a function that reads a string and outputs a linked
-list! Here&rsquo;s a good first go, annotated:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span> <span class="nf">read</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">s</span> <span class="o">==</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+list! Here's a good first go, annotated:</p>
+<pre><code class="language-c"><span class="hljs-function">C * <span class="hljs-title">read</span><span class="hljs-params">(<span class="hljs-keyword">char</span> *s)</span> </span>{
+    <span class="hljs-keyword">if</span> (*s == <span class="hljs-string">'\0'</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> makecell(*s, <span class="hljs-built_in">read</span>(s + <span class="hljs-number">1</span>));
+    }
+}
+</code></pre>
 <p>This function returns a pointer to the first cell in the new linked
 list. As we saw before, from there we can access further elements by traversing
 the <code>next</code> members in each cell.</p>
-
 <p>This function accepts a string. In C, strings are not a primitive type,
-they&rsquo;re instead represented by a pointer address that points to the location of
+they're instead represented by a pointer address that points to the location of
 the first character in the string. C strings are NULL terminated, which means
-that it goes from the &ldquo;starting&rdquo; point, to the next null byte. The null byte
-here is represented by &lsquo;\0&rsquo;, but it could just as well be <code>NULL</code> or <code>0</code> or
+that it goes from the &quot;starting&quot; point, to the next null byte. The null byte
+here is represented by '\0', but it could just as well be <code>NULL</code> or <code>0</code> or
 <code>0.0</code> or <code>0x0</code>. They are all equal to the same thing, which is absolute 0,
 which is the null byte. Functions that operate on strings implement loops that
 go until they run into a null byte, and this one will do that, too.</p>
-
-<p>Notice the <code>*s</code>&rsquo;s. This is called &lsquo;dereferencing&rsquo;. When we &lsquo;dereference&rsquo; the
-pointer we&rsquo;ve been given, it returns the actual content of that memory address.
-Let&rsquo;s say we&rsquo;re passing in a string like so:</p>
-
+<p>Notice the <code>*s</code>'s. This is called 'dereferencing'. When we 'dereference' the
+pointer we've been given, it returns the actual content of that memory address.
+Let's say we're passing in a string like so:</p>
 <pre><code>read(&quot;a&quot;);
 </code></pre>
-
-<p>Now, it looks like that string constant is one byte long, and it is&hellip; sort of.
+<p>Now, it looks like that string constant is one byte long, and it is... sort of.
 The <em>contents</em> of that string are only one byte long, but it takes up two
 contiguous bytes in memory, and looks something like this:</p>
-
 <pre><code>['a']['\0']
 </code></pre>
-
 <p>This is the difference between single and double quotes in C. A double quote
 represents a string literal, and a single quote represents a single <code>char</code>.</p>
-
 <blockquote>
-<p>I&rsquo;m going to change the struct that represents a cell now, so that the <code>val</code>
+<p>I'm going to change the struct that represents a cell now, so that the <code>val</code>
 member holds a <code>char</code> instead of an <code>int</code>. This will make it easier to think
 about parsing strings. From now it will look like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="o">&gt;</span> <span class="k">typedef</span> <span class="k">struct</span> <span class="n">C</span> <span class="p">{</span>
-<span class="o">&gt;</span>     <span class="kt">char</span> <span class="n">val</span><span class="p">;</span>
-<span class="o">&gt;</span>     <span class="k">struct</span> <span class="n">C</span> <span class="o">*</span> <span class="n">next</span><span class="p">;</span>
-<span class="o">&gt;</span> <span class="p">}</span> <span class="n">C</span><span class="p">;</span>
-<span class="o">&gt;</span> <span class="err">```</span>
-
-<span class="n">So</span><span class="p">,</span> <span class="n">the</span> <span class="n">function</span> <span class="n">above</span> <span class="n">would</span> <span class="n">look</span> <span class="n">at</span> <span class="err">`</span><span class="s">&#34;a&#34;</span><span class="err">`</span><span class="p">,</span> <span class="n">and</span> <span class="n">find</span> <span class="n">that</span> <span class="n">the</span> <span class="n">first</span> <span class="kt">char</span> <span class="n">in</span> <span class="n">the</span>
-<span class="n">string</span> <span class="n">is</span> <span class="err">`</span><span class="sc">&#39;a&#39;</span><span class="err">`</span><span class="p">,</span> <span class="n">and</span> <span class="n">create</span> <span class="n">a</span> <span class="n">cell</span> <span class="n">using</span> <span class="err">`</span><span class="n">makecell</span><span class="p">()</span><span class="err">`</span> <span class="n">whose</span> <span class="err">`</span><span class="n">val</span><span class="err">`</span> <span class="n">is</span> <span class="err">`</span><span class="sc">&#39;a&#39;</span><span class="err">`</span><span class="p">,</span> <span class="n">and</span>
-<span class="n">whose</span> <span class="err">`</span><span class="n">next</span><span class="err">`</span> <span class="n">cell</span> <span class="n">is</span><span class="p">...</span></code></pre></div>
-<p>read(s + 1)</p>
-
-<pre><code>
-Why are we adding `1` to a ... string?
-
-We're not adding `1` to a string, we're adding `1` to the *address* that we were
-originally given. We're saying, in effect, &quot;Tell me what is right after the
-first character in memory.&quot; This call to `read()` sees whatever the first call
-saw, but starting on the second `char`. In this case, that's the `NULL` byte!
-On the second call, we're returning the `NULL` pointer. So the final structure
-of this linked list looks like this, it is currently just one cell long:
-
-```c
-{ 'a', 0x0 }
+</blockquote>
+<blockquote>
+<pre><code class="language-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+    <span class="hljs-keyword">char</span> val;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
+} C;
 </code></pre>
 </blockquote>
-
+<p>So, the function above would look at <code>&quot;a&quot;</code>, and find that the first char in the
+string is <code>'a'</code>, and create a cell using <code>makecell()</code> whose <code>val</code> is <code>'a'</code>, and
+whose <code>next</code> cell is...</p>
+<pre><code>read(s + 1)
+</code></pre>
+<p>Why are we adding <code>1</code> to a ... string?</p>
+<p>We're not adding <code>1</code> to a string, we're adding <code>1</code> to the <em>address</em> that we were
+originally given. We're saying, in effect, &quot;Tell me what is right after the
+first character in memory.&quot; This call to <code>read()</code> sees whatever the first call
+saw, but starting on the second <code>char</code>. In this case, that's the <code>NULL</code> byte!
+On the second call, we're returning the <code>NULL</code> pointer. So the final structure
+of this linked list looks like this, it is currently just one cell long:</p>
+<pre><code class="language-c">{ <span class="hljs-string">'a'</span>, <span class="hljs-number">0x0</span> }
+</code></pre>
 <p>How about <code>read(&quot;abcde&quot;)</code></p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">{</span> <span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="mh">0x7fe6514034c0</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="mh">0x7fe6514034a0</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39;c&#39;</span><span class="p">,</span> <span class="mh">0x7fe651403480</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39;d&#39;</span><span class="p">,</span> <span class="mh">0x7fe651403460</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="mh">0x0</span> <span class="p">}</span></code></pre></div>
+<pre><code class="language-c">{ <span class="hljs-string">'a'</span>, <span class="hljs-number">0x7fe6514034c0</span> },
+{ <span class="hljs-string">'b'</span>, <span class="hljs-number">0x7fe6514034a0</span> },
+{ <span class="hljs-string">'c'</span>, <span class="hljs-number">0x7fe651403480</span> },
+{ <span class="hljs-string">'d'</span>, <span class="hljs-number">0x7fe651403460</span> },
+{ <span class="hljs-string">'e'</span>, <span class="hljs-number">0x0</span> }
+</code></pre>
 <p>This is a little more complicated! Each character has been loaded into a cell
 whose <code>val</code> is the <code>char</code> at the location it was given, and whose <code>next</code> member
 contains the memory address of the return value of the successive call to
 <code>read()</code>. Those numbers are pointers that represent memory addresses, and are
 the return value of <code>malloc()</code> via <code>makecell()</code>.</p>
-
 <blockquote>
-<p>You might notice that the linked list structure we&rsquo;re using has something in
-common with the general string structure in C itself&hellip; they are both <code>NULL</code>
-terminated! In fact, I&rsquo;ve written a <code>read()</code> function that turns a C string
+<p>You might notice that the linked list structure we're using has something in
+common with the general string structure in C itself... they are both <code>NULL</code>
+terminated! In fact, I've written a <code>read()</code> function that turns a C string
 (which takes up contiguous space in memory) to a linked list of <code>char</code>s whose
 elements could be stored in arbitrary places.</p>
 </blockquote>
-
-<p>Now we&rsquo;re cooking with gas!</p>
-
+<p>Now we're cooking with gas!</p>
 <hr>
-
-<p>Let&rsquo;s see&hellip;</p>
-
+<p>Let's see...</p>
 <pre><code>read(&quot;a b c d e&quot;);
 </code></pre>
-
 <p>This will make a linked list that looks like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">{</span> <span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="mh">0x7fe6514034c0</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39; &#39;</span><span class="p">,</span> <span class="mh">0x7fe6514034a0</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="mh">0x7fe651403480</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39; &#39;</span><span class="p">,</span> <span class="mh">0x7fe651403460</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39;c&#39;</span><span class="p">,</span> <span class="mh">0x7fe651403440</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39; &#39;</span><span class="p">,</span> <span class="mh">0x7fe651403420</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39;d&#39;</span><span class="p">,</span> <span class="mh">0x7fe651403400</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39; &#39;</span><span class="p">,</span> <span class="mh">0x7fe6514033fe</span> <span class="p">},</span>
-<span class="p">{</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="mh">0x0</span> <span class="p">}</span></code></pre></div>
+<pre><code class="language-c">{ <span class="hljs-string">'a'</span>, <span class="hljs-number">0x7fe6514034c0</span> },
+{ <span class="hljs-string">' '</span>, <span class="hljs-number">0x7fe6514034a0</span> },
+{ <span class="hljs-string">'b'</span>, <span class="hljs-number">0x7fe651403480</span> },
+{ <span class="hljs-string">' '</span>, <span class="hljs-number">0x7fe651403460</span> },
+{ <span class="hljs-string">'c'</span>, <span class="hljs-number">0x7fe651403440</span> },
+{ <span class="hljs-string">' '</span>, <span class="hljs-number">0x7fe651403420</span> },
+{ <span class="hljs-string">'d'</span>, <span class="hljs-number">0x7fe651403400</span> },
+{ <span class="hljs-string">' '</span>, <span class="hljs-number">0x7fe6514033fe</span> },
+{ <span class="hljs-string">'e'</span>, <span class="hljs-number">0x0</span> }
+</code></pre>
 <p>This is doing what I told it to do. A space is indeed a <code>char</code> <code>' '</code>. But I
-don&rsquo;t really care about space characters. If I add an <code>if else</code> clause to my
-function, I can simply ignore the input if it&rsquo;s a space char.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span> <span class="nf">read</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">s</span> <span class="o">==</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">s</span> <span class="o">==</span> <span class="sc">&#39; &#39;</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>I&rsquo;m going to change this from a series of if statements to a <code>switch</code>. Because
-in some ways it&rsquo;s cleaner. The code below is functionally equivalent to the
-code above, and while we&rsquo;re at it, let&rsquo;s also ignore <code>\n</code> newline <code>char</code>s in
+don't really care about space characters. If I add an <code>if else</code> clause to my
+function, I can simply ignore the input if it's a space char.</p>
+<pre><code class="language-c"><span class="hljs-function">C * <span class="hljs-title">read</span><span class="hljs-params">(<span class="hljs-keyword">char</span> *s)</span> </span>{
+    <span class="hljs-keyword">if</span> (*s == <span class="hljs-string">'\0'</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (*s == <span class="hljs-string">' '</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">read</span>(s + <span class="hljs-number">1</span>);
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> makecell(*s, <span class="hljs-built_in">read</span>(s + <span class="hljs-number">1</span>));
+    }
+}
+</code></pre>
+<p>I'm going to change this from a series of if statements to a <code>switch</code>. Because
+in some ways it's cleaner. The code below is functionally equivalent to the
+code above, and while we're at it, let's also ignore <code>\n</code> newline <code>char</code>s in
 the input:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span> <span class="nf">read</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="sc">&#39;\0&#39;</span><span class="o">:</span>
-            <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-        <span class="k">case</span> <span class="sc">&#39; &#39;</span><span class="o">:</span>
-        <span class="k">case</span> <span class="sc">&#39;\n&#39;</span><span class="o">:</span>
-            <span class="k">return</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-        <span class="k">default</span><span class="o">:</span>
-            <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>It&rsquo;s easy to think of switch statements as a simple refactor of <code>if</code> and <code>else
-if</code> and <code>else</code> clauses when dealing with the various possible states of a
+<pre><code class="language-c"><span class="hljs-function">C * <span class="hljs-title">read</span><span class="hljs-params">(<span class="hljs-keyword">char</span> *s)</span> </span>{
+    <span class="hljs-keyword">switch</span>(*s) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'\0'</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">' '</span>:
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'\n'</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">read</span>(s + <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">default</span>:
+            <span class="hljs-keyword">return</span> makecell(*s, <span class="hljs-built_in">read</span>(s + <span class="hljs-number">1</span>));
+    }
+}
+</code></pre>
+<p>It's easy to think of switch statements as a simple refactor of <code>if</code> and <code>else if</code> and <code>else</code> clauses when dealing with the various possible states of a
 single variable being compared to constant values, and they do often play
 that role, but there are some subtle differences and weird little gotchas.
 Look at this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="k">switch</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-        <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-        <span class="k">default</span><span class="o">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">int</span> x = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">switch</span>(x) {
+        <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%i"</span>, x);
+        <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%i"</span>, x);
+        <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%i"</span>, x);
+        <span class="hljs-keyword">default</span>:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%i"</span>, x);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
 <p>At a glance, you would expect this code to print out <code>x</code> once, no matter what
 it is. But it does not!</p>
-
 <p>If <code>x</code> is 1, then this will print <code>1111</code>.</p>
-
 <p><code>2</code> will output <code>222</code>.</p>
-
 <p><code>3</code> will print <code>33</code>,</p>
-
 <p>and any other value will print <code>x</code> one time.</p>
-
 <p>Under the hood, a switch statement produces jump instructions that act like
 simple <code>goto</code> statements. If <code>x</code> is 2 at the switch, then it will jump to the
 point in the code where this case is stated. After that, it will execute all
 the remaining lines in the switch unless you break it off, either explicitly
 with a <code>break</code> statement, like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="k">switch</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">default</span><span class="o">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%i&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
-<p>Or implicitly, with a return statement, as I&rsquo;ve done above with the <code>read</code> function.</p>
-
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">int</span> x = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">switch</span>(x) {
+        <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%i"</span>, x);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%i"</span>, x);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%i"</span>, x);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%i"</span>, x);
+            <span class="hljs-keyword">break</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Or implicitly, with a return statement, as I've done above with the <code>read</code> function.</p>
 <hr>
-
-<p>The <code>print_list()</code> function I&rsquo;ve been using so far has been useful, but I&rsquo;d like
+<p>The <code>print_list()</code> function I've been using so far has been useful, but I'd like
 more information about the cells that a list is composed of. Here is a function
 called <code>debug_list()</code>, which has the same basic structure as <code>print_list</code>, but
 prints out all of the information for each cell.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">debug_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">c</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Address: %p, Value: %c, Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">,</span> <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">debug_list</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">debug_list</span><span class="hljs-params">(C *c)</span> </span>{
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Address: %p, Value: %c, Next: %p\n"</span>, c, c-&gt;val, c-&gt;next)
+    <span class="hljs-keyword">if</span> (c-&gt;next) {
+        debug_list(c-&gt;next);
+    }
+}
+</code></pre>
 <p>So something like <code>debug_list(read(&quot;abcd&quot;))</code> would output something like</p>
-
 <pre><code>Address: 0x7fb9cbc033f0, Value: a, Next: 0x7fb9cbc033e0
 Address: 0x7fb9cbc033e0, Value: b, Next: 0x7fb9cbc033d0
 Address: 0x7fb9cbc033d0, Value: c, Next: 0x7fb9cbc033c0
 Address: 0x7fb9cbc033c0, Value: d, Next: 0x0
 </code></pre>
-
-<p>Notice that, as you would expect, each cell&rsquo;s <code>next</code> member is the same as the
-next cell&rsquo;s <code>Address</code>, with the exception of the last cell, whose <code>next</code> member
+<p>Notice that, as you would expect, each cell's <code>next</code> member is the same as the
+next cell's <code>Address</code>, with the exception of the last cell, whose <code>next</code> member
 is, again, the <code>NULL</code> pointer.</p>
-
 <hr>
-
-<p>It&rsquo;s all well and good to be able to read in individual chars as values for
-each cell, but it&rsquo;s not very practical in the long run to only have single char long
+<p>It's all well and good to be able to read in individual chars as values for
+each cell, but it's not very practical in the long run to only have single char long
 labels for everything. I need to be able to read in arbitrarily long strings, instead.</p>
-
-<p>First, I&rsquo;ll have to adjust the <code>val</code> member once again, to be a C string (a pointer to a char) instead of a <code>char</code> by itself.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">C</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span> <span class="n">val</span><span class="p">;</span>
-    <span class="k">struct</span> <span class="n">C</span> <span class="o">*</span> <span class="n">next</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">C</span><span class="p">;</span></code></pre></div>
-<p>The final new read function will look like this (let&rsquo;s work backwards):</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span> <span class="nf">read</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="sc">&#39;\0&#39;</span><span class="o">:</span>
-            <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-        <span class="k">case</span> <span class="sc">&#39; &#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sc">&#39;\n&#39;</span><span class="o">:</span>
-            <span class="k">return</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-        <span class="k">default</span><span class="o">:</span>
-            <span class="k">return</span> <span class="n">makecell</span><span class="p">(</span><span class="n">read_substring</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">count_substring_length</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<p>First, I'll have to adjust the <code>val</code> member once again, to be a C string (a pointer to a char) instead of a <code>char</code> by itself.</p>
+<pre><code class="language-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+    <span class="hljs-keyword">char</span> * val;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
+} C;
+</code></pre>
+<p>The final new read function will look like this (let's work backwards):</p>
+<pre><code class="language-c"><span class="hljs-function">C * <span class="hljs-title">read</span><span class="hljs-params">(<span class="hljs-keyword">char</span> *s)</span> </span>{
+    <span class="hljs-keyword">switch</span>(*s) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">'\0'</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">' '</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">'\n'</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">read</span>(s + <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">default</span>:
+            <span class="hljs-keyword">return</span> makecell(read_substring(s), <span class="hljs-built_in">read</span>(s + count_substring_length(s) + <span class="hljs-number">1</span>));
+    }
+}
+</code></pre>
 <p>As you can see, I need two new functions. <code>read_substring()</code> and
 <code>count_substring_length()</code>.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="o">*</span><span class="nf">read_substring</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">count_substring_length</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">out</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-    <span class="p">}</span>
-    <span class="n">out</span><span class="p">[</span><span class="n">len</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
-    <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
-<span class="p">};</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">char</span> *<span class="hljs-title">read_substring</span><span class="hljs-params">(<span class="hljs-keyword">char</span> *s)</span> </span>{
+    <span class="hljs-keyword">int</span> len = count_substring_length(s);
+    <span class="hljs-keyword">char</span> *out = <span class="hljs-built_in">malloc</span>(len + <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; len; i++) {
+        out[i] = s[i];
+    }
+    out[len] = <span class="hljs-string">'\0'</span>;
+    <span class="hljs-keyword">return</span> out;
+};
+</code></pre>
 <p>This function is manually copying the substring into a new, <code>malloc()</code>ed
 location, and returning the pointer to that location. I need to know how much
-space to allocate, though, and that&rsquo;s where <code>count_substring_length()</code> comes in.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">count_substring_length</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">while</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39; &#39;</span> <span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span> <span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\n&#39;</span><span class="p">)</span>
-        <span class="n">i</span><span class="o">++</span><span class="p">;</span>
-    <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+space to allocate, though, and that's where <code>count_substring_length()</code> comes in.</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">count_substring_length</span><span class="hljs-params">(<span class="hljs-keyword">char</span> *s)</span> </span>{
+    <span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (s[i] != <span class="hljs-string">' '</span> &amp;&amp; s[i] != <span class="hljs-string">'\0'</span> &amp;&amp; s[i] != <span class="hljs-string">'\n'</span>)
+        i++;
+    <span class="hljs-keyword">return</span> i;
+}
+</code></pre>
 <p>This function is very simple, it just increments a counter <code>int i</code> for every
 character in a string that is not a space, a newline character, or a <code>NULL</code>
 byte. What you get back is a number that is equal to the amount of bytes needed
 to store the substring in question, including the one slot for the <code>'\0'</code> which
 will terminate the new string.</p>
-
-<p>I&rsquo;ll use that <code>count_substring_length()</code> in a couple of places. Once in the
+<p>I'll use that <code>count_substring_length()</code> in a couple of places. Once in the
 <code>read_substring()</code> function itself, for the aforementioned allocation, and
 another time in the succession call to <code>read()</code> at the tail of the switch
-statement, when I need to know how much to increment to pointer so that I&rsquo;m
+statement, when I need to know how much to increment to pointer so that I'm
 starting at the <em>end</em> of the substring that I just processed. This will make
-more sense with an example. Let&rsquo;s make a list out of <code>&quot;red balloons&quot;</code>.</p>
-
+more sense with an example. Let's make a list out of <code>&quot;red balloons&quot;</code>.</p>
 <p><code>read(&quot;red balloons&quot;)</code> will look at the first char it was given. It is the
 default case in the switch, so it will</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">return</span> <span class="nf">makecell</span><span class="p">(</span><span class="n">read_substring</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">count_substring_length</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-keyword">return</span> makecell(read_substring(s), <span class="hljs-built_in">read</span>(s + count_substring_length(s) + <span class="hljs-number">1</span>));
+</code></pre>
 <p>The first <code>read_substring</code> will first pass the string into
 <code>count_substring_length</code> to figure out the allocation.</p>
-
 <p><code>count_substring_length</code> will increment until it hits a terminal char, in this
-case a space. &ldquo;red&rdquo; is the substring, which is 3 bytes long.</p>
-
+case a space. &quot;red&quot; is the substring, which is 3 bytes long.</p>
 <p>Back in <code>read_substring()</code>, <code>malloc()</code> will allocate space for those 4 bytes,
 plus 1 more for the terminating <code>'\0'</code> in the copied string, and then, one by
-one, copy each char of the substring into the newly <code>malloc()</code>&lsquo;ed space, then
+one, copy each char of the substring into the newly <code>malloc()</code>'ed space, then
 tagging the end of it with a <code>'\0'</code>, then returning that pointer, which is
-loaded into the new cell&rsquo;s <code>val</code> member in the call to <code>makecell()</code>. Having
+loaded into the new cell's <code>val</code> member in the call to <code>makecell()</code>. Having
 read in the substring, the read function needs to know how far ahead to skip in
-the input string <code>&quot;red balloons&quot;</code> to get past the substring it&rsquo;s processed, so
+the input string <code>&quot;red balloons&quot;</code> to get past the substring it's processed, so
 it counts ahead again, in the line</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="k">return</span> <span class="nf">makecell</span><span class="p">(</span><span class="n">read_substring</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">read</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">count_substring_length</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">));</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-keyword">return</span> makecell(read_substring(s), <span class="hljs-built_in">read</span>(s + count_substring_length(s) + <span class="hljs-number">1</span>));
+</code></pre>
 <p>and adds one more to get past the terminating space. The next call to <code>read()</code>
 will then see <code>&quot;balloons&quot;</code> by itself, and then read in <em>that</em> substring, and
-finally we&rsquo;ll end up with a list of just two elements, instead of an element
+finally we'll end up with a list of just two elements, instead of an element
 for each char as we had before.</p>
-
 <pre><code>Address: 0x7ffb21c033f0, Value: red, Next: 0x7ffb21c033e0
 Address: 0x7ffb21c033e0, Value: balloons, Next: 0x0
 </code></pre>
-
 <p>Now, we have a way to turn some input (a random string) into a linked list
 structure that contains a bunch of cells that contain substrings of that
 original string. We also have a couple of functions that can operate on the
 resulting linked list. Those functions, as they develop, will serve as the
 prototypes for <em>all</em> functions that operate on these lists.</p>
 
-                </div>
-            </article>
         </div>
-    </body>
-
-    
-
-
+      </article>
+    </div>
+  </body>
 </html>

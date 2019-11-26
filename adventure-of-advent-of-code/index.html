@@ -1,314 +1,286 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
-    <head>
+  <head>
     <title>Adventure of Advent of Code</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" href="/images/jeff.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
+    <link href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs=" rel=icon>
+    <link href="/hljs.css" type="text/css" rel="stylesheet" />
+    <link href="/style.css" type="text/css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+  </head>
 
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;">archive</a> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;about">about</a>
+      </header>
 
-    <body>
-        <div id="content">
-            <header class="site-header">
-    <h5>jfo</h5> &mdash;
-    <a href="https://blog.jfo.click/">archive</a> &mdash;
-    <a href="https://blog.jfo.click/about">about</a> &mdash;
-    <a href="https://blog.jfo.click/feed.xml">rss</a>
-</header>
-
-            <article>
-                <p>
-                    <h1 class="title-thing">Adventure of Advent of Code</h1>
-                    <sub>December 4, 2016 </sub>
-                <p>
-                <div>
-                    
-
-<p>So there is this thing that <a href="http://was.tl/">Eric Wastl</a> puts together
-once a year called the &ldquo;<a href="http://adventofcode.com/">Advent of Code</a>.&rdquo; Every day
-at 12 am EST a new puzzle is unlocked. It&rsquo;s fun, you should totally try it!
+      <article>
+        <p></p>
+        <h1 class="title-thing">Adventure of Advent of Code</h1>
+        <sub>December 4, 2016</sub>
+        <p></p>
+        <div>
+          <p>So there is this thing that <a href="http://was.tl/">Eric Wastl</a> puts together
+once a year called the &quot;<a href="http://adventofcode.com/">Advent of Code</a>.&quot; Every day
+at 12 am EST a new puzzle is unlocked. It's fun, you should totally try it!
 This is its second year. You can read more about it <a href="http://adventofcode.com/2016/about">here</a>.</p>
-
 <p>The puzzles are all different from each other day to day- and in fact the
-puzzle <em>inputs</em> are different from user to user. You could copy someone&rsquo;s
-solution, but you&rsquo;d still have to run it on your own input data.</p>
-
-<p>I did 6 days last year before getting distracted and falling &ldquo;behind.&rdquo; This
-year, I&rsquo;m doing it a little differently, here&rsquo;s how.</p>
-
-<h2 id="how-i-m-doing-advent-of-code-this-year">How I&rsquo;m doing Advent of Code this year</h2>
-
+puzzle <em>inputs</em> are different from user to user. You could copy someone's
+solution, but you'd still have to run it on your own input data.</p>
+<p>I did 6 days last year before getting distracted and falling &quot;behind.&quot; This
+year, I'm doing it a little differently, here's how.</p>
+<h2>How I'm doing Advent of Code this year</h2>
 <p>AoC is a really good opportunity for learning things!</p>
-
 <ul>
 <li>new problem solving techniques and algorithms</li>
 <li>practice ingesting different input data into usable structures and models in different ways</li>
 <li>trying out new programming languages and paradigms</li>
 <li>seeing how <em>other people solve the same problems</em> in <a href="https://www.reddit.com/r/adventofcode/comments/5g80ck/2016_day_3_solutions/daq7nqd/">creative and clever ways</a>!</li>
-<li>competing with the world or your friends or also yourself for solving the problems &ldquo;best&rdquo; or &ldquo;fastest&rdquo;</li>
+<li>competing with the world or your friends or also yourself for solving the problems &quot;best&quot; or &quot;fastest&quot;</li>
 </ul>
-
-<p>Last year, I sort of felt like if I couldn&rsquo;t compete and keep up to get on the
-leaderboard, it wasn&rsquo;t worth doing it. That was wrong, of course! It is easy to
-feel like you&rsquo;ve &ldquo;fallen behind&rdquo; though, and doing all the puzzles right when
+<p>Last year, I sort of felt like if I couldn't compete and keep up to get on the
+leaderboard, it wasn't worth doing it. That was wrong, of course! It is easy to
+feel like you've &quot;fallen behind&quot; though, and doing all the puzzles right when
 they are posted at midnight my time for 25 straight days is <em>very difficult</em> to
 sustain. So,</p>
-
-<p><strong>Things I DON&rsquo;T care about this year</strong>:</p>
-
+<p><strong>Things I DON'T care about this year</strong>:</p>
 <ul>
-<li><em>Competing</em>. It&rsquo;s just not going to happen. I&rsquo;ve done all the problems so far
-right at midnight, but I&rsquo;m going to have to burst that bubble soon, maybe
-I&rsquo;ll do it tonight.</li>
-<li><em>Writing clean, maintainable code for all the problems</em>. Sure, that would be nice, but it&rsquo;s not a priority.</li>
+<li><em>Competing</em>. It's just not going to happen. I've done all the problems so far
+right at midnight, but I'm going to have to burst that bubble soon, maybe
+I'll do it tonight.</li>
+<li><em>Writing clean, maintainable code for all the problems</em>. Sure, that would be nice, but it's not a priority.</li>
 <li><em>Tests</em>. The puzzle is itself a test, after all, and the server knows the
 solution, so solve the problem, and you know your program passed its tests!</li>
 </ul>
-
 <p>These programs are by definition one offs- there are a lot more things that I
-would like to take into consideration if I were writing a &ldquo;real&rdquo; program, or a
-service or something&hellip; input sanitation&hellip; edge case checking, stuff like
-that. I&rsquo;m just not going to worry about any of that as long as it works on the
+would like to take into consideration if I were writing a &quot;real&quot; program, or a
+service or something... input sanitation... edge case checking, stuff like
+that. I'm just not going to worry about any of that as long as it works on the
 input I was provided.</p>
-
 <p><strong>Things I DO care about this year</strong>:</p>
-
 <ul>
 <li><em>Solving all the puzzles, eventually.</em> I think that this is a reasonable
-goal. The problems get really difficult later on, so I doubt I&rsquo;ll be able
-to keep doing them all the day they come out, but I&rsquo;m a lot more confident
+goal. The problems get really difficult later on, so I doubt I'll be able
+to keep doing them all the day they come out, but I'm a lot more confident
 this year that I can finish them all, at some point.</li>
 <li><em>Learning a lot!</em> Which is really the whole point! I initially thought I
 would try to solve everything in Rust, but I threw that idea out the window
 within 30 seconds of the first problem being put up because I wanted to do it
 as fast as I could.</li>
 </ul>
-
-<p>So I&rsquo;m going to solve the problem in the way I can think of fastest first,
-probably in Ruby. Then, if I feel led to, I&rsquo;m going to solve the problem in the
+<p>So I'm going to solve the problem in the way I can think of fastest first,
+probably in Ruby. Then, if I feel led to, I'm going to solve the problem in the
 fastest or most elegant way I can think of later, maybe using Rust (or clean nice
-Ruby). So far, this has been a really great way to do these problems! I don&rsquo;t
+Ruby). So far, this has been a really great way to do these problems! I don't
 know Rust well enough to enjoy both solving the problem and reading docs at the
 same time, but I do want to keep learning it. I <em>do</em> know Ruby well enough to
-toss off a solution in whatever random way might occur to me, but I don&rsquo;t have
-too much interest in polishing it up once I&rsquo;ve finished it.</p>
-
+toss off a solution in whatever random way might occur to me, but I don't have
+too much interest in polishing it up once I've finished it.</p>
 <p>In the past few days, following this process, a neat thing has been happening!</p>
-
-<h2 id="a-neat-thing-that-s-been-happening">A neat thing that&rsquo;s been happening</h2>
-
-<p>Because I have told myself that the first iteration doesn&rsquo;t have to look nice,
-or be efficient, or really anything at all, I&rsquo;ve been able to just jump right
+<h2>A neat thing that's been happening</h2>
+<p>Because I have told myself that the first iteration doesn't have to look nice,
+or be efficient, or really anything at all, I've been able to just jump right
 in with writing dumpster fire procedural code that still spits out the answer I
 want! Look at this hot garbage from <a href="http://adventofcode.com/2016/day/2">day 2 part 2</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="vi">@input</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;./inputs/2.txt&#39;</span><span class="p">,</span> <span class="s2">&#34;r&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">l</span><span class="o">|</span> <span class="n">l</span><span class="o">.</span><span class="n">chomp!</span><span class="p">}</span><span class="o">.</span><span class="n">collect!</span> <span class="p">{</span><span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)}</span>
-<span class="vi">@keypadtwo</span> <span class="o">=</span> <span class="o">[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="o">]</span><span class="p">,</span> <span class="o">[</span><span class="s2">&#34;A&#34;</span><span class="p">,</span><span class="s2">&#34;B&#34;</span><span class="p">,</span><span class="s2">&#34;C&#34;</span><span class="o">]]</span>
-<span class="k">def</span> <span class="nf">two</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">acc</span> <span class="o">=</span> <span class="o">[]</span>
+<pre><code class="language-ruby">@input = File.open(<span class="hljs-string">'./inputs/2.txt'</span>, <span class="hljs-string">"r"</span>).readlines.each {<span class="hljs-params">|l|</span> l.chomp!}.collect! {<span class="hljs-params">|e|</span> e.split(<span class="hljs-string">''</span>)}
+@keypadtwo = [[<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>], [<span class="hljs-number">6</span>,<span class="hljs-number">7</span>,<span class="hljs-number">8</span>], [<span class="hljs-string">"A"</span>,<span class="hljs-string">"B"</span>,<span class="hljs-string">"C"</span>]]
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">two</span></span>
+    x = <span class="hljs-number">0</span>
+    y = <span class="hljs-number">1</span>
+    acc = []
 
-    <span class="n">uplock</span> <span class="o">=</span> <span class="kp">false</span>
-    <span class="n">downlock</span> <span class="o">=</span> <span class="kp">false</span>
-    <span class="n">rightlock</span> <span class="o">=</span> <span class="kp">false</span>
-    <span class="n">leftlock</span> <span class="o">=</span> <span class="kp">true</span>
-    <span class="vi">@input</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">elem</span><span class="o">|</span>
-        <span class="n">elem</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span>
-            <span class="k">case</span> <span class="n">e</span>
-            <span class="k">when</span> <span class="s1">&#39;U&#39;</span>
-                <span class="k">next</span> <span class="k">if</span> <span class="p">(</span><span class="n">leftlock</span> <span class="o">||</span> <span class="n">rightlock</span> <span class="o">||</span> <span class="n">uplock</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">downlock</span>
-                    <span class="n">downlock</span> <span class="o">=</span> <span class="kp">false</span>
-                    <span class="k">next</span>
-                <span class="k">end</span>
-                <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">1</span>
-                    <span class="n">uplock</span> <span class="o">=</span> <span class="kp">true</span>
-                    <span class="k">next</span>
-                <span class="k">end</span>
-                <span class="n">y</span> <span class="o">-=</span> <span class="mi">1</span>
-            <span class="k">when</span> <span class="s1">&#39;D&#39;</span>
-                <span class="k">next</span> <span class="k">if</span> <span class="p">(</span><span class="n">leftlock</span> <span class="o">||</span> <span class="n">rightlock</span> <span class="o">||</span> <span class="n">downlock</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">uplock</span>
-                    <span class="n">uplock</span> <span class="o">=</span> <span class="kp">false</span>
-                    <span class="k">next</span>
-                <span class="k">end</span>
-                <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">1</span>
-                    <span class="n">downlock</span> <span class="o">=</span> <span class="kp">true</span>
-                    <span class="k">next</span>
-                <span class="k">end</span>
-                <span class="n">y</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">when</span> <span class="s1">&#39;R&#39;</span>
-                <span class="k">next</span> <span class="k">if</span> <span class="p">(</span><span class="n">uplock</span> <span class="o">||</span> <span class="n">downlock</span> <span class="o">||</span> <span class="n">rightlock</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">leftlock</span>
-                    <span class="n">leftlock</span> <span class="o">=</span> <span class="kp">false</span>
-                    <span class="k">next</span>
-                <span class="k">end</span>
-                <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">2</span>
-                    <span class="n">rightlock</span> <span class="o">=</span> <span class="kp">true</span>
-                    <span class="k">next</span>
-                <span class="k">end</span>
-                <span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">when</span> <span class="s1">&#39;L&#39;</span>
-                <span class="k">next</span> <span class="k">if</span> <span class="p">(</span><span class="n">uplock</span> <span class="o">||</span> <span class="n">downlock</span> <span class="o">||</span> <span class="n">leftlock</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">rightlock</span>
-                    <span class="n">rightlock</span> <span class="o">=</span> <span class="kp">false</span>
-                    <span class="k">next</span>
-                <span class="k">end</span>
-                <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span>
-                    <span class="n">leftlock</span> <span class="o">=</span> <span class="kp">true</span>
-                    <span class="k">next</span>
-                <span class="k">end</span>
-                <span class="n">x</span> <span class="o">-=</span> <span class="mi">1</span>
-            <span class="k">end</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">3</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">3</span>
-        <span class="k">end</span>
+    uplock = <span class="hljs-literal">false</span>
+    downlock = <span class="hljs-literal">false</span>
+    rightlock = <span class="hljs-literal">false</span>
+    leftlock = <span class="hljs-literal">true</span>
+    @input.each <span class="hljs-keyword">do</span> <span class="hljs-params">|elem|</span>
+        elem.each <span class="hljs-keyword">do</span> <span class="hljs-params">|e|</span>
+            <span class="hljs-keyword">case</span> e
+            <span class="hljs-keyword">when</span> <span class="hljs-string">'U'</span>
+                <span class="hljs-keyword">next</span> <span class="hljs-keyword">if</span> (leftlock <span class="hljs-params">||</span> rightlock <span class="hljs-params">||</span> uplock)
+                <span class="hljs-keyword">if</span> downlock
+                    downlock = <span class="hljs-literal">false</span>
+                    <span class="hljs-keyword">next</span>
+                <span class="hljs-keyword">end</span>
+                <span class="hljs-keyword">if</span> y == <span class="hljs-number">0</span> &amp;&amp; x == <span class="hljs-number">1</span>
+                    uplock = <span class="hljs-literal">true</span>
+                    <span class="hljs-keyword">next</span>
+                <span class="hljs-keyword">end</span>
+                y -= <span class="hljs-number">1</span>
+            <span class="hljs-keyword">when</span> <span class="hljs-string">'D'</span>
+                <span class="hljs-keyword">next</span> <span class="hljs-keyword">if</span> (leftlock <span class="hljs-params">||</span> rightlock <span class="hljs-params">||</span> downlock)
+                <span class="hljs-keyword">if</span> uplock
+                    uplock = <span class="hljs-literal">false</span>
+                    <span class="hljs-keyword">next</span>
+                <span class="hljs-keyword">end</span>
+                <span class="hljs-keyword">if</span> y == <span class="hljs-number">2</span> &amp;&amp; x == <span class="hljs-number">1</span>
+                    downlock = <span class="hljs-literal">true</span>
+                    <span class="hljs-keyword">next</span>
+                <span class="hljs-keyword">end</span>
+                y += <span class="hljs-number">1</span>
+            <span class="hljs-keyword">when</span> <span class="hljs-string">'R'</span>
+                <span class="hljs-keyword">next</span> <span class="hljs-keyword">if</span> (uplock <span class="hljs-params">||</span> downlock <span class="hljs-params">||</span> rightlock)
+                <span class="hljs-keyword">if</span> leftlock
+                    leftlock = <span class="hljs-literal">false</span>
+                    <span class="hljs-keyword">next</span>
+                <span class="hljs-keyword">end</span>
+                <span class="hljs-keyword">if</span> y == <span class="hljs-number">1</span> &amp;&amp; x == <span class="hljs-number">2</span>
+                    rightlock = <span class="hljs-literal">true</span>
+                    <span class="hljs-keyword">next</span>
+                <span class="hljs-keyword">end</span>
+                x += <span class="hljs-number">1</span>
+            <span class="hljs-keyword">when</span> <span class="hljs-string">'L'</span>
+                <span class="hljs-keyword">next</span> <span class="hljs-keyword">if</span> (uplock <span class="hljs-params">||</span> downlock <span class="hljs-params">||</span> leftlock)
+                <span class="hljs-keyword">if</span> rightlock
+                    rightlock = <span class="hljs-literal">false</span>
+                    <span class="hljs-keyword">next</span>
+                <span class="hljs-keyword">end</span>
+                <span class="hljs-keyword">if</span> y == <span class="hljs-number">1</span> &amp;&amp; x == <span class="hljs-number">0</span>
+                    leftlock = <span class="hljs-literal">true</span>
+                    <span class="hljs-keyword">next</span>
+                <span class="hljs-keyword">end</span>
+                x -= <span class="hljs-number">1</span>
+            <span class="hljs-keyword">end</span>
+            x = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> x == -<span class="hljs-number">1</span>
+            x = <span class="hljs-number">2</span> <span class="hljs-keyword">if</span> x == <span class="hljs-number">3</span>
+            y = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> y == -<span class="hljs-number">1</span>
+            y = <span class="hljs-number">2</span> <span class="hljs-keyword">if</span> y == <span class="hljs-number">3</span>
+        <span class="hljs-keyword">end</span>
 
-        <span class="k">if</span> <span class="n">uplock</span>
-            <span class="n">acc</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
-        <span class="k">elsif</span> <span class="n">downlock</span>
-            <span class="n">acc</span> <span class="o">&lt;&lt;</span> <span class="s1">&#39;D&#39;</span>
-        <span class="k">elsif</span> <span class="n">rightlock</span>
-            <span class="n">acc</span> <span class="o">&lt;&lt;</span> <span class="mi">9</span>
-        <span class="k">elsif</span> <span class="n">leftlock</span>
-            <span class="n">acc</span> <span class="o">&lt;&lt;</span> <span class="mi">5</span>
-        <span class="k">else</span>
-            <span class="n">acc</span> <span class="o">&lt;&lt;</span> <span class="vi">@keypadtwo</span><span class="o">[</span><span class="n">y</span><span class="o">][</span><span class="n">x</span><span class="o">]</span>
-        <span class="k">end</span>
-    <span class="k">end</span>
+        <span class="hljs-keyword">if</span> uplock
+            acc &lt;&lt; <span class="hljs-number">1</span>
+        <span class="hljs-keyword">elsif</span> downlock
+            acc &lt;&lt; <span class="hljs-string">'D'</span>
+        <span class="hljs-keyword">elsif</span> rightlock
+            acc &lt;&lt; <span class="hljs-number">9</span>
+        <span class="hljs-keyword">elsif</span> leftlock
+            acc &lt;&lt; <span class="hljs-number">5</span>
+        <span class="hljs-keyword">else</span>
+            acc &lt;&lt; @keypadtwo[y][x]
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
 
-    <span class="n">acc</span><span class="o">.</span><span class="n">join</span>
-<span class="k">end</span>
+    acc.join
+<span class="hljs-keyword">end</span>
 
-<span class="nb">p</span> <span class="n">two</span></code></pre></div>
-<p>The specifics of this problem are not important right now, and in fact you&rsquo;d
+p two
+</code></pre>
+<p>The specifics of this problem are not important right now, and in fact you'd
 need to solve the first part to see them on the link above. But, I mean, even
-just looking at the shape of that you can tell that it&rsquo;s some&hellip; not very great
-or sophisticated code! There is a ton of repetition, the whole boolean &ldquo;lock&rdquo;
-construct smells dubious&hellip; (even if you don&rsquo;t know what it does!) This is the
+just looking at the shape of that you can tell that it's some... not very great
+or sophisticated code! There is a ton of repetition, the whole boolean &quot;lock&quot;
+construct smells dubious... (even if you don't know what it does!) This is the
 kind of code I would have written a few years ago- it fulfills the task,
 but boy howdy is it ugly, and has a ton of nooks and crannies in it where a
 simple typo could make everything bad in really funny ways.</p>
-
-<p>But! <em>Why</em> it looks like that is what I&rsquo;m interested in. It&rsquo;s like a rough
-sketch- it&rsquo;s me thinking about the problem as &ldquo;<a href="https://www.infoq.com/presentations/Simple-Made-Easy">easily</a>&rdquo; as I can.
-That code might look (and be) &ldquo;bad&rdquo; code, but it&rsquo;s as clear a procedural
+<p>But! <em>Why</em> it looks like that is what I'm interested in. It's like a rough
+sketch- it's me thinking about the problem as &quot;<a href="https://www.infoq.com/presentations/Simple-Made-Easy">easily</a>&quot; as I can.
+That code might look (and be) &quot;bad&quot; code, but it's as clear a procedural
 representation of the problem as I could come up with in only a couple of
-minutes. Once I&rsquo;ve solved the problem I can be confident that I really do understand
+minutes. Once I've solved the problem I can be confident that I really do understand
 it, and then I can take my time in implementing either an efficient or elegant
 solution for teh learns. Ideally both!</p>
+<p>Here's my Rust for that very same problem:</p>
+<pre><code class="language-rust"><span class="hljs-keyword">use</span> std::io::prelude::*;
+<span class="hljs-keyword">use</span> std::fs::File;
+<span class="hljs-keyword">use</span> std::collections::HashSet;
+<span class="hljs-keyword">use</span> std::iter::FromIterator;
 
-<p>Here&rsquo;s my Rust for that very same problem:</p>
-<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="n">prelude</span>::<span class="o">*</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fs</span>::<span class="n">File</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">collections</span>::<span class="n">HashSet</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">iter</span>::<span class="n">FromIterator</span><span class="p">;</span><span class="w">
-</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="k">static</span><span class="w"> </span><span class="n">GRID</span><span class="w"> </span>: <span class="p">[</span><span class="o">&amp;</span><span class="nb">&#39;static</span><span class="p">[</span><span class="kt">i32</span><span class="p">;</span><span class="w"> </span><span class="mi">5</span><span class="p">];</span><span class="w"> </span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w">
-</span><span class="w">    </span><span class="o">&amp;</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w">
-</span><span class="w">    </span><span class="o">&amp;</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w">
-</span><span class="w">    </span><span class="o">&amp;</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">9</span><span class="p">],</span><span class="w">
-</span><span class="w">    </span><span class="o">&amp;</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w">
-</span><span class="w">    </span><span class="o">&amp;</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">],</span><span class="w">
-</span><span class="w"></span><span class="p">];</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">allowedarr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w">
-</span><span class="w">        </span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="w">
-</span><span class="w">        </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="w">
-</span><span class="w">        </span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="w">
-</span><span class="w">        </span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="w">
-</span><span class="w">    </span><span class="p">];</span><span class="w">
-</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">allowed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HashSet</span>::<span class="o">&lt;</span><span class="n">_</span><span class="o">&gt;</span>::<span class="n">from_iter</span><span class="p">(</span><span class="n">allowedarr</span><span class="p">.</span><span class="n">iter</span><span class="p">());</span><span class="w">
-</span><span class="w">
-</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span>::<span class="n">open</span><span class="p">(</span><span class="s">&#34;../inputs/2.txt&#34;</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
-</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">new</span><span class="p">();</span><span class="w">
-</span><span class="w">    </span><span class="n">f</span><span class="p">.</span><span class="n">read_to_string</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">s</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
-</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="p">();</span><span class="w">
-</span><span class="w">    </span><span class="n">s</span><span class="p">.</span><span class="n">truncate</span><span class="p">(</span><span class="n">len</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">
-</span><span class="w">
-</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">keys</span>: <span class="nb">String</span> <span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="w">
-</span><span class="w">        </span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#34;\n&#34;</span><span class="p">)</span><span class="w">
-</span><span class="w">        </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">tokenlist</span><span class="o">|</span><span class="w">
-</span><span class="w">            </span><span class="n">tokenlist</span><span class="p">.</span><span class="n">chars</span><span class="p">().</span><span class="n">fold</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="o">|</span><span class="n">coord</span><span class="p">,</span><span class="w"> </span><span class="n">dir</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">newcoord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">dir</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w">                    </span><span class="sc">&#39;U&#39;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">coord</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">coord</span><span class="p">.</span><span class="mi">1</span><span class="p">),</span><span class="w">
-</span><span class="w">                    </span><span class="sc">&#39;D&#39;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">coord</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">coord</span><span class="p">.</span><span class="mi">1</span><span class="p">),</span><span class="w">
-</span><span class="w">                    </span><span class="sc">&#39;R&#39;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">coord</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">coord</span><span class="p">.</span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w">
-</span><span class="w">                    </span><span class="sc">&#39;L&#39;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">coord</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">coord</span><span class="p">.</span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w">
-</span><span class="w">                    </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">panic</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;Malformed input&#34;</span><span class="p">)</span><span class="w">
-</span><span class="w">                </span><span class="p">};</span><span class="w">
-</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">allowed</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="o">&amp;</span><span class="n">newcoord</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">newcoord</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">coord</span><span class="w"> </span><span class="p">}</span><span class="w">
-</span><span class="w">            </span><span class="p">})</span><span class="w">
-</span><span class="w">        </span><span class="p">)</span><span class="w">
-</span><span class="w">        </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">coord</span><span class="o">|</span><span class="w"> </span><span class="n">GRID</span><span class="p">[</span><span class="n">coord</span><span class="p">.</span><span class="mi">0</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">usize</span><span class="p">][</span><span class="n">coord</span><span class="p">.</span><span class="mi">1</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">usize</span><span class="p">])</span><span class="w">
-</span><span class="w">        </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">e</span><span class="o">|</span><span class="w"> </span><span class="n">format</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{:x}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">))</span><span class="w">
-</span><span class="w">        </span><span class="p">.</span><span class="n">collect</span>::<span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;&gt;</span><span class="p">()</span><span class="w">
-</span><span class="w">        </span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span><span class="w">
-</span><span class="w">        </span><span class="p">.</span><span class="n">to_uppercase</span><span class="p">();</span><span class="w">
-</span><span class="w">
-</span><span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">keys</span><span class="p">);</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
-</span></code></pre></div>
-<p>So&hellip; I don&rsquo;t really know yet if this is &ldquo;good Rust&rdquo; because I don&rsquo;t know Rust
-super well yet, but I can say for certain that it&rsquo;s much better written than
+
+<span class="hljs-keyword">static</span> GRID : [&amp;<span class="hljs-symbol">'static</span>[<span class="hljs-built_in">i32</span>; <span class="hljs-number">5</span>]; <span class="hljs-number">5</span>] = [
+    &amp;[<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>],
+    &amp;[<span class="hljs-number">0</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">0</span>],
+    &amp;[<span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>, <span class="hljs-number">9</span>],
+    &amp;[<span class="hljs-number">0</span>,<span class="hljs-number">10</span>,<span class="hljs-number">11</span>,<span class="hljs-number">12</span>, <span class="hljs-number">0</span>],
+    &amp;[<span class="hljs-number">0</span>, <span class="hljs-number">0</span>,<span class="hljs-number">13</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>],
+];
+
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() {
+    <span class="hljs-keyword">let</span> allowedarr = [
+        (<span class="hljs-number">0</span>,<span class="hljs-number">2</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>),(<span class="hljs-number">1</span>,<span class="hljs-number">3</span>),
+        (<span class="hljs-number">2</span>,<span class="hljs-number">0</span>),(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>),(<span class="hljs-number">2</span>,<span class="hljs-number">2</span>),(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>),
+        (<span class="hljs-number">2</span>,<span class="hljs-number">4</span>),(<span class="hljs-number">3</span>,<span class="hljs-number">1</span>),(<span class="hljs-number">3</span>,<span class="hljs-number">2</span>),(<span class="hljs-number">3</span>,<span class="hljs-number">3</span>),
+        (<span class="hljs-number">4</span>,<span class="hljs-number">2</span>)
+    ];
+    <span class="hljs-keyword">let</span> allowed = HashSet::&lt;_&gt;::from_iter(allowedarr.iter());
+
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> f = File::open(<span class="hljs-string">"../inputs/2.txt"</span>).unwrap();
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut</span> s = <span class="hljs-built_in">String</span>::new();
+    f.read_to_string(&amp;<span class="hljs-keyword">mut</span> s).unwrap();
+    <span class="hljs-keyword">let</span> len = s.len();
+    s.truncate(len - <span class="hljs-number">1</span>);
+
+    <span class="hljs-keyword">let</span> keys: <span class="hljs-built_in">String</span> = s
+        .split(<span class="hljs-string">"\n"</span>)
+        .map(|tokenlist|
+            tokenlist.chars().fold((<span class="hljs-number">2</span>,<span class="hljs-number">0</span>), |coord, dir| {
+                <span class="hljs-keyword">let</span> newcoord = <span class="hljs-keyword">match</span> dir {
+                    <span class="hljs-string">'U'</span> =&gt; (coord.<span class="hljs-number">0</span> - <span class="hljs-number">1</span>, coord.<span class="hljs-number">1</span>),
+                    <span class="hljs-string">'D'</span> =&gt; (coord.<span class="hljs-number">0</span> + <span class="hljs-number">1</span>, coord.<span class="hljs-number">1</span>),
+                    <span class="hljs-string">'R'</span> =&gt; (coord.<span class="hljs-number">0</span>, coord.<span class="hljs-number">1</span> + <span class="hljs-number">1</span>),
+                    <span class="hljs-string">'L'</span> =&gt; (coord.<span class="hljs-number">0</span>, coord.<span class="hljs-number">1</span> - <span class="hljs-number">1</span>),
+                    _ =&gt; <span class="hljs-built_in">panic!</span>(<span class="hljs-string">"Malformed input"</span>)
+                };
+                <span class="hljs-keyword">if</span> allowed.contains(&amp;newcoord) { newcoord } <span class="hljs-keyword">else</span> { coord }
+            })
+        )
+        .map(|coord| GRID[coord.<span class="hljs-number">0</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">usize</span>][coord.<span class="hljs-number">1</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">usize</span>])
+        .map(|e| <span class="hljs-built_in">format!</span>(<span class="hljs-string">"{:x}"</span>, e))
+        .collect::&lt;<span class="hljs-built_in">Vec</span>&lt;<span class="hljs-built_in">String</span>&gt;&gt;()
+        .join(<span class="hljs-string">""</span>)
+        .to_uppercase();
+
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">"{}"</span>, keys);
+}
+</code></pre>
+<p>So... I don't really know yet if this is &quot;good Rust&quot; because I don't know Rust
+super well yet, but I can say for certain that it's much better written than
 the first one!It uses a completely different boundary checking method, and is
 much more functional. Again,the specifics of the problem are not that important
 here, but you can see that my thinking is clearer. Basically it just pulls in
 the input and then chains together a lot of functions to turn that input into
 the desired answer! Yay functions!</p>
-
-<p>Here&rsquo;s where something else neat happened.</p>
-
-<h2 id="something-else-neat-that-happened">Something else neat that happened.</h2>
-
+<p>Here's where something else neat happened.</p>
+<h2>Something else neat that happened.</h2>
 <p>Take a look at my ruby solution for the
-next day&rsquo;s second problem:</p>
-<div class="highlight"><pre class="chroma"><code class="language-rb" data-lang="rb"><span class="vi">@input</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;./inputs/3.txt&#39;</span><span class="p">,</span> <span class="s2">&#34;r&#34;</span><span class="p">)</span>
-<span class="o">.</span><span class="n">readlines</span>
-<span class="o">.</span><span class="n">collect!</span> <span class="p">{</span><span class="o">|</span><span class="n">e</span><span class="o">|</span>
-    <span class="n">e</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">map!</span> <span class="p">{</span><span class="o">|</span><span class="n">e</span><span class="o">|</span><span class="n">e</span><span class="o">.</span><span class="n">to_i</span><span class="p">}</span>
-<span class="p">}</span>
+next day's second problem:</p>
+<pre><code class="language-rb">@input = File.open(<span class="hljs-string">'./inputs/3.txt'</span>, <span class="hljs-string">"r"</span>)
+.readlines
+.collect! {<span class="hljs-params">|e|</span>
+    e.split(<span class="hljs-string">' '</span>)
+    .map! {<span class="hljs-params">|e|</span>e.to_i}
+}
 
-<span class="nb">p</span> <span class="p">(</span><span class="mi">0</span><span class="o">..</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span>
-    <span class="vi">@input</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span><span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">}</span>
-    <span class="o">.</span><span class="n">each_slice</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">to_a</span><span class="p">}</span>
-<span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="o">.</span><span class="n">select</span> <span class="p">{</span><span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="ss">:+</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">e</span><span class="o">.</span><span class="n">max</span> <span class="o">*</span> <span class="mi">2</span> <span class="p">}</span>
-<span class="o">.</span><span class="n">count</span></code></pre></div>
-<p>It&rsquo;s functional af! The whole thing is just one chain of methods that spits out
+p (<span class="hljs-number">0</span>..<span class="hljs-number">2</span>).map{<span class="hljs-params">|i|</span>
+    @input.map {<span class="hljs-params">|e|</span> e[i]}
+    .each_slice(<span class="hljs-number">3</span>)
+    .to_a}
+.flatten(<span class="hljs-number">1</span>)
+.select {<span class="hljs-params">|e|</span> e.inject(<span class="hljs-symbol">:+</span>) &gt; e.max * <span class="hljs-number">2</span> }
+.count
+</code></pre>
+<p>It's functional af! The whole thing is just one chain of methods that spits out
 the answer! It reminds me of the
-<a href="https://github.com/twitter/scalding">scalding</a> code I&rsquo;ve written at work to
+<a href="https://github.com/twitter/scalding">scalding</a> code I've written at work to
 produce big data jobs. It also looks like (shocker) the Rust code I wrote the
-day before. This is a very clear cross pollination of the different things I&rsquo;m
-looking at right now, and that&rsquo;s really exciting!</p>
-
+day before. This is a very clear cross pollination of the different things I'm
+looking at right now, and that's really exciting!</p>
 <p>I was thinking about going through all these solutions in greater detail- but I
 think a much more important take away than my implementations here is just that
 AoC provides a <em>ton</em> of opportunities for learning new things, and that if
-you&rsquo;re interested in that, and puzzles, and or programming, then you should
-totally give it a try! And you shouldn&rsquo;t feel bad about what you use or how you
+you're interested in that, and puzzles, and or programming, then you should
+totally give it a try! And you shouldn't feel bad about what you use or how you
 use it, and just have fun solving the puzzles you can solve! And THEN, search
 the <a href="https://www.reddit.com/r/adventofcode/">subreddit</a> or talk to other people
-doing the challenges and see what they did! It&rsquo;s really amazing how many
+doing the challenges and see what they did! It's really amazing how many
 different ways people find to solve these problems!</p>
 
-                </div>
-            </article>
         </div>
-    </body>
-
-    
-
-
+      </article>
+    </div>
+  </body>
 </html>

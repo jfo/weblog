@@ -1,11 +1,11 @@
 @font-face {
   font-family: "etbook";
-  src: url("/css/et-book.woff") format('woff');
+  src: url("/et-book.woff") format('woff');
 }
 
 @font-face {
   font-family: "Inconsolata";
-  src: url("/css/inconsolata.woff") format('woff');
+  src: url("/inconsolata.woff") format('woff');
 }
 
 .site-header {

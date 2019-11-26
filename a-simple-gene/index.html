@@ -1,77 +1,61 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
-    <head>
+  <head>
     <title>a simple gene</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" href="/images/jeff.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
+    <link href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs=" rel=icon>
+    <link href="/hljs.css" type="text/css" rel="stylesheet" />
+    <link href="/style.css" type="text/css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+  </head>
 
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;">archive</a> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;about">about</a>
+      </header>
 
-    <body>
-        <div id="content">
-            <header class="site-header">
-    <h5>jfo</h5> &mdash;
-    <a href="https://blog.jfo.click/">archive</a> &mdash;
-    <a href="https://blog.jfo.click/about">about</a> &mdash;
-    <a href="https://blog.jfo.click/feed.xml">rss</a>
-</header>
-
-            <article>
-                <p>
-                    <h1 class="title-thing">a simple gene</h1>
-                    <sub>April 23, 2014 </sub>
-                <p>
-                <div>
-                    <p>I had a goodly and productive day today, by which I mean that I:</p>
-
+      <article>
+        <p></p>
+        <h1 class="title-thing">a simple gene</h1>
+        <sub>April 23, 2014</sub>
+        <p></p>
+        <div>
+          <p>I had a goodly and productive day today, by which I mean that I:</p>
 <ul>
 <li>Had a thing I wanted to do</li>
 <li>Did it.</li>
 </ul>
-
-<p>How rewarding! The &ldquo;thing&rdquo; was:</p>
-
+<p>How rewarding! The &quot;thing&quot; was:</p>
 <ul>
 <li>The fizzbuzz of genetic algorithms.</li>
 </ul>
-
 <p>There were a lot of intermediate steps, of course, like these:</p>
-
 <ul>
 <li>talk to Alex about it a bunch</li>
 <li>scratch head</li>
 <li>talk to Alex some more</li>
 </ul>
-
 <p>and these:</p>
-
 <ul>
 <li>fail.</li>
 <li>fail.</li>
-<li>notice I&rsquo;m using completely wrong function for thing; fail.</li>
+<li>notice I'm using completely wrong function for thing; fail.</li>
 <li>succeed.</li>
 </ul>
-
 <p>All in all, it struck a balance.</p>
-
-<p>Now, I don&rsquo;t mean I wrote fizzbuzz <em>as</em> a genetic algorithm (and I&rsquo;m going to space here for a second to avoid nerd sniping myself: lalala&hellip;.) but rather asked the question- what is the simplest implementation that I can think of <em>of</em> a genetic algorithm, which qualifies as such?</p>
-
+<p>Now, I don't mean I wrote fizzbuzz <em>as</em> a genetic algorithm (and I'm going to space here for a second to avoid nerd sniping myself: lalala....) but rather asked the question- what is the simplest implementation that I can think of <em>of</em> a genetic algorithm, which qualifies as such?</p>
 <p>Here is what you need to make it work:</p>
-
 <ul>
-<li>A defined type of &ldquo;gene,&rdquo; that is organized into</li>
-<li>&ldquo;generations,&rdquo; or sets of genes of a constant size.</li>
+<li>A defined type of &quot;gene,&quot; that is organized into</li>
+<li>&quot;generations,&quot; or sets of genes of a constant size.</li>
 <li>A metric for evaluating the fitness of a given gene, and</li>
 <li>A way to change genes slightly, whether through mutation, recombination, or some other method.</li>
 </ul>
-
-<p>I&rsquo;ll come back to those momentarily, but Alex suggested this as a good first go:</p>
-
+<p>I'll come back to those momentarily, but Alex suggested this as a good first go:</p>
 <pre><code>A &quot;gene&quot; is a string of n length of bits (1 or 0).
 They can be randomized or seeded with a starting gene (such as all 0's)
 
@@ -80,103 +64,99 @@ The fitness of a gene is denoted by the number of 1's in the string.
 
 Write a mutative algorithm that moves towards the base case of all 1's.
 </code></pre>
-
-<p>Let&rsquo;s start with generating the basic material: one gene! This solution is in Clojure:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">new-gene</span> <span class="p">[]</span>
-   <span class="c1">; (repeatedly 50 #(rand-int 2)))</span>
-   <span class="p">(</span><span class="nb">take </span><span class="mi">50</span> <span class="p">(</span><span class="nb">repeat </span><span class="mi">0</span><span class="p">)))</span></code></pre></div>
-<p>I&rsquo;ve given a length of 50. The commented out line would generate random bits, and the line at the bottom would generate a seq of all 0&rsquo;s. Now to dump those into our first generation:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">generation</span> <span class="p">[]</span>
-   <span class="p">(</span><span class="nv">repeatedly</span> <span class="mi">100</span> <span class="nv">new-gene</span><span class="p">)))</span></code></pre></div>
-<p>In English: &ldquo;Take the first one hundred elements in the sequence generated by repeatedly calling the new gene function.&rdquo; This gives us a list of 100 genes of 50 bits each.</p>
-
-<p>Now we need to evaluate each gene for fitness; remember that our metric is simply &ldquo;the more 1&rsquo;s the better.&rdquo;</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">fitness</span> <span class="p">[</span><span class="nv">gene</span><span class="p">]</span>
-  <span class="p">(</span><span class="nb">count </span><span class="p">(</span><span class="nb">filter </span><span class="o">#</span><span class="p">(</span><span class="nb">= </span><span class="mi">1</span> <span class="nv">%</span><span class="p">)</span> <span class="nv">gene</span><span class="p">)))</span></code></pre></div>
+<p>Let's start with generating the basic material: one gene! This solution is in Clojure:</p>
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> new-gene []
+   <span class="hljs-comment">; (repeatedly 50 #(rand-int 2)))</span>
+   (<span class="hljs-name"><span class="hljs-builtin-name">take</span></span> <span class="hljs-number">50</span> (<span class="hljs-name"><span class="hljs-builtin-name">repeat</span></span> <span class="hljs-number">0</span>)))
+</code></pre>
+<p>I've given a length of 50. The commented out line would generate random bits, and the line at the bottom would generate a seq of all 0's. Now to dump those into our first generation:</p>
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> generation []
+   (<span class="hljs-name">repeatedly</span> <span class="hljs-number">100</span> new-gene)))
+</code></pre>
+<p>In English: &quot;Take the first one hundred elements in the sequence generated by repeatedly calling the new gene function.&quot; This gives us a list of 100 genes of 50 bits each.</p>
+<p>Now we need to evaluate each gene for fitness; remember that our metric is simply &quot;the more 1's the better.&quot;</p>
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> fitness [gene]
+  (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">filter</span></span> #(<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> <span class="hljs-number">1</span> %) gene)))
+</code></pre>
 <p>Matt helpfully points out that in this case, the above function could be rewritten as:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">fitness</span> <span class="p">[</span><span class="nv">gene</span><span class="p">]</span>
-  <span class="p">(</span><span class="nb">apply + </span><span class="nv">gene</span><span class="p">))</span></code></pre></div>
-<p>Which achieves the same result by summing up all of the values in the gene instead of just counting the 1&rsquo;s.</p>
-
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> fitness [gene]
+  (<span class="hljs-name"><span class="hljs-builtin-name">apply</span></span> + gene))
+</code></pre>
+<p>Which achieves the same result by summing up all of the values in the gene instead of just counting the 1's.</p>
 <p>And it is straightforward to map this function over all the genes in our generation:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">evaluate-generation</span> <span class="p">[</span><span class="nv">generation</span><span class="p">]</span>
-  <span class="p">(</span><span class="nv">map</span>
-    <span class="nv">fitness</span>
-    <span class="nv">generation</span><span class="p">))</span></code></pre></div>
-<p>Hmmm&hellip; good, but not exactly what we want just yet. We now have a list of the fitness of each gene, but this information does us no good in a vacuum&hellip; let&rsquo;s try reordering the original generation <em>by</em> fitness, instead. By default, <code>sort-by</code> goes least to greatest, so I will also reverse that output.</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">evaluate-generation</span> <span class="p">[</span><span class="nv">generation</span><span class="p">]</span>
-  <span class="p">(</span><span class="nv">reverse</span>
-    <span class="p">(</span><span class="nv">sort-by</span>
-      <span class="nv">fitness</span>
-      <span class="nv">generation</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> evaluate-generation [generation]
+  (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span>
+    fitness
+    generation))
+</code></pre>
+<p>Hmmm... good, but not exactly what we want just yet. We now have a list of the fitness of each gene, but this information does us no good in a vacuum... let's try reordering the original generation <em>by</em> fitness, instead. By default, <code>sort-by</code> goes least to greatest, so I will also reverse that output.</p>
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> evaluate-generation [generation]
+  (<span class="hljs-name"><span class="hljs-builtin-name">reverse</span></span>
+    (<span class="hljs-name"><span class="hljs-builtin-name">sort-by</span></span>
+      fitness
+      generation))
+</code></pre>
 <p>Or, even better:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">evaluate-generation</span> <span class="p">[</span><span class="nv">generation</span><span class="p">]</span>
-  <span class="p">(</span><span class="nb">sort-by </span><span class="nv">fitness</span> <span class="nb">&gt; </span><span class="nv">generation</span><span class="p">))</span></code></pre></div>
-<p>Now we&rsquo;re getting somewhere.</p>
-
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> evaluate-generation [generation]
+  (<span class="hljs-name"><span class="hljs-builtin-name">sort-by</span></span> fitness &gt; generation))
+</code></pre>
+<p>Now we're getting somewhere.</p>
 <p>Since we have an ordered-by-fitness list of genes, we want to cull away the least fit and allow the most fit to procreate forward. A good way to accomplish this is to simply discard the bottom half, and since this is a lazy sequence we can take just the first half of it to achieve the desired effect:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">evaluate-generation</span> <span class="p">[</span><span class="nv">generation</span><span class="p">]</span>
-  <span class="p">(</span><span class="nv">take</span>
-    <span class="p">(</span><span class="nb">/ </span><span class="p">(</span><span class="nb">count </span><span class="nv">generation</span><span class="p">)</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="p">(</span><span class="nb">sort-by </span><span class="nv">fitness</span> <span class="nb">&gt; </span><span class="nv">generation</span><span class="p">)))</span></code></pre></div>
-<p>Once again, English: &ldquo;Take the top half of the generation of genes sorted by fitness.&rdquo;</p>
-
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> evaluate-generation [generation]
+  (<span class="hljs-name"><span class="hljs-builtin-name">take</span></span>
+    (/ (<span class="hljs-name"><span class="hljs-builtin-name">count</span></span> generation) <span class="hljs-number">2</span>)
+    (<span class="hljs-name"><span class="hljs-builtin-name">sort-by</span></span> fitness &gt; generation)))
+</code></pre>
+<p>Once again, English: &quot;Take the top half of the generation of genes sorted by fitness.&quot;</p>
 <p>Now comes the fun part! We need to introduce some type of variation in the proceeding generation. There are plenty of ways to do this, but I want to start with the most fundamental: introducing random mutations.</p>
-
 <p>To start- a function to perform that action on a single bit:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">mutate</span> <span class="p">[</span><span class="nv">g</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nb">rand-int </span><span class="mi">100</span><span class="p">)</span> <span class="mi">1</span><span class="p">)</span>
-      <span class="p">(</span><span class="nv">bit-flip</span> <span class="nv">g</span> <span class="mi">0</span><span class="p">)</span>
-      <span class="nv">g</span><span class="p">))</span></code></pre></div>
-<p>Paraphrased: &ldquo;If the result of calling a random number between 1 and 100 is 1, then &ldquo;bit-flip&rdquo; the input. If it is a 1, it becomes a 0. If it is a 0, it becomes a 1.&rdquo;</p>
-
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> mutate [g]
+  (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">rand-int</span></span> <span class="hljs-number">100</span>) <span class="hljs-number">1</span>)
+      (<span class="hljs-name">bit-flip</span> g <span class="hljs-number">0</span>)
+      g))
+</code></pre>
+<p>Paraphrased: &quot;If the result of calling a random number between 1 and 100 is 1, then &quot;bit-flip&quot; the input. If it is a 1, it becomes a 0. If it is a 0, it becomes a 1.&quot;</p>
 <p>Now to map that function over an entire gene:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">gene</span><span class="p">]</span>
-  <span class="p">(</span><span class="nv">map</span>
-    <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">g</span><span class="p">]</span> <span class="nv">mutate</span> <span class="nv">g</span><span class="p">)</span>
-    <span class="nv">gene</span><span class="p">))</span></code></pre></div>
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [gene]
+  (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span>
+    (<span class="hljs-name"><span class="hljs-builtin-name">fn</span></span> [g] mutate g)
+    gene))
+</code></pre>
 <p>I have made these functions anonymous because I am going to go ahead and skip a step by mapping the above function over an entire generation all at once, like this.</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">mutate-gen</span> <span class="p">[</span><span class="nv">generation</span><span class="p">]</span>
-  <span class="p">(</span><span class="nv">map</span>
-   <span class="o">#</span><span class="p">(</span><span class="nb">map </span><span class="nv">mutate</span> <span class="nv">%</span><span class="p">)</span>
-   <span class="nv">generation</span><span class="p">))</span></code></pre></div>
-<p>This will output a new list of the same length of its input, each of whose bit&rsquo;s will have had a <sup>1</sup>&frasl;<sub>100</sub> chance of being flipped.</p>
-
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> mutate-gen [generation]
+  (<span class="hljs-name"><span class="hljs-builtin-name">map</span></span>
+   #(<span class="hljs-name"><span class="hljs-builtin-name">map</span></span> mutate %)
+   generation))
+</code></pre>
+<p>This will output a new list of the same length of its input, each of whose bit's will have had a 1/100 chance of being flipped.</p>
 <p>To get a new generation, therefore, the whole instruction set looks like this:</p>
-
 <pre><code>Start from somewhere (in our case, all zeros.)
 evaluate all genes for fitness and discard the bottom scoring half.
 replace the discarded half with a mutated version of the top half,
 where each bit in the top half had a 1/100 chance of flipping.
 repeat until the &quot;objective&quot; has been reached.
 </code></pre>
-
-<p>Alex points out that under most use cases for this type of algorithm, the &ldquo;objective&rdquo; is not stricly defined. It is always, in essence, to &ldquo;maximize fitness.&rdquo; Because the fitness of these genes is evaluated on such a simple metric, the objective is obvious (MOAR ONES!).</p>
-
+<p>Alex points out that under most use cases for this type of algorithm, the &quot;objective&quot; is not stricly defined. It is always, in essence, to &quot;maximize fitness.&quot; Because the fitness of these genes is evaluated on such a simple metric, the objective is obvious (MOAR ONES!).</p>
 <p>Here is the function that strings all of these together and returns a new generation, mutations and all:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">tng</span> <span class="p">[</span><span class="nv">generation</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">ng</span> <span class="p">(</span><span class="nv">evaluate-generation</span> <span class="nv">generation</span><span class="p">)]</span>
-    <span class="p">(</span><span class="nb">concat </span><span class="nv">ng</span>
-            <span class="p">(</span><span class="nv">mutate-gen</span> <span class="nv">ng</span><span class="p">))))</span></code></pre></div>
-<p>And here is the last function, which recurs until a perfect output of all 1&rsquo;s is generated:</p>
-<div class="highlight"><pre class="chroma"><code class="language-clojure" data-lang="clojure"><span class="p">(</span><span class="kd">defn </span><span class="nv">go</span> <span class="p">[</span><span class="nv">generation</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="p">(</span><span class="nv">fitness</span> <span class="p">(</span><span class="nb">first </span><span class="p">(</span><span class="nv">evaluate-generation</span> <span class="nv">generation</span><span class="p">)))</span> <span class="mi">50</span><span class="p">)</span>
-    <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">first </span><span class="p">(</span><span class="nv">evaluate-generation</span> <span class="nv">generation</span><span class="p">)))</span>
-    <span class="p">(</span><span class="nv">do</span>
-      <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">first </span><span class="p">(</span><span class="nv">evaluate-generation</span> <span class="nv">generation</span><span class="p">)))</span>
-      <span class="p">(</span><span class="nv">recur</span> <span class="p">(</span><span class="nv">tng</span> <span class="nv">generation</span><span class="p">)))))</span></code></pre></div>
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> tng [generation]
+  (<span class="hljs-name"><span class="hljs-builtin-name">let</span></span> [ng (<span class="hljs-name">evaluate-generation</span> generation)]
+    (<span class="hljs-name"><span class="hljs-builtin-name">concat</span></span> ng
+            (<span class="hljs-name">mutate-gen</span> ng))))
+</code></pre>
+<p>And here is the last function, which recurs until a perfect output of all 1's is generated:</p>
+<pre><code class="language-clojure">(<span class="hljs-name"><span class="hljs-builtin-name">defn</span></span> go [generation]
+  (<span class="hljs-name"><span class="hljs-builtin-name">if</span></span> (<span class="hljs-name"><span class="hljs-builtin-name">=</span></span> (<span class="hljs-name">fitness</span> (<span class="hljs-name"><span class="hljs-builtin-name">first</span></span> (<span class="hljs-name">evaluate-generation</span> generation))) <span class="hljs-number">50</span>)
+    (<span class="hljs-name">println</span> (<span class="hljs-name"><span class="hljs-builtin-name">first</span></span> (<span class="hljs-name">evaluate-generation</span> generation)))
+    (<span class="hljs-name"><span class="hljs-builtin-name">do</span></span>
+      (<span class="hljs-name">println</span> (<span class="hljs-name"><span class="hljs-builtin-name">first</span></span> (<span class="hljs-name">evaluate-generation</span> generation)))
+      (<span class="hljs-name"><span class="hljs-builtin-name">recur</span></span> (<span class="hljs-name">tng</span> generation)))))
+</code></pre>
 <p>Notice I had a debugging line in there to print out the fitness of each gene.</p>
-
-<p>That&rsquo;s that! If you are curious what the output looks like, you can see a round <a href="/misc/output.txt">here</a>. Each line is the top scoring gene of that generation. Computation time varies, but it generally takes about the same number of generations to reach the objective.</p>
-
+<p>That's that! If you are curious what the output looks like, you can see a round <a href="/misc/output.txt">here</a>. Each line is the top scoring gene of that generation. Computation time varies, but it generally takes about the same number of generations to reach the objective.</p>
 <p><a href="https://github.com/urthbound/genotic">Github repo here</a>; Clojure advice to optimize for readability and idiom is greatly welcome.</p>
 
-                </div>
-            </article>
         </div>
-    </body>
-
-    
-
-
+      </article>
+    </div>
+  </body>
 </html>

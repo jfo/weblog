@@ -1,395 +1,398 @@
 <!DOCTYPE html>
 <html lang="en-us">
-
-    <head>
+  <head>
     <title>Sild; an initial eval</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" href="/images/jeff.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/style.css">
-    <link href="" rel="alternate feed" type="application/rss+xml" title="RSS Feed for blog.jfo.click" />
+    <link href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs=" rel=icon>
+    <link href="/hljs.css" type="text/css" rel="stylesheet" />
+    <link href="/style.css" type="text/css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
+  </head>
 
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;">archive</a> &mdash;
+        <a href="http:&#x2F;&#x2F;blog.jfo.click&#x2F;about">about</a>
+      </header>
 
-    <body>
-        <div id="content">
-            <header class="site-header">
-    <h5>jfo</h5> &mdash;
-    <a href="https://blog.jfo.click/">archive</a> &mdash;
-    <a href="https://blog.jfo.click/about">about</a> &mdash;
-    <a href="https://blog.jfo.click/feed.xml">rss</a>
-</header>
-
-            <article>
-                <p>
-                    <h1 class="title-thing">Sild; an initial eval</h1>
-                    <sub>June 19, 2016 </sub>
-                <p>
-                <div>
-                    <p>With the basic read function working, it&rsquo;s time to write <code>eval</code>!</p>
-
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; an initial eval</h1>
+        <sub>June 19, 2016</sub>
+        <p></p>
+        <div>
+          <p>With the basic read function working, it's time to write <code>eval</code>!</p>
 <p>I want eval to accept a cell, and return an evaluated cell. What exactly
-&lsquo;evaluated&rsquo; means is immaterial right now. Here&rsquo;s a good first go.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span><span class="o">*</span> <span class="nf">eval</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
-<p>Further, a cell&rsquo;s evaluated version, if it has a cons component (meaning the
+'evaluated' means is immaterial right now. Here's a good first go.</p>
+<pre><code class="language-c"><span class="hljs-function">C* <span class="hljs-title">eval</span><span class="hljs-params">(C* c)</span> </span>{
+    <span class="hljs-keyword">return</span> c;
+}
+</code></pre>
+<p>Further, a cell's evaluated version, if it has a cons component (meaning the
 <code>next</code> member of the cell struct is pointing to a cell that is not <code>NIL</code>)
 should be pointing to an evaluated cell. So before returning the cell that I
 passed in, I need to evaluate its <code>next</code> member and assign the output of
 that evaluation to the <code>next</code> member of the passed in cell.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span><span class="o">*</span> <span class="nf">eval</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
-<p>If I try to run this right now, I&rsquo;ll get a familiar rupture, as there is no
+<pre><code class="language-c"><span class="hljs-function">C* <span class="hljs-title">eval</span><span class="hljs-params">(C* c)</span> </span>{
+    c-&gt;next = eval(c-&gt;next);
+    <span class="hljs-keyword">return</span> c;
+}
+</code></pre>
+<p>If I try to run this right now, I'll get a familiar rupture, as there is no
 check against <code>NIL</code> and it will eventually try to pass the <code>NULL</code> pointer that
 <code>NIL</code> is wrapped around into <code>eval()</code>. Just as I did in the debug_list
-function, I&rsquo;ll add a switch statement to operate on the three different types
+function, I'll add a switch statement to operate on the three different types
 of cells differently.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">eval</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-function">C *<span class="hljs-title">eval</span><span class="hljs-params">(C* c)</span> </span>{
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+        <span class="hljs-keyword">case</span> LIST:
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
 <p>This is now a type of transparent pass through function. If I eval a cell right
-now, I get back exactly what I put in. The only interesting thing is that I&rsquo;m
-necessarily evaluating all the elements that are linked to the cell I&rsquo;m passing
-in. To see that this is actually working, I&rsquo;ll change all the <code>LABEL</code>s to
-&ldquo;<a href="https://youtu.be/yL_-1d9OSdk?t=37://youtu.be/yL_-1d9OSdk?t=37s">chicken</a>&rdquo;.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">eval</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&#34;chicken&#34;</span><span class="p">;</span>
-            <span class="c1">// falling through
-</span><span class="c1"></span>        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+now, I get back exactly what I put in. The only interesting thing is that I'm
+necessarily evaluating all the elements that are linked to the cell I'm passing
+in. To see that this is actually working, I'll change all the <code>LABEL</code>s to
+&quot;<a href="https://youtu.be/yL_-1d9OSdk?t=37://youtu.be/yL_-1d9OSdk?t=37s">chicken</a>&quot;.</p>
+<pre><code class="language-c"><span class="hljs-function">C *<span class="hljs-title">eval</span><span class="hljs-params">(C* c)</span> </span>{
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            c-&gt;val.label = <span class="hljs-string">"chicken"</span>;
+            <span class="hljs-comment">// falling through</span>
+        <span class="hljs-keyword">case</span> LIST:
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
 <p>Notice that the fall through from the LABEL case to the LIST case is desirable,
 here. I still do want to evaluate the next cell after a label.  It is good form
 to note when this kind of situation arises, because it is <em>very</em> easy to miss
-that it&rsquo;s happening, and can result in pretty insidious bugs.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="s">&#34;a b c&#34;</span><span class="p">;</span>
-    <span class="n">C</span> <span class="o">*</span><span class="n">a_list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a_string</span><span class="p">);</span>
-    <span class="n">debug_list</span><span class="p">(</span><span class="n">eval</span><span class="p">(</span><span class="n">a_list</span><span class="p">));</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+that it's happening, and can result in pretty insidious bugs.</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">char</span> *a_string = <span class="hljs-string">"a b c"</span>;
+    C *a_list = <span class="hljs-built_in">read</span>(&amp;a_string);
+    debug_list(eval(a_list));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
 <p>Gives me:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fe970403a70</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fe970403a50</span>
-<span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fe970403a50</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fe970403a30</span>
-<span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fe970403a30</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x10656d040</span>
-<span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x10656d040</span>
-<span class="o">-------------------------</span></code></pre></div>
+<pre><code class="language-c">LABEL- Address: <span class="hljs-number">0x7fe970403a70</span>, Value: chicken Next: <span class="hljs-number">0x7fe970403a50</span>
+LABEL- Address: <span class="hljs-number">0x7fe970403a50</span>, Value: chicken Next: <span class="hljs-number">0x7fe970403a30</span>
+LABEL- Address: <span class="hljs-number">0x7fe970403a30</span>, Value: chicken Next: <span class="hljs-number">0x10656d040</span>
+NIL- Address: <span class="hljs-number">0x10656d040</span>
+-------------------------
+</code></pre>
 <p>Success!</p>
-
-<p>But that is just a linked list of atoms. It&rsquo;s important to note here that
+<p>But that is just a linked list of atoms. It's important to note here that
 reading in a string of atoms like that gives us an <em>internal</em> representation of
 a linked list of atoms, but is <em>not</em> a LIST in the context of the language
-space. You can see that the three atoms are linked in the same way, but the enclosing linked list is not itself the <code>val.list</code> member of a <code>LIST</code> cell. This is a subtle but important distinction. For example, how &lsquo;bout this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="s">&#34;a b (hi mom) c&#34;</span><span class="p">;</span>
-    <span class="n">C</span> <span class="o">*</span><span class="n">a_list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a_string</span><span class="p">);</span>
-    <span class="n">debug_list</span><span class="p">(</span><span class="n">eval</span><span class="p">(</span><span class="n">a_list</span><span class="p">));</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div><div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fdb19403af0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fdb19403ad0</span>
-<span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fdb19403ad0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fdb19403ab0</span>
-<span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fdb19403ab0</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fdb19403a60</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fdb19403a90</span>
-<span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fdb19403a60</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">hi</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fdb19403a40</span>
-<span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fdb19403a40</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">mom</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x10b7ab040</span>
-<span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x10b7ab040</span>
-<span class="o">-------------------------------------------------------</span>
-<span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fdb19403a90</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x10b7ab040</span>
-<span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x10b7ab040</span>
-<span class="o">-------------------------------------------------------</span></code></pre></div>
-<p>Hmm&hellip; the atoms at the top level have been evaluated accurately, but the atoms
-inside of the &lsquo;LIST&rsquo; have been left untouched. I need to evaluate sublists, as
-well! The fall through is no longer desirable, since I&rsquo;m treating the <code>LIST</code>
+space. You can see that the three atoms are linked in the same way, but the enclosing linked list is not itself the <code>val.list</code> member of a <code>LIST</code> cell. This is a subtle but important distinction. For example, how 'bout this:</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">char</span> *a_string = <span class="hljs-string">"a b (hi mom) c"</span>;
+    C *a_list = <span class="hljs-built_in">read</span>(&amp;a_string);
+    debug_list(eval(a_list));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<pre><code class="language-c">LABEL- Address: <span class="hljs-number">0x7fdb19403af0</span>, Value: chicken Next: <span class="hljs-number">0x7fdb19403ad0</span>
+LABEL- Address: <span class="hljs-number">0x7fdb19403ad0</span>, Value: chicken Next: <span class="hljs-number">0x7fdb19403ab0</span>
+LIST- Address: <span class="hljs-number">0x7fdb19403ab0</span>, List_Value: <span class="hljs-number">0x7fdb19403a60</span> Next: <span class="hljs-number">0x7fdb19403a90</span>
+|   LABEL- Address: <span class="hljs-number">0x7fdb19403a60</span>, Value: hi Next: <span class="hljs-number">0x7fdb19403a40</span>
+|   LABEL- Address: <span class="hljs-number">0x7fdb19403a40</span>, Value: mom Next: <span class="hljs-number">0x10b7ab040</span>
+|   NIL- Address: <span class="hljs-number">0x10b7ab040</span>
+-------------------------------------------------------
+LABEL- Address: <span class="hljs-number">0x7fdb19403a90</span>, Value: chicken Next: <span class="hljs-number">0x10b7ab040</span>
+NIL- Address: <span class="hljs-number">0x10b7ab040</span>
+-------------------------------------------------------
+</code></pre>
+<p>Hmm... the atoms at the top level have been evaluated accurately, but the atoms
+inside of the 'LIST' have been left untouched. I need to evaluate sublists, as
+well! The fall through is no longer desirable, since I'm treating the <code>LIST</code>
 and <code>LABEL</code> types differently now.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">C</span> <span class="o">*</span><span class="nf">eval</span><span class="p">(</span><span class="n">C</span><span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&#34;chicken&#34;</span><span class="p">;</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">);</span>
-            <span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">eval</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-function">C *<span class="hljs-title">eval</span><span class="hljs-params">(C* c)</span> </span>{
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            c-&gt;val.label = <span class="hljs-string">"chicken"</span>;
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> LIST:
+            c-&gt;val.<span class="hljs-built_in">list</span> = eval(c-&gt;val.<span class="hljs-built_in">list</span>);
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
 <p>And success! Now, <code>&quot;a b (hi mom) c&quot;</code> evals to:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7f9282c03af0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7f9282c03ad0</span>
-<span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7f9282c03ad0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7f9282c03ab0</span>
-<span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7f9282c03ab0</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7f9282c03a60</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7f9282c03a90</span>
-<span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7f9282c03a60</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7f9282c03a40</span>
-<span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7f9282c03a40</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x10219e040</span>
-<span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x10219e040</span>
-<span class="o">-------------------------------------------------------</span>
-<span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7f9282c03a90</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x10219e040</span>
-<span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x10219e040</span>
-<span class="o">-------------------------------------------------------</span></code></pre></div>
-<p>Now that I am evaluating sublists, it doesn&rsquo;t matter what depth I go to, every
-<code>LABEL</code> will be evaluated to &lsquo;chicken&rsquo;.</p>
-
+<pre><code class="language-c">LABEL- Address: <span class="hljs-number">0x7f9282c03af0</span>, Value: chicken Next: <span class="hljs-number">0x7f9282c03ad0</span>
+LABEL- Address: <span class="hljs-number">0x7f9282c03ad0</span>, Value: chicken Next: <span class="hljs-number">0x7f9282c03ab0</span>
+LIST- Address: <span class="hljs-number">0x7f9282c03ab0</span>, List_Value: <span class="hljs-number">0x7f9282c03a60</span> Next: <span class="hljs-number">0x7f9282c03a90</span>
+|   LABEL- Address: <span class="hljs-number">0x7f9282c03a60</span>, Value: chicken Next: <span class="hljs-number">0x7f9282c03a40</span>
+|   LABEL- Address: <span class="hljs-number">0x7f9282c03a40</span>, Value: chicken Next: <span class="hljs-number">0x10219e040</span>
+|   NIL- Address: <span class="hljs-number">0x10219e040</span>
+-------------------------------------------------------
+LABEL- Address: <span class="hljs-number">0x7f9282c03a90</span>, Value: chicken Next: <span class="hljs-number">0x10219e040</span>
+NIL- Address: <span class="hljs-number">0x10219e040</span>
+-------------------------------------------------------
+</code></pre>
+<p>Now that I am evaluating sublists, it doesn't matter what depth I go to, every
+<code>LABEL</code> will be evaluated to 'chicken'.</p>
 <p>What about</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="s">&#34;(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t(u (v (w (x) y (and) (z)))))))&#34;</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-string">"(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t(u (v (w (x) y (and) (z)))))))"</span>
+</code></pre>
 <p>?</p>
-
 <p>You guessed it.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2404090</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2404070</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2404070</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2404050</span>
-<span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2404050</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2404030</span>
-<span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2404030</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2404010</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2404010</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403ff0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403ff0</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403aa0</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403fd0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403aa0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403a80</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403a80</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403a60</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403a60</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403fd0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403fb0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403fb0</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403b40</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403f90</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403b40</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403b20</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403b20</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403b00</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403b00</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403f90</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403f70</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403f70</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403c40</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403f50</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403c40</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403c20</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403c20</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403c00</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403c00</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403be0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403be0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403bc0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403bc0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403f50</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403f30</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403f30</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403f10</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403f10</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403ef0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403ef0</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403c90</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403ed0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403c90</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403ed0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403eb0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403eb0</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403e90</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403e90</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403e70</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403e70</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403e50</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403e50</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403e30</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403e30</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403e10</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403e10</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403df0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403df0</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403d00</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403dd0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403d00</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403dd0</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403db0</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403db0</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403d40</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x7fede2403d90</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403d40</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LIST</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403d90</span><span class="p">,</span> <span class="nl">List_Value</span><span class="p">:</span> <span class="mh">0x7fede2403d70</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">LABEL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x7fede2403d70</span><span class="p">,</span> <span class="nl">Value</span><span class="p">:</span> <span class="n">chicken</span> <span class="nl">Next</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">|</span>   <span class="o">-------------------------------------------------------</span>
-<span class="o">|</span>   <span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">-------------------------------------------------------</span>
-<span class="n">NIL</span><span class="o">-</span> <span class="nl">Address</span><span class="p">:</span> <span class="mh">0x104310040</span>
-<span class="o">-------------------------------------------------------</span></code></pre></div>
+<pre><code class="language-c">LIST- Address: <span class="hljs-number">0x7fede2404090</span>, List_Value: <span class="hljs-number">0x7fede2404070</span> Next: <span class="hljs-number">0x104310040</span>
+|   LABEL- Address: <span class="hljs-number">0x7fede2404070</span>, Value: chicken Next: <span class="hljs-number">0x7fede2404050</span>
+|   LABEL- Address: <span class="hljs-number">0x7fede2404050</span>, Value: chicken Next: <span class="hljs-number">0x7fede2404030</span>
+|   LIST- Address: <span class="hljs-number">0x7fede2404030</span>, List_Value: <span class="hljs-number">0x7fede2404010</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   LABEL- Address: <span class="hljs-number">0x7fede2404010</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403ff0</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fede2403ff0</span>, List_Value: <span class="hljs-number">0x7fede2403aa0</span> Next: <span class="hljs-number">0x7fede2403fd0</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403aa0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403a80</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403a80</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403a60</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403a60</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   -------------------------------------------------------
+|   |   LABEL- Address: <span class="hljs-number">0x7fede2403fd0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403fb0</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fede2403fb0</span>, List_Value: <span class="hljs-number">0x7fede2403b40</span> Next: <span class="hljs-number">0x7fede2403f90</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403b40</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403b20</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403b20</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403b00</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403b00</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   -------------------------------------------------------
+|   |   LABEL- Address: <span class="hljs-number">0x7fede2403f90</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403f70</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fede2403f70</span>, List_Value: <span class="hljs-number">0x7fede2403c40</span> Next: <span class="hljs-number">0x7fede2403f50</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403c40</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403c20</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403c20</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403c00</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403c00</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403be0</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403be0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403bc0</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403bc0</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   -------------------------------------------------------
+|   |   LABEL- Address: <span class="hljs-number">0x7fede2403f50</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403f30</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fede2403f30</span>, List_Value: <span class="hljs-number">0x7fede2403f10</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403f10</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403ef0</span>
+|   |   |   LIST- Address: <span class="hljs-number">0x7fede2403ef0</span>, List_Value: <span class="hljs-number">0x7fede2403c90</span> Next: <span class="hljs-number">0x7fede2403ed0</span>
+|   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403c90</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   -------------------------------------------------------
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403ed0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403eb0</span>
+|   |   |   LIST- Address: <span class="hljs-number">0x7fede2403eb0</span>, List_Value: <span class="hljs-number">0x7fede2403e90</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403e90</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403e70</span>
+|   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403e70</span>, List_Value: <span class="hljs-number">0x7fede2403e50</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403e50</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403e30</span>
+|   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403e30</span>, List_Value: <span class="hljs-number">0x7fede2403e10</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403e10</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403df0</span>
+|   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403df0</span>, List_Value: <span class="hljs-number">0x7fede2403d00</span> Next: <span class="hljs-number">0x7fede2403dd0</span>
+|   |   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403d00</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403dd0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403db0</span>
+|   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403db0</span>, List_Value: <span class="hljs-number">0x7fede2403d40</span> Next: <span class="hljs-number">0x7fede2403d90</span>
+|   |   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403d40</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403d90</span>, List_Value: <span class="hljs-number">0x7fede2403d70</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403d70</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   -------------------------------------------------------
+|   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   -------------------------------------------------------
+|   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   -------------------------------------------------------
+|   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   -------------------------------------------------------
+|   NIL- Address: <span class="hljs-number">0x104310040</span>
+-------------------------------------------------------
+NIL- Address: <span class="hljs-number">0x104310040</span>
+-------------------------------------------------------
+</code></pre>
 <hr>
-
 <p>You know, <code>debuglist()</code> is getting a little unwieldy, as far as output is
 concerned. It is useful for seeing how the linked list cells are stiched
-together internally in the memory space of the running C program, but I don&rsquo;t
+together internally in the memory space of the running C program, but I don't
 strictly need to see all those memory addresses all the time, do I? It is time
 to bring back <code>print_list</code>.</p>
-
 <p>It will have the same basic structure as <code>debug_list()</code>, but it will print different
 things. As a reminder of what <code>debug_list_inner()</code> looks like (remember that
 <code>debug_list()</code> is just a wrapper around <code>debug_list_inner()</code> that passes in an
 initial depth of <code>0</code>):</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">debug_list_inner</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">depth</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printtabs</span><span class="p">(</span><span class="n">depth</span><span class="p">);</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;LABEL- Address: %p, Value: %s Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;LIST- Address: %p, List_Value: %p Next: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
-            <span class="n">debug_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;NIL- Address: %p</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">);</span>
-            <span class="n">printtabs</span><span class="p">(</span><span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;-------------------------------------------------------</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>Let&rsquo;s strip out all the specifics and make a skeleton:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-        <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>And a first pass at what we&rsquo;ll want to see when we print a list, annotated:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
-            <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;(&#34;</span><span class="p">);</span>
-            <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">);</span>
-            <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;)&#34;</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
-<p>Let&rsquo;s try it!</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="s">&#34;(a b c d)&#34;</span><span class="p">;</span>
-    <span class="n">C</span> <span class="o">*</span><span class="n">a_list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a_string</span><span class="p">);</span>
-    <span class="n">print_list</span><span class="p">(</span><span class="n">a_list</span><span class="p">);</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">debug_list_inner</span><span class="hljs-params">(C *l, <span class="hljs-keyword">int</span> depth)</span> </span>{
+    printtabs(depth);
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"LABEL- Address: %p, Value: %s Next: %p\n"</span>, l, l-&gt;val.label, l-&gt;next);
+            debug_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"LIST- Address: %p, List_Value: %p Next: %p\n"</span>, l, l-&gt;val.<span class="hljs-built_in">list</span>, l-&gt;next);
+            debug_list_inner(l-&gt;val.<span class="hljs-built_in">list</span>, depth + <span class="hljs-number">1</span>);
+            debug_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"NIL- Address: %p\n"</span>, &amp;nil);
+            printtabs(depth - <span class="hljs-number">1</span>);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"-------------------------------------------------------\n"</span>);
+            <span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
+<p>Let's strip out all the specifics and make a skeleton:</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">print_list</span><span class="hljs-params">(C *l)</span> </span>{
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+        <span class="hljs-keyword">case</span> LIST:
+        <span class="hljs-keyword">case</span> NIL:
+    }
+}
+</code></pre>
+<p>And a first pass at what we'll want to see when we print a list, annotated:</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">print_list</span><span class="hljs-params">(C *l)</span> </span>{
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%s"</span>, l-&gt;val.label);
+            print_list(l-&gt;next);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"("</span>);
+            print_list(l-&gt;val.<span class="hljs-built_in">list</span>);
+            print_list(l-&gt;next);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">")"</span>);
+            <span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
+<p>Let's try it!</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">char</span> *a_string = <span class="hljs-string">"(a b c d)"</span>;
+    C *a_list = <span class="hljs-built_in">read</span>(&amp;a_string);
+    print_list(a_list);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
 <p>yields:</p>
-
 <pre><code>(abcd))
 </code></pre>
-
 <p>Not bad! Need to add some spaces between those labels, and deal with that
-trailing closing paren, as well! First, for the spaces, I simply need to print a space if the atom that I&rsquo;m printing is <em>not</em> the last cell in a list.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
+trailing closing paren, as well! First, for the spaces, I simply need to print a space if the atom that I'm printing is <em>not</em> the last cell in a list.</p>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">print_list</span><span class="hljs-params">(C *l)</span> </span>{
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%s"</span>, l-&gt;val.label);
 
-            <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-                <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
+            <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">" "</span>);
 
-            <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;(&#34;</span><span class="p">);</span>
-            <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">);</span>
+            print_list(l-&gt;next);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"("</span>);
+            print_list(l-&gt;val.<span class="hljs-built_in">list</span>);
 
-            <span class="c1">// also adding here to print space after a list ends!
-</span><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-                <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
+            <span class="hljs-comment">// also adding here to print space after a list ends!</span>
+            <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">" "</span>);
 
-            <span class="n">print_list</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;)&#34;</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span></code></pre></div>
+            print_list(l-&gt;next);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">")"</span>);
+            <span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
 <p>This gives me:</p>
-
 <pre><code>(a b c d))
 </code></pre>
-
 <p>Which looks pretty good!</p>
-
 <p>Now, as for that trailing paren! If we look back at the read function, you can see that it is treating <code>')'</code> and <code>'\0'</code> the same way:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">etc</span><span class="p">...</span>
-    <span class="k">switch</span><span class="p">(</span><span class="n">current_char</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="sc">&#39;)&#39;</span><span class="o">:</span> <span class="k">case</span> <span class="sc">&#39;\0&#39;</span><span class="o">:</span>
-            <span class="n">list_depth</span><span class="o">--</span><span class="p">;</span>
-            <span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span><span class="o">++</span><span class="p">;</span>
-            <span class="k">return</span> <span class="o">&amp;</span><span class="n">nil</span><span class="p">;</span>
-<span class="p">...</span><span class="n">etc</span></code></pre></div>
+<pre><code class="language-c">etc...
+    <span class="hljs-keyword">switch</span>(current_char) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">')'</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">'\0'</span>:
+            list_depth--;
+            (*s)++;
+            <span class="hljs-keyword">return</span> &amp;nil;
+...etc
+</code></pre>
 <p>This is functionally correct- the <code>NULL</code> byte in the string should return a
 <code>NIL</code> cell to guarantee that the list it read in is a well formed one.</p>
-
 <p>The answer is to keep track of the depth of the list that has been passed in,
 and only print a closing paren if the depth is greater than <code>0</code>, similar to the way I handled indention in <code>debug_list()</code>.</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">print_list_inner</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">depth</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="nl">LABEL</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">print_list_inner</span><span class="hljs-params">(C *l, <span class="hljs-keyword">int</span> depth)</span> </span>{
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%s"</span>, l-&gt;val.label);
 
-            <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-                <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
+            <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">" "</span>);
 
-            <span class="n">print_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">LIST</span><span class="p">:</span>
-            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;(&#34;</span><span class="p">);</span>
-            <span class="n">print_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+            print_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"("</span>);
+            print_list_inner(l-&gt;val.<span class="hljs-built_in">list</span>, depth + <span class="hljs-number">1</span>);
 
-            <span class="k">if</span> <span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">type</span> <span class="o">!=</span> <span class="n">NIL</span><span class="p">)</span>
-                <span class="n">printf</span><span class="p">(</span><span class="s">&#34; &#34;</span><span class="p">);</span>
+            <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">" "</span>);
 
-            <span class="n">print_list_inner</span><span class="p">(</span><span class="n">l</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">,</span> <span class="n">depth</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="k">case</span> <span class="nl">NIL</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">printf</span><span class="p">(</span><span class="s">&#34;)&#34;</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+            print_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">if</span> (depth &gt; <span class="hljs-number">0</span>) {
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">")"</span>);
+            }
+            <span class="hljs-keyword">break</span>;
+    }
+}
 
-<span class="kt">void</span> <span class="nf">print_list</span><span class="p">(</span><span class="n">C</span> <span class="o">*</span><span class="n">l</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">print_list_inner</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="p">};</span></code></pre></div>
-<p>Just like <code>debug_list</code>, I&rsquo;ve wrapped this in a helper function that always
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">print_list</span><span class="hljs-params">(C *l)</span> </span>{
+    print_list_inner(l, <span class="hljs-number">0</span>);
+};
+
+</code></pre>
+<p>Just like <code>debug_list</code>, I've wrapped this in a helper function that always
 starts at 0 depth. This achieves the desired effect!</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">a_string</span> <span class="o">=</span> <span class="s">&#34;(a b c d)&#34;</span><span class="p">;</span>
-    <span class="n">C</span> <span class="o">*</span><span class="n">a_list</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a_string</span><span class="p">);</span>
-    <span class="n">print_list</span><span class="p">(</span><span class="n">a_list</span><span class="p">);</span>
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-keyword">char</span> *a_string = <span class="hljs-string">"(a b c d)"</span>;
+    C *a_list = <span class="hljs-built_in">read</span>(&amp;a_string);
+    print_list(a_list);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
 <p>Is now outputting <code>(a b c d)</code>, just like I wanted it to!</p>
-
-<p>I&rsquo;m not conviced this is an optimal solution, but it is ok for now!</p>
-
+<p>I'm not conviced this is an optimal solution, but it is ok for now!</p>
 <p>How about:</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="s">&#34;(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t (u (v (w (x) y (and) (z)))))))&#34;</span></code></pre></div>
+<pre><code class="language-c"><span class="hljs-string">"(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t (u (v (w (x) y (and) (z)))))))"</span>
+</code></pre>
 <p>Through the extra special <code>eval()</code> that turns everything into chickens, and
 then through this improved <code>print_list()</code> function</p>
-<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="p">(</span><span class="n">chicken</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span> <span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span><span class="p">)</span> <span class="n">chicken</span> <span class="p">(</span><span class="n">chicken</span><span class="p">)</span> <span class="p">(</span><span class="n">chicken</span><span class="p">)))))))</span></code></pre></div>
+<pre><code class="language-c">(chicken chicken (chicken (chicken chicken chicken) chicken (chicken chicken chicken) chicken (chicken chicken chicken chicken chicken) chicken (chicken (chicken) chicken (chicken (chicken (chicken (chicken) chicken (chicken) (chicken)))))))
+</code></pre>
 <p>This is real progress! I can imagine a much better way to print
 out deeply nested lists than this- this is just one long stream of cells with
 no newlines! But it looks a lot cleaner and terser than <code>debug_list()</code> does,
-and it&rsquo;s more familiar and easier to read.</p>
+and it's more familiar and easier to read.</p>
 
-                </div>
-            </article>
         </div>
-    </body>
-
-    
-
-
+      </article>
+    </div>
+  </body>
 </html>
