@@ -177,7 +177,7 @@ app.get(<span class="hljs-string">'/'</span>, (req, res) =&gt; {
 app.listen(port, () =&gt; <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Listening on port <span class="hljs-subst">${port}</span>.`</span>));
 </code></pre>
 <p>And of course, <code>hello.html</code> in the same directory:</p>
-<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>&gt;Hello World! From another file this time!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World! From another file this time!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
 </code></pre>
 <p>This now reads the file into memory (as a <code>utf-8</code> string) and the server sends
 it along.</p>
