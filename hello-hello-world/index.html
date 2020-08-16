@@ -55,12 +55,9 @@ there are often syntactical constructs to go along with that...</p>
     })
 }
 </code></pre>
-<p>You'll notice that this <em>also</em> has a macro <em>inside of it.</em> This calls into <code>print!</code> which expands to call into</p>
-<pre><code class="language-rust"><span class="hljs-built_in">macro_rules!</span> print {
-    ($($arg:tt)*) =&gt; ($crate::io::_print($crate::<span class="hljs-built_in">format_args!</span>($($arg)*)));
-}
-</code></pre>
-<p><code>io::_print</code> which calls into</p>
+<p>You'll notice that this <em>also</em> has a macro <em>inside of it.</em> This matches on the
+second case (because there is an argument present) and calls into <code>print!</code>
+which expands to call into <code>io::_print</code> which calls into</p>
 <pre><code class="language-rust"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">_print</span></span>(args: fmt::Arguments&lt;<span class="hljs-symbol">'_</span>&gt;) {
     print_to(args, &amp;LOCAL_STDOUT, stdout, <span class="hljs-string">"stdout"</span>);
 }
@@ -719,7 +716,7 @@ register, and then making a <code>syscall</code>. The syscall looks at the <code
 and does what the value inside of it corresponds to, which is <code>sys_exit</code>, so
 the program exits. That's it.</p>
 <p>When I compile and run this program, nothing happens, but
-<code>[strace](https://jvns.ca/blog/2015/04/14/strace-zine/)</code> tells me that it's
+<a href="https://jvns.ca/blog/2015/04/14/strace-zine/"><code>strace</code></a> tells me that it's
 doing exactly what I expected:</p>
 <pre><code>zig cc -nostdlib empty.s &amp;&amp; strace ./a.out
 </code></pre>
