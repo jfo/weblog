@@ -62,7 +62,7 @@ second case (because there is an argument present) and calls into
     print_to(args, &amp;LOCAL_STDOUT, stdout, <span class="hljs-string">"stdout"</span>);
 }
 </code></pre>
-<p><code>print_to</code> which looks like</p>
+<p>which calls into <code>print_to</code>, which looks like</p>
 <pre><code class="language-rust"><span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">print_to</span></span>&lt;T&gt;(
     args: fmt::Arguments&lt;<span class="hljs-symbol">'_</span>&gt;,
     local_s: &amp;<span class="hljs-symbol">'static</span> LocalKey&lt;RefCell&lt;<span class="hljs-built_in">Option</span>&lt;<span class="hljs-built_in">Box</span>&lt;<span class="hljs-keyword">dyn</span> Write + <span class="hljs-built_in">Send</span>&gt;&gt;&gt;&gt;,
