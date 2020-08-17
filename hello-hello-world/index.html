@@ -56,8 +56,8 @@ there are often syntactical constructs to go along with that...</p>
 }
 </code></pre>
 <p>You'll notice that this <em>also</em> has a macro <em>inside of it.</em> This matches on the
-second case (because there is an argument present) and calls into <code>print!</code>
-which expands to call into <code>io::_print</code> which calls into</p>
+second case (because there is an argument present) and calls into
+<code>$crate::format_args_nl!</code> and passes the result of that to <code>$crate::io::_print</code></p>
 <pre><code class="language-rust"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">_print</span></span>(args: fmt::Arguments&lt;<span class="hljs-symbol">'_</span>&gt;) {
     print_to(args, &amp;LOCAL_STDOUT, stdout, <span class="hljs-string">"stdout"</span>);
 }
