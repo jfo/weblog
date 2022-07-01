@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>fizzbuzz in brainfuck, part one</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="fizzbuzz in brainfuck, part one" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/fizzbuzz-in-brainfuck-part-one" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">fizzbuzz in brainfuck, part one</h1>
+        <sub>Sep 22, 2013</sub>
+        <p></p>
+        <div>
+<pre><code class="lang-brainfuck">&gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &lt; &lt; <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-title">[</span> &lt; &lt; &lt; &lt; &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; &gt; &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-title">[</span> &lt; &lt; &lt; &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> &gt; &gt; &gt; &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-title">[</span> &lt; &lt; &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> &gt; &gt; &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-title">[</span> &lt; &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> &gt; &gt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-title">[</span> &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-title">[</span> &gt; &gt; &gt; &lt; &lt; <span class="hljs-title">[</span> &gt; &gt; &lt; <span class="hljs-title">[</span> &gt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; &lt; <span class="hljs-title">[</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; &lt; &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; &lt; <span class="hljs-title">[</span> &gt; <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; <span class="hljs-title">[</span> &lt; <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; <span class="hljs-title">[</span> &gt; &gt; &gt; &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> &lt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-title">]</span> &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &gt; <span class="hljs-literal">-</span> &lt; <span class="hljs-title">[</span> &gt; &gt; <span class="hljs-literal">+</span> &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-title">]</span> &gt; &gt; <span class="hljs-title">[</span> &lt; &lt; <span class="hljs-literal">+</span> &gt; &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; <span class="hljs-title">[</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; <span class="hljs-string">.</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> &gt; &gt; &gt; <span class="hljs-string">.</span> <span class="hljs-string">.</span> &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; &lt; <span class="hljs-title">[</span> &gt; <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">+</span> &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; <span class="hljs-title">[</span> &lt; <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-title">[</span> &lt; <span class="hljs-literal">-</span> &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-title">]</span> &lt; <span class="hljs-title">[</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> <span class="hljs-string">.</span> &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; &lt; &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-title">[</span> <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; &lt; <span class="hljs-title">[</span> &gt; <span class="hljs-literal">-</span> &lt; <span class="hljs-title">[</span> &gt; &gt; <span class="hljs-literal">+</span> &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-title">]</span> &gt; &gt; <span class="hljs-title">[</span> &lt; &lt; <span class="hljs-literal">+</span> &gt; &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &lt; <span class="hljs-title">[</span> &lt; <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-title">[</span> &lt; <span class="hljs-title">[</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; <span class="hljs-string">.</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> <span class="hljs-string">.</span> &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> &gt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; <span class="hljs-literal">+</span> &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &lt; &lt; &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> &gt; &gt; &gt; &gt; &gt; &gt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; &gt; <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> &lt; <span class="hljs-literal">+</span> &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> <span class="hljs-literal">+</span> &gt; &gt; &gt; &gt; <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> <span class="hljs-literal">-</span> &lt; <span class="hljs-literal">+</span> &lt; &lt; &lt; &lt; <span class="hljs-literal">-</span> <span class="hljs-title">]</span> &gt; &gt; &gt; <span class="hljs-string">.</span> &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> &gt; <span class="hljs-string">.</span> <span class="hljs-string">.</span> &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt; &lt;
+</code></pre>
+<p><a href="http://replit.com/Kr0/1" target="_blank">Run that junk.</a></p>
+<p>A couple of weeks ago I got it into my pointy little egg-head that I wanted to
+write a
+<a href="http://www.codinghorror.com/blog/2007/02/fizzbuzz-the-programmers-stairway-to-heaven.html">fizzbuzz</a>
+in <a href="http://www.jeffalanfowler.com/blog/how-brainfuck-works/">brainfuck</a>
+As with a lot of the stupid ideas that occur to me, I initially dismissed it as
+a waste of time, as-well-I-had-ought-to-have-done.</p>
+<p>&quot;Nahhhhhhh,&quot; past me said to himself, chuckling, &quot;that would be totally,
+needlessly hard right now, and it would take a lot of time, and anyway I don&#39;t
+know how I would even START! Unless, maybe, well... I wonder if I could write
+an if/else... and then if I could do that...maybe with a multiples counter
+cell...and....&quot;</p>
+<p>And so <a href="http://esolangs.org/wiki/brainfuck_algorithms">after a quick googling</a>
+I was off. I had <a href="http://xkcd.com/356/">nerd-sniped</a> myself!</p>
+<p>I decided the easiest way to go about it was to write fizzbuzz in Ruby, first,
+and then translate it into brainfuck. Aww Ruby, <a
+href="http://replit.com/Kr2/1" target="_blank">you so pretty with your little
+modulos and all that ish.</a> But of course I couldn&#39;t use anything more
+complicated than an if/else statement, and I had to do everything incrementally
+by 1, as well... and I could only stop loops by allowing their index counter to
+reach zero, not when it got to a certain high number like 100... hmmmmmm.</p>
+<p>It looks a little unwieldy, but I used numbers spelled out as variable names to
+stand for the address of the memory cell that I would eventually use in
+brainfuck. The variables could only be set to numbers, and until loops can only
+be set to terminate at zero. I started by writing a program that simply counts
+to 100 without any of the divisor logic.</p>
+<p>First I needed to mark how high I was going to count. We&#39;re going to 100, so I
+need a 1 in the hundreds loop counter, a 10 in the tens loop counter, and a 10
+in the ones loop counter to start with:</p>
+
+<pre><code class="lang-ruby">seven = <span class="hljs-number">1</span>
+eight = <span class="hljs-number">10</span>
+nine = <span class="hljs-number">10</span>
+</code></pre>
+<p>Those are the indices; they are going to be going down. Now I need the memory
+slots holding the actual numerals that are going to be printed... including one
+slot that holds a new line character I can access so not everything comes out
+all smashed together, because I can&#39;t use <code>puts</code>:</p>
+
+<pre><code class="lang-ruby">ten = <span class="hljs-string">&quot;/n&quot;</span>
+eleven = <span class="hljs-number">0</span>
+twelve = <span class="hljs-number">0</span>
+thirteen = <span class="hljs-number">0</span>
+</code></pre>
+<p>Now I&#39;ll just create some nested loops to do the counting (up in the printed
+slots&#39; case and down in the index slots&#39; case):</p>
+
+<pre><code class="lang-ruby">  <span class="hljs-keyword">until</span> seven == <span class="hljs-number">0</span>
+    <span class="hljs-keyword">until</span> eight == <span class="hljs-number">0</span>
+        <span class="hljs-keyword">until</span> nine == <span class="hljs-number">0</span>
+            print ten       <span class="hljs-comment">#prints the newline</span>
+            print eleven    <span class="hljs-comment">#prints the hundreds place</span>
+            print twelve    <span class="hljs-comment">#prints the tens place</span>
+            print thirteen  <span class="hljs-comment">#prints the ones place</span>
+
+            nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+            thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+        <span class="hljs-keyword">end</span>
+
+        nine = <span class="hljs-number">10</span>           <span class="hljs-comment">#resets the ones place index slot</span>
+        eight -=<span class="hljs-number">1</span>           <span class="hljs-comment">#decrements the tens place index slot</span>
+
+        twelve += <span class="hljs-number">1</span>         <span class="hljs-comment">#increments the tens place print slot</span>
+        thirteen = <span class="hljs-number">0</span>        <span class="hljs-comment">#resets the ones place print slot</span>
+    <span class="hljs-keyword">end</span>
+
+  eight = <span class="hljs-number">10</span>                  <span class="hljs-comment">#resets the tens place index slot</span>
+  seven -= <span class="hljs-number">1</span>                  <span class="hljs-comment">#decrements the hundreds place index slot</span>
+
+  eleven += <span class="hljs-number">1</span>                 <span class="hljs-comment">#increments the hundreds place print slot</span>
+  twelve = <span class="hljs-number">0</span>                  <span class="hljs-comment">#resets the tens place print slot</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>Okay- still Ruby... ugly, non-Rubyish Ruby, but now it is nothing I can&#39;t do in
+brainfuck.</p>
+<p>But we haven&#39;t done the hard part yet- implementing the logic that will filter
+out the multiples of 3 and 5 and replace them with &quot;Fizz&quot; and &quot;Buzz.&quot; In Ruby
+or any other higher level language, this program practically writes itself with
+a <a href="http://en.wikipedia.org/wiki/Modulo_operation"
+target="_blank">modulo operation</a>, which returns zero if a number is evenly
+divisible by another number and leaves no remainder. But brainfuck, of course,
+doesn&#39;t have this operation, and remember- it&#39;s conditional loops can only be
+triggered by a &quot;0&quot; in the memory slot that is being evaluated, anyway.</p>
+<p>This one took a little bit of thought, but a solution was forthcoming. I add
+two more index cells:</p>
+
+<pre><code class="lang-ruby">five = <span class="hljs-number">3</span>
+six = <span class="hljs-number">5</span>
+</code></pre>
+<p>and decrement both of those each time I print a number out- when the &quot;3&quot; index
+slot reaches zero, I know I have found a multiple of 3 and can use that spot to
+trigger the code to print &quot;Fizz&quot; (and to reset the index back to 3- or rather 2
+actually, since that accounts for the<a
+href="http://en.wikipedia.org/wiki/Off-by-one_error" target="_blank"> ol&#39; off
+by one</a>) instead of the code to print the number. Ditto for &quot;Buzz.&quot;</p>
+<p>Here is what all this looks like...</p>
+
+<pre><code class="lang-ruby">five = <span class="hljs-number">3</span>
+six = <span class="hljs-number">5</span>
+
+seven = <span class="hljs-number">1</span>
+eight = <span class="hljs-number">10</span>
+nine = <span class="hljs-number">10</span>
+
+ten = <span class="hljs-string">&quot;\n&quot;</span>
+eleven = <span class="hljs-number">0</span>
+twelve = <span class="hljs-number">0</span>
+thirteen = <span class="hljs-number">0</span>
+
+ <span class="hljs-keyword">until</span> seven == <span class="hljs-number">0</span>
+    <span class="hljs-keyword">until</span> eight == <span class="hljs-number">0</span>
+        <span class="hljs-keyword">until</span> nine == <span class="hljs-number">0</span>
+
+            <span class="hljs-keyword">if</span> five == <span class="hljs-number">0</span>
+                print ten      <span class="hljs-comment">#don&#x27;t forget the newline!</span>
+                print <span class="hljs-string">&quot;Fizz&quot;</span>
+                five = <span class="hljs-number">2</span>
+                six -= <span class="hljs-number">1</span>
+                nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+            <span class="hljs-keyword">elsif</span> six == <span class="hljs-number">0</span>
+                print ten
+                print <span class="hljs-string">&quot;Buzz&quot;</span>
+                six = <span class="hljs-number">4</span>
+                five -= <span class="hljs-number">1</span>
+                nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+            <span class="hljs-keyword">else</span>
+                print ten       <span class="hljs-comment">#prints the newline</span>
+                print eleven    <span class="hljs-comment">#prints the hundreds place</span>
+                print twelve    <span class="hljs-comment">#prints the tens place</span>
+                print thirteen  <span class="hljs-comment">#prints the ones place</span>
+
+                nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+
+                five -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the multiple of 3 tracker</span>
+                six -= <span class="hljs-number">1</span>        <span class="hljs-comment">#decrements the multiple of 5 tracker</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+
+        nine = <span class="hljs-number">10</span>           <span class="hljs-comment">#resets the ones place index slot</span>
+        eight -=<span class="hljs-number">1</span>           <span class="hljs-comment">#decrements the tens place index slot</span>
+
+        twelve += <span class="hljs-number">1</span>         <span class="hljs-comment">#increments the tens place print slot</span>
+        thirteen = <span class="hljs-number">0</span>        <span class="hljs-comment">#resets the ones place print slot</span>
+    <span class="hljs-keyword">end</span>
+
+eight = <span class="hljs-number">10</span>                  <span class="hljs-comment">#resets the tens place index slot</span>
+seven -= <span class="hljs-number">1</span>                  <span class="hljs-comment">#decrements the hundreds place index slot</span>
+
+eleven += <span class="hljs-number">1</span>                 <span class="hljs-comment">#increments the hundreds place print slot</span>
+twelve = <span class="hljs-number">0</span>                  <span class="hljs-comment">#resets the tens place print slot</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment">#since the above loop is set to terminate at the top after it reaches 100, that</span>
+<span class="hljs-comment">#final number won&#x27;t get printed. I&#x27;ll print it below:</span>
+
+print ten
+print eleven
+print twelve
+print thirteen
+</code></pre>
+<p>Now, before printing the number, the program checks to see if it is a multiple
+of three or five...only when it is not  divisible by either does it print the
+number itself.</p>
+<p>This totally works! But there are some issues- I can&#39;t use elsifs in brainfuck-
+the algorithms I&#39;ve researched aren&#39;t that sophisticated, and I haven&#39;t
+implemented &quot;FizzBuzz&quot; for the numbers that are multiples of both- the logic
+catches them on &quot;Fizz&quot; and skips over the other bits. Also there is some
+needless repetition with the newlines, though I&#39;m actually going to need some
+of that later on so I&#39;ll leave it for now.</p>
+<p>I can&#39;t use explicit elsifs to evaluate mutliple possible states... but I CAN
+do that evaluation in series as two nested if/else statements, which is all
+elsif is shorthand for anyway... and I can deal with those! Now it looks
+like this:</p>
+
+<pre><code class="lang-ruby">five = <span class="hljs-number">3</span>
+six = <span class="hljs-number">5</span>
+
+seven = <span class="hljs-number">1</span>
+eight = <span class="hljs-number">10</span>
+nine = <span class="hljs-number">10</span>
+
+ten = <span class="hljs-string">&quot;\n&quot;</span>
+eleven = <span class="hljs-number">0</span>
+twelve = <span class="hljs-number">0</span>
+thirteen = <span class="hljs-number">0</span>
+
+ <span class="hljs-keyword">until</span> seven == <span class="hljs-number">0</span>
+    <span class="hljs-keyword">until</span> eight == <span class="hljs-number">0</span>
+        <span class="hljs-keyword">until</span> nine == <span class="hljs-number">0</span>
+
+            <span class="hljs-keyword">if</span> five == <span class="hljs-number">0</span>
+
+                print ten      <span class="hljs-comment">#don&#x27;t forget the newline!</span>
+                print <span class="hljs-string">&quot;Fizz&quot;</span>
+                five = <span class="hljs-number">2</span>
+                six -= <span class="hljs-number">1</span>
+                nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+
+            <span class="hljs-keyword">else</span>
+
+                <span class="hljs-keyword">if</span> six == <span class="hljs-number">0</span>
+
+                    print ten
+                    print <span class="hljs-string">&quot;Buzz&quot;</span>
+                    six = <span class="hljs-number">4</span>
+                    five -= <span class="hljs-number">1</span>
+                    nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                    thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+
+                <span class="hljs-keyword">else</span>
+
+                    print ten       <span class="hljs-comment">#prints the newline</span>
+                    print eleven    <span class="hljs-comment">#prints the hundreds place</span>
+                    print twelve    <span class="hljs-comment">#prints the tens place</span>
+                    print thirteen  <span class="hljs-comment">#prints the ones place</span>
+
+                    nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                    thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+
+                    five -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the multiple of 3 tracker</span>
+                    six -= <span class="hljs-number">1</span>        <span class="hljs-comment">#decrements the multiple of 5 tracker</span>
+                <span class="hljs-keyword">end</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+
+        nine = <span class="hljs-number">10</span>           <span class="hljs-comment">#resets the ones place index slot</span>
+        eight -=<span class="hljs-number">1</span>           <span class="hljs-comment">#decrements the tens place index slot</span>
+
+        twelve += <span class="hljs-number">1</span>         <span class="hljs-comment">#increments the tens place print slot</span>
+        thirteen = <span class="hljs-number">0</span>        <span class="hljs-comment">#resets the ones place print slot</span>
+    <span class="hljs-keyword">end</span>
+
+eight = <span class="hljs-number">10</span>                  <span class="hljs-comment">#resets the tens place index slot</span>
+seven -= <span class="hljs-number">1</span>                  <span class="hljs-comment">#decrements the hundreds place index slot</span>
+
+eleven += <span class="hljs-number">1</span>                 <span class="hljs-comment">#increments the hundreds place print slot</span>
+twelve = <span class="hljs-number">0</span>                  <span class="hljs-comment">#resets the tens place print slot</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment">#since the above loop is set to terminate at the top after it reaches 100, that</span>
+<span class="hljs-comment">#final number won&#x27;t get printed. I&#x27;ll print it below:</span>
+
+print ten
+print eleven
+print twelve
+print thirteen
+</code></pre>
+<p>Aside from the repetition we are ignoring- there are three problems left. Still
+no &quot;FizzBuzz,&quot; and when it should make &quot;FizzBuzz,&quot; it throws off the 5&#39;s
+counter into negative numbers so it never prints Buzz after 15. And it&#39;s not
+evaluating 100. The first and second problem can be fixed with just one more
+&quot;if&quot; statement, nuzzled way down in the bowels of our<a
+href="http://en.wikipedia.org/wiki/Spaghetti_code" target="_blank">
+increasingly complex</a>program. We know we&#39;ll only have to write &quot;FizzBuzz&quot; if
+we&#39;ve already written &quot;Fizz,&quot; so anytime we print &quot;Fizz,&quot; we just throw in an
+extra check against whether or not we need to write &quot;Buzz.&quot; Now, if we write
+&quot;FizzBuzz&quot;, we will also be resetting the 5&#39;s counter.</p>
+<p>Oh and as for the last problem, I just hardcoded printing &quot;Buzz&quot; out at the end
+instead of &quot;100&quot;, bypassing all the logic, because I&#39;m a filthy, cheating,
+dirty fraud. YOLO####33<a href="http://knowyourmeme.com/memes/the-1-phenomenon"
+target="_blank">3</a>. Also because it will always end up on a multiple of 100,
+so at least the &quot;Buzz&quot; part will be right. Screw you, 300, 600, and 900!!</p>
+
+<pre><code class="lang-ruby">five = <span class="hljs-number">3</span>
+six = <span class="hljs-number">5</span>
+
+seven = <span class="hljs-number">1</span>
+eight = <span class="hljs-number">10</span>
+nine = <span class="hljs-number">10</span>
+
+ten = <span class="hljs-string">&quot;\n&quot;</span>
+eleven = <span class="hljs-number">0</span>
+twelve = <span class="hljs-number">0</span>
+thirteen = <span class="hljs-number">0</span>
+
+ <span class="hljs-keyword">until</span> seven == <span class="hljs-number">0</span>
+    <span class="hljs-keyword">until</span> eight == <span class="hljs-number">0</span>
+        <span class="hljs-keyword">until</span> nine == <span class="hljs-number">0</span>
+
+            <span class="hljs-keyword">if</span> five == <span class="hljs-number">0</span>
+
+                print ten      <span class="hljs-comment">#don&#x27;t forget the newline!</span>
+                print <span class="hljs-string">&quot;Fizz&quot;</span>
+
+                <span class="hljs-keyword">if</span> six == <span class="hljs-number">0</span>
+                    print <span class="hljs-string">&quot;Buzz&quot;</span>
+                    six = <span class="hljs-number">5</span>
+                <span class="hljs-keyword">end</span>
+
+                five = <span class="hljs-number">2</span>
+                six -= <span class="hljs-number">1</span>
+                nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+
+            <span class="hljs-keyword">else</span>
+
+                <span class="hljs-keyword">if</span> six == <span class="hljs-number">0</span>
+
+                    print ten
+                    print <span class="hljs-string">&quot;Buzz&quot;</span>
+                    six = <span class="hljs-number">4</span>
+                    five -= <span class="hljs-number">1</span>
+                    nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                    thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+
+                <span class="hljs-keyword">else</span>
+
+                    print ten       <span class="hljs-comment">#prints the newline</span>
+                    print eleven    <span class="hljs-comment">#prints the hundreds place</span>
+                    print twelve    <span class="hljs-comment">#prints the tens place</span>
+                    print thirteen  <span class="hljs-comment">#prints the ones place</span>
+
+                    nine -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the ones index slot</span>
+                    thirteen += <span class="hljs-number">1</span>   <span class="hljs-comment">#increments the ones print slot</span>
+
+                    five -= <span class="hljs-number">1</span>       <span class="hljs-comment">#decrements the multiple of 3 tracker</span>
+                    six -= <span class="hljs-number">1</span>        <span class="hljs-comment">#decrements the multiple of 5 tracker</span>
+                <span class="hljs-keyword">end</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+
+        nine = <span class="hljs-number">10</span>           <span class="hljs-comment">#resets the ones place index slot</span>
+        eight -=<span class="hljs-number">1</span>           <span class="hljs-comment">#decrements the tens place index slot</span>
+
+        twelve += <span class="hljs-number">1</span>         <span class="hljs-comment">#increments the tens place print slot</span>
+        thirteen = <span class="hljs-number">0</span>        <span class="hljs-comment">#resets the ones place print slot</span>
+    <span class="hljs-keyword">end</span>
+
+eight = <span class="hljs-number">10</span>                  <span class="hljs-comment">#resets the tens place index slot</span>
+seven -= <span class="hljs-number">1</span>                  <span class="hljs-comment">#decrements the hundreds place index slot</span>
+
+eleven += <span class="hljs-number">1</span>                 <span class="hljs-comment">#increments the hundreds place print slot</span>
+twelve = <span class="hljs-number">0</span>                  <span class="hljs-comment">#resets the tens place print slot</span>
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-comment"># Since the above loop is set to terminate at the top after it reaches 100, that</span>
+<span class="hljs-comment"># final number won&#x27;t get printed. I&#x27;ll print it below:</span>
+
+print ten
+print <span class="hljs-string">&quot;Buzz&quot;</span> <span class="hljs-comment">#dirty cheater.</span>
+</code></pre>
+<p>So I&#39;ve written the whole program in a way that brainfuck can accommodate. The
+next step is to translate it. Bleep, bloop, bleep! I&#39;m going to write that in a
+separate post, because this is getting pretty long. Also if you want to
+increase the maximum number that you&#39;re evaluating, try changing the initial
+index of the hundreds place in the above code! It will go for as long as you
+want it to, because it will just continue to print higher numbers because it is
+Ruby! brainfuck wouldn&#39;t be able to do that past 999, because we would need to
+implement a new loop to print the thousands place, because it is printing
+strings of digits instead of numbers. We&#39;ll get to that next time.</p>
+<p><a href="a
+href=&quot;https://www.google.com/search?q=cats&amp;source=lnms&amp;tbm=isch&amp;sa=X&amp;ei=1Kk-UsXeBYq88wSZi4CABg&amp;ved=0CAkQ_AUoAQ&amp;biw=1916&amp;bih=919&amp;dpr=1#imgdii=_&quot;
+target=&quot;_blank&quot;">a
+href=&quot;https://www.google.com/search?q=cats&amp;source=lnms&amp;tbm=isch&amp;sa=X&amp;ei=1Kk-UsXeBYq88wSZi4CABg&amp;ved=0CAkQ_AUoAQ&amp;biw=1916&amp;bih=919&amp;dpr=1#imgdii=_&quot;
+target=&quot;_blank&quot;</a>If you got this far, you deserve this.</a> Come back soon!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Recursion in 3 steps</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Recursion in 3 steps" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/recursion-in-3-steps" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Recursion in 3 steps</h1>
+        <sub>Feb 27, 2014</sub>
+        <p></p>
+        <div><p>Recursion is not as difficult a concept as people would have you believe when you first start out. Textbook definition says:</p>
+<blockquote>
+<p>Recursion in computer science is a method where the solution to a problem depends on solutions to smaller instances of the same problem (as opposed to iteration).</p>
+</blockquote>
+<p>Ok, great. If you&#39;re a beginner, that&#39;s not <strong>super</strong> helpful, and if you ask your grizzled old dev friends about it they are likely to either start yammering about how awesome recursion is from a to the metal on the stack implementation perspective or advise you to not worry about it. Either response maintains the mystery.</p>
+<p>So what is recursion? At a basic level, you are using recursion if you are calling a function from inside of itself. It makes more sense as a demonstration.</p>
+<p>Let&#39;s define a function that returns nothing (in Python, because why not):</p>
+
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">myfunc</span>():
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+</code></pre>
+<p>Now here is a function that does nothing but call itself:</p>
+
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">myfunc</span>():
+    myfunc()
+</code></pre>
+<p>Calling this will produce the following, almost immediately:</p>
+
+<pre><code>RuntimeError: maximum recursion depth exceeded
+</code></pre>
+<p>So, we&#39;ve succeeding in making recursion occur, to no external effect. What&#39;s happening under the hood? The computer takes your instructions and dutifully executes them. Whenever you give it a new instruction (including as a subsection of the original instruction) it puts the original instruction aside to complete the new instruction. Once it completes the new instuction (and all sub instructions of that one, as well...) it picks up the original instruction and completes its steps.</p>
+<p>It is easy to imagine literally piling these nested instruction sets up on a table top- just you know, stacking them up. Stacking. Stack.</p>
+<p>Eventually you&#39;re going to run out of room- maybe you hit the ceiling, or something. Once you have no more space to set aside these instruction sets, you have run out of stack, and you will no longer be able to keep track of new nested instructions. You will have reached your maximum recursion depth.</p>
+<p>A recursive function MUST have a way to know when to stop calling itself. This is called a &quot;base case&quot; and it looks something like this... if we pass in a number and evaluate against that:</p>
+
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">myfunc</span>(<span class="hljs-params">some_number</span>):
+    <span class="hljs-keyword">if</span> some_number == <span class="hljs-number">0</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Base case&quot;</span>
+    <span class="hljs-keyword">else</span>:
+        myfunc(some_number)
+</code></pre>
+<p>But here is the tricky part. Each new call to the function is passing in the same number. If we start at 0, it will not reach the recursive call. But if we do not start at 0, we have the same problem as before. Every time you call the function inside of itself, therfore, you want to change the value that you are passing into it.</p>
+
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">myfunc</span>(<span class="hljs-params">some_number</span>):
+    <span class="hljs-keyword">if</span> some_number == <span class="hljs-number">0</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Base case&quot;</span>
+    <span class="hljs-keyword">else</span>:
+        myfunc(some_number - <span class="hljs-number">1</span>)
+</code></pre>
+<p>This will cause the function calls to move towards the base case. Assuming you have enough space on your table to stack up all of those instructions, the variable will eventually reach 0 and propogate back through the stack of instructions that you had set aside.</p>
+<p>Astute readers, of course, may ask what would happen if you start from a negative number. Clearly, subtracting one will never reach 0. The function also needs a way to exit if it finds itelf pursuing a line of instructions that will never reach a base case...</p>
+
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">myfunc</span>(<span class="hljs-params">some_number</span>):
+    <span class="hljs-keyword">if</span> some_number &lt; <span class="hljs-number">0</span>:
+        <span class="hljs-keyword">raise</span> StandardError(<span class="hljs-string">&#x27;Value will never reach base case&#x27;</span>)
+    <span class="hljs-keyword">elif</span> some_number == <span class="hljs-number">0</span>:
+        <span class="hljs-built_in">print</span> <span class="hljs-string">&quot;Base case&quot;</span>
+    <span class="hljs-keyword">else</span>:
+        myfunc(some_number - <span class="hljs-number">1</span>)
+</code></pre>
+<p>This function has &quot;knowledge&quot; about a situation that would cause it to enter an infinite recursive loop. It moves towards a base case and will eventually reach it, provided it has enough space to store the stack of instructions as it is executing them. What if it doesn&#39;t?</p>
+<p>If I call this function passing in 998, it works fine. 999, I will get a stack overflow. It still runs out of memory, at least in the particular python that I ran it in on my machine (memory allocation may differ depending on some other factors...)!</p>
+<p>The way different languages deal with this problem is dependant on the priorities and style of the language, and is beyond the scope of this simple post. Suffice to say that for many problem spaces, recursion can be overkill where iteration would work fine. Here is the same function iteratively:</p>
+
+<pre><code class="lang-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">myiter</span>(<span class="hljs-params">some_number</span>):
+
+    <span class="hljs-keyword">if</span> some_number &lt; <span class="hljs-number">0</span>
+      <span class="hljs-keyword">raise</span> StandardError(<span class="hljs-string">&#x27;This will subtract forever&#x27;</span>)
+
+    <span class="hljs-keyword">while</span> some_number &gt; <span class="hljs-number">0</span>:
+      some_number = some_number - <span class="hljs-number">1</span>
+
+    <span class="hljs-built_in">print</span> <span class="hljs-string">&quot;You made it!&quot;</span>
+</code></pre>
+<p>This does not have to keep track of how many instructions it has set aside. It simply mutates the given variable in the specified way until it reaches the condition set. Once again, we have caught numbers that would never reach 0 before they reach the loop... (errors cut off the code evaluation at the point at which they were raised.)</p>
+<p>Languages like Python and Ruby implicitly discourage recursiveness through their design decisions. Functional languages like Scheme and Clojure (from the lisp lineage) have built in optimizations to make recursion less brittle. Hilariously, a common technique is tail call optimization, which under certain circumstances turns a recursive function into an iterative one at the machine level.</p>
+<p>Recursion is powerful and can be conceptually difficult at first, but... for some problem spaces it is by far the best computational method.</p>
+<p>More on that later!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

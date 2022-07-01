@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; implementing some built in functions</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; implementing some built in functions" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/sild-implementing-some-built-in-functions" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; implementing some built in functions</h1>
+        <sub>Jun 23, 2016</sub>
+        <p></p>
+        <div><p>This post is part of a series of posts that began <a href="/sild-is-a-lisp-dialect/">here</a>.</p>
+<p>Now that the eval apply loop actually <em>works</em>, I need to write some basic
+functions that operate on lists in the same way my example functions
+(<code>/dev/null</code> and <code>concat</code>) did. Those were just examples, I&#39;m not going to keep
+them around.</p>
+<p>I&#39;m going to implement the 7 most basic operations in lisp, as per Paul
+Graham&#39;s essay <a href="http://www.paulgraham.com/rootsoflisp.html">&quot;The Roots of
+Lisp&quot;</a>. I recommend reading that,
+it is very thorough in describing these functions.</p>
+<p>One function can operate on anyting at all:</p>
+
+<ol>
+<li><strong>quote</strong>: the identity function, expects one cell of any type and returns
+whatever is passed to it unchanged.</li>
+</ol>
+<p>Three functions operate on lists:</p>
+
+<ol>
+<li><strong>car</strong>: expects a list, returns the first element of the list.</li>
+<li><strong>cdr</strong>: expects a list, returns the list without the first element.</li>
+<li><strong>cons</strong>: expects a cell of any type and a list. Returns the list with the
+cell at its beginning.</li>
+</ol>
+<p>Three functions depend on a notion of true/false in the language (which we
+haven&#39;t really addressed yet):</p>
+
+<ol>
+<li><strong>eq</strong>: expects two cells; returns true if they have the same value or are
+both the empty list.</li>
+<li><strong>atom</strong>: expects one cell, returns true if a cell is an atom or the empty list.</li>
+<li><strong>cond</strong>: expects a series of lists of two elements. It evaluates the first
+of each pair and returns the second of the first one that returns true.</li>
+</ol>
+<p>One depends on setting up an environment inside the evaluating framework:</p>
+
+<ol>
+<li><strong>define</strong>: Expects a label and any other single thing, and stores that
+thing in the evaluating environment under that label. Subsequent appearances
+of that label, when evall&#39;ed, will be resolved to a copy of that master
+value.</li>
+</ol>
+<p>And the last is the most powerful of all- which depends on all the other
+functions and makes application of arbitrary, composed functions possible, and
+which I&#39;ll describe in much greater detail later on.</p>
+
+<ol>
+<li><strong>lambda</strong> the ultimate :)</li>
+</ol>
+<p>Let&#39;s make some of them! Specifically, the first four!</p>
+<hr>
+
+<p>The implementation of all these functions will follow the same basic pattern.
+All of them will accept a cell and return a cell:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">feel_the_func</span><span class="hljs-params">(C *c)</span> {
+};
+</code></pre>
+<p>They&#39;ll all perform a simple arity check against the number of inputs <em>before</em>
+evaluating them:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">feel_the_func</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-comment">// arity check</span>
+}
+</code></pre>
+<p>Then they&#39;ll evaluate the operands (except for quote) and perform a type check
+against the resulting inputs if necessary</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">feel_the_func</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-comment">// arity check</span>
+    <span class="hljs-comment">// eval operands</span>
+    <span class="hljs-comment">// argument type check</span>
+}
+</code></pre>
+<p>Then operate on the inputs! This can mean creating and destroying cells, or
+simply stitching together the inputs in a new way and returning that.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">feel_the_func</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-comment">// arity check</span>
+    <span class="hljs-comment">// eval operands</span>
+    <span class="hljs-comment">// argument type check</span>
+    <span class="hljs-comment">// operate on inputs</span>
+}
+</code></pre>
+<p>Then clean up after themselves using <code>free_cell</code> and/or <code>free_one_cell</code>, if neccessary!</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">feel_the_func</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-comment">// arity check</span>
+    <span class="hljs-comment">// eval operands</span>
+    <span class="hljs-comment">// argument type check</span>
+    <span class="hljs-comment">// operate on inputs</span>
+    <span class="hljs-comment">// clean up</span>
+}
+</code></pre>
+<p>and finally return a pointer to their computed value.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">feel_the_func</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-comment">// arity check</span>
+    <span class="hljs-comment">// eval operands</span>
+    <span class="hljs-comment">// argument type check</span>
+    <span class="hljs-comment">// operate on inputs</span>
+    <span class="hljs-comment">// clean up</span>
+    <span class="hljs-comment">// return value</span>
+}
+</code></pre>
+<p>I&#39;ll start with <code>quote</code>, arguably the simplest function there is. It will
+accept the first operand to the function:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">quote</span><span class="hljs-params">(C *operand)</span> {
+
+    <span class="hljs-comment">// arity check</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL || operand-&gt;next-&gt;type != NIL) {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-comment">// operate on inputs</span>
+    <span class="hljs-comment">// don&#x27;t need to do anything for this</span>
+
+    <span class="hljs-comment">// clean up</span>
+    <span class="hljs-comment">// nothing here, either!</span>
+
+    <span class="hljs-comment">// return value</span>
+    <span class="hljs-keyword">return</span> operand;
+}
+</code></pre>
+<p>Thats it! Now I have to register this label as a function in <code>apply</code>.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">apply</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL: {
+            <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strcmp</span>(c-&gt;val.label, <span class="hljs-string">&quot;quote&quot;</span>)) {
+                C *outcell = quote(c-&gt;next); <span class="hljs-comment">// passing in the first operand instead of the operator</span>
+                <span class="hljs-built_in">free</span>(c); <span class="hljs-comment">// free the operator!</span>
+                <span class="hljs-keyword">return</span> outcell;
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+            }
+        }
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> apply(eval(c));
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+}
+</code></pre>
+<p>You can see that since I&#39;m passing the first operand into the function call, I
+have to free the operator itself before passing back the return value. The
+enclosing list cell is freed back up in <code>eval</code>:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> LIST:
+        {
+            C *out = apply(c-&gt;val.<span class="hljs-built_in">list</span>);
+            out-&gt;next = eval(c-&gt;next);
+            <span class="hljs-built_in">free</span>(c); <span class="hljs-comment">// here!</span>
+            <span class="hljs-keyword">return</span> out;
+        }
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>So without comments, quote looks like this:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">quote</span><span class="hljs-params">(C *operand)</span> {
+    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL || operand-&gt;next-&gt;type != NIL) {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+    <span class="hljs-keyword">return</span> operand;
+}
+</code></pre>
+<p>Pretty simple! Now evalling:</p>
+
+<pre><code class="lang-c">(quote thingy)                           =&gt; thingy
+(quote ())                               =&gt; ()
+(quote (really (anything anywhere)))     =&gt; (really (anything anywhere))
+</code></pre>
+<p><code>quote</code> is an <em>immensely</em> powerful part of lisp. The why behind that will
+become apparent shortly!</p>
+<hr>
+
+<p>How about another!</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">car</span><span class="hljs-params">(C *operand)</span> {
+    <span class="hljs-comment">// arity check, must accept one thing only</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL || operand-&gt;next-&gt;type != NIL) {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-comment">// eval the operand</span>
+    operand = eval(operand);
+
+    <span class="hljs-comment">// operand type check: can only operate on lists</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type != LIST) {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-comment">// clean up the cells we don&#x27;t need, recursively, everything that is not</span>
+    <span class="hljs-comment">// the first element in the list.</span>
+    free_cell(operand-&gt;val.<span class="hljs-built_in">list</span>-&gt;next);
+
+    <span class="hljs-comment">// disconnect the first cell in the list from the rest of the list</span>
+    C* outcell = operand-&gt;val.<span class="hljs-built_in">list</span>;
+    outcell-&gt;next = &amp;nil;
+
+    <span class="hljs-comment">// free the enclosing list</span>
+    <span class="hljs-built_in">free</span>(operand);
+
+    <span class="hljs-comment">// return the newly liberated single cell</span>
+    <span class="hljs-keyword">return</span> outcell;
+}
+</code></pre>
+<p>and register it in apply:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">apply</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL: {
+            <span class="hljs-comment">// moving outcell declaration out here</span>
+            C *outcell;
+            <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strcmp</span>(c-&gt;val.label, <span class="hljs-string">&quot;quote&quot;</span>)) {
+                outcell = quote(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strcmp</span>(c-&gt;val.label, <span class="hljs-string">&quot;car&quot;</span>)) {
+                outcell = car(c-&gt;next);
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+            }
+            <span class="hljs-comment">// c is always freed here</span>
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> outcell;
+        }
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> apply(eval(c));
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+}
+</code></pre>
+<p>Now we can call <code>car</code> on a list from within a Sild form and get back the first
+element of that list.</p>
+
+<pre><code class="lang-c">(car (this is a <span class="hljs-built_in">list</span>))
+</code></pre>
+
+<pre><code class="lang-c">shell returned <span class="hljs-number">1</span>
+</code></pre>
+<p>Hmm. Some better error messaging would be nice here... (I know I know! I&#39;ll get
+to it!) but what is going on?</p>
+<p>Well inside of <code>car</code>, the operand is being evaluated, which is what we want.
+But when it tries to eval the list, it breaks, because <code>this</code> is not a
+function (it is currently an unbound label).</p>
+<p>This is why <code>quote</code> is so important!!</p>
+
+<pre><code class="lang-c">(car (quote (this is a <span class="hljs-built_in">list</span>)))
+</code></pre>
+<p>returns</p>
+
+<pre><code class="lang-c">this
+</code></pre>
+<p>A lot of lisp tutorials will say that the <code>quote</code> function &quot;stops evaluation.&quot;
+Strictly speaking, this is true in practice, but I think it is misleading to
+speak about the function as if it does something different than other forms...
+it does not, <em>really</em>. <code>quote</code> forms are still evaluated, but the <em>operands</em> to them are
+<em>not</em>. In this way, <code>quoted</code> cells <em>could</em> represent truly arbitrary data.</p>
+<p><hr>
+How about <code>cdr</code>?</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">cdr</span><span class="hljs-params">(C *operand)</span> {
+    <span class="hljs-comment">// arity check</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL || operand-&gt;next-&gt;type != NIL) {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-comment">// eval the operand</span>
+    operand = eval(operand);
+
+    <span class="hljs-comment">// operand type check</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type != LIST || operand-&gt;val.<span class="hljs-built_in">list</span>-&gt;type == NIL) {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    C *garbage = operand-&gt;val.<span class="hljs-built_in">list</span>;
+    operand-&gt;val.<span class="hljs-built_in">list</span> = operand-&gt;val.<span class="hljs-built_in">list</span>-&gt;next;
+
+    <span class="hljs-comment">// clean up the car cell we don&#x27;t need, non-recursively.</span>
+    free_one_cell(garbage);
+
+    <span class="hljs-keyword">return</span> operand;
+}
+</code></pre>
+
+<pre><code class="lang-c">(car (car (cdr (cdr (car (cdr (cdr
+    (quote
+        (((boop) doop (doop doop (woot!))) waaaat)))))))))
+</code></pre>
+
+<pre><code>woot!
+</code></pre>
+<hr>
+
+<p>Ok, now for <code>cons</code>. Notice that in this case, none of the argument cells has to
+be cleaned up, because the function is meant to return the same information,
+but organized differently. It&#39;s to turn <code>a, (b c d)</code> into <code>(a b c d)</code>:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">cons</span><span class="hljs-params">(C *operand)</span> {
+    <span class="hljs-comment">// arity check</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL ||
+        operand-&gt;next-&gt;type == NIL ||
+        operand-&gt;next-&gt;next-&gt;type != NIL) {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+    <span class="hljs-comment">// eval the operand</span>
+    operand = eval(operand);
+
+    <span class="hljs-comment">// operand type check</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type == LIST || operand-&gt;next-&gt;type != LIST) {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-comment">// shuffling them around and returning the new list</span>
+    C *operand2 = operand-&gt;next;
+    operand-&gt;next = operand2-&gt;val.<span class="hljs-built_in">list</span>;
+    operand2-&gt;val.<span class="hljs-built_in">list</span> = operand;
+    <span class="hljs-keyword">return</span> operand2;
+}
+</code></pre>
+<hr>
+
+<p>These are some pretty rudimentary operations in lisp! This is a good place to
+stop and do some refactoring.</p>
+<p>Here&#39;s what <code>apply</code> looks like now:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">apply</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL: {
+            C *outcell;
+            <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strcmp</span>(c-&gt;val.label, <span class="hljs-string">&quot;quote&quot;</span>)) {
+                outcell = quote(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strcmp</span>(c-&gt;val.label, <span class="hljs-string">&quot;car&quot;</span>)) {
+                outcell = car(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strcmp</span>(c-&gt;val.label, <span class="hljs-string">&quot;cdr&quot;</span>)) {
+                outcell = cdr(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">strcmp</span>(c-&gt;val.label, <span class="hljs-string">&quot;cons&quot;</span>)) {
+                outcell = cons(c-&gt;next);
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+            }
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> outcell;
+        }
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> apply(eval(c));
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+}
+</code></pre>
+<p><code>strcmp</code> is a real bottleneck, and hugely overkill for what it&#39;s doing here.
+The function iterates through the entirety of at least one of the strings and
+returns <code>0</code> if they are equal, <code>-1</code> if string one is &quot;less&quot; than string 2, and
+<code>1</code> if string 2 is &quot;less&quot; than string 1. I don&#39;t have to go through the whole
+string if at any point they differ, because I only care about whether or not
+the are the same string completely. I can write a simple function that does
+this a lot more efficiently for my use case.</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">// checks if two strings are equal, aborts at first sign they are not.</span>
+<span class="hljs-type">int</span> <span class="hljs-title function_">scmp</span><span class="hljs-params">(<span class="hljs-type">char</span> *str1, <span class="hljs-type">char</span> *str2)</span> {
+    <span class="hljs-type">int</span> i;
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; str1[i] != <span class="hljs-string">&#x27;\0&#x27;</span>; i++) {
+        <span class="hljs-comment">// if ANY of the chars are different, or if the end of the second</span>
+        <span class="hljs-comment">// string is reached before the first, abort and return false</span>
+        <span class="hljs-keyword">if</span> (str1[i] != str2[i] || str2[i] == <span class="hljs-string">&#x27;\0&#x27;</span>) {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+        }
+    }
+    <span class="hljs-comment">// if the end of the first string is reached and it is also the end of the</span>
+    <span class="hljs-comment">// second, they are the same! return true.</span>
+    <span class="hljs-keyword">if</span> (str2[i] == <span class="hljs-string">&#x27;\0&#x27;</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">// if there is more of the second string, return false.</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+}
+</code></pre>
+<p>And I can use this function in apply:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">apply</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL: {
+            C *outcell;
+            <span class="hljs-keyword">if</span> (scmp(c-&gt;val.label, <span class="hljs-string">&quot;quote&quot;</span>)) {
+                outcell = quote(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(c-&gt;val.label, <span class="hljs-string">&quot;car&quot;</span>)) {
+                outcell = car(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(c-&gt;val.label, <span class="hljs-string">&quot;cdr&quot;</span>)) {
+                outcell = cdr(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(c-&gt;val.label, <span class="hljs-string">&quot;cons&quot;</span>)) {
+                outcell = cons(c-&gt;next);
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+            }
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> outcell;
+        }
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> apply(eval(c));
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+}
+</code></pre>
+<p>This allows me to dispense with the odd <code>!</code> boolean flip in the comparison, as
+well. Faster and more readable ftw!</p>
+<p><em>But wait, there&#39;s more!!</em></p>
+<p>I can do away with <em>all</em> of the string comparisons for built in functions in
+the application step! Next post I&#39;ll explain it!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

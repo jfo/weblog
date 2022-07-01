@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>fizzbuzz in brainfuck, part two</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="fizzbuzz in brainfuck, part two" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/fizzbuzz-in-brainfuck-part-two" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">fizzbuzz in brainfuck, part two</h1>
+        <sub>Sep 24, 2013</sub>
+        <p></p>
+        <div><p>Last time, <a href="/fizzbuzz-in-brainfuck-part-one.html">this</a>!</p>
+<p>This time I&#39;ll translate the first half of the &quot;Ruby&quot; code into brainfuck. Oh
+the anticipation!</p>
+<p>Because every bf interpreter initializes with a completely clean memory slate,
+we have to set the memory cells we are going to use before we do anything else.
+I approximated this in Ruby by using variables to stand in for the memory slots
+and simply assigning them the value necessary. This time, we have to do it
+manually, and incrementally, but there&#39;s no trick at all to it, just
+remembering where we are, really. I&#39;ll kind of do this in the order I did it
+last time, too.</p>
+<p>First we go to cell 7 to start:</p>
+
+<pre><code class="lang-brainfuck">&gt;&gt;&gt;&gt;&gt;&gt;
+</code></pre>
+<p>...and increment it to the hundreds counter:</p>
+
+<pre><code class="lang-brainfuck"><span class="hljs-literal">+</span>
+</code></pre>
+<p>same for cell 8; the tens counter:</p>
+
+<pre><code class="lang-brainfuck">&gt;<span class="hljs-literal">++++++++++</span>
+</code></pre>
+<p>and cell 9 for the ones counter</p>
+
+<pre><code class="lang-brainfuck">&gt;<span class="hljs-literal">++++++++++</span>
+</code></pre>
+<p>Now the printing cells... cell 10 gets a newline character, which in ascii code
+is the byte value &quot;10&quot; in decimal (or 0000 1010 in binary).</p>
+
+<pre><code class="lang-brainfuck">&gt;<span class="hljs-literal">++++++++++</span>
+</code></pre>
+<p>Cells 11, 12, and 13 are assigned to the hundreds, tens, and ones printing
+places respectively. They have to be initialized to 0, but there&#39;s a little
+trick to it. Remember, we don&#39;t want the byte value to be 0, we want to byte
+value to be &quot;0&quot;, which is a string that prints the character for zero, not the
+byte value for zero itself. All three of these cells, then, need the byte value
+&quot;48,&quot; which is the ascii code for the <em>STRING</em> &quot;0&quot;.</p>
+
+<pre><code class="lang-brainfuck"><span class="hljs-comment">to 11 hold hundreds place &quot;0&quot;</span>
+&gt;&gt;
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++</span>
+
+<span class="hljs-comment">to 12 hold tens place &quot;0&quot;</span>
+&gt;
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++</span>
+
+<span class="hljs-comment">to 13 hold ones place &quot;0&quot;</span>
+&gt;
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++</span>
+</code></pre>
+<p>Now we initialize a few cells to ascii values for the letters we will need to
+print &quot;Fizz&quot; and &quot;Buzz&quot; and &quot;FizzBuzz.&quot; Turns out we only need 5: &quot;FizBu&quot;. I
+chose to move the pointer all the way to cell 25 to do this one, both so that I
+would have more space to work with if I needed it for anything else, and more
+importantly so that I could visually keep track of where my pointer generally
+was in the program. When I saw a long string of <code>&gt;</code>&#39;s I had an idea of where it
+all was. So cells 25-29 spell &quot;FizBu&quot;:</p>
+
+<pre><code class="lang-brainfuck"><span class="hljs-comment">Move to cell 25:</span>
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; &gt;&gt;&gt;&gt;&gt;
+
+<span class="hljs-comment">Set 25 to &quot;F&quot; (ascii key &quot;70&quot;)</span>
+&gt;&gt;&gt;&gt;&gt;<span class="hljs-literal">+++++</span> <span class="hljs-literal">++</span><span class="hljs-title">[</span>&lt;&lt;&lt;&lt;&lt;<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>&gt;&gt;&gt;&gt;&gt;<span class="hljs-literal">-</span><span class="hljs-title">]</span>
+
+<span class="hljs-comment">Set 26 to &quot;i&quot; (ascii key &quot;105&quot;)</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">+</span><span class="hljs-title">[</span>&lt;&lt;&lt;&lt;<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>&gt;&gt;&gt;&gt;<span class="hljs-literal">-</span><span class="hljs-title">]</span>&lt;&lt;&lt;<span class="hljs-literal">-----</span>&gt;&gt;&gt;
+
+<span class="hljs-comment">Set 27 to &quot;z&quot; (ascii key &quot;122&quot;)</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">++</span><span class="hljs-title">[</span>&lt;&lt;&lt;<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>&gt;&gt;&gt;<span class="hljs-literal">-</span><span class="hljs-title">]</span>&lt;&lt;<span class="hljs-literal">++</span>&gt;&gt;
+
+<span class="hljs-comment">Set 28 to &quot;B&quot; (ascii key &quot;66&quot;)</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">++</span><span class="hljs-title">[</span>&lt;&lt;<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>&gt;&gt;<span class="hljs-literal">-</span><span class="hljs-title">]</span>&lt;<span class="hljs-literal">----</span>&gt;
+
+<span class="hljs-comment">Set 29 to &quot;u&quot; (ascii key &quot;117&quot;)</span>
+<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span> <span class="hljs-literal">++</span><span class="hljs-title">[</span>&lt;<span class="hljs-literal">+++++</span> <span class="hljs-literal">+++++</span>&gt;<span class="hljs-literal">-</span><span class="hljs-title">]</span>&lt;<span class="hljs-literal">---</span>
+
+<span class="hljs-comment">Move back to cell 25</span>
+&lt;&lt;&lt;&lt;
+
+<span class="hljs-comment">Move back to cell 10 to begin program</span>
+&lt;&lt;&lt;&lt;&lt; &lt;&lt;&lt;&lt;&lt; &lt;&lt;&lt;&lt;&lt;
+</code></pre>
+<p>Oh, and for all of these I&#39;m using cell 30 as a counter cell to iterate through
+the incrementer loops. Not so many <code>++++++++++</code> etc that way...</p>
+<p>Incidentally- I used cell 10 as my &quot;Home Base&quot; for all of this. After any
+operation I would reset the pointer back to cell 10 so I had a pretty good idea
+of where I was. This was super inefficient from a computing standpoint,
+resulting in a lot of wasted pointer motions, but carpe diem.</p>
+<p>Oh!... only one more thing we need to do, and that is to prepare the 3 and 5
+multiples finder to 3 and 5, respectively! I put those in cells 1 (for the 3&#39;s
+counter) and 4 (for the 5&#39;s counter) because each of them needs two helper
+cells for all the logic we&#39;re going to futz with later on.</p>
+
+<pre><code class="lang-brainfuck">&lt;&lt;&lt;&lt;&lt;&lt;
+<span class="hljs-literal">+++++</span>
+&lt;&lt;&lt;
+<span class="hljs-literal">+++</span>
+&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
+</code></pre>
+<p>We&#39;ve set everything up and our &quot;workspace&quot;, so to speak, is ready to go...</p>
+
+<pre><code>3 0 0 5 0 0 1 10 10 [10] 48 48 48 0 0 0 0 0 0 0 0 70 105 122 66 117 0
+</code></pre>
+<p>Also, spoiler alert. At this point when I was setting everything up, I had
+forgotten to allocate temp cells for the logic of the innermost &quot;if&quot; block that
+prints &quot;Buzz&quot; after &quot;Fizz&quot;, so I&#39;ll have to add a couple more slots when I get
+to that bit. The logic part is what I&#39;m really looking forward to trying to
+explain, because it all makes sense to me but in a pretty jumbled up way so
+far...</p>
+<p>That concludes <a href="http://www.youtube.com/watch?v=QIL-nwJfGgg"
+target="_blank">the first half of this basketball game</a>, which is a thing
+that Chuck Mangione says right before starting to play that track on a live
+album I had in high school. You should totally click through to the video and
+let the soothing sounds of well orchestrated, innocuous, proto easy listening
+jazz drizzle into your ears like honey and cream while riding a bike in a park
+or petting a dog or something.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

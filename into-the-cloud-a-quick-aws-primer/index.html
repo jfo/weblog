@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Into the cloud- a quick AWS primer</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Into the cloud- a quick AWS primer" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/into-the-cloud-a-quick-aws-primer" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Into the cloud- a quick AWS primer</h1>
+        <sub>Apr 26, 2014</sub>
+        <p></p>
+        <div><p>Amazon Web Services used to scare the hell out of me.</p>
+<p>There are <strong>so many things to click on all the time everywhere</strong>. Is this what I want? That? This? Everything is an abbreviation or an acronym and the UX feels like the table of contents for a technical manual. And the very first thing they ask for is your credit card information.</p>
+<p>Wait- I thought this was free? Or something? Didn&#39;t someone say this was free? What?</p>
+<p>Errrmgh, yes and no. Mostly yes... you just have to click on the right things. But also no... my bill last month was for nine cents, which hardly breaks the bank, but does officially qualify as &quot;not free.&quot; It took me a few attempts to get through the process... I would give up at some obscure menu or get spooked by the credit card info part. It wasn&#39;t until Tom Ballinger sat down with and gave me a walk through that I realize how easy it is to get set up.</p>
+<p>I&#39;ve since helped quite a few of my fellow batchlings with the same process, so I thought it would be worthwhile to write a post about it. As of now, all this information is accurate. If you&#39;re reasonably comfortable on the command line, then in 20 or so minutes you too can have access to a virtual linux box up in the &quot;cloud&quot; for basically nothing (caveats ahead though!). This is going to be pretty step by step, but let me know if I miss anything or if anything is slightly unclear.</p>
+<h4>Step one: get an account.</h4>
+
+<p>This one is pretty easy, but has a couple gotchas. Go <a href="http://aws.amazon.com/">here</a> and click on &quot;sign up.&quot; Yes, I know you have an Amazon account already probably. Isn&#39;t it the same account then? Why do I need to put in my credit card info right now? I signed in with the other account... uh...? Yeah it&#39;s fine. It is the same/new account.</p>
+<p>Now for the main reason AWS scared me off so many times. You give them your credit card right now at the beginning, and they can charge you if you go over their free usage tier. Yikes! This makes AWS <strong>not ideal</strong> for any project that you are expecting to receive a moderate amount of non-commercial traffic for. If you&#39;re just playing around with the process and trying to learn about how to do some sysadmin-y things, great! Also: great! if you have a project which will generate some income via its traffic. But there is a large use case in between those that does kind of give me the creeps. What about the slim chance that I accidentally write a hit blog post? Am I going to get slammed with a huge bill? Or make a little app that goes viral or something... these possibilities exists, and if you  are worried about them you should look into Heroku, or Github pages, or even something like Linode that has a fixed fee (more on that later.)</p>
+<p>But if you want to fiddle and have the freedom to spin up and destroy VM&#39;s on a whim while learning about the process, AWS fits the bill. As long as you don&#39;t keep more than one instance running at a time and are judicious about what you host and how you share it, you won&#39;t get blasted. Tom showed me his account history, and most months were less than 25 cents. The largest bill he ever got was for 100 dollars, and that was a month that he was hosting a Minecraft server, which is most likely not something you can easily do accidentally.</p>
+<p>But do take care to select the &quot;free tier.&quot; They will try to upsell you: my favorite is the page that says that the free tier has &quot;very poor&quot; transfer rates. Ok I get it, it&#39;s free after all, but it&#39;s totally adequate for pooping around with, so don&#39;t sweat it.</p>
+<h4>Step One.5: click on the right thing.</h4>
+
+<p>This one doesn&#39;t really deserve a whole step, but it does deserve special mention. After you sign up for an account, you&#39;ll sign in to the account. And then I think you have to click on &quot;My account&quot; and then &quot;AWS Management Console.&quot; Then you will be greeting with exactly 1287 icons with inexplicable letters next to them. Many of them are, I&#39;m sure, very useful, if you know what they do. Even if you know what they do, they are all named by acronyms, or cutesy Amazon specific names, or both. <strong>All I wanted was shell access to a VM.</strong> If that is what you want, too, then click on:</p>
+<h2>EC2</h2>
+
+<p>Again: that is the second icon in the list that looks like a squished screw or a dumbbell with no bar in the middle of it or a server farm (I guess) and it says</p>
+<h2>EC2- Virtual Servers in the Cloud</h2>
+
+<p>Great, moving on.</p>
+<h4>Step Two: Create and Launch an Instance</h4>
+
+<p>Amazon&#39;s free tier gives you something like 750 hours of free computation time a month, which is a hair over 31 days worth. Enough for even August! Wow! If you keep one instance up all the time, you won&#39;t exceed that number ever, because math. BUT, you could also spread them out. If you want to run 2 machines simultaneously for 375 hours each and then cut them off, you can do that. If you want to run 750 machines for an hour each all at once, or 45,000 machines for a minute, then I guess you could do that, also, but you&#39;ll be tempting the fates. As long as you don&#39;t have more than one instance running at a time, you won&#39;t be charged for computation time during the first year. [Update on that is that the lowest unit of charge is an hour, so I guess the most you could do is 750; that&#39;s probably enough though! (thanks Rose!)]</p>
+<p>So with that in mind, click that big button that says <strong>launch instance</strong>. Now pick an OS. I picked Ubuntu, because I&#39;ve worked with it before, so the rest of this post will assume you did, too. Should work about the same with any Linux distro though. Just make sure that it is labeled &quot;Free tier eligible.&quot;</p>
+<p>Now select &quot;Micro Instance.&quot; Which is the only option that is free tier eligible on the next page. Ignore the upselling and the &quot;Very Low&quot; network performance. It&#39;s fine. You&#39;re not writing Twitter right now, and your blog doesn&#39;t need to scale.</p>
+<p>There are a few more configuration options steps, but I would just ignore them and go ahead and launch it. We&#39;ll get to the important ones in a moment, and it&#39;s mostly more upsells.</p>
+<p>So launch! Boom!</p>
+<h4>Step Three: connecting to your VM</h4>
+
+<p>On the left side of the page, click &quot;Instances.&quot; You&#39;ll have a list of your running instances, which right now is just the one that you just launched. Select the instance with the little box next to it to get some info. Again, there is lot of info there, but right now, the only thing we need is the <strong>Public IP</strong>. Take out a pen and paper and write that down. Just kidding. Or do that, if you want. Just, hold on. We&#39;re going to need that number in a second.</p>
+<p>Now comes the commandlinefu part. Open a terminal and type &quot;which ssh.&quot; Did it say /usr/bin/ssh? Or something like that? Great, you&#39;ve got SSH already. I thought you might! If you don&#39;t you can brew install it, or apt-get install it, or google how to do those things.</p>
+<p>Type this:</p>
+
+<pre><code>yourawesomeprompt$ ssh [your public IP]
+</code></pre>
+<p>Did it work? No? Haha, fooled you! that was a learning experience! What kind of service would let just anyone ssh willy nilly into whereever any time? That would be sub-optimal, from a network security standpoint. Also, we didn&#39;t specify a user.</p>
+<p>So, you&#39;re going to need a public/private key pair. Amazon is actually pretty helpful on this one! Under the &quot;instances&quot; tab we were just looking at, click on the &quot;Connect&quot; tab at the top. It will let you generate a new key pair, the private of which you will download. Follow the instructions to ssh into your client- but they&#39;ll probably look something like this:</p>
+
+<pre><code>To access your instance:
+
+Open an SSH client.
+
+Locate your private key file ([thenameyouchose].pem). The wizard automatically detects the key you used to launch the instance.
+</code></pre>
+<p>and</p>
+
+<pre><code>Your key must not be publicly viewable for SSH to work. Use this command if needed:
+
+chmod 400 [thenameyouchose].pem
+
+Connect to your instance using its Public IP:
+
+[your public IP]
+</code></pre>
+<p>and</p>
+
+<pre><code>ssh -i [thenameyouchose].pem ubuntu@[your public IP]
+</code></pre>
+<p>The key file referred to above must reside in your working directory, or be given an absolute path, of course. And the permissions thing is a necessary step almost always, despite what they said.</p>
+<p>If you ran those commands, then you probably get a server prompt! Congratulations, you now have what amounts to a free virtual computer! You can install whatever you want and <code>sudo</code> to your hearts content! You can spin up a new VM and destroy the old ones as much as you&#39;d like! Pretty rad.</p>
+<p>Oh, but one more</p>
+<h4>Step Four: making step three easier.</h4>
+
+<p>So, yeah, that last bit is a lot of typing, and keeping track of a keyfile explicitly is a little bit not great. Let&#39;s fix that part now. You should have already changed permissions, so that&#39;s taken care of, so it&#39;s only a couple more steps from here.</p>
+<p>Move your .pem keyfile into the .ssh folder in your home directory. If you don&#39;t have one yet, make one and then move the file into it. Now make a file in that directory called <code>config</code>. Just <code>config</code>, and add these four lines to it:</p>
+
+<pre><code>Host (an alias, can be anything you want)
+HostName (your public ip)
+User (your username, probably &quot;ubuntu&quot; or whatever came before &quot;@&quot;)
+IdentityFile (path to the keyfile, probably ~/.ssh/[nameoffile].pem)
+</code></pre>
+<p>date: 2014-04-26 17:54 UTC</p>
+<p>Take out the parens, as well. That&#39;s the kind of little thing that can stick you, you know?</p>
+<p>Now, anytime you want to connect to your server, just type:</p>
+
+<pre><code>yoursuperradprompt$ ssh (whatever sweet alias you chose)
+</code></pre>
+<p>And that&#39;s it!</p>
+<p>Let&#39;s try</p>
+<h4>Step Five: connecting to your webserver</h4>
+
+<p>Now go back to the instances page on the console, and click on the running instance again. We have the Public IP- but we also have the public DNS. You can drop either of them into an address bar of a web browser to connect to your server. Try it now!</p>
+<p>Are you back? Yeah, that didn&#39;t work either, did it? Sry, lol. You don&#39;t have a webserver <strong>because you haven&#39;t set one up yet!</strong> But we have to have something to look forward to in life.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

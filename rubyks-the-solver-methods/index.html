@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Rubyks, the solver methods</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Rubyks, the solver methods" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/rubyks-the-solver-methods" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Rubyks, the solver methods</h1>
+        <sub>Nov 13, 2013</sub>
+        <p></p>
+        <div><p>So now I have a software model of a rubik&#39;s cube. But how would I go about
+writing a program that can manipulate that model from any legal position and
+solve it?</p>
+<p>This was also a major nerd snipe on myself, much like the fizzbuzz in brainfuck
+that ate up a full weekend a few weeks ago. At first, I figured that this was
+out of my paygrade-- so many better solvers have been written. I&#39;m not even
+that good of a cuber! I learned to solve it in college but only ever learned
+one method- it works every time but is not the most efficient solution by any
+means. I would have to learn new algorithms and strategies if I wanted to write
+a program that would work well. But then...</p>
+<p>Really, the point of the exercise was not to write a fast, efficient program-
+but rather to attempt to model my own logical process when I solve an &quot;analog&quot;
+cube. For that- this was a perfect test problem, so that&#39;s what I did.</p>
+<p>As I said in the last post, implementing the basic transformations was pretty
+easy. Using those methods in series to build helper methods that perform even
+complex algorithms was as simple as stringing them together on a single Cube
+object and then returning that object. Like this:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-comment">#Re-orients cubies of [0][4], [0][6], and [0][8] without affecting anything else.</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">last_move</span>
+    <span class="hljs-variable language_">self</span>.rr.d.d.r.f.d.d.fr.ur.f.d.d.fr.rr.d.d.r.u
+    <span class="hljs-variable language_">self</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>That&#39;s the most long winded combination in my repertoire, used to reorient the
+final cubies to their proper faces.</p>
+<p>I planned out the solution by thinking of the steps I use normally:</p>
+
+<ol>
+<li>top cross</li>
+<li>corners next to the top cross</li>
+<li>second level middles</li>
+<li>last level cross</li>
+<li>last level corners</li>
+</ol>
+<p>So I implemented solving methods for each of these. Basically, each step
+repeats a set of motions that don&#39;t change the effects of the previous step
+until some condition is satisfied. Here is the top cross method for an example:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-comment">##Solves for cross on first layer. Affects all other layers.</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">cross_solve</span>
+    downcross = []
+    i = <span class="hljs-number">1</span>
+    <span class="hljs-keyword">until</span> <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>] == <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] &amp;&amp; <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">3</span>] == <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] &amp;&amp; <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">5</span>] == <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] &amp;&amp; <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">7</span>] == <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]
+
+        <span class="hljs-keyword">until</span> downcross.<span class="hljs-keyword">include</span>?(<span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>])
+            downcross = []
+            <span class="hljs-variable language_">self</span>.rr.d.r.l.dr.lr.turn
+            downcross = [<span class="hljs-variable">@cube</span>[<span class="hljs-number">5</span>][<span class="hljs-number">1</span>],<span class="hljs-variable">@cube</span>[<span class="hljs-number">5</span>][<span class="hljs-number">3</span>],<span class="hljs-variable">@cube</span>[<span class="hljs-number">5</span>][<span class="hljs-number">5</span>], <span class="hljs-variable">@cube</span>[<span class="hljs-number">5</span>][<span class="hljs-number">7</span>]]
+            i += <span class="hljs-number">1</span>
+            <span class="hljs-keyword">if</span> i &gt; <span class="hljs-number">10</span>
+                <span class="hljs-variable language_">self</span>.turn <span class="hljs-keyword">until</span> <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>] != <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]
+                <span class="hljs-variable language_">self</span>.l.b
+                i = <span class="hljs-number">1</span>
+            <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+
+        <span class="hljs-keyword">until</span> <span class="hljs-variable">@cube</span>[<span class="hljs-number">5</span>][<span class="hljs-number">3</span>] == cube[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]
+            i =<span class="hljs-number">0</span>
+            <span class="hljs-variable language_">self</span>.d
+
+            <span class="hljs-keyword">if</span> i &gt; <span class="hljs-number">59</span>
+                <span class="hljs-variable language_">self</span>.print
+                gets
+            <span class="hljs-keyword">end</span>
+            i+=<span class="hljs-number">1</span>
+        <span class="hljs-keyword">end</span>
+
+        <span class="hljs-keyword">until</span> <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">7</span>] != <span class="hljs-variable">@cube</span>[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]
+            <span class="hljs-variable language_">self</span>.u
+        <span class="hljs-keyword">end</span>
+        <span class="hljs-variable language_">self</span>.f.f
+        downcross = []
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-keyword">until</span> <span class="hljs-variable">@cube</span>[<span class="hljs-number">4</span>][<span class="hljs-number">3</span>] == <span class="hljs-variable">@cube</span>[<span class="hljs-number">4</span>][<span class="hljs-number">0</span>] &amp;&amp; <span class="hljs-variable">@cube</span>[<span class="hljs-number">1</span>][<span class="hljs-number">5</span>] == <span class="hljs-variable">@cube</span>[<span class="hljs-number">1</span>][<span class="hljs-number">0</span>]
+        <span class="hljs-keyword">until</span> <span class="hljs-variable">@cube</span>[<span class="hljs-number">1</span>][<span class="hljs-number">5</span>] == <span class="hljs-variable">@cube</span>[<span class="hljs-number">1</span>][<span class="hljs-number">0</span>]
+            <span class="hljs-variable language_">self</span>.u
+        <span class="hljs-keyword">end</span>
+        <span class="hljs-variable language_">self</span>.turn <span class="hljs-keyword">if</span> <span class="hljs-variable">@cube</span>[<span class="hljs-number">4</span>][<span class="hljs-number">3</span>] != <span class="hljs-variable">@cube</span>[<span class="hljs-number">4</span>][<span class="hljs-number">0</span>]
+        i += <span class="hljs-number">1</span>
+
+        <span class="hljs-keyword">if</span> i &gt; <span class="hljs-number">10</span>
+            <span class="hljs-variable language_">self</span>.cross_swap
+            i = <span class="hljs-number">1</span>
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-keyword">if</span> <span class="hljs-variable">@cube</span>[<span class="hljs-number">2</span>][<span class="hljs-number">7</span>] != <span class="hljs-variable">@cube</span>[<span class="hljs-number">2</span>][<span class="hljs-number">0</span>]
+        <span class="hljs-variable language_">self</span>.cross_swap
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-variable language_">self</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>It is a very dumb, brute force solving method. I also included several
+conditionals that trip if the loop has iterated a certain number of times;
+these act like a tilt- jogging things around just enough to change whatever was
+causing the loop to lock up.</p>
+<p>And so on down the line, until the cube is solved.</p>
+<p>The final method to call all of these layers in sequence looks something like
+this:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-comment">#solve invokes all layer solving methods in sequence, solving from any legal state</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">simple_solve</span>
+    testarray = []
+    <span class="hljs-variable">@cube</span>.each {|<span class="hljs-params">side</span>| testarray &lt;&lt; side.uniq}
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span> <span class="hljs-keyword">if</span> testarray.flatten.length == <span class="hljs-number">6</span>
+
+    <span class="hljs-variable language_">self</span>.cross_solve.corners_solve.second_layer_solve.top_cross.top_corners
+    <span class="hljs-variable language_">self</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>Note that it always checks to see if the cube is ALREADY solved before mucking
+it up!</p>
+<p>Going through the process of modeling my own behavior was enlightening. The
+computer is very, very stupid, but if you give it explicit enough instructions
+that are able to handle any possible cases, it can do almost any logical
+process.</p>
+<p>Once again, <a href="https://github.com/urthbound/rubyks/blob/master/lib/rubyks.rb">Here is the
+source</a></p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

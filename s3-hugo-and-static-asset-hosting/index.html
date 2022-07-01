@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>s3, Hugo, and static asset hosting</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="s3, Hugo, and static asset hosting" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/s3-hugo-and-static-asset-hosting" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">s3, Hugo, and static asset hosting</h1>
+        <sub>Sep 29, 2017</sub>
+        <p></p>
+        <div><p>I&#39;ve been writing this blog for a while now, and put it through several different
+blogging engines and style changes.  <a href="https://wordpress.org/">Wordpress</a>,
+<a href="https://middlemanapp.com/">Middleman</a>, <a href="https://jekyllrb.com/">Jekyll</a>...  and
+finally to <a href="https://gohugo.io/">Hugo</a>, which I&#39;m using currently. I feel it
+should be <em>really easy</em> to switch platforms (where &quot;really easy&quot; means like, a
+week or two of fiddly work), and I fully expect to do so again when it becomes
+worth the trouble to do it, whenever and whyever that may be.</p>
+<p>I was hosting my Middleman version on <a href="https://pages.github.com/">github
+pages</a>, but Jekyll was attractive with the built in
+<a href="https://help.github.com/articles/about-github-pages-and-jekyll/">build
+support</a>, so I
+switched to that when Middleman made some breaking changes.  It was great in
+every way except that it was simply <em>way</em> too slow! I have around
+80 posts so far, and I&#39;m only going to write more, but it took about 5 or 6
+seconds for every build, even with incremental builds on! Most of this was
+likely due to the syntax highlighting, and usually it wouldn&#39;t be that big a
+deal, but when I was writing interactive javascript snippets like for <a href="/the-mandelwat-set/">&quot;The
+Mandelwat Set&quot;</a> it <em>really</em> slowed me down. I decided to
+switch to something faster.</p>
+<p>The spectre of &quot;write your own&quot; is always looming, but I also truly want to
+simply have a tool that makes things easy, stays out of my way, and &quot;just
+works.&quot; Hugo has everything I need!  It&#39;s <em>super fast</em>.  After the initial
+build every incremental change triggers a new build that takes about 150
+milliseconds. It also includes a development server that auto reloads on every
+build.</p>
+<p>This is all great! But there is something I&#39;ve been thinking about for quite a
+while that I need, and that is photo hosting! I want to to be able to spice up
+my posts with custom images, but I don&#39;t want to commit images to my git
+repo - both to avoid bloat and because, properly speaking, image files are
+data, not source code. I know this is fairly arbitrary, but I feel oddly
+strongly about maintaining that separation.</p>
+<p>For The Mandelwat set, I uploaded small photos to <a href="https://imgur.com/">imgur</a>.
+This works great, but it&#39;s very time consuming, and results in ugly URL&#39;s like
+<a href="https://i.imgur.com/Yq0SFWn.jpg">https://i.imgur.com/Yq0SFWn.jpg</a>. Not to mention, and most importantly for
+posterity&#39;s sake, it&#39;s all dependant on their naming scheme and continued
+existence. I want this site to be as self contained as possible and where not,
+relatively reproducible. If Hugo disappeared tomorrow, I know that I could
+switch to another static site generator (albeit with some effort). If they all
+disappeared, I know that I could write my own static site generator (albeit
+with much more effort). If html is disappeared and some new weird markup format
+comes out, I know I could get <em>this</em> markdown into that format <em>somehow</em> (probably with <a href="http://pandoc.org/">pandoc</a>).</p>
+<p>The point is not that I expect this site to necessarily last for that long, the
+point is that I&#39;d like to operate with the assumption that it <em>could</em>.  Bitrot
+is real! Great swaths of the foundational internet has withered into the ether!
+Remember <a href="https://news.ycombinator.com/item?id=4136682">Geocities</a>?</p>
+<p>Anyway, I want a place to host images that&#39;s not in my source tree and is easy
+to manage.</p>
+<p>I went to an <a href="https://aws.amazon.com/events/awsomeday-nordics-2017/">AWS conference last
+week</a>, and guess what
+will solve my problem? <a href="https://aws.amazon.com/s3/">S3</a>!</p>
+<h2 id="here-s-how-i-set-it-up-">Here&#39;s how I set it up.</h2>
+<p>I started with a <code>.gitignore</code>d folder in the root of my blog&#39;s directory: <code>s3</code>.</p>
+<p>I installed and authenticated the <a href="https://aws.amazon.com/cli/">command line interface
+<code>awscli</code></a> with homebrew:</p>
+
+<pre><code>$ brew install awscli
+</code></pre>
+<p>... and
+<a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration">configured</a>
+it with</p>
+
+<pre><code>$ aws configure
+</code></pre>
+<p>I created a bucket on <code>s3</code> just for this purpose called <code>blog.jfo.click</code>, and I
+added some <code>make</code> targets that sync both to the bucket:</p>
+
+<pre><code class="lang-make"><span class="hljs-section">syncs3:</span>
+    aws s3 sync ./s3 s3://blog.jfo.click/
+</code></pre>
+<p>and from the bucket:</p>
+
+<pre><code class="lang-make"><span class="hljs-section">syncfroms3:</span>
+    aws s3 sync s3://blog.jfo.click/ ./s3
+</code></pre>
+<p>Since I am in there, I also took care of a <code>TODO</code> I&#39;ve been meaning to do to
+make it easier to deploy my whole site with a single command.</p>
+
+<pre><code class="lang-make"><span class="hljs-section">push: build</span>
+    cd ./public &amp;&amp; git add -A &amp;&amp; git commit -m <span class="hljs-string">&quot;`date`&quot;</span> &amp;&amp; git push
+
+<span class="hljs-section">build:</span>
+    hugo
+</code></pre>
+<p><code>build</code> simply issues the <code>hugo</code> command to build the site. <code>push</code> now <code>cd</code>&#39;s
+into the built directory, adds and commits everything indiscriminantly, and
+pushes it to <em>its</em> remote, which is a <a href="https://gohugo.io/hosting-and-deployment/hosting-on-github://gohugo.io/hosting-and-deployment/hosting-on-github/">git
+subtree</a></p>
+<p>Finally,</p>
+
+<pre><code class="lang-make"><span class="hljs-section">deploy: syncs3 push</span>
+</code></pre>
+<p>Now, with a single <code>make deploy</code>, I can sync my images, build the site, and
+push it all up to the hosted environment. This is a lot better than the multi
+step process I was doing before, <em>and</em> adds the images!</p>
+<p>Ok, last thing. Hosting static content on s3 has a lot of benefits... it&#39;s
+easy, scriptable via the command line interface, cheap, and automagically
+CDN&#39;d. But it also results in ugly URLs like this:</p>
+
+<pre><code>https://s3-us-west-2.amazonaws.com/blog.jfo.click/images/redefine.jpg
+</code></pre>
+<p>This is not good for two reasons. I don&#39;t want to be typing that into every
+place I post a photo, certainly, but more importantly I want to be able to
+replicate my full image folder in an arbitrary place and switch every reference
+across my site to it without editing every file. Let&#39;s say that tomorrow,
+Amazon goes out of business. I know, lol right? But <a href="https://www.theatlantic.com/business/archive/2017/09/sears-predicts-amazon/540888/">who knows what will happen
+in the future</a>.
+Perhaps more realistically in the short term, they could render s3 unusable
+because of price or breaking API changes... or they could deprecate it. Who
+knows! I would like to know that if I have to or want to for any reason, I
+could host my photos and other static assets anywhere else at a moment&#39;s
+notice.</p>
+<p>Hugo has a great feature I can use for this,
+<a href="https://gohugo.io/content-management/shortcodes/">shortcodes</a>!</p>
+<p>I make a template for my simple little shortcode here:</p>
+
+<pre><code>/themes/jfo/shortcodes/img.html
+</code></pre>
+<p>That consists of a single, simple line:</p>
+
+<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://s3-us-west-2.amazonaws.com/blog.jfo.click/images/&quot;</span> /&gt;</span>
+</code></pre>
+<p>You&#39;ll notice an interpolated variable here, or at least a method that looks
+like it is accessing same:</p>
+
+<pre><code class="lang-go">
+</code></pre>
+<p>This is how I access things I pass in!</p>
+<p>I can now put a shortcode tag anywhere in my markdown passing in a filename as
+a string of something I&#39;ve stored in that I&#39;ve stored in the synced <code>s3</code> folder:</p>
+<pre>{&#8205;{< img "redefine.jpg" >}}</pre>
+
+<blockquote>
+<p>Hey also fun fact, I had to use a hidden <a href="https://en.wikipedia.org/wiki/Zero-width_joiner">zero width
+joiner</a> in my markup to
+actually type that and not have it be preprocessed. Looks like:</p>
+
+<pre><code>{&amp;#8205;{&lt; img &quot;redefine.jpg&quot; &gt;}}
+</code></pre>
+<p>!</p>
+</blockquote>
+<p>That, by the way, is the new version of the <a href="/v-i">very first post I made</a> on
+my OG site that was Wordpress.</p>
+<p>So! Expect to see more media on here in the future!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

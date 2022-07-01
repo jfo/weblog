@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Dialog with an intern, or, alternately, some random unixy tips and tricks</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Dialog with an intern, or, alternately, some random unixy tips and tricks" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/dialog-with-an-intern" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Dialog with an intern, or, alternately, some random unixy tips and tricks</h1>
+        <sub>Aug 08, 2016</sub>
+        <p></p>
+        <div><p><span style="color:red;">mmeehan</span>: actually i may be able to ask it on here if u have a moment</p>
+<p><span style="color:blue;">jfo</span>: sure</p>
+<p><span style="color:red;">mmeehan</span>: so for the [work task related] thing, I added another output field [task thing stuff] and then when i recompile, i get a GET request error for adding that [thing]</p>
+<p><span style="color:blue;">jfo</span>: ah</p>
+<p><span style="color:red;">mmeehan</span>: and i wasn&#39;t sure if i was missing some other step?</p>
+<p><span style="color:blue;">jfo</span>: show me the diff?</p>
+<p><span style="color:red;">mmeehan</span>: sure...</p>
+<p><span style="color:red;">mmeehan</span>: this is kind of difficult to read, without the syntax highlighting...</p>
+<p><span style="color:blue;">jfo</span>: ooohhh pro tip!</p>
+<p><span style="color:red;">mmeehan</span>: ok</p>
+<p><span style="color:blue;">jfo</span>: how did you generate this</p>
+<p><span style="color:red;">mmeehan</span>: <code>git diff commit#..commit# | gist</code></p>
+<p><span style="color:blue;">jfo</span>: cool!</p>
+<p><span style="color:blue;">jfo</span>: so, <a href="https://github.com/defunkt/gist">gist</a> has a type param</p>
+<p><span style="color:blue;">jfo</span>: <code>gist -t diff</code> or whatever the filetype is...</p>
+<p><span style="color:blue;">jfo</span>: which will syntax highlight for you</p>
+<p><span style="color:red;">mmeehan</span>: [url to syntax highlighted gist of a diff]</p>
+<p><span style="color:blue;">jfo</span>: cool!</p>
+<p><span style="color:red;">mmeehan</span>: oO)o0</p>
+<p><span style="color:red;">mmeehan</span>: thank u!!!</p>
+<p><span style="color:blue;">jfo</span>: want another related awesome trick?</p>
+<p><span style="color:red;">mmeehan</span>: YES</p>
+<p><span style="color:red;">mmeehan</span>: i like pro tips</p>
+<p><span style="color:blue;">jfo</span>: this is a good one</p>
+<p><span style="color:blue;">jfo</span>: this will blow people&#39;s minds</p>
+<p><span style="color:red;">mmeehan</span>: ok i want to blow all the minds gimme</p>
+<p><span style="color:blue;">jfo</span>: we think of diffs as just a git thing probably</p>
+<p><span style="color:blue;">jfo</span>: but they are not</p>
+<p><span style="color:red;">mmeehan</span>: lol</p>
+<p><span style="color:blue;">jfo</span>: <code>man diff</code> to read about the diff tool, which is separate</p>
+<p><span style="color:red;">mmeehan</span>: woooah</p>
+<p><span style="color:blue;">jfo</span>: diff is actually a like, really specific file format that originated in perl land, I think</p>
+<blockquote>
+<p>well, actually, yeah... <code>patch</code> <em>was</em> written by Larry Wall in 1985, who
+later went on to write perl, but <code>diff</code> was a unix utility before that,
+authored in the early 70&#39;s. <code>patch</code> was capable of taking the <em>output</em> from
+<code>diff</code> and applying the changes to a file or a group of files.</p>
+</blockquote>
+<p><span style="color:blue;">jfo</span>: here&#39;s another one...</p>
+<p><span style="color:blue;">jfo</span>: <code>man patch</code></p>
+<p><span style="color:blue;">jfo</span>: which you can use to apply a patch file</p>
+<p><span style="color:blue;">jfo</span>: a &quot;patch&quot; is what <code>git diff</code> produces and it&#39;s what <code>git apply</code> applies; a &quot;patchfile&quot; contains the plaintext diff.</p>
+<blockquote>
+<p>Here&#39;s a thing to try! Run some commands in an empty directory (not a git repo
+just an empty directory...)</p>
+</blockquote>
+
+<pre><code class="lang-bash"><span class="hljs-built_in">printf</span> <span class="hljs-string">&#x27;hi mom\nhi dad\n&#x27;</span> &gt; 1.txt
+<span class="hljs-built_in">printf</span> <span class="hljs-string">&#x27;hi mom\nhi dad\nhello world\n&#x27;</span> &gt; 2.txt
+<span class="hljs-built_in">cat</span> 1.txt
+<span class="hljs-built_in">cat</span> 2.txt
+</code></pre>
+<blockquote>
+<p>Just makin&#39; some files! How are they different?</p>
+</blockquote>
+
+<pre><code class="lang-bash">diff 1.txt 2.txt
+diff 2.txt 1.txt
+</code></pre>
+
+<pre><code class="lang-bash">diff 1.txt 2.txt &gt; look_a_patch_file_omg
+<span class="hljs-built_in">cat</span> look_a_patch_file_omg
+</code></pre>
+<blockquote>
+<p>We saved those differences into the patchfile... notice the name is
+inconsequential, it doesn&#39;t need a suffix to describe a filetype.</p>
+<p>Let&#39;s apply that patch, then!</p>
+</blockquote>
+
+<pre><code class="lang-bash">patch 1 &lt; look_a_patch_file_omg
+</code></pre>
+<blockquote>
+<p>or</p>
+</blockquote>
+
+<pre><code class="lang-bash">patch 2 &lt; look_a_patch_file_omg
+</code></pre>
+
+<pre><code class="lang-bash"><span class="hljs-built_in">cat</span> 1.txt
+<span class="hljs-built_in">cat</span> 2.txt
+</code></pre>
+<blockquote>
+<p>This is basically all <code>git diff</code> and <code>git apply</code> do, but the diff is taken from
+what a file looked like at a specified ref (a ref[erence] is a commit hash, or
+a branch name, or one of a few other things...), rather than another file on
+disk like above. I do not know why <code>git apply</code> isn&#39;t <code>git patch</code>.</p>
+</blockquote>
+<p><span style="color:blue;">jfo</span>: it&#39;s the same stuff</p>
+<p><span style="color:blue;">jfo</span>: just wrapped into the git plumbing</p>
+<p><span style="color:blue;">jfo</span>: so this is all to say that you can apply a diff directly to a working tree</p>
+<p><span style="color:blue;">jfo</span>: with <code>git apply patch.diff</code> or whatever</p>
+<p><span style="color:blue;">jfo</span>: which is what I&#39;ll do to &quot;checkout&quot; your changes in a really lightweight way</p>
+<p><span style="color:red;">mmeehan</span>: O0o0o0o i get it woow ahh thats so helpful! So whenever you want to see what someone else&#39;s diff does on your own machine you just <code>git apply patch.diff</code></p>
+<p><span style="color:blue;">jfo</span>: yup! or at least that is one way to do
+it. It&#39;s outside of a lot of the git tracking and checking out and branches and
+stuff... it&#39;s as if you typed all the changes in yourself. It doesn&#39;t commit anything for
+you, which means you can get back to a clean head with a <code>git reset --hard</code> if
+that is what you want</p>
+<p><span style="color:blue;">jfo</span>: but you might have already known that...</p>
+<p><span style="color:red;">mmeehan</span>: i didn&#39;t know about that</p>
+<p><span style="color:blue;">jfo</span>: oh good!</p>
+<p><span style="color:blue;">jfo</span>: well want more? theres another level that&#39;s even more cool</p>
+<p><span style="color:blue;">jfo</span>: I&#39;m on a pedagogical roll here</p>
+<p><span style="color:red;">mmeehan</span>: go for it hahah</p>
+<p><span style="color:blue;">jfo</span>: well, git apply reads a patchfile, just
+like patch does. As far as I can tell they pretty much do the same thing
+basically, just with different invocation syntax and I am sure there are more
+subtle differences but the main point is they both apply a patch file.</p>
+<p><span style="color:blue;">jfo</span>: but</p>
+<p><span style="color:blue;">jfo</span>: what about [url to raw gist of diff on github]</p>
+<p><span style="color:blue;">jfo</span>: that is the diff we want</p>
+<p><span style="color:blue;">jfo</span>: in plaintext... just that it&#39;s living on the server right now.</p>
+<p><span style="color:blue;">jfo</span>: so</p>
+<p><span style="color:blue;">jfo</span>: <code>curl [url]</code></p>
+<p><span style="color:blue;">jfo</span>: would fetch the diff from the server and print it to standard out.</p>
+<p><span style="color:blue;">jfo</span>: so from there...</p>
+<p><span style="color:blue;">jfo</span>: you could <code>curl [url] &gt; /tmp/file.diff</code>, which redirects the diff into a temporary file,</p>
+<blockquote>
+<p>omg did you know about <code>/tmp</code>? It&#39;s the best. Basically the whole directory
+gets cleaned out by the OS every so often, so for ephemeral crap that you just
+want to hold onto for a little while (tmporarily?) you can just put it in
+<code>/tmp</code> and you will get cleaned up after.</p>
+</blockquote>
+<p><span style="color:blue;">jfo</span>: and then <code>git apply /tmp/file.diff</code> in the working tree</p>
+<p><span style="color:blue;">jfo</span>: (the suffixes are inconsequential btw, just conventional, you don&#39;t have to call it <code>.diff</code>, it could be whatever you want)</p>
+<p><span style="color:blue;">jfo</span>: but doesn&#39;t it seem like you should be able to do that in one step?</p>
+<p><span style="color:red;">mmeehan</span>: yes it sure does</p>
+<p><span style="color:blue;">jfo</span>: well you sure can!</p>
+<p><span style="color:blue;">jfo</span>: in at least TWO different ways!</p>
+<p><span style="color:red;">mmeehan</span>: !!</p>
+<p><span style="color:blue;">jfo</span>: OMG I KNOW</p>
+<p><span style="color:red;">mmeehan</span>: hahaha</p>
+<p><span style="color:blue;">jfo</span>: you can pipe it like <code>curl [url] | git apply</code></p>
+<p><span style="color:red;">mmeehan</span>: so piping sends the output of the first command to the second command?</p>
+<p><span style="color:blue;">jfo</span>: basically yes, when used like that the stdout stream coming from the left side command feeds into the stdin stream of the right side command. You can chain things as much as you want, btw, it&#39;s the unix way <sup>tm</sup>. Want to know how many <code>README</code> files are on your whole computer?</p>
+
+<pre><code>tree / | grep README | wc -l
+</code></pre>
+<p><span style="color:blue;">jfo</span>: That&#39;s a terrible and inefficient way to do that, but it would totally work. I always forget the flag for multi pattern grepping and end up piping things through multiple instances of grep instead, like a wally.</p>
+<p><span style="color:red;">mmeehan</span>: what is curl exactly?</p>
+<p><span style="color:red;">mmeehan</span>: i feel like i have seen it in a few different contexts...</p>
+<p><span style="color:blue;">jfo</span>: curl is a command line http client</p>
+<p><span style="color:blue;">jfo</span>: you can do all sorts of stuff with it,</p>
+<p><span style="color:blue;">jfo</span>: omg</p>
+<p><span style="color:blue;">jfo</span>: this is so fun</p>
+<p><span style="color:blue;">jfo</span>: check this out</p>
+<p><span style="color:blue;">jfo</span>: open a terminal window</p>
+<p><span style="color:blue;">jfo</span>: and run <code>nc -l localhost 5000</code></p>
+<p><span style="color:red;">mmeehan</span>: what does nc do?</p>
+<p><span style="color:blue;">jfo</span>: it&#39;s short for &#39;netcat&#39;, which is a simple little utility that reads and writes data across networks.</p>
+<p><span style="color:blue;">jfo</span>: ok ready?</p>
+<p><span style="color:red;">mmeehan</span>: yea</p>
+<p><span style="color:blue;">jfo</span>: then open another terminal window</p>
+<p><span style="color:red;">mmeehan</span>: ok</p>
+<p><span style="color:blue;">jfo</span>: and run <code>curl localhost:5000</code></p>
+<p><span style="color:red;">mmeehan</span>: ok ok</p>
+<p><span style="color:red;">mmeehan</span>: what is happening</p>
+<p><span style="color:blue;">jfo</span>: haha did it work?</p>
+<p><span style="color:red;">mmeehan</span>: o0o0o i see i wasn&#39;t sure what nc is</p>
+<p><span style="color:red;">mmeehan</span>: cool</p>
+<p><span style="color:blue;">jfo</span>: curl is the most basic client, it sends simple get request headers and then prints the response to std out</p>
+<blockquote>
+<p>If the commands worked you should have seen something like</p>
+
+<pre><code>GET / HTTP/1.1
+Host: localhost:5000
+User-Agent: curl/7.43.0
+Accept: */*
+</code></pre>
+<p>Appear in the netcat window. Those are the &#39;headers&#39; I&#39;m referring to.</p>
+</blockquote>
+<p><span style="color:red;">mmeehan</span>: that&#39;s crazy</p>
+<p><span style="color:blue;">jfo</span>: you can also post with it, not sure of the flags off the top of my head...</p>
+<p><span style="color:blue;">jfo</span>: :sparkles: networking :sparkles:</p>
+<p><span style="color:blue;">jfo</span>: notice too, that</p>
+<p><span style="color:blue;">jfo</span>: the window you ran curl in</p>
+<p><span style="color:red;">mmeehan</span>: yeah</p>
+<p><span style="color:blue;">jfo</span>: is waiting on a response</p>
+<p><span style="color:red;">mmeehan</span>: yeah it&#39;s so smart!</p>
+<p><span style="color:blue;">jfo</span>: it will never get one, because it sent the request to netcat, which isn&#39;t a server that knows how to handle that request, and it also isn&#39;t piping to anything that responds, either.</p>
+<p><span style="color:red;">mmeehan</span>: this is supa cool</p>
+<p><span style="color:blue;">jfo</span>: but you could wire up like, the dumbest server ever, using pipes and random utilities, probably</p>
+<p><span style="color:red;">mmeehan</span>: ooo right i see</p>
+<p><span style="color:blue;">jfo</span>: but the last thing I was going to say</p>
+<p><span style="color:blue;">jfo</span>: is this weird unix operator that I learned about last year</p>
+<p><span style="color:blue;">jfo</span>: &lt;(arbitrary commands or whatever)</p>
+<p><span style="color:blue;">jfo</span>: run <code>echo &lt;(cat /dev/random)</code></p>
+<p><span style="color:red;">mmeehan</span>: ok</p>
+<p><span style="color:red;">mmeehan</span>: hmm i don&#39;t understand the return</p>
+<p><span style="color:blue;">jfo</span>: you get a path, right? to a device file!</p>
+<p><span style="color:blue;">jfo</span>: which is weird, right?</p>
+<p><span style="color:blue;">jfo</span>: :D</p>
+<p><span style="color:red;">mmeehan</span>: yeah i got a path ... where is it comin from? random? lol</p>
+<p><span style="color:blue;">jfo</span>: under the hood, *nix is implementing interfaces to processes as device files, which represent streams in some form or another!</p>
+<p><span style="color:blue;">jfo</span>: a usual path represents what we think of as data on disk</p>
+<p><span style="color:blue;">jfo</span>: but a stream can come from anywhere... like a stream of audio data could be coming in through an analog to digital converter, which is an external <em>device</em>, that the OS interfaces with through a <em>device file</em>!</p>
+<p><span style="color:blue;">jfo</span>: what that <code>&lt;(...)</code> command does, it exposes the internal device file representation of the process you run inside of it</p>
+<p><span style="color:blue;">jfo</span>: so you can access the return of that process like any other file</p>
+<p><span style="color:blue;">jfo</span>: that is to say</p>
+<p><span style="color:blue;">jfo</span>: that this will also work:</p>
+<p><span style="color:blue;">jfo</span>: <code>git apply &lt;(curl [url to raw diff])</code></p>
+<p><span style="color:blue;">jfo</span>: and essentially it does the same thing as writing the curl output to a file with <code>curl [url] &gt; /tmp/filename</code> and then reading it with <code>git apply</code></p>
+<p><span style="color:blue;">jfo</span>: but it skips the writing to disk step</p>
+<p><span style="color:blue;">jfo</span>: computers! :D</p>
+<p><span style="color:blue;">jfo</span>: now, I will actually look at the diff</p>
+<p><span style="color:red;">mmeehan</span>: this all sounds cool but i would have to read more into device files and streams and such to fully grasp the awesomeness ...</p>
+<p><span style="color:red;">mmeehan</span>: lol</p>
+<p><span style="color:blue;">jfo</span>: yeah it&#39;s a little mind bendy!</p>
+<p><span style="color:blue;">jfo</span>: sorry for getting excited about it!</p>
+<p><span style="color:red;">mmeehan</span>: y r u sry i am glad to learn !!</p>
+<p><span style="color:blue;">jfo</span>: you are right I am not sorry I am just being polite in case you hate this</p>
+<p><span style="color:red;">mmeehan</span>: i am excited to understand it better ... under the terminal hood</p>
+<p><span style="color:blue;">jfo</span>: I should write this all up in a blog post or something</p>
+<p><span style="color:red;">mmeehan</span>: yeah !</p>
+<p><span style="color:blue;">jfo</span>: oh yeah last tip for now and this is a small one</p>
+<p><span style="color:blue;">jfo</span>: you can put &#39;.diff&#39; on the end of any github pull request url</p>
+<p><span style="color:blue;">jfo</span>: like <code>https://github.com/username/reponame/pull/#####.diff</code></p>
+<p><span style="color:blue;">jfo</span>: and you&#39;ll get the raw diff of the whole changeset</p>
+<p><span style="color:blue;">jfo</span>: try it!</p>
+<p><span style="color:blue;">jfo</span>: or <code>.patch</code> too</p>
+<p><span style="color:blue;">jfo</span>: either will work</p>
+<p><span style="color:red;">mmeehan</span>: right wow!</p>
+<p><span style="color:blue;">jfo</span>: lol</p>
+<p><span style="color:blue;">jfo</span>: ok back to this ticket</p>
+<p><em>jfo and mmeehan work on a javascript bug until the heat death of the universe in the year 41201 AD. Scene.</em></p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

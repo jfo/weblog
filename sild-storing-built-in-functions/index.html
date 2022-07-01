@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; storing built in functions</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; storing built in functions" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/sild-storing-built-in-functions" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; storing built in functions</h1>
+        <sub>Jun 25, 2016</sub>
+        <p></p>
+        <div><p>It is silly to spend all of this evaluation time unnecessarily comparing
+strings to each other. For these builtin functions, I should really only have
+to do that once, at read time. Instead of storing the information about which
+builtins are which in labels, which are expensive to resolve, why can&#39;t I just
+store the function itself somehow, <em>in</em> the cell? It turns out I can totally do
+that, using <strong>function pointers</strong>!</p>
+<hr>
+
+<p>This <em>completely blew my mind</em> when I finally figured out how it works... and I
+think this is the point when I really grew to like C a LOT. It&#39;s not the
+easiest language to work with, and has mountains of idiosyncrises, but if you
+really grok what&#39;s going on in a C program, you really grok it!</p>
+<p>We&#39;ve been dealing a lot with pointers, and pointers are simply memory
+addresses. A function is just a wrapper over some generic computation, the
+instructions for which are just data like everything else, so it shouldn&#39;t be
+surprising that you can have a pointer to where that data lives in a program.
+What <em>is</em> surprising to me, is that you can invoke a function from a pointer to
+that function <em>in the same exact syntax</em> as invoking the function itself! <em>This
+is bonkers!</em></p>
+<p>An example will be much better, I think.</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">happy_birthday_mom</span><span class="hljs-params">()</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s\n&quot;</span>, <span class="hljs-string">&quot;happy birthday, Mom!&quot;</span>);
+}
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    happy_birthday_mom();
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Here I am printing out a happy birthday message to my Mom, because it is
+actually her birthday the day I am writing this and she is sure to see this
+heartfelt message on my computer screen thousands of miles away.</p>
+<p>I can <em>dereference</em> the happy birthday function, just like I could any other variable
+that takes up memory space!</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">happy_birthday_mom</span><span class="hljs-params">()</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;happy birthday, Mom!\n&quot;</span>);
+}
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">void</span> (*meta_happy_birthday_mom)() = &amp;happy_birthday_mom;
+    meta_happy_birthday_mom();
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>And this <em>totally works</em>! The syntax is really hard to read, but this is what
+assigning a variable to a function pointer looks like!</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">//    pointer to a function          getting function address</span>
+<span class="hljs-type">void</span> (*meta_happy_birthday_mom)() = &amp;happy_birthday_mom;
+<span class="hljs-comment">//^return type                   ^arg type signature</span>
+</code></pre>
+<p>If the function looked like this;</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">happy_birthday_mom</span><span class="hljs-params">(<span class="hljs-type">int</span> age1, <span class="hljs-type">int</span> age2)</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;happy birthday, Mom! You don&#x27;t look a day over %i%i!!\n&quot;</span>, age1, age2);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>then the function pointer declaration would look like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> (*meta_happy_birthday_mom)(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>) = &amp;happy_birthday_mom;
+</code></pre>
+<p>I also discovered during this process that the dereferencing operator is
+unneccesary in this case, so you can just assign the funciton directly to the
+declared function pointer like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> (*meta_happy_birthday_mom)(<span class="hljs-type">int</span>, <span class="hljs-type">int</span>) = happy_birthday_mom;
+</code></pre>
+<p>I am not sure why this is, or why dereferencing it gives the same address, but
+it does. Indeed, all three of these print the same address (which will of
+course be different each time the program is run):</p>
+
+<pre><code class="lang-c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%p\n&quot;</span>, meta_happy_birthday_mom); <span class="hljs-comment">// 0x107401ea0</span>
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%p\n&quot;</span>, happy_birthday_mom);      <span class="hljs-comment">// 0x107401ea0</span>
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%p\n&quot;</span>, &amp;happy_birthday_mom);     <span class="hljs-comment">// 0x107401ea0</span>
+</code></pre>
+<p>I will assume it is conventional <em>not</em> to use the dereference operator, since
+it is, strictly speaking, unneccessary.</p>
+<hr>
+
+<p>What does this mean for Sild? Well, since I know for sure that these built in
+functions are going to exist in the language, I can simply store a <em>pointer</em> to
+those functions <em>inside the cell itself!</em> That way, I can call every
+builtin the same way, and I never have to check against a whole bunch of
+strings each time I see a builtin! KILLIN!</p>
+<p>This will entail adding a new type to the <code>CellType</code> enum:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">CellType</span> {</span> NIL, LABEL, LIST, BUILTIN };
+</code></pre>
+<p>As soon as I do this, I get a bunch of compilation warnings telling me
+<em>exactly</em> where I need to handle this new case in all of the switch statements
+in the program. Yay switch statements! I&#39;ll address all of them in a moment,
+but it&#39;s nice to have them listed and have full confidence I won&#39;t miss any!</p>
+<p>I&#39;ll add a new possible <code>val</code> type in the <code>val</code> member&#39;s union <code>(V)</code>:</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> {</span>
+    <span class="hljs-type">char</span> * label;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> *(*<span class="hljs-title">func</span>)(<span class="hljs-keyword">struct</span> <span class="hljs-title">C</span>*);</span>
+} V;
+</code></pre>
+<p>Remember, the signature goes something like</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">return</span> type (*name)(argument_types)
+</code></pre>
+<p>All of the builtin functions have had the same signature so far, they accept a
+pointer and return a pointer. They all have to share that or this technique
+won&#39;t work.</p>
+<p>Next, I can move all of the string checking against these builtins back up into
+the <code>read</code> function. Here is what it looks like right now:</p>
+
+<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-type">char</span> current_char = **s;
+
+    verify(current_char);
+
+    <span class="hljs-keyword">switch</span>(current_char) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>:
+            list_depth--;
+            (*s)++;
+            <span class="hljs-keyword">return</span> &amp;nil;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27; &#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\n&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> read(s);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;(&#x27;</span>:
+            list_depth++;
+            (*s)++;
+            <span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = read(s)}, read(s));
+        <span class="hljs-keyword">default</span>: {
+            <span class="hljs-comment">// this is where the determination must be made as to whether a</span>
+            <span class="hljs-comment">// given string is a builtin or not.</span>
+            <span class="hljs-keyword">return</span> makecell(LABEL, (V){read_substring(s)}, read(s));
+        }
+    }
+}
+</code></pre>
+<p>To do this, I&#39;ll first pull that <code>LABEL</code> makecell into a helper function, and
+call it <code>categorize</code>:</p>
+
+<pre><code class="lang-c">C* <span class="hljs-title function_">categorize</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-keyword">return</span> makecell(LABEL, (V){read_substring(s)}, read(s));
+}
+</code></pre>
+<p>Next I&#39;ll read the substring in once for the function and add comparison <code>scmp</code>
+tests to see if the string is in fact a <code>BUILTIN</code> or just a regular, generic
+<code>LABEL</code>. I can pretty much lift this if/else branching straight from the apply
+function I had been writing before!</p>
+
+<pre><code class="lang-c">C* <span class="hljs-title function_">categorize</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-type">char</span> *token = read_substring(s);
+    <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;quote&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = quote }, read(s));
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;car&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = car }, read(s));
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;cdr&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = cdr }, read(s));
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;cons&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = cons }, read(s));
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> makecell(LABEL, (V){ token }, read(s));
+    }
+}
+</code></pre>
+<p>This is pretty dense and ugly, but it means I only have to check for these
+strings ONCE instead of <em>every single time</em> I eval the builtin functions.
+Unfortunately, there is no easy way to map a string to its counterpart function
+without some sort of key/value expression, and this is the simplest way to do
+that. If this were a more introspective language, you could perhaps do
+something like <code>&amp;asfunc(char *name)</code> or something... but this is C, so SOL. If
+you go check out the commits where this is happening, you&#39;ll notice some pretty
+haphazard forward declarations of these builtin functions so that the <code>reader</code>
+knows they exist. This is decidedly suboptimal, and I&#39;ll be cleaning up things
+like that aggressively when I refactor this into a proper program structure
+with headers and all that jazz. Up till about now though, it&#39;s just been
+simpler to keep everything in a single big file- and it&#39;s not even really that
+big! Only 344 lines at this point!</p>
+<p>Anyway, this totally breaks right now. Of course it does! I haven&#39;t told any of
+the rest of the program how to deal with this strange new type, the <code>BUILTIN</code>!</p>
+
+<pre><code class="lang-c">sild.c:<span class="hljs-number">51</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;BUILTIN&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+            ^
+sild.c:<span class="hljs-number">68</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;BUILTIN&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+            ^
+sild.c:<span class="hljs-number">97</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;BUILTIN&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+            ^
+sild.c:<span class="hljs-number">122</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;BUILTIN&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+            ^
+sild.c:<span class="hljs-number">294</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;BUILTIN&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+            ^
+sild.c:<span class="hljs-number">316</span>:<span class="hljs-number">1</span>: warning: control may reach end of non-<span class="hljs-type">void</span> function [-Wreturn-type]
+}
+^
+sild.c:<span class="hljs-number">319</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;BUILTIN&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+            ^
+sild.c:<span class="hljs-number">333</span>:<span class="hljs-number">1</span>: warning: control may reach end of non-<span class="hljs-type">void</span> function [-Wreturn-type]
+}
+^
+<span class="hljs-number">8</span> warnings generated.
+</code></pre>
+<p>These are basically all the same warning. Everywhere I have a switch that
+operates on a <code>CellType</code> enum, I have to account for the new <code>BUILTIN</code> type.
+So, one by one.</p>
+<p><code>free_cell</code> and <code>free_one_cell</code> just need to be told how to free a <code>val.func</code>
+member:</p>
+
+<pre><code class="lang-c">.
+.
+.
+<span class="hljs-keyword">case</span> BUILTIN:
+    <span class="hljs-built_in">free</span>(c-&gt;val.func);
+    free_cell(c-&gt;next);
+    <span class="hljs-built_in">free</span>(c);
+    <span class="hljs-keyword">break</span>;
+.
+.
+.
+</code></pre>
+<p><code>debug_list</code> and <code>print</code> both want to know how to display the new value. For now, I&#39;ll display the address of the function for both. This isn&#39;t ideal, but I&#39;ll come back to it in a second.</p>
+<p>For <code>debug_list</code>:</p>
+
+<pre><code class="lang-c">.
+.
+.
+<span class="hljs-keyword">case</span> BUILTIN:
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;BUILTIN- Address: %p, func: %p Next: %p\n&quot;</span>, l, l-&gt;val.func, l-&gt;next);
+    debug_list_inner(l-&gt;next, depth);
+    <span class="hljs-keyword">break</span>;
+.
+.
+.
+</code></pre>
+<p>and for <code>print</code>:</p>
+
+<pre><code class="lang-c">.
+.
+.
+<span class="hljs-keyword">case</span> BUILTIN:
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%p&quot;</span>, l-&gt;val.func);
+
+    <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot; &quot;</span>);
+
+    print_inner(l-&gt;next, depth);
+    <span class="hljs-keyword">break</span>;
+.
+.
+.
+</code></pre>
+<p>After handling all these, I&#39;m left with the big ones, <code>eval</code> and <code>apply</code>:</p>
+
+<pre><code class="lang-c">sild.c:<span class="hljs-number">316</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;BUILTIN&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+            ^
+sild.c:<span class="hljs-number">338</span>:<span class="hljs-number">1</span>: warning: control may reach end of non-<span class="hljs-type">void</span> function [-Wreturn-type]
+}
+^
+sild.c:<span class="hljs-number">341</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;BUILTIN&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+            ^
+sild.c:<span class="hljs-number">355</span>:<span class="hljs-number">1</span>: warning: control may reach end of non-<span class="hljs-type">void</span> function [-Wreturn-type]
+}
+^
+<span class="hljs-number">4</span> warnings generated.
+</code></pre>
+<p>Apply looks like this, currently:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">apply</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL: {
+            C *outcell;
+            <span class="hljs-keyword">if</span> (scmp(c-&gt;val.label, <span class="hljs-string">&quot;quote&quot;</span>)) {
+                outcell = quote(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(c-&gt;val.label, <span class="hljs-string">&quot;car&quot;</span>)) {
+                outcell = car(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(c-&gt;val.label, <span class="hljs-string">&quot;cdr&quot;</span>)) {
+                outcell = cdr(c-&gt;next);
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(c-&gt;val.label, <span class="hljs-string">&quot;cons&quot;</span>)) {
+                outcell = cons(c-&gt;next);
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+            }
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> outcell;
+        }
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> apply(eval(c));
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+}
+</code></pre>
+<p>All of those <code>scmp</code>s are unnecessary! I&#39;ve already done that work in <code>read</code>!
+Instead, I can <em>call the cell&#39;s function pointer on its <code>next</code> member</em>. This
+is awesome! So sleek!</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">apply</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> BUILTIN:
+            <span class="hljs-keyword">return</span> c-&gt;val.func(c-&gt;next);
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> apply(eval(c));
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-comment">// falling through</span>
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+}
+</code></pre>
+<p>Notice that <code>LABEL</code> will now fall through to the <code>NIL</code> case and exit, because
+we&#39;re no longer implementing these builtin functions using <code>LABELS</code>. I will
+change this in a later post, but for now it is alright that it would exit here.</p>
+<p>And finally, in <code>eval</code>, I want the <code>BUILTIN</code> to act the same as a regular label:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> BUILTIN:
+        <span class="hljs-keyword">case</span> LABEL:
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> LIST:
+        {
+            C *out = apply(c-&gt;val.<span class="hljs-built_in">list</span>);
+            out-&gt;next = eval(c-&gt;next);
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> out;
+        }
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>And that&#39;s it!</p>
+<hr>
+
+<p>Well, almost. I still have account for the weird way I&#39;m outputting the
+<code>BUILTIN</code> cells in debug and print.</p>
+<p>This is a little bit of a problem, actually, because once the program is
+running we don&#39;t really know which pointers are which functions!</p>
+<p>Consider this:</p>
+
+<pre><code>(quote (cons (quote theng) (quote (thing thang))))
+</code></pre>
+<p>prints out something like:</p>
+
+<pre><code class="lang-c">(<span class="hljs-number">0x104174be0</span> (<span class="hljs-number">0x104174920</span> theng) (<span class="hljs-number">0x104174920</span> (thing thang)))
+</code></pre>
+<p>You may be able to tell, with these side by side, that <code>cons</code> is at
+<code>0x104174be0</code> and <code>quote</code> is at <code>0x104174920</code>. But these are ephemeral
+locations- they will change each time the program is run. How can I know which
+<code>BUILTIN</code> cell is which?</p>
+<p>I can fix this by making the thing storing the function pointer into a struct
+that holds both a function pointer and a string representation of which
+function it is.</p>
+<p>So instead of:</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> {</span>
+    <span class="hljs-type">char</span> * label;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> *(*<span class="hljs-title">func</span>)(<span class="hljs-keyword">struct</span> <span class="hljs-title">C</span>*);</span>
+} V;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+    <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">CellType</span> <span class="hljs-title">type</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> <span class="hljs-title">val</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
+} C;
+</code></pre>
+<p>I&#39;ll have something like:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">funcval</span> {</span>
+    <span class="hljs-type">char</span> *func_name;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> *(*<span class="hljs-title">func</span>)(<span class="hljs-keyword">struct</span> <span class="hljs-title">C</span>*);</span>
+};
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> {</span>
+    <span class="hljs-type">char</span> * label;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">funcval</span> <span class="hljs-title">func</span>;</span>
+} V;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+    <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">CellType</span> <span class="hljs-title">type</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> <span class="hljs-title">val</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
+} C;
+</code></pre>
+<p>I have to go through the program and adjust every call to the <code>val.func</code> member
+depending on whether I&#39;m trying to get at the <code>name</code> or the <code>addr</code>. This is a
+little hairy, but it&#39;s not difficult and I won&#39;t show the details. Suffice to
+say following the compiler errors is enough to make this all work. I end up with things that look like </p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> BUILTIN:
+    <span class="hljs-built_in">free</span>(c-&gt;val.func.addr);
+    <span class="hljs-built_in">free</span>(c-&gt;val.func.name);
+    <span class="hljs-built_in">free</span>(c);
+    <span class="hljs-keyword">break</span>;
+</code></pre>
+<p>But now I can print out builtins with their proper names:</p>
+
+<pre><code class="lang-c">(quote (cons (quote theng) (quote (thing thang))))
+</code></pre>
+<p>Yields, as you would expect:</p>
+
+<pre><code class="lang-c">(cons (quote theng) (quote (thing thang)))
+</code></pre>
+<p>The fact that these functions are builtin is opaque to the user&#39;s perspective-
+it is an implementation detail.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

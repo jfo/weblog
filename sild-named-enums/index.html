@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; typedeffed enums have a benefit!</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; typedeffed enums have a benefit!" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/sild-named-enums" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; typedeffed enums have a benefit!</h1>
+        <sub>Jun 15, 2016</sub>
+        <p></p>
+        <div><p>I&#39;ve got a short one today.</p>
+<p>As of now, the enum I&#39;ve been using to represent cell types has been an anonymous one.</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">enum</span> {</span> NIL, LABEL, LIST };
+
+<span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> {</span>
+    <span class="hljs-type">char</span> * label;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list</span>;</span>
+};
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+    <span class="hljs-type">int</span> type;
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> <span class="hljs-title">val</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
+} C;
+</code></pre>
+<p>But I&#39;m going to give it a name.</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">CellType</span> {</span> NIL, LABEL, LIST };
+</code></pre>
+<p>So that I can use it as a type inside the cell struct, like this.</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+    <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">CellType</span> <span class="hljs-title">type</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> <span class="hljs-title">val</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
+} C;
+</code></pre>
+<p>Now, I&#39;m going to switch the internal conditionals inside of the <code>debug_list()</code>
+function from <code>if</code> / <code>else if</code> statements:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list_inner</span><span class="hljs-params">(C *l, <span class="hljs-type">int</span> depth)</span> {
+    printtabs(depth);
+    <span class="hljs-keyword">if</span> (l-&gt;type == LABEL) {
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LABEL- Address: %p, Value: %s Next: %p\n&quot;</span>, l, l-&gt;val.label, l-&gt;next);
+            debug_list_inner(l-&gt;next, depth );
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l-&gt;type == LIST) {
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LIST- Address: %p, List_Value: %p Next: %p\n&quot;</span>, l, l-&gt;val.<span class="hljs-built_in">list</span>, l-&gt;next);
+            debug_list_inner(l-&gt;val.<span class="hljs-built_in">list</span>, depth + <span class="hljs-number">1</span>);
+            debug_list_inner(l-&gt;next, depth);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (l-&gt;type == NIL) {
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;NIL- Address: %p\n&quot;</span>, &amp;nil);
+            printtabs(depth - <span class="hljs-number">1</span>);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;-------------------------------------------------------\n&quot;</span>);
+    }
+}
+</code></pre>
+<p>To a switch statement.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list_inner</span><span class="hljs-params">(C *l, <span class="hljs-type">int</span> depth)</span> {
+    printtabs(depth);
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LABEL- Address: %p, Value: %s Next: %p\n&quot;</span>, l, l-&gt;val.label, l-&gt;next);
+            debug_list_inner(l-&gt;next, depth );
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LIST- Address: %p, List_Value: %p Next: %p\n&quot;</span>, l, l-&gt;val.<span class="hljs-built_in">list</span>, l-&gt;next);
+            debug_list_inner(l-&gt;val.<span class="hljs-built_in">list</span>, depth + <span class="hljs-number">1</span>);
+            debug_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;NIL- Address: %p\n&quot;</span>, &amp;nil);
+            printtabs(depth - <span class="hljs-number">1</span>);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;-------------------------------------------------------\n&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
+<p>Notice that I&#39;ve had to add <code>break;</code>s at the end of each code block to prevent
+fall through, since this function doesn&#39;t return anything.</p>
+<p>Why do I want to do this? There is actually a really good reason! Because the
+compiler now knows what the type (<code>enum Celltype</code>) of the cell&#39;s <code>type</code> member
+is, and it knows that the switch statement is operating on this type, it can
+catch me if I try to write a switch and forget to account for every possible
+case. Look what happens if I remove the <code>LIST</code> case, for example!</p>
+
+<pre><code class="lang-c">sild.c:<span class="hljs-number">27</span>:<span class="hljs-number">13</span>: warning: enumeration value <span class="hljs-string">&#x27;LIST&#x27;</span> not handled in <span class="hljs-keyword">switch</span> [-Wswitch]
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+                    ^
+                    <span class="hljs-number">1</span> warning generated.
+</code></pre>
+<p>It is just a warning, it won&#39;t stop the compilation from succeeding, but it&#39;s a
+very valuable one! When I start writing the interpreter functions, it will
+become very important that every case is accounted for.</p>
+<hr>
+
+<p>While I&#39;m at the <code>typedef</code> store, I&#39;m also going to typedef the <code>union</code> that represents the value member of the cell struct.</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> {</span>
+    <span class="hljs-type">char</span> * label;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list</span>;</span>
+} V;
+</code></pre>
+<p>Now I can instantiate the <code>.val</code> member like this:</p>
+
+<pre><code class="lang-c">makecell(LIST, (V){.<span class="hljs-built_in">list</span> = read(s)}, read(s));
+</code></pre>
+<p>Short and sweet.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

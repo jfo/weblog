@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>How Rust Do?</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="How Rust Do?" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/how-rust-do" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">How Rust Do?</h1>
+        <sub>Oct 16, 2016</sub>
+        <p></p>
+        <div><p>Hey how does <a href="https://www.rust-lang.org/en-US/">Rust</a> do?</p>
+<p>I&#39;ve been kind of interested in Rust since my <a href="https://www.recurse.com">Recurse
+Center</a> batch in 2014. A <a href="http://src.codes/">batchmate of mine was
+getting interested in it</a>, and it sounded hella neat.</p>
+<p>But alas, it wasn&#39;t to be. I was new to programming, having only written
+Ruby for a few months, and Rust was still a long ways from 1.0 stable,
+with the nightlies breaking libraries and the like.  One or the other of these
+might have been alright, but not both. I&#39;m glad I didn&#39;t try to learn it then,
+I almost definitely would have been extremely frustrated.</p>
+<p>But I kept Rust in the back of my mind, and now, with at least some programming
+in C under my belt, more general experience, and Rust being firmly post 1.0, it
+feels like the right time to check it out in earnest. I gotta say, I&#39;m pretty
+excited about it so far.</p>
+<p>This is a tutorial/devlog of a small project, my first, I did in Rust. Once
+again, I&#39;m no expert, but I learned a lot doing it, and maybe someone will find
+this account useful- I start from nothing and build a thing that does a thing.
+Feel free to lmk if anything is borked. I would be happy to know.</p>
+<p>The code for this is <a href="https://github.com/urthbound/rav">here</a></p>
+<div id="toc"></div>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ul>
+<li><a href="#getrust">getting Rust</a></li>
+<li><a href="#mkdir">mkdir</a></li>
+<li><a href="#cargo">Cargo</a></li>
+<li><a href="#stdout">stdout</a></li>
+<li><a href="#mystery">mystery</a></li>
+<li><a href="#arbbytes">writing arbitrary bytes</a></li>
+<li><a href="#didsomethinghappen">did something happen?</a></li>
+<li><a href="#writingthewaves">writing the waves</a></li>
+<li><a href="#makesomenoise">make some noise</a></li>
+<li><a href="#runit">run it</a></li>
+<li><a href="#dumpster">let&#39;s refactor this dumpster fire</a></li>
+<li><a href="#stdoutlock">stdout.lock()</a></li>
+<li><a href="#byteorder">byteorder</a></li>
+<li><a href="#someotherstuff">some other stuff</a></li>
+<li><a href="#passinglocks">passing locks</a></li>
+<li><a href="#notjust">not just stdout, pls</a></li>
+<li><a href="#borrowchecker">the borrow checker</a></li>
+<li><a href="#ampersand">&amp;</a></li>
+<li><a href="#twofuncs">two sound producing functions</a></li>
+<li><a href="#comebacktowarnings">you said we were going to come back to those warnings</a></li>
+<li><a href="#resultsvsexceptions">result returns vs exceptions</a></li>
+<li><a href="#almostdoneass">almost done</a></li>
+<li><a href="#whatsthatclick">what&#39;s that click</a></li>
+<li><a href="#coda">coda</a></li>
+</ul>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="getrust"></div>
+
+<h2 id="getting-rust">getting Rust</h2>
+<p>Ok, first I have to get Rust on my machine. I could download a binary from that
+website, or I could use <a href="http://brewformulas.org/Rust">homebrew</a> on my mac, or
+I could use <a href="https://rustup.rs/">this thing called rustup</a>.</p>
+<p>That last site looks a little spartan, but it&#39;s an <a href="https://github.com/rust-lang-nursery/rustup.rs">officially supported
+project.</a>, so I&#39;m going to trust it.</p>
+
+<pre><code>curl https://sh.rustup.rs -sSf | sh
+</code></pre>
+<p>If you have a healthy scepticism of running arbitrary shell scripts on your
+machine (insider tip, you should totally have that!) you can check out what
+that&#39;s doing
+<a href="https://github.com/rust-lang-nursery/rustup.rs/blob/master/rustup-init.sh">here</a>.</p>
+<p>Or alternately, you could just curl it into less or something to read it first...</p>
+
+<pre><code>curl https://sh.rustup.rs -sSl | less
+</code></pre>
+<p>This should figure out what system you&#39;re on and download the correct
+installer and run it, and will create the <code>~/.cargo/</code> directory in your home
+directory and populate it with some stuff.</p>
+<p>Ok! What&#39;s in this thing anyway?</p>
+
+<pre><code>tree -L 2 ~/.cargo
+</code></pre>
+
+<pre><code>/Users/jfowler/.cargo
+├── bin
+│   ├── cargo
+│   ├── rust-gdb
+│   ├── rust-lldb
+│   ├── rustc
+│   ├── rustdoc
+│   └── rustup
+├── env
+└── registry
+    ├── cache
+    ├── index
+    └── src
+
+5 directories, 7 files
+</code></pre>
+<p>That bin directory is what we&#39;re interested in.  It will need to be on your
+<a href="https://www.cs.purdue.edu/homes/bb/cs348/www-S08/unix_path.html">path</a>... the
+installer might be able to add this for you, but it might not have. Or you
+might have to start a new shell or something to get access to these commands.</p>
+<p><code>rustup</code> is the version manager we&#39;re using! If the path is configured correctly,</p>
+
+<pre><code>rustup update
+</code></pre>
+<p>Should ensure you have the latest stable build! You can also run it without
+args to get a help menu. That was relatively easy...</p>
+<p>What&#39;s the other stuff?</p>
+
+<ul>
+<li><p><code>cargo</code> is the built in package manager / task runner. I&#39;ll come back to this
+in detail. It&#39;s pretty great though.</p>
+</li>
+<li><p><code>rust-gdb</code> and <code>rust-lldb</code> are <a href="https://michaelwoerister.github.io/2015/03/27/rust-xxdb.html">wrappers around
+debuggers</a>
+<code>gdb</code> and <code>lldb</code> respectively.</p>
+</li>
+<li><p><code>rustc</code> is the rust compiler. This is where we&#39;ll start.</p>
+</li>
+<li><p><code>rustdoc</code> generates documentation from inlined comments and code.</p>
+</li>
+<li><p><code>rustup</code> is the version manager.</p>
+</li>
+</ul>
+<p>Let&#39;s do something with rust! I&#39;m going to write a program that produces a wave
+file that&#39;s going to sound really good I promise.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="mkdir"></div>
+
+<h1 id="mkdir">mkdir</h1>
+
+<pre><code>mkdir rav
+</code></pre>
+<p>Rust is a compiled language, like C. A C program needs a <code>main</code> function, so
+that it knows where to start when you run it, and Rust does too.</p>
+<p><a href="https://www.youtube.com/watch?v=yNi0bukYRnA">In C</a>, err... I mean, <a href="https://en.wikipedia.org/wiki/%22Hello,_World!%22_program#History">In
+C</a>, the
+classic <code>Hello World!</code> looks like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+main( )
+{
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;hello, world\n&quot;</span>);
+}
+</code></pre>
+<p>In Rust, it looks almost exactly the same! It looks like this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Hello, World!&quot;</span>);
+}
+</code></pre>
+<p>A couple of things here!</p>
+<p>First, there is no <code>stdio.h</code> equivalent import! The compiler automatically
+inserts a <a href="https://doc.rust-lang.org/std/prelude/">prelude</a> that imports a lot
+of useful things right off the bat.</p>
+<p>Second, though I won&#39;t go into the differences just yet, <code>println!</code> is a
+<em>macro</em>, not a function. This distinction is very important, but for now you
+can just think of it like a function, as long as you keep in the back of your
+head that it is a macro. It does act look a function, anyway. Anything with a
+<code>!</code> at the end of it is a macro.</p>
+<p>We can compile that! Let&#39;s say it lives in a file called <code>hello.rs</code></p>
+
+<pre><code>rustc hello.rs
+</code></pre>
+<p>Will compile our code and give us an executable binary called <code>hello</code>.</p>
+<p>Run it!</p>
+
+<pre><code>./hello
+</code></pre>
+<p>And as you would expect...</p>
+
+<pre><code>Hello, World!
+</code></pre>
+<p>Hello, Rust!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="cargo"></div>
+
+<h1 id="cargo">Cargo</h1>
+<p>Cargo is rust&#39;s package manager. It feels a lot like ruby&#39;s
+<a href="http://bundler.io/">bundler</a> or python&#39;s
+<a href="https://pypi.python.org/pypi/pip">pip</a> or javascript&#39;s
+<a href="https://www.npmjs.com/"><strike>npm</strike></a>
+<a href="https://code.facebook.com/posts/1840075619545360/yarn-a-new-package-manager-for-javascript/">yarn</a>.</p>
+<p>That is to say, it is very easy to use, and declarative. You have a
+<a href="http://doc.crates.io/manifest.html">manifest</a> file written in
+<a href="https://users.rust-lang.org/t/why-does-cargo-use-toml/3577/4">toml</a> and
+running cargo will keep all the dependencies installed and up to date.</p>
+<p>But <code>cargo</code> isn&#39;t <em>just</em> dependency management... it&#39;s also a taskrunner.
+running <code>rustc</code> directly is more granular than is usually necessary, in fact!
+<code>cargo</code> provides facilities to create new projects, compile them in various
+modes, run tests, compile and run the project, and a whole lot more I don&#39;t
+know about yet. In fact, let&#39;s scratch that <code>mkdir</code>.</p>
+
+<pre><code>rm -r rav
+</code></pre>
+<p>and instead start a project with cargo.</p>
+
+<pre><code>cargo new --bin rav
+</code></pre>
+<p>This sets up a directory structure for a project that will produce an
+executable binary. The <code>hello world</code> code from above is already there, and the
+build directory is ignored by default.</p>
+<p>Try:</p>
+
+<pre><code>cargo run
+</code></pre>
+<p>This will compile the source and run the binary. It feels really smooth! I&#39;ve
+already added that command to my
+<a href="https://github.com/urthbound/vim-runners/blob/master/plugin/runners.vim#L41-L49">vim-runners</a>
+plugin that I use all the time.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="stdout"></div>
+
+<h1 id="stdout">stdout</h1>
+<p>If I want to write data out of the program, I&#39;m going to start by figuring out
+how to write arbitrary data to standard out. This facility is <em>not</em> included
+with the prelude, so I&#39;m going to have to import a thing for it. That looks
+like this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::stdout;
+</code></pre>
+<p>Now with access to that, I can call <code>stdout()</code>, which is a function that
+returns a &#39;handle&#39; to the standard out of the current process (read, access to
+the running program&#39;s environmental stdout pipe!).</p>
+<p>This program does nothing, but will compile:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::stdout;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-title function_ invoke__">stdout</span>();
+}
+</code></pre>
+<p>With rust, I&#39;ve found that just getting it to compile can be quite a challenge
+sometimes, but the compiler erroring is quite verbose and will lead you down
+some really interesting rabbit holes if you follow it. The fact that this
+compiles is :+1:!</p>
+<p>But of course, I actually want to <em>write something</em> to stdout. For that, I&#39;ll
+need to import another trait from the same namespace as before:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::stdout;
+<span class="hljs-keyword">use</span> std::io::Write;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">&quot;hi mom&quot;</span>);
+}
+</code></pre>
+<p>Because we&#39;re pulling in two things from the same module, we can inline them in
+a bracketed group, bash style...</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::{ stdout, Write };
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">&quot;hi mom&quot;</span>);
+}
+</code></pre>
+<p>This doesn&#39;t compile!</p>
+
+<pre><code>Compiling rav v0.1.0 (file:///Users/jfowler/code/rav)
+error[E0308]: mismatched types
+ --&gt; src/main.rs:5:20
+  |
+5 |     stdout().write(&quot;hi mom&quot;);
+  |                    ^^^^^^^^ expected slice, found str
+  |
+  = note: expected type `&amp;[u8]`
+  = note:    found type `&amp;&#39;static str`
+</code></pre>
+<p>See what I mean about the compiler? The problem here is that the function wants
+an array of <code>u8</code>s, not a static string, which is what I&#39;m giving it. a <code>u8</code> is
+the name for the unsigned 8 bit type- what in C would be a <code>char</code>, which was
+always a terrible misleading name.</p>
+<p>Strings have an <code>as_bytes()</code> method (can I call it a method? I think I&#39;m going
+to call it a method, since it implicitly passes self of whatever you&#39;re calling
+it on) that will turn that string into an array of bytes. So this will compile:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::{ stdout, Write };
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">&quot;hi mom&quot;</span>.<span class="hljs-title function_ invoke__">as_bytes</span>());
+}
+</code></pre>
+<p>So will this- apparently prefixing a string with a lowercase <code>b</code> does the same thing!</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::{ stdout, Write };
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;hi mom&quot;</span>);
+}
+</code></pre>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="mystery"></div>
+
+<h2 id="a-mysterious-warning">A mysterious warning</h2>
+<p>Both of these examples compile and run, but they also trigger compiler warnings:</p>
+
+<pre><code>Compiling rav v0.1.0 (file:///Users/jfowler/code/rav)
+warning: unused result which must be used, #[warn(unused_must_use)] on by default
+--&gt; src/main.rs:5:5
+|
+5 |     stdout().write(&quot;hi mom&quot;.as_bytes());
+|     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Finished debug [unoptimized + debuginfo] target(s) in 0.33 secs
+Running `target/debug/rav`
+hi mom
+</code></pre>
+<p><em>ooooo a mystery!</em></p>
+<p>This is just a warning- it doesn&#39;t halt compilation and the program runs, but
+it will become important to address this later on. It might seem a little
+strange at first, really! What even is this call returning? Why is it returning
+anything? The answer is pretty interesting and super important to understanding
+how rust works, in particularly with regard to error handling, but I&#39;m going to
+totally ignore it for now and come back to it in excruciating detail later on.</p>
+<p>We can issue compiler directives inline in the source code just above the
+function we want it to apply to. To silence these warnings, we&#39;ll add this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::{ stdout, Write };
+
+<span class="hljs-meta">#[allow(unused_must_use)]</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;hi mom&quot;</span>);
+}
+</code></pre>
+<p>Now, the program will compile without any warnings at all, and write &#39;hi mom&#39;
+to stdout when run.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="arbbytes"></div>
+
+<h2 id="writing-arbitrary-bytes">writing arbitrary bytes</h2>
+<p>So, <code>write()</code> ing to stdout is different than printing to standard out. The
+<code>Hello World!</code> using <code>println!</code> did that just fine. Why do I need to go to the
+extra effort of instantiating my own handle and writing byte arrays of
+characters by hand? If all I want to do is print human readable strings to
+output, then <code>println!</code> works just fine. But <code>write()</code> is much lower level- I
+can write <em>anything</em> to stdout, as long as I do it one <code>u8</code> at a time! This is
+very powerful!</p>
+<p>Can I do this?</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-number">1</span>);
+</code></pre>
+<p>Nope.</p>
+
+<pre><code>stdout().write(1);
+               ^ expected &amp;[u8], found integral variable
+</code></pre>
+<p>Maybe it&#39;s because I&#39;m passing in an integer without a type annotation? It
+could be anything? I can be explicit about that by appending a type directly to
+the number, like this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-number">1u8</span>);
+</code></pre>
+<p>This might look weird, but it&#39;s more explicit. It still doesn&#39;t work, though.</p>
+
+<pre><code>stdout().write(1u8);
+               ^^^^ expected &amp;[u8], found u8
+</code></pre>
+<blockquote>
+<p>Fun fact: that could also be written as <code>1_u8</code>. The underscore is ignored, and
+can be used for readibility in this or in very large numbers, like where you
+might put commas. Like <code>9_223_372_036_854_775_807u64</code> or something.</p>
+</blockquote>
+<p>Maybe it needs the number to be in an array?</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>([<span class="hljs-number">1u8</span>]);
+</code></pre>
+<p>Nyope.</p>
+
+<pre><code>stdout().write([1u8]);
+               ^^^^^ expected &amp;[u8], found array of 1 elements
+</code></pre>
+<blockquote>
+<p>I want to pause for a minute here and acknowledge how incredibly frustrating
+this might be for beginners to the language, especially if you&#39;re new to
+types in general. This type of thing would have crushed my resolve a few
+years ago!</p>
+</blockquote>
+<p>We&#39;re almost there. The type that it&#39;s expecting is prepended with an
+ampersand. In C, this would denote a pointer address to an array of <code>chars</code>
+(<code>u8</code>s in rust) in memory. In rust, the meaning of this symbol is similar but
+not quite the same. It does, in a sense, mean to pass something by reference-
+we don&#39;t copy the whole byte array over into the <code>write()</code> function, but we
+also don&#39;t really deal with pointers as abstractions in rust too often. Or at
+least, it seems that way to me. The ampersand is related more to concepts of
+ownership and borrowing than direct pointer manipulation, even if it&#39;s kind of
+the same thing in this case.</p>
+<p>Anyway- let&#39;s slap an ampersand on it.</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[<span class="hljs-number">1u8</span>]);
+</code></pre>
+<p>This one compiles! As will, surprisingly, this one:</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[<span class="hljs-number">1</span>]);
+</code></pre>
+<p>Turns out the compiler does do some type inference on integral types, after
+all!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="didsomethinghappen"></div>
+
+<h2 id="did-something-happen-">did something happen?</h2>
+<p>When you run this one, it doesn&#39;t seem to do anything. But it does! Let&#39;s run
+the binary directly, it gets compiled into <code>target/debug/rav</code>. We&#39;ll pipe it
+into <a href="http://linuxcommand.org/man_pages/xxd1.html"><code>xxd</code></a>, which makes a stream
+into a hexdump.</p>
+
+<pre><code>./target/debug/rav | xxd
+</code></pre>
+
+<pre><code>0000000: 01
+</code></pre>
+<p>There it is, that&#39;s the <code>1</code> we wrote to stdout!</p>
+<p><code>write()</code> was expecting a variably sized
+<a href="https://doc.rust-lang.org/beta/std/slice/">slice</a> of <code>u8</code>s, so we could write
+as many as we want.</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>, <span class="hljs-number">8</span>]);
+</code></pre>
+
+<pre><code>0000000: 0102 0304 0506 0708                      ........
+</code></pre>
+<p>If the values correspond to an ascii character code, then it will be
+interpreted as that character by the terminal.</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[<span class="hljs-number">104</span>, <span class="hljs-number">105</span>, <span class="hljs-number">32</span>, <span class="hljs-number">109</span>, <span class="hljs-number">111</span>, <span class="hljs-number">109</span>, <span class="hljs-number">22</span>]);
+</code></pre>
+
+<pre><code>0000000: 6869 206d 6f6d 16                        hi mom.
+</code></pre>
+<p>Well, it doesn&#39;t have to be ascii, it can be unicode too!</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[<span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb9</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xd5</span>, <span class="hljs-number">0x87</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb9</span>, <span class="hljs-number">0x94</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb9</span>, <span class="hljs-number">0x8f</span>, <span class="hljs-number">0xd1</span>, <span class="hljs-number">0x94</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb8</span>, <span class="hljs-number">0xa3</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb8</span>, <span class="hljs-number">0xa0</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0xd5</span>, <span class="hljs-number">0x87</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0xd1</span>, <span class="hljs-number">0x92</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb8</span>, <span class="hljs-number">0x84</span>, <span class="hljs-number">0xd7</span>, <span class="hljs-number">0xa9</span>, <span class="hljs-number">0xd1</span>, <span class="hljs-number">0x94</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0xd5</span>, <span class="hljs-number">0x87</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb9</span>, <span class="hljs-number">0x8f</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb9</span>, <span class="hljs-number">0x92</span>, <span class="hljs-number">0xd1</span>, <span class="hljs-number">0x94</span>, <span class="hljs-number">0x20</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb8</span>, <span class="hljs-number">0x84</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb8</span>, <span class="hljs-number">0xa3</span>, <span class="hljs-number">0xcf</span>, <span class="hljs-number">0x82</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb9</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0xe0</span>, <span class="hljs-number">0xb9</span>, <span class="hljs-number">0x80</span>, <span class="hljs-number">0x0a</span>]);
+</code></pre>
+<p>Neat!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="writingthewaves"></div>
+
+<h1 id="writing-the-waves">Writing the waves</h1>
+<p>We usually think of catting and echoing and stdout and whatnot as being related
+to textual out and input. But it&#39;s not, really! It can be <em>any type</em> of data. I
+want to make a sound file. For simplicity&#39;s sake, it should be uncompressed.
+I&#39;ll make a .wav file!</p>
+<p><img src="http://soundfile.sapp.org/doc/WaveFormat/wav-sound-format.gif" alt="img"></p>
+<p><a href="http://soundfile.sapp.org/doc/WaveFormat/">A wave file consists of a header
+chunk</a>, containing metadata about
+the data contained int he rest of the file, and a data chunk, which contains
+the, uh, data.</p>
+<p>The link above is really informative, but I&#39;ll go over it a little bit here
+too. I&#39;m going to be writing an 8 bit file, at 44.1kHz. I&#39;ll write all the data
+to <code>stdout</code> initally, from there I can do something else with it if I want.</p>
+<p>We start with the characters <code>&quot;RIFF&quot;</code></p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+</code></pre>
+<p>Just like writing a string; that&#39;s 4 bytes long.</p>
+<p>The next 4 bytes are a little-endian representation of how long the rest of the
+file is. We&#39;ll come back to that in a minute, for now I&#39;ll just put in nulls (0).</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span> ]);
+</code></pre>
+<p>Next I write the literal strings <code>&quot;WAVE&quot;</code> and <code>&quot;fmt &quot;</code>... note the extra space
+at the end of <code>&quot;fmt &quot;</code>, so that it takes up 4 bytes.</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span> ]);
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;WAVE&quot;</span>);
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;fmt &quot;</span>);
+</code></pre>
+<p>Next comes the size annotation for the metadata chunk. For this type of wave
+file, it is always 16 bytes.</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span> ]);
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;WAVE&quot;</span>);
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;fmt &quot;</span>);
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">16</span> ]);
+</code></pre>
+<p>BUT WAIT! All of the numerical values in this metadata header are in <em>little
+endian</em> format. This means that <em>the least significant byte comes first</em>. So,
+instead of</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">16</span> ]);
+</code></pre>
+<p>We write 16 like this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">16</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span> ]);
+</code></pre>
+<p><a href="https://www.youtube.com/watch?v=MEyV7moej-k">Here&#39;s a spoopy video describing endianess in more
+detail.</a> (Happy Halloween
+errybody.)</p>
+<p>Ok, little endian everywhere! The next two bytes denote the &quot;Audio Format&quot;. For
+uncompressed <a href="https://en.wikipedia.org/wiki/Pulse-code_modulation">PCM</a>, this
+value is always <code>1</code> (Again, in little endian!)</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+</code></pre>
+<p>The next two bits are the number of channels. Let&#39;s go easy on ourselves with mono!</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+</code></pre>
+<p>(That&#39;s one channel.)</p>
+<p>The next one is a tad different! It&#39;s 4 bytes that represent that <em>sample rate</em>
+of the file. We&#39;re going to go with 44.1kHz, which is the <a href="http://www.soundonsound.com/sound-advice/q-it-worth-recording-higher-sample-rate">&quot;red book
+standard&quot;</a>
+for digital audio.</p>
+<p>Now, we can&#39;t do this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">44100</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span> ]);
+</code></pre>
+<p>This doesn&#39;t make any sense. Each number is a single byte- which is 8 bits. A
+single byte can only hold a value up to 2<sup>8</sup>, which is 256. Including
+0, that&#39;s <a href="/c-and-simple-types/">256 possible values</a> from 0-255. We need a two byte / 16
+bit word to hold 44100.</p>
+<p>In binary, that value would look like this:</p>
+
+<pre><code>1010110001000100
+</code></pre>
+<p>If we split that up into two bytes, and assing hexadecimal values to the two bytes,</p>
+
+<pre><code>binary:   1010 1100    0100 0100
+hex:         a    c       4    4
+</code></pre>
+<p>Add a couple of padding zero bytes before these two byte:</p>
+
+<pre><code>00 00 ac 44
+</code></pre>
+<p>And then make the transformation to little endian:</p>
+
+<pre><code>44 ac 00 00
+</code></pre>
+<p>And there you go! It makes sense to write these into the stream as hexadecimal
+literals just like they look above,</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+</code></pre>
+<p>(though you could write their decimal equivalents)</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">68</span>, <span class="hljs-number">172</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span> ]);
+</code></pre>
+<p>(but, frankly, this makes even less sense, kind of...)</p>
+<p>We&#39;re getting close. Don&#39;t worry. We&#39;re going to make it.</p>
+<p>Next, is a 4 byte block for the byterate. The byterate is computed thusly:</p>
+
+<pre><code class="lang-rust">samplerate * number of channels * (bits per sample / <span class="hljs-number">8</span>)
+</code></pre>
+<p>This is basically asking: how many bytes are set aside for each second of
+audio? In our case,</p>
+
+<pre><code class="lang-rust"><span class="hljs-number">44100</span> * <span class="hljs-number">1</span> * (<span class="hljs-number">8</span> / <span class="hljs-number">8</span>)
+</code></pre>
+<p>This is the same as the sample rate, so we can reuse that value. Again, in
+little endian.</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+</code></pre>
+<p>Blockalign is similar... how many bytes <em>per sample</em> for all channels
+inclusively.</p>
+
+<pre><code class="lang-rust">number of channels * (bits per sample / <span class="hljs-number">8</span>)
+</code></pre>
+<p>That&#39;s just one.</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+</code></pre>
+<p>Sigh. Almost there.</p>
+<p>Bits per sample is self explanatory:</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">8</span>, <span class="hljs-number">0</span> ]);
+</code></pre>
+<p>Finally, another string literal to denote the beginning of the data chunk...</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;data&quot;</span>);
+</code></pre>
+<p>AND FINALLY, a four byte section to tell us how many bytes exist <em>in the whole
+data chunk</em>. Let&#39;s pretend we&#39;re going to make one second of sound... at a
+sample rate of 44100Hz, this means we&#39;re going to need 44100 samples to fill
+one second, so once again:</p>
+
+<pre><code class="lang-rust"><span class="hljs-comment">// subchunk2size == numsamples * numchannels * bitspersample / 8</span>
+<span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+</code></pre>
+<p>The whole header looks something like this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+
+    <span class="hljs-comment">// ChunkId</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+
+    <span class="hljs-comment">// ChunkSize = 36 + subchunk size 2</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x68</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+
+    <span class="hljs-comment">// Format</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;WAVE&quot;</span>);
+
+    <span class="hljs-comment">// Subchunk1ID</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;fmt &quot;</span>);
+
+    <span class="hljs-comment">// Subchunk1size</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[<span class="hljs-number">16</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// AudioFormat</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// Numchannels</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// Samplerate</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+
+    <span class="hljs-comment">// Byterate samplerate + num of channels * bits per sample /8</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+
+    <span class="hljs-comment">// blockalign</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// bitspersample</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">8</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// subchunk2 id</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;data&quot;</span>);
+
+    <span class="hljs-comment">// subchunk2size == numsamples * numchannels * bitspersample / 8</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+</code></pre>
+<p>Notice I&#39;ve filled in the subchunk 1 size with the appropriate value, which is
+the size of all the data + a constant of 36 for the header prior to the data
+chunk! That&#39;s the whole header!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="makesomenoise"></div>
+
+<h2 id="make-some-noise">Make some noise</h2>
+<p>We need some actual data to fill this wav file with! What is it going to be? We
+could start with the simplest to make noise there is- <a href="https://www.youtube.com/watch?v=EY5OQ2iVA50">white
+noise</a>.</p>
+<p>Sampled white noise is simply random values. Each sample is going to be some
+random value between 0 and 255. No computation necessary!</p>
+<p>We need 44100 of these values. It will look something like this!</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">for</span> <span class="hljs-variable">x</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..<span class="hljs-number">44100</span> {
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-title function_ invoke__">random</span>() ]);
+}
+</code></pre>
+<p>But rust isn&#39;t going to let us get away with a call like <code>random()</code>! We&#39;ll need
+a crate <a href="https://crates.io/crates/rand">library</a> for it!</p>
+<p>Using a crate is pretty easy! We just need to add it to our <code>Cargo.toml</code> file
+under <code>[dependencies]</code>, along with a version annotation. This glob means I
+don&#39;t care which version I get.</p>
+
+<pre><code class="lang-toml"><span class="hljs-section">[dependencies]</span>
+<span class="hljs-attr">rand</span> = <span class="hljs-string">&quot;*&quot;</span>
+</code></pre>
+<p>At the top of the file, we&#39;ll import the library.</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">extern</span> <span class="hljs-keyword">crate</span> rand;
+</code></pre>
+<p>And we&#39;ll have access to that namespacing and all of its functions and traits!</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">for</span> <span class="hljs-variable">x</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..<span class="hljs-number">44100</span> {
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ rand::random::&lt;<span class="hljs-type">u8</span>&gt;() ]);
+}
+</code></pre>
+<p>So, cool thing here- when we compile this, <em>cargo just like, works</em>. Assuming
+you&#39;re connected to the internet- the dependency will be downloaded and
+resolved and made available to you to be linked and compiled into the resulting
+binary.</p>
+<p><a href="https://github.com/urthbound/rav/commit/cf20c195d94a01b0edf70ef21d10118d39e977a2">We&#39;re just about right here, by the
+way.</a></p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="runit"></div>
+
+<h2 id="run-it">run it</h2>
+<p>You can compile and run this! If you <code>cargo run</code> it, it will both compile <em>and</em>
+run it.</p>
+<p>But surprise if you did, because it just screwed up your terminal!! :D Turns
+out catting a bunch of random binary shit to stdout can royally screw up your
+terminal emulator. I assume it&#39;s catching random values that correspond to
+instruction codes to the terminal display or something? I don&#39;t know, it
+doesn&#39;t matter, but the first time it happens it sure can freak you out. if you
+did this, just type <code>reset</code> and all should be well.</p>
+<blockquote>
+<p>If it screwed up your tmux, you can reset the pane by renaming it. <C-b>,<C-n></p>
+</blockquote>
+<p>But, also, there is an easy way to get stdout directed into a file!</p>
+
+<pre><code>cargo build
+target/debug/rav &gt; out.wav
+</code></pre>
+<p>Note that we have to build and run it this way because <code>cargo run</code> prints other
+stuff to stdout before compiling the file!</p>
+<p>Hey look a wav file! Try opening it up in a music player, and you should hear
+exactly one second of horrible abrasive white noise! We just wrote a soundfile
+from scratch.</p>
+<p>If I open the resulting horrible sounding wave file in some editing software
+that I can see the waveform in, I can look at the values I&#39;ve produced.</p>
+<p><img src="/images/whitenoise.png" /></p>
+<p>Looks like whitenoise! If we zoom in even further, it&#39;s easy to see the
+individual random values.</p>
+<p><img src="/images/whitenoiseclose.png" /></p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="dumpster"></div>
+
+<h2 id="let-s-refactor-this-dumpster-fire-">Let&#39;s refactor this dumpster fire!</h2>
+<p>Ok, so, first of all, it seems pretty straightforward that we might want to
+abstract the header writing out into a function called something clever, like
+<code>write_header</code>. How about that?</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::{ stdout, Write };
+<span class="hljs-keyword">extern</span> <span class="hljs-keyword">crate</span> rand;
+
+<span class="hljs-meta">#[allow(unused_must_use)]</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_header</span>() {
+    <span class="hljs-comment">// ChunkId</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+
+    <span class="hljs-comment">// ChunkSize = 36 + subchunk size 2</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x68</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+
+    <span class="hljs-comment">// Format</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;WAVE&quot;</span>);
+
+    <span class="hljs-comment">// Subchunk1ID</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;fmt &quot;</span>);
+
+    <span class="hljs-comment">// Subchunk1size</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[<span class="hljs-number">16</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// AudioFormat</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// Numchannels</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// Samplerate</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+
+    <span class="hljs-comment">// Byterate samplerate + num of channels * bits per sample /8</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+
+    <span class="hljs-comment">// blockalign</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">1</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// bitspersample</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">8</span>, <span class="hljs-number">0</span> ]);
+
+    <span class="hljs-comment">// subchunk2 id</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;data&quot;</span>);
+
+    <span class="hljs-comment">// subchunk2size == numsamples * numchannels * bitspersample / 8</span>
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+}
+
+<span class="hljs-meta">#[allow(unused_must_use)]</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-title function_ invoke__">write_header</span>();
+    <span class="hljs-comment">// for x in 0..44100 {</span>
+    <span class="hljs-comment">//     stdout().write(&amp;[ rand::random::&lt;u8&gt;() ]);</span>
+    <span class="hljs-comment">// }</span>
+}
+</code></pre>
+<p>Notice that we have to add the <code>#[allow(unused_must_use)]</code> annotation over
+<em>every</em> function that we want it to apply to. Explicit! (There is a way to have
+it apply to the <a href="http://stackoverflow.com/a/25877389/2727670">whole project</a>,
+but that&#39;s overkill right now.)</p>
+<blockquote>
+<p>Also, I&#39;ve commented out the noise generation so that I can <code>cargo run</code> with
+impunity <a href="https://www.youtube.com/watch?v=D_XI_290cfw">because I want to</a>.</p>
+</blockquote>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="stdoutlock"></div>
+
+<h2 id="stdout-lock-">stdout.lock()</h2>
+<p>So, this works fine. Each call to <code>stdout()</code> returns a locked handle to the
+stdout stream of that process. But, why suffer the overhead of calling that
+function over and over again? I can simply assign the output of that call
+<em>once</em> to a local binding, and reuse it... something like this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> <span class="hljs-variable">stdout</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+stdout.<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+</code></pre>
+<p>Woah hey this doesn&#39;t work!</p>
+
+<pre><code> --&gt; src/main.rs:9:5
+  |
+6 |     let stdout = stdout();
+  |         ------ use `mut stdout` here to make mutable
+...
+9 |     stdout.write(b&quot;RIFF&quot;);
+  |     ^^^^^^ cannot borrow mutably
+</code></pre>
+<p>IF I do that...</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">stdout</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+stdout.<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+</code></pre>
+<p>This will work. It will uncomplainingly compile and run, printint as you would
+expect. But this is not the best way to accomplish this!</p>
+<p>A mutable reference to stdout means that there is no lock against an attempt to
+write to it from anywhere!</p>
+<p>Look at this- what if I try to write to stdout in this mutable way from two
+different threads simultaneously?</p>
+
+<pre><code class="lang-rust">thread::<span class="hljs-title function_ invoke__">spawn</span>(|| {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..<span class="hljs-number">100</span> {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">stdout</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+        stdout.<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;1&quot;</span>);
+    }
+});
+thread::<span class="hljs-title function_ invoke__">spawn</span>(|| {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..<span class="hljs-number">100</span> {
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">stdout</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+        stdout.<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;2&quot;</span>);
+    }
+});
+</code></pre>
+<p>This will also compile... I have explicitly told the compiler to treat stdout
+at mutable in both places, but it&#39;s <em>completely unpredictable</em>. Every time you
+run it it will look different. I mean, look at this hot garbage!</p>
+
+<pre><code>   Compiling rav v0.1.0 (file:///Users/jfowler/code/rav)
+    Finished debug [unoptimized + debuginfo] target(s) in 0.41 secs
+     Running `target/debug/rav`
+11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111112222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+Press ENTER or type command to continue
+
+   Compiling rav v0.1.0 (file:///Users/jfowler/code/rav)
+    Finished debug [unoptimized + debuginfo] target(s) in 0.42 secs
+     Running `target/debug/rav`
+12thread &#39;&lt;unnamed&gt;&#39; panicked at &#39;cannot access stdout during shutdown&#39;, ../src/libcore/option.rs:700
+note: Run with `RUST_BACKTRACE=1` for a backtrace.
+
+Press ENTER or type command to continue
+
+   Compiling rav v0.1.0 (file:///Users/jfowler/code/rav)
+    Finished debug [unoptimized + debuginfo] target(s) in 0.42 secs
+     Running `target/debug/rav`
+12thread &#39;
+Press ENTER or type command to continue
+</code></pre>
+<p>I don&#39;t even rn.</p>
+<p>This is just to say that I need a mechanism for <em>locking stdout</em> to a
+particular handle before I write to it. This is implicit in the <code>stdout()</code>
+calls, as the lock persists only as long as the scope of that call, but I&#39;d
+prefer to be more explicit, as rust <a href="https://doc.rust-lang.org/beta/std/io/fn.stdout.html">seems to want me to want to
+be.</a></p>
+<p>So I will!</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> <span class="hljs-variable">stdout</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+<span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">handle</span> = stdout.<span class="hljs-title function_ invoke__">lock</span>();
+handle.<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+<span class="hljs-comment">// etc...</span>
+</code></pre>
+<p>The benefits of this method will become more apparent when I start to pass
+handles around!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id='byteorder'></div>
+
+<h2 id="byteorder">Byteorder</h2>
+<p>So, this all works fine, to write that header, but it&#39;s cryptic as all hell.</p>
+
+<pre><code class="lang-rust">handle.<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+</code></pre>
+<p>We know what that is because I explained it, but if I hadn&#39;t, would it make any
+sense at all at first glance? When I forget this repo exists and come back to
+it in a year... will I remember what that is? What it represents? That it&#39;s in
+little endian?</p>
+
+<pre><code class="lang-rust"><span class="hljs-comment">// little endian bytewise representation of the sample rate: 44100</span>
+handle.<span class="hljs-title function_ invoke__">write</span>(&amp;[ <span class="hljs-number">0x44</span>, <span class="hljs-number">0xac</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span> ]);
+</code></pre>
+<p>Sure, fine, I should comment more liberally. But that old axiom, that code
+should be it&#39;s own documentation? That might be bumpkis, writ generalis, but I
+can&#39;t argue with the idea that I should try to write code that clearly
+expresses my intent.</p>
+<p>The fine folks over in <code>#rust-beginners</code> pointed me to the perfect library to
+solve this problem... <a href="https://crates.io/crates/byteorder">Byteorder</a>.</p>
+<p>I pull in the crate in my Cargo.toml:</p>
+
+<pre><code class="lang-toml"><span class="hljs-section">[dependencies]</span>
+<span class="hljs-attr">rand</span> = <span class="hljs-string">&quot;*&quot;</span>
+<span class="hljs-attr">byteorder</span> = <span class="hljs-string">&quot;0.5.3&quot;</span>
+</code></pre>
+<p>And add the import <code>use</code> statement specifying what I&#39;m actually using in my
+preamble.</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> byteorder::{ LittleEndian, WriteBytesExt };
+</code></pre>
+<p>This library includes some utilities (WriteBytesExt) for writing different
+sized numerical types into anything that uses the <code>Write</code> trait. So instead of
+the cryptic thing above, I can write this:</p>
+
+<pre><code class="lang-rust">handle.write_u32::&lt;LittleEndian&gt;(<span class="hljs-number">44100</span>);
+</code></pre>
+<p>I&#39;m writing a u32 (which is 4 bytes wide) and I&#39;m writing it in little endian,
+and the number I am writing is clear af and human readable right in the code now!</p>
+<blockquote>
+<p>This syntax is pretty unfamiliar to me- the brackets and type annotations and where
+they can live and do things and what they do has so far been the most counter
+intuitive part of this exercise...</p>
+</blockquote>
+<p>I can do the same for all the other writes in the header function. And also I&#39;m
+going to pull a bunch of these values out into constants, because I don&#39;t
+anticipate changing them for the duration of these exercises.</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">const</span> SAMPLE_RATE: <span class="hljs-type">u32</span> = <span class="hljs-number">44100</span>;
+<span class="hljs-keyword">const</span> CHANNELS: <span class="hljs-type">u32</span> = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">const</span> HEADER_SIZE: <span class="hljs-type">u32</span> = <span class="hljs-number">36</span>;
+<span class="hljs-keyword">const</span> SUBCHUNK1_SIZE: <span class="hljs-type">u32</span> = <span class="hljs-number">16</span>;
+<span class="hljs-keyword">const</span> AUDIO_FORMAT: <span class="hljs-type">u32</span> = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">const</span> BIT_DEPTH: <span class="hljs-type">u32</span> = <span class="hljs-number">8</span>;
+<span class="hljs-keyword">const</span> BYTE_SIZE: <span class="hljs-type">u32</span> = <span class="hljs-number">8</span>;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_header</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">stdout</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">handle</span> = stdout.<span class="hljs-title function_ invoke__">lock</span>();
+
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">numsamples</span> = SAMPLE_RATE * <span class="hljs-number">1</span>;
+
+    handle.<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;RIFF&quot;</span>);
+    handle.write_u32::&lt;LittleEndian&gt;(HEADER_SIZE + numsamples);
+    handle.<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;WAVEfmt &quot;</span>);
+    handle.write_u32::&lt;LittleEndian&gt;(SUBCHUNK1_SIZE);
+    handle.write_u16::&lt;LittleEndian&gt;(AUDIO_FORMAT <span class="hljs-keyword">as</span> <span class="hljs-type">u16</span>);
+    handle.write_u16::&lt;LittleEndian&gt;(CHANNELS <span class="hljs-keyword">as</span> <span class="hljs-type">u16</span>);
+    handle.write_u32::&lt;LittleEndian&gt;(SAMPLE_RATE);
+    handle.write_u32::&lt;LittleEndian&gt;(SAMPLE_RATE * CHANNELS * (BIT_DEPTH / BYTE_SIZE));
+    handle.write_u16::&lt;LittleEndian&gt;((CHANNELS * (BIT_DEPTH / BYTE_SIZE)) <span class="hljs-keyword">as</span> <span class="hljs-type">u16</span>);
+    handle.write_u16::&lt;LittleEndian&gt;(BIT_DEPTH <span class="hljs-keyword">as</span> <span class="hljs-type">u16</span>);
+    handle.<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;data&quot;</span>);
+    handle.write_u32::&lt;LittleEndian&gt;(numsamples * CHANNELS * (BIT_DEPTH / BYTE_SIZE));
+}
+</code></pre>
+<p>Sure thing! That&#39;s a lot clearer. Also I snuck some other stuff in there!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="someotherstuff"></div>
+
+<h2 id="some-other-stuff">some other stuff</h2>
+<p>Look at the <code>as u16</code> statements in the audio format and the channels sections.
+So, in rust, there is <em>no implicit arithmetic integral type casting</em>. This is
+pretty wild!</p>
+<p>So for example,</p>
+
+<pre><code class="lang-rust"><span class="hljs-number">3</span> * <span class="hljs-number">3</span>           <span class="hljs-comment">// will work</span>
+<span class="hljs-number">3u32</span> * <span class="hljs-number">3u32</span>     <span class="hljs-comment">// will work</span>
+<span class="hljs-number">3u32</span> * <span class="hljs-number">3i32</span>     <span class="hljs-comment">// will NOT work</span>
+<span class="hljs-number">3u8</span> * <span class="hljs-number">3i64</span>      <span class="hljs-comment">// will NOT work</span>
+</code></pre>
+<p>They have to actually be the actual for realsies same type!</p>
+<p>I&#39;m setting most of those constants as u32 (because I don&#39;t need any negative
+numbers.) so that they can interact with each other. But I need to explicitly
+cast them into <code>u16</code> to write them as two byte words into stdout, even though
+the value is small enough to fit into a u16, it might NOT be small enough. How
+is the compiler supposed to know? That&#39;s some hard typing, right there.</p>
+<p>Also this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> <span class="hljs-variable">numsamples</span> = SAMPLE_RATE * <span class="hljs-number">1</span>;
+</code></pre>
+<p>I&#39;m computing how many samples total are in the file! This is straightforward-
+however many seconds the file is, times the sample rate. Look above, the number
+of samples is also used in computing the size of the whole file in the last
+line, and the size of the whole file including the headers in the second!</p>
+<p>Let&#39;s parameterize the seconds!</p>
+
+<pre><code class="lang-rust"><span class="hljs-meta">#[allow(unused_must_use)]</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_header</span>(seconds: <span class="hljs-type">u32</span>) {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">stdout</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">handle</span> = stdout.<span class="hljs-title function_ invoke__">lock</span>();
+
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">numsamples</span> = SAMPLE_RATE * seconds;
+<span class="hljs-comment">// etc...</span>
+</code></pre>
+<p>Now I can write a wav file of arbitrary length of white noise!</p>
+<blockquote>
+<p>TODO: link to that commit</p>
+</blockquote>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="passinglocks"></div>
+
+<h2 id="passing-locks-">passing locks.</h2>
+<p>I want <code>write_header()</code> to be more generic. I&#39;ll also parameterize the lock
+that I&#39;m passing in!</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_header</span>(seconds: <span class="hljs-type">u32</span>, <span class="hljs-keyword">mut</span> handle: StdoutLock) {
+        <span class="hljs-comment">// etc...</span>
+</code></pre>
+<p>and in <code>main()</code>:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> <span class="hljs-variable">stdoutvar</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+<span class="hljs-title function_ invoke__">write_header</span>(duration, stdoutvar.<span class="hljs-title function_ invoke__">lock</span>());
+</code></pre>
+<p>So, check out that typing! <code>seconds</code> has to be a <code>u32</code> but the <code>handle</code> var
+must be a <code>StdoutLock</code>.
+<a href="https://doc.rust-lang.org/std/io/struct.StdoutLock.html">StdoutLock</a> is the
+struct that is returned by a call to <code>.lock()</code>. Also, it <em>must</em> be mutable,
+because we&#39;re writing to it! You can&#39;t write to an immutable value, because
+that would be changing it, which means it&#39;s not immutable.</p>
+<p>Now, in main, I can create that lock once and pass it in to the function I&#39;ve
+made:</p>
+
+<pre><code class="lang-rust"><span class="hljs-meta">#[allow(unused_must_use)]</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = <span class="hljs-number">1</span>;
+
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">stdoutvar</span> = <span class="hljs-title function_ invoke__">stdout</span>();
+    <span class="hljs-title function_ invoke__">write_header</span>(duration, stdoutvar.<span class="hljs-title function_ invoke__">lock</span>());
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">x</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..duration * SAMPLE_RATE {
+        stdoutvar.<span class="hljs-title function_ invoke__">lock</span>().<span class="hljs-title function_ invoke__">write</span>(&amp;[ rand::random::&lt;<span class="hljs-type">u8</span>&gt;() ]);
+    }
+}
+</code></pre>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="notjust"></div>
+
+<h2 id="not-just-stdout-pls-">Not just stdout, pls.</h2>
+<p>So whiny.</p>
+<p>Ok so,</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_header</span>(seconds: <span class="hljs-type">u32</span>, <span class="hljs-keyword">mut</span> handle: StdoutLock) {
+    <span class="hljs-comment">// stuff</span>
+}
+</code></pre>
+<p>Is great, cause I can pass in a lock, but what if I want to write that output
+to something else? Say a file? Or a
+<a href="https://doc.rust-lang.org/std/vec/struct.Vec.html">vector</a>?</p>
+<p>Let&#39;s start with a vector! Vectors <a href="https://doc.rust-lang.org/src/std/up/src/libstd/io/impls.rs.html#211-226">do implement the write
+trait</a>,
+so all those writes should work on them the same way! (of course, it will need to be a vector of <code>u8</code>s, but that&#39;s ok!)</p>
+<p>I can&#39;t pass a vector in under the current type annotation, though, I&#39;ll get this:</p>
+
+<pre><code>error[E0308]: mismatched types
+  --&gt; src/main.rs:40:28
+   |
+40 |     write_header(duration, vec);
+   |                            ^^^ expected struct `std::io::StdoutLock`, found struct `std::vec::Vec`
+   |
+</code></pre>
+<p>But I could state that I could allow anything to be passed through, with a
+generic, which is denoted by <code>T</code></p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_header</span>&lt;T:Write&gt;(seconds: <span class="hljs-type">u32</span>, <span class="hljs-keyword">mut</span> handle: T) {
+</code></pre>
+<p>A generic needs to guarantee some trait or interface, that&#39;s the <code>&lt;T:Write&gt;</code>
+part of the function declaration.</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">let</span> <span class="hljs-variable">vec</span>: <span class="hljs-type">Vec</span>&lt;<span class="hljs-type">u8</span>&gt; = Vec::<span class="hljs-title function_ invoke__">new</span>();
+<span class="hljs-title function_ invoke__">write_header</span>(duration, vec);
+</code></pre>
+<p>This will work! I just wrote the header for a one second file straight into a vector.</p>
+<p>Let&#39;s print the vector to see what it looks like;</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">vec</span>: <span class="hljs-type">Vec</span>&lt;<span class="hljs-type">u8</span>&gt; = Vec::<span class="hljs-title function_ invoke__">new</span>();
+    <span class="hljs-title function_ invoke__">write_header</span>(duration, vec);
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{:?}&quot;</span>, vec);
+}
+</code></pre>
+<p>Uh oh...</p>
+
+<pre><code>error[E0382]: use of moved value: `vec`
+  --&gt; src/main.rs:42:22
+   |
+40 |     write_header(duration, vec);
+   |                            --- value moved here
+41 |
+42 |     println!(&quot;{:?}&quot;, vec);
+   |                      ^^^ value used here after move
+</code></pre>
+<p>Strap the eff in because it&#39;s our first encounter with</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="borrowchecker"></div>
+
+<h2 id="the-borrow-checker">The Borrow Checker</h2>
+<p><a href="https://doc.rust-lang.org/beta/book/ownership.html">The official docs</a> do a
+much better job of explaining this concept than I could hope to in a subsection
+of an introductory blog post, so I&#39;d suggest you go skim a little bit of that
+to get a feel for <em>what</em> the borrow checker is, <em>why</em> it is, and <em>how</em> it
+do. It&#39;s one of Rust&#39;s most powerful power features, and what makes GC-less
+memory management possible through static compile time analysis.</p>
+<p>I can however, in this limited example, explain <em>exactly</em> what the checker is
+complaining about.</p>
+<p>When a value is passed in with what you might think of as &quot;normal&quot; syntax (ie,
+no special annotation), <em>ownership</em> of that value is transferred to the function
+you&#39;re passing it into.  That means that at the end of <em>that</em> scope, the memory
+is freed.</p>
+<p>When we try to print it after that function call, we get the error above,
+because the memory is no longer guaranteed to be stable. It <em>might</em> be, but it
+<em>might</em> not be, so it won&#39;t compile.</p>
+<p>What if we pass in a (ahem) &quot;pointer&quot;?</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = <span class="hljs-number">1</span>;
+<span class="hljs-keyword">let</span>  <span class="hljs-variable">vec</span>: <span class="hljs-type">Vec</span>&lt;<span class="hljs-type">u8</span>&gt; = Vec::<span class="hljs-title function_ invoke__">new</span>();
+<span class="hljs-title function_ invoke__">write_header</span>(duration, &amp;vec);
+<span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{:?}&quot;</span>, vec);
+</code></pre>
+<p>No worky!</p>
+
+<pre><code>error[E0277]: the trait bound `&amp;std::vec::Vec&lt;u8&gt;: std::io::Write` is not satisfied
+</code></pre>
+<p>I&#39;m a little fuzzy on the terminology here, but I find it useful to think about
+it this way.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="ampersand"></div>
+
+<p>&amp;
+-</p>
+
+<pre><code>&amp;
+</code></pre>
+<p>In C, the ampersand <em>takes the address of a thing</em>. When you pass an address
+around, you&#39;re passing by reference, and when you mutate the data that thing
+references, you&#39;re mutating the original data, not a copy.</p>
+<p>In Rust, the ampersand <em>kind of sort of</em> means the same thing, but the
+appropriate term is &quot;borrowing&quot; the value- the difference being what I was
+saying before about who is responsible for deallocation.</p>
+<p>If the value is &quot;moved&quot;, i.e., passed by value into a called function- the
+called function is responsible for that deallocation. If however, the value is
+&quot;borrowed&quot; by the called function, the <em>caller</em> is still responsible for the
+deallocation.</p>
+<p>But passing by reference (er... <em>borrowing</em>) is <em>immutable by default.</em></p>
+<p>A borrowed vector is therefore read only. To make it writable, we have to
+explicitly <em>say</em> we&#39;re borrowing a <em>mutable</em> reference, with <code>mut</code>.</p>
+<p>Both in the function declaration:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">write_header</span>&lt;T:Write&gt;(seconds: <span class="hljs-type">u32</span>, handle: &amp;<span class="hljs-keyword">mut</span> T) {
+    <span class="hljs-comment">// stuff...</span>
+}
+</code></pre>
+<p>And in the variable binding:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">vec</span>: <span class="hljs-type">Vec</span>&lt;<span class="hljs-type">u8</span>&gt; = Vec::<span class="hljs-title function_ invoke__">new</span>();
+</code></pre>
+<p>... oh yes, <em>and</em> in the call to the function.</p>
+
+<pre><code class="lang-rust"><span class="hljs-title function_ invoke__">write_header</span>(duration, &amp;<span class="hljs-keyword">mut</span> vec);
+</code></pre>
+<p>With all these conditions satisfied, we can now pass in a mutable vector which
+gets written to in the function call, and then print it to the screen after
+that.</p>
+
+<pre><code>[82, 73, 70, 70, 104, 172, 0, 0, 87, 65, 86, 69, 102, 109, 116, 32, 16, 0, 0, 0, 1, 0, 1, 0, 68, 172, 0, 0, 68, 172, 0, 0, 1, 0, 8, 0, 100, 97, 116, 97
+</code></pre>
+<p>Isn&#39;t that something?</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="twofuncs"></div>
+
+<h2 id="two-sound-producing-functions">two sound producing functions</h2>
+<p>I will also factor out the white noise generation into its own function, with the same type signature as <code>write_header()</code> :</p>
+
+<pre><code class="lang-rust"><span class="hljs-meta">#[allow(unused_must_use)]</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">make_some_noise</span>&lt;T: Write&gt;(seconds: <span class="hljs-type">u32</span>, handle: &amp;<span class="hljs-keyword">mut</span> T) {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..seconds * SAMPLE_RATE {
+        handle.<span class="hljs-title function_ invoke__">write</span>(&amp;[ rand::random::&lt;<span class="hljs-type">u8</span>&gt;() ]);
+    }
+}
+</code></pre>
+<blockquote>
+<p>How about this one?</p>
+
+<pre><code class="lang-rust"> <span class="hljs-meta">#[allow(unused_must_use)]</span>
+ <span class="hljs-keyword">fn</span> <span class="hljs-title function_">make_a_random_ass_sawtooth</span>&lt;T: Write&gt;(seconds: <span class="hljs-type">u32</span>, handle: &amp;<span class="hljs-keyword">mut</span> T) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Result</span>&lt;(), Error &gt; {
+     <span class="hljs-keyword">for</span> <span class="hljs-variable">x</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..seconds * SAMPLE_RATE {
+         <span class="hljs-built_in">try!</span>(handle.<span class="hljs-title function_ invoke__">write</span>(&amp;[ ((x + <span class="hljs-number">1</span>) % <span class="hljs-number">255</span>) <span class="hljs-number">1</span><span class="hljs-keyword">as</span> <span class="hljs-type">u8</span> ]));
+     }
+ }
+</code></pre>
+<p>The period of this <a href="https://en.wikipedia.org/wiki/Sawtooth_wave">waveform</a> is
+SAMPLE_RATE / <a href="https://doc.rust-lang.org/std/u8/constant.MAX.html">u8::MAX</a>.
+That&#39;s 44100 / 255 = 172.94, which is just a hair under
+<a href="http://www.phy.mtu.edu/~suits/notefreqs.html">F3</a>. Give it a try!</p>
+</blockquote>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="comebacktowarnings"></div>
+
+<h2 id="you-said-we-were-going-to-come-back-to-those-warnings-">You said we were going to come back to those warnings.</h2>
+<p>So I did. It&#39;s time to remove all the <code>#[allow(unused_must_use)]</code>
+annotations.</p>
+<p>Surprise! Everything breaks!</p>
+
+<pre><code class="lang-rust">   Compiling rav v0.<span class="hljs-number">1.0</span> (file:<span class="hljs-comment">///Users/jfowler/code/rav)</span>
+warning: unused result which must be used, <span class="hljs-meta">#[warn(unused_must_use)]</span> on by default
+  -<span class="hljs-punctuation">-&gt;</span> src/main.rs:<span class="hljs-number">42</span>:<span class="hljs-number">9</span>
+   |
+<span class="hljs-number">42</span> |         handle.<span class="hljs-title function_ invoke__">write</span>(&amp;[ rand::random::&lt;<span class="hljs-type">u8</span>&gt;() ]);
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+</code></pre>
+<p>Well, not everything breaks, really, it still compiles, but with <em>ton</em> of
+warnings. In fact, I get a separate warning like the above for every call to
+any kind of <code>write</code>.</p>
+<p>Let&#39;s go back to the simplest case where we first saw this message.</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::{ stdout, Write };
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;hi mom&quot;</span>);
+}
+</code></pre>
+
+<pre><code>warning: unused result which must be used, #[warn(unused_must_use)] on by default
+ --&gt; thing.rs:5:5
+  |
+5 |     stdout().write(b&quot;hi mom&quot;);
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+hi mom
+</code></pre>
+<p>What is this unused <code>result</code> thing? Let&#39;s try to get a little more information
+about it... maybe I can print it to something? It&#39;s being returned from that
+expression, so I&#39;ll assign it to a thing and then <code>println!</code> it...</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::{ stdout, Write };
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">thing</span> = <span class="hljs-title function_ invoke__">stdout</span>().<span class="hljs-title function_ invoke__">write</span>(<span class="hljs-string">b&quot;hi mom\n&quot;</span>);
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{:?}&quot;</span>, thing);
+}
+</code></pre>
+<p>yields:</p>
+
+<pre><code>hi mom
+Ok(7)
+</code></pre>
+<p>OOOOOOH, the result is a <a href="https://doc.rust-lang.org/beta/std/result/"><em>Result</em>, with a capital
+<code>R</code></a>!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="resultsvsexceptions"></div>
+
+<h2 id="result-returns-vs-exceptions">result returns vs exceptions</h2>
+<p>So, Rust doesn&#39;t have exceptions. There is no concept of a <code>try</code>/<code>catch</code> block
+like there is in many other languages. Instead, Rust uses <a href="https://doc.rust-lang.org/book/error-handling.html">return
+values</a> to communicate
+success and failure.</p>
+<p>For every call that can fail, like <code>write()</code>, the expression evaluates to a
+Return type, that can either be <code>Ok</code> or <code>Err</code>. <a href="https://doc.rust-lang.org/beta/std/result/enum.Result.html">That&#39;s this bit</a>:</p>
+
+<pre><code class="lang-rust"><span class="hljs-meta">#[must_use]</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">Result</span>&lt;T, E&gt; {
+   <span class="hljs-title function_ invoke__">Ok</span>(T),
+   <span class="hljs-title function_ invoke__">Err</span>(E),
+}
+</code></pre>
+<p>So, if a <code>Result</code> is <code>Ok</code>, it can return any other type <code>T</code> wrapped in that
+Result. If it&#39;s an Error, it return an <code>E</code> type wrapped in a Result. Either
+way, the return value of a potentially failable function call is a <em>something</em>
+wrapped in a Result.</p>
+<blockquote>
+<p>This has something to do / a lot in common with the <a href="https://hackage.haskell.org/package/category-extras-0.52.0/docs/Control-Monad-Either.html">Either monad in
+Haskell</a>, and
+the <a href="http://danielwestheide.com/blog/2012/12/19/the-neophytes-guide-to-scala-part-5-the-option-type.html">Option type in
+Scala</a>
+and the <a href="http://sml-family.org/Basis/option.html">option datatype</a> in ML. I
+don&#39;t really know about how those things work other than to mention them as
+probably pertinent here! Rust is my first encounter with this concept in a
+language I&#39;m actively trying to learn, but it&#39;s not new in the world at large!</p>
+</blockquote>
+<p>The compiler is telling us that we need to address this Result, because it
+<em>could</em> be potentially failing. As the code is written, if any of the writes
+fail, the program will do weird things!</p>
+<p>Check this one out:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::fs::File;
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = File::<span class="hljs-title function_ invoke__">open</span>(<span class="hljs-string">&quot;file_that_doesnt_exist.lol&quot;</span>);
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{:?}&quot;</span>, result);
+}
+</code></pre>
+
+<pre><code>Err(Error { repr: Os { code: 2, message: &quot;No such file or directory&quot; } })
+</code></pre>
+<p>That&#39;s a potential error case that I need to address in my code! This is what
+the warning was warning about.</p>
+<p>There are a few ways to do this! The simplest way is to call
+<a href="https://doc.rust-lang.org/1.7.0/std/option/enum.Option.html#method.unwrap"><code>.unwrap()</code></a>
+on the expression that returns a result. This will &quot;unwrap&quot; the option, and if
+it&#39;s <code>Ok()</code> it will return whatever the result has wrapped. If it&#39;s an <code>Err()</code>,
+it will simply panic, killing the process. This is a rudimentary way of
+handling the error, yes, but it definitely beats the program mysteriously
+dying, or worse, undefined behavior after that failure to write or whatever.</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::fs::{File};
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    File::<span class="hljs-title function_ invoke__">open</span>(<span class="hljs-string">&quot;file_that_doesnt_exist.lol&quot;</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+}
+</code></pre>
+
+<pre><code>thread &#39;main&#39; panicked at &#39;called `Result::unwrap()` on an `Err` value: Error { repr: Os { code: 2, message: &quot;No such file or directory&quot; } }&#39;, ../src/libcore/result.rs:788
+note: Run with `RUST_BACKTRACE=1` for a backtrace.
+</code></pre>
+<p>backtrace == sweet action.</p>
+<p>Better still is to <em>actively deal with the error</em> somehow. I could assign that
+result to a local var and handle each case explicitly using a match statement...</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::fs::{File};
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = File::<span class="hljs-title function_ invoke__">open</span>(<span class="hljs-string">&quot;file_that_doesnt_exist.lol&quot;</span>);
+    <span class="hljs-keyword">match</span> result {
+        <span class="hljs-title function_ invoke__">Ok</span>(v) =&gt; <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;success opening file :) {:?}&quot;</span>, v),
+        <span class="hljs-title function_ invoke__">Err</span>(e) =&gt; <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;error opening file!!!: {:?}&quot;</span>, e),
+    }
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;the above doesn&#x27;t exit the thread though, so this is still printed.&quot;</span>);
+}
+</code></pre>
+<p><a href="https://doc.rust-lang.org/stable/book/patterns.html">Pattern matching is super common and useful in
+rust!</a> The <code>match</code>
+statement is like a superpowered <code>switch</code> from C. <a href="http://blog.jfo.click/sild-named-enums/">Just like in
+C</a> the compiler will warn you if you
+haven&#39;t handled all the possible cases for a typed match! If I try to do this,
+for example:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::fs::{File};
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = File::<span class="hljs-title function_ invoke__">open</span>(<span class="hljs-string">&quot;file_that_doesnt_exist.lol&quot;</span>);
+    <span class="hljs-keyword">match</span> result {
+        <span class="hljs-title function_ invoke__">Ok</span>(v) =&gt; <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;success opening file :) {:?}&quot;</span>, v),
+    }
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;the above doesn&#x27;t exit the thread though, so this is still printed.&quot;</span>);
+}
+</code></pre>
+<p>I get this:</p>
+
+<pre><code>error[E0004]: non-exhaustive patterns: `Err(_)` not covered
+ --&gt; thing.rs:5:11
+  |
+5 |     match result {
+  |           ^^^^^^ pattern `Err(_)` not covered
+
+error: aborting due to previous error
+</code></pre>
+<p>This is a great example of the compiler being your best friend! Non exhaustive
+pattern matching would mean that I could have weird things happen.</p>
+<p>So a thing about match, syntactically, is that it can be inlined and the
+intermediate <code>result</code> variable can be dispensed with, assuming you don&#39;t need
+that result type for anything else:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">match</span> File::<span class="hljs-title function_ invoke__">open</span>(<span class="hljs-string">&quot;file_that_doesnt_exist.lol&quot;</span>) {
+    <span class="hljs-title function_ invoke__">Ok</span>(v) =&gt; <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;success opening file :) {:?}&quot;</span>, v),
+    <span class="hljs-title function_ invoke__">Err</span>(e) =&gt; <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;error opening file!!!: {:?}&quot;</span>, e),
+}
+</code></pre>
+<p>In reality, I need to handle <em>every single write() call</em> and the possible Error
+results. You can imagine how tedious, and ugly, and verbose this would get in a
+function like <code>write_header()</code>, especially when all the handlers basically do
+the same thing. Rust provides a macro that does this for me,
+<a href="https://doc.rust-lang.org/src/core/up/src/libcore/macros.rs.html#223-230"><code>try!</code></a>.
+Unfortunately, there is a catch! ... this won&#39;t work...</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::fs::{ File };
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-built_in">try!</span>(File::<span class="hljs-title function_ invoke__">open</span>(<span class="hljs-string">&quot;file_that_doesnt_exist.lol&quot;</span>));
+}
+</code></pre>
+<p>And fails with kind of a cryptic error..</p>
+
+<pre><code>error[E0308]: mismatched types
+ --&gt; &lt;std macros&gt;:5:8
+  |
+5 | return $ crate :: result :: Result :: Err (
+  |        ^ expected (), found enum `std::result::Result`
+thing.rs:4:5: 4:52 note: in this expansion of try! (defined in &lt;std macros&gt;)
+  |
+  = note: expected type `()`
+  = note:    found type `std::result::Result&lt;_, _&gt;`
+</code></pre>
+<p>This was was a head scratcher for me for a bit. Why would this fail? And what
+was expecting
+<a href="http://stackoverflow.com/questions/31107614/what-does-an-empty-set-of-parens-mean-when-used-in-a-generic-type-declaration"><code>()</code></a>?</p>
+<p>The answer is perfectly reasonable but very sneaky! Check again the
+<a href="https://doc.rust-lang.org/src/core/up/src/libcore/macros.rs.html#227"><code>try!</code></a>.
+macro&#39;s source... you&#39;ll notice there is a hidden <code>return</code> statement in there!</p>
+<p>In this case the compiler error is referencing <em>main itself</em>. It was expected
+to return nothing, but a branch of that code (expanded from <code>try!</code>) could
+potentially return the errored result. This was tricky!</p>
+<p><code>try!</code> is designed to allow early bailing from a function that returns a
+result. It doesn&#39;t work in <code>main()</code> because main doesn&#39;t return a result! But
+it will work perfectly fine in the other functions I&#39;ve written, with a
+little change to their signatures... take the noise function as an example!</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">make_some_noise</span>&lt;T: Write&gt;(seconds: <span class="hljs-type">u32</span>, handle: &amp;<span class="hljs-keyword">mut</span> T) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Result</span>&lt; (), Error &gt; {
+
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..seconds * SAMPLE_RATE {
+       <span class="hljs-built_in">try!</span>(handle.<span class="hljs-title function_ invoke__">write</span>(&amp;[ rand::random::&lt;<span class="hljs-type">u8</span>&gt;() ]));
+    }
+
+    <span class="hljs-title function_ invoke__">Ok</span>(())
+}
+</code></pre>
+<p>This will compile just fine- I am saying that this function will return a
+result of either nothing (<code>Ok(())</code>) or an error! This can then be <em>explicitly
+passed</em> to the caller (in this case <code>main</code>) and handled there.</p>
+<p>For my case, simply <code>unwrap()</code>ping the return from the <code>make_some_noise()</code> call
+inside of <code>main()</code> is sufficient. If it failed at any point, ok whatevers, just bail.
+In production code or a bigger program, I might want to propogate that error
+further, or handle it more gracefully, but this is ok for now.</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = <span class="hljs-number">1</span>;
+
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">fp</span> = File::<span class="hljs-title function_ invoke__">create</span>(<span class="hljs-string">&quot;out.wav&quot;</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+
+    <span class="hljs-title function_ invoke__">write_header</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">make_some_noise</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp).<span class="hljs-title function_ invoke__">unwrap</span>();
+}
+</code></pre>
+<p><a href="https://github.com/urthbound/rav/commit/8994c8e0163a7a0d67bcac9f043745dd3327421f">I also wrap all the <code>write</code> calls in <code>write_header()</code> in <code>try!</code> macros!</a></p>
+<p>And now I don&#39;t have to suppress those warnings, because I&#39;ve addressed them,
+and they don&#39;t show up!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="almostdoneass"></div>
+
+<h2 id="almost-done">almost done</h2>
+<p>This is getting pretty close to being a doneass program, but I still haven&#39;t
+really written any sound output that sounds like anything, except for that
+awful sawtooth whose frequency is tied to the sample rate.</p>
+<p>Here&#39;s a function that computes sinusoidal values on a sample by sample basis
+given a frequency:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">sine_wave</span>&lt;T: Write&gt;(seconds: <span class="hljs-type">u32</span>, handle: &amp;<span class="hljs-keyword">mut</span> T, freq: <span class="hljs-type">f64</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">Result</span>&lt;(), Error &gt; {
+    <span class="hljs-keyword">for</span> <span class="hljs-variable">x</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span>..seconds * SAMPLE_RATE {
+       <span class="hljs-keyword">let</span> <span class="hljs-variable">x</span> = x <span class="hljs-keyword">as</span> <span class="hljs-type">f64</span>;
+       <span class="hljs-built_in">try!</span>(handle.<span class="hljs-title function_ invoke__">write</span>(&amp;[ ((((((x * <span class="hljs-number">2f64</span> * PI) / SAMPLE_RATE <span class="hljs-keyword">as</span> <span class="hljs-type">f64</span>) * freq).<span class="hljs-title function_ invoke__">sin</span>() + <span class="hljs-number">1f64</span> )/ <span class="hljs-number">2f64</span>) * <span class="hljs-number">255f64</span>) <span class="hljs-keyword">as</span> <span class="hljs-type">u8</span> ]));
+    }
+    <span class="hljs-title function_ invoke__">Ok</span>(())
+}
+</code></pre>
+<p>I debated whether or not to explain everything in that function right now. I&#39;m
+not going to! I&#39;ll come back to it in another post, because it&#39;s fascinating,
+but it&#39;s not about rust, really..</p>
+<p>I used it to write a <a href="https://www.youtube.com/watch?v=-jO-sIrjTq://www.youtube.com/watch?v=-jO-sIrjTqg">Barry Harris
+scale</a></p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">duration</span> = <span class="hljs-number">1</span>;
+
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">fp</span> = File::<span class="hljs-title function_ invoke__">create</span>(<span class="hljs-string">&quot;out.wav&quot;</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+
+    <span class="hljs-title function_ invoke__">write_header</span>(duration * <span class="hljs-number">9</span>, &amp;<span class="hljs-keyword">mut</span> fp).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">523.25_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">493.88_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">440_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">415.30_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">392_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">349.23_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">329.63_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">293.66_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+    <span class="hljs-title function_ invoke__">sine_wave</span>(duration, &amp;<span class="hljs-keyword">mut</span> fp, <span class="hljs-number">261.63_f64</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
+}
+</code></pre>
+<p><a href="https://github.com/urthbound/rav/commit/f291ae4d50573c0591ef8496cbadce1e6c111cd2">Try compiling
+it!</a></p>
+<p><img src="/images/sinusoidal.png" /></p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="whatsthatclick"></div>
+
+<h2 id="what-s-that-click">what&#39;s that click</h2>
+<p>So, I gotta share this one last thing that I learned. If you compile that last
+example and play the resulting wave file, you might notice something strange.
+There is an audible clicking between some of the notes being played. I used to
+wonder about what that is, but with this output you can just like, <em>look at
+it</em>, and see!</p>
+<p><img src="/images/clicks.png" /></p>
+<p>When I start computing a new note, I <em>always</em> start from 0. Sometimes, the last
+value in the previous note is pretty close to 0, and you don&#39;t hear anything,
+and it&#39;s smooth. Sometimes, it&#39;s <em>very far</em> from 0, and the change happens
+super abruptly and results in an audible clicking noise. Gross! The solution to
+this nastiness would be to precompute the phase offset of the next note, to
+know where to start the new waveform from. This is outside the scope of this post,
+but I thought it was pretty neat!</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="coda"></div>
+
+<h2 id="coda">Coda</h2>
+<p>Thanks to #rust-beginners, that channel was friendly and does what it says on
+the tin.  And also
+<a href="https://users.rust-lang.org/t/some-questions-on-idioms-in-a-small-program/7607/4">users.rust-lang.org/</a>.
+And also <a href="https://twitter.com/steveklabnik">Steve Klabnik</a>, who seems to be
+everywhere and is very helpful.</p>
+<p>The Rust community has a pretty welcoming reputation, and so far so good on
+that front! I&#39;m excited to do low level stuff with a modern ecosystem, and Rust
+has a lot of interesting ideas behind it I am eager to learn more about.</p>
+<p>Ok that&#39;s it for now.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

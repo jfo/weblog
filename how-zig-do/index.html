@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>How Zig Do?</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="How Zig Do?" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/how-zig-do" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">How Zig Do?</h1>
+        <sub>Mar 15, 2018</sub>
+        <p></p>
+        <div><blockquote>
+<p>1/13/19 Update: This post was written using Zig 0.2.0, and some of the code is
+out of date. The <a href="https://github.com/jfo/zigf">repository</a> has been updated to
+work with 0.3.0, inculding (for the moment) trunk. Refer to that to see a <a href="https://github.com/jfo/zigf/commit/7b1c563a9bd20e084243bfa0c7435e3cb468ccf2">simplified use of stdout</a>.</p>
+</blockquote>
+<p>Hello and good morning or whatever! Let&#39;s write a brainfuck interpreter. &quot;Why
+are you doing this?&quot; you might say, but you won&#39;t find that answer here.</p>
+<p>I&#39;m going to make it in <a href="http://ziglang.org/">Zig</a>.</p>
+<h2 id="zig-is-">Zig is....</h2>
+<p>...a new programming language. It is still very much in beta, and moving quickly. If you&#39;ve seen any Zig
+previously, the code in this post might look quite different. It is different!
+Zig 0.2.0 has just been released, coinciding with the release of <a href="http://releases.llvm.org/6.0.0/docs/ReleaseNotes.html">LLVM
+6</a> a few weeks ago,
+and includes a lot of changes to the syntax and general improvements to the
+language. Most notably, many of the sigils have been replaced by keywords. See
+<a href="https://ziglang.org/download/0.2.0/release-notes.html">here</a> for a more in depth explanations of all the changes!</p>
+<p>Zig is <a href="http://andrewkelley.me/post/zig-already-more-knowable-than-c.html">designed to be
+readable</a>,
+and as such it&#39;s relatively intuitive if you are familiar with similarly
+compiled, (~)typed languages like C, C++, and in some cases Rust.</p>
+<p>This code was all compiled and tested with Zig 0.2.0, which is available
+right now, <a href="https://ziglang.org/download/">via different channels</a>, including
+homebrew if you&#39;re on a OSX with <code>brew install zig</code>.</p>
+<h2 id="ok-go">Ok go</h2>
+<p>For info about how brainfuck works, <a href="/how-brainfuck-works/">look
+here</a>. There&#39;s almost nothing to
+it, but it <em>is</em> <a href="https://en.wikipedia.org/wiki/Turing_completeness">turing
+complete</a>, which means you
+can use it to <a href="/fizzbuzz-in-brainfuck-part-one/">write anything</a>.</p>
+<p>I&#39;ve <a href="https://github.com/jfo/zigf">committed this code here</a> if you want to see
+the finished product or dig into earlier commits.</p>
+<p>Zig is a compiled language. When you compile a program, the resulting binary
+(if you are building an executable binary, as opposed to a library) needs a
+<code>main</code> function that denotes the entry point.</p>
+<p>So...</p>
+
+<pre><code class="lang-zig"><span class="hljs-comment">// main.zig</span>
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> { }
+</code></pre>
+<p>...and running...</p>
+
+<pre><code class="lang-shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">zig build-exe main.zig</span>
+</code></pre>
+<p>...gives me...</p>
+
+<pre><code class="lang-shell">/zig/std/special/bootstrap.zig:70:33: error: &#x27;main&#x27; is private
+/zigfuck/main.zig:2:1: note: declared here
+</code></pre>
+<p><code>main</code> must be declared public in order to be visible outside of its module...</p>
+
+<pre><code class="lang-zig"><span class="hljs-comment">// main.zig</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> { }
+</code></pre>
+<p>A brainfuck program is supposed to use a 30,000 byte array of memory, so I&#39;ll
+make one.</p>
+
+<pre><code class="lang-zig"><span class="hljs-comment">// main.zig</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">const</span> mem: [<span class="hljs-number">30000</span>]<span class="hljs-type">u8</span>;
+}
+</code></pre>
+<p>I can make a variable <code>const</code> or <code>var</code>. Here, I&#39;m declaring <code>mem</code> as an array
+of <code>30000</code> unsigned (<code>u</code>) bytes (<code>8</code> bits).</p>
+<p>This does not compile.</p>
+
+<pre><code class="lang-shell">/main.zig:3:5: error: variables must be initialized
+</code></pre>
+<p>The equivalent C would compile fine: I can declare a variable without
+initializing it, but Zig forces me to make this decision now, at the
+declaration site. Often, I don&#39;t care what the memory has in it, but I have to
+<em>say that</em>. I can state this intent clearly by initializing to <code>undefined</code>.</p>
+
+<pre><code class="lang-zig"><span class="hljs-comment">// main.zig</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">const</span> mem: [<span class="hljs-number">30000</span>]<span class="hljs-type">u8</span> = <span class="hljs-literal">undefined</span>;
+}
+</code></pre>
+<p>Initializing a variable to <code>undefined</code> offers no guarantees about the values
+that may or may not be in the memory. This is just like an uninitialized
+declaration in C except the clarity of intent is enforced.</p>
+<p>But maybe I <em>do</em> care what this memory is initialized to. Maybe I want to
+guarantee that it is zeroed out, or start it all off at some arbitrary value or
+something. In that case I can be explicit about <em>that</em> as well:</p>
+
+<pre><code class="lang-zig"><span class="hljs-comment">// main.zig</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">const</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+}
+</code></pre>
+<p>This might look a little odd, but <code>**</code> is an operator used for array
+multiplication. I&#39;m defining an array of a single <code>0</code> byte and then multiplying
+it by <code>30000</code> to get my final initialization value of an array of 30000 zeroed
+out bytes.  This operation happens only once, at <em>compile time</em>.  <code>comptime</code> is
+one of Zig&#39;s main Big Ideas, and I&#39;ll come back to it in a later post.</p>
+<p>Now to write a brainfuck program that doesn&#39;t do anything except increment the
+first memory slot 5 times!</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">const</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+  <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;+++++&quot;</span>;
+}
+</code></pre>
+<p>In Zig, strings are just byte arrays. I don&#39;t have to declare <code>src</code> as a byte
+array because the compiler infers it. It is unneccesary to do so, but I am free
+to be explicit about that, too:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> src: [<span class="hljs-number">5</span>]<span class="hljs-type">u8</span> = <span class="hljs-string">&quot;+++++&quot;</span>;
+</code></pre>
+<p>This will compile just fine. This, however...</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> src: [<span class="hljs-number">6</span>]<span class="hljs-type">u8</span>= <span class="hljs-string">&quot;+++++&quot;</span>;
+</code></pre>
+<p>will not.</p>
+
+<pre><code class="lang-shell">main.zig:5:22: error: expected type &#x27;[6]u8&#x27;, found &#x27;[5]u8&#x27;
+</code></pre>
+<p>An additional note: as strings are just simple byte arrays, they are <em>not null
+terminated</em>. You can easily declare C style null terminated strings though! As
+literals, they look like this:</p>
+
+<pre><code class="lang-zig">c<span class="hljs-string">&quot;Hello I am a null terminated string&quot;</span>;
+</code></pre>
+<h2 id="-for-goodness-s-sake"><code>for</code> goodness&#39;s sake</h2>
+<p>I want to do <em>something</em> for each character in the source string. I can do
+that! At the top of <code>main.zig</code>, I can import some functionality from the
+standard library like so:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> warn = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).debug.warn;
+</code></pre>
+<p><code>@import</code>, and in fact anything that begins with an <code>@</code> sign, is a <a href="https://ziglang.org/documentation/master/#Builtin-Functions"><em>compiler
+builtin
+function</em></a>. These
+functions are always available globally. Imports here actually feel quite a lot
+like javascript imports- you can simply assign anything to whatever, digging
+into a namespace to get at any publically exposed functions or variables. In
+the above example, I&#39;m directly importing the warn function and assigning it
+to, surprise, the const <code>warn</code>. This is now callable. It is a common pattern to
+import the <code>std</code> namespace directly and then you may call <code>std.debug.warn()</code>
+<em>or</em> assign warn off of that. That looks like:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> std = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>);
+<span class="hljs-keyword">const</span> warn = std.debug.warn;
+</code></pre>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> warn = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).debug.warn;
+<span class="hljs-comment">// main.zig</span>
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">const</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+  <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;+++++&quot;</span>;
+
+  <span class="hljs-keyword">for</span> (src) |c| {
+      warn(<span class="hljs-string">&quot;{}&quot;</span>, c);
+  }
+}
+</code></pre>
+<p>During debugging and initial development and testing, I just want to print
+something to the screen. Zig is <a href="http://ziglang.org/documentation/master/#Hello-World">fastidious about error
+handling</a> and stdout is
+error prone. I don&#39;t want to mess around with that right now, so I can print
+straight to stderr with <code>warn</code>, above imported from the standard library.</p>
+<p><code>warn</code> takes a format string, just like <code>printf</code> in C does! The above prints:</p>
+
+<pre><code class="lang-bash">4343434343
+</code></pre>
+<p>43 is the ascii code for the <code>+</code> char. I can also go:</p>
+
+<pre><code class="lang-zig">warn(<span class="hljs-string">&quot;{c}&quot;</span>, c);
+</code></pre>
+<p>and wouldn&#39;t you know it:</p>
+
+<pre><code class="lang-zig">+++++
+</code></pre>
+<p>So, I&#39;ve initialized the memory space, and written a program. Next, I must
+implement the language itself. I&#39;ll start with <code>+</code>, I&#39;ll replace the body of
+the <code>for</code> to <code>switch</code> on the character.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">for</span> (src) |c| {
+    <span class="hljs-keyword">switch</span>(c) {
+        &#x27;+&#x27; =&gt; mem[<span class="hljs-number">0</span>] += <span class="hljs-number">1</span>
+    }
+}
+</code></pre>
+<p>I get two errors from this program:</p>
+
+<pre><code class="lang-shell">/main.zig:10:7: error: switch must handle all possibilities
+      switch(c) {
+      ^
+/main.zig:11:25: error: cannot assign to constant
+          &#x27;+&#x27; =&gt; mem[0] += 1
+                        ^
+</code></pre>
+<p>Of course, I can&#39;t assign a new value to a variable that&#39;s been declared
+<code>const</code>ant! <code>mem</code> needs to be <code>var</code>...</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">var</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+</code></pre>
+<p>as for the other error, my <a href="http://ziglang.org/documentation/master/#switch"><code>switch</code>
+statement</a> needs to know what
+to do for everything that&#39;s not a <code>+</code>, even if it&#39;s nothing. In my case, that&#39;s
+exactly what I want. I&#39;ll fulfill that case with an empty block:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">for</span> (src) |c| {
+    <span class="hljs-keyword">switch</span>(c) {
+        &#x27;+&#x27; =&gt; mem[<span class="hljs-number">0</span>] += <span class="hljs-number">1</span>,
+        <span class="hljs-keyword">else</span> =&gt; {}
+    }
+}
+</code></pre>
+<p>Now, I can compile the program. If I run it with a warn on the end of it,</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> warn = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).debug.warn;
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+  <span class="hljs-keyword">var</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+  <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;+++++&quot;</span>;
+
+  <span class="hljs-keyword">for</span> (src) |c| {
+      <span class="hljs-keyword">switch</span>(c) {
+          &#x27;+&#x27; =&gt; mem[<span class="hljs-number">0</span>] += <span class="hljs-number">1</span>,
+          <span class="hljs-keyword">else</span> =&gt; {}
+      }
+  }
+
+  warn(<span class="hljs-string">&quot;{}&quot;</span>, mem[<span class="hljs-number">0</span>]);
+}
+</code></pre>
+<p>I get <code>5</code> printed to
+<a href="https://en.wikipedia.org/wiki/Standard_streams#Standard_error_(stderr">stderr</a>),
+like I would expect.</p>
+<h2 id="from-here-">From here...</h2>
+<p>It becomes straightforward to support <code>-</code>.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">switch</span>(c) {
+    &#x27;+&#x27; =&gt; mem[<span class="hljs-number">0</span>] += <span class="hljs-number">1</span>,
+    &#x27;-&#x27; =&gt; mem[<span class="hljs-number">0</span>] -= <span class="hljs-number">1</span>,
+    <span class="hljs-keyword">else</span> =&gt; {}
+}
+</code></pre>
+<p>To use <code>&gt;</code> and <code>&lt;</code>, I&#39;ll need a helper variable that represents a &quot;pointer&quot;
+into the memory I&#39;ve allocated for brainfuck&#39;s &quot;user space&quot;.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">var</span> memptr: <span class="hljs-type">u16</span> = <span class="hljs-number">0</span>;
+</code></pre>
+<p>an unsigned 16 bit number can be a maximum of 65,535, much more than enough to
+index the entire 30,000 byte address space.</p>
+<blockquote>
+<p>Actually, all I <em>really</em> need is an unsigned <em>15 bit</em> number, which would be
+enough for 32,767. Zig allows for fairly <a href="http://ziglang.org/documentation/master/#Primitive-Types">arbitrarily wide
+types</a>, but not a
+u15 just yet.</p>
+<blockquote>
+<p>Andy says: &quot;You actually can make a u15 like this:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> <span class="hljs-type">u15</span> = <span class="hljs-meta">@IntType</span>(<span class="hljs-literal">false</span>, <span class="hljs-number">15</span>):
+</code></pre>
+<p>it&#39;s <a href="https://github.com/zig-lang/zig/issues/745">proposed to allow any [iu]\d+  type to be an integer
+type</a>
+(I guess it wasn&#39;t, so I just made the above sentence be true)&quot;</p>
+</blockquote>
+</blockquote>
+<p>Now, instead of indexing <code>mem[0]</code> for everything, I can use this variable.</p>
+
+<pre><code class="lang-zig">&#x27;+&#x27; =&gt; mem[memptr] += <span class="hljs-number">1</span>,
+&#x27;-&#x27; =&gt; mem[memptr] -= <span class="hljs-number">1</span>,
+</code></pre>
+<p><code>&lt;</code> and <code>&gt;</code>, then, are simply incrementing and decrementing that pointer.</p>
+
+<pre><code class="lang-zig">&#x27;&gt;&#x27; =&gt; memptr += <span class="hljs-number">1</span>,
+&#x27;&lt;&#x27; =&gt; memptr -= <span class="hljs-number">1</span>,
+</code></pre>
+<p>Great. We can write &quot;real&quot; programs with this, sort of!</p>
+<h2 id="testing-1-2-3">Testing 1,2,3</h2>
+<p>Zig has a simple built in testing apparatus. Anywhere in any file I can write a
+test block:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;Name of Test&quot;</span> {
+  <span class="hljs-comment">// test code</span>
+}
+</code></pre>
+<p>And then run the tests from the command line with <code>zig test $FILENAME</code>. There
+is nothing special about test blocks, except that they are executed only under
+these circumstances.</p>
+<p>Look at this:</p>
+
+<pre><code class="lang-zig"><span class="hljs-comment">// test.zig</span>
+<span class="hljs-keyword">test</span> <span class="hljs-string">&quot;testing tests&quot;</span> {}
+</code></pre>
+
+<pre><code class="lang-txt">zig test test.zig
+</code></pre>
+
+<pre><code>Test 1/1 testing tests...OK
+</code></pre>
+<p>Of course, an empty test is not useful. I can use <code>assert</code> to actually assert
+test cases.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> assert = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).debug.assert;
+
+<span class="hljs-keyword">test</span> <span class="hljs-string">&quot;test true&quot;</span> {
+    assert(<span class="hljs-literal">true</span>);
+}
+
+<span class="hljs-keyword">test</span> <span class="hljs-string">&quot;test false&quot;</span> {
+    assert(<span class="hljs-literal">false</span>);
+}
+</code></pre>
+
+<pre><code class="lang-txt">zig test test.zig
+</code></pre>
+
+<pre><code class="lang-zig"><span class="hljs-string">&quot;thing.zig&quot;</span> <span class="hljs-number">10</span>L, <span class="hljs-number">127</span>C written
+:!zig <span class="hljs-keyword">test</span> thing.zig
+
+Test <span class="hljs-number">1</span>/<span class="hljs-number">2</span> <span class="hljs-keyword">test</span> <span class="hljs-literal">true</span>...OK
+Test <span class="hljs-number">2</span>/<span class="hljs-number">2</span> <span class="hljs-keyword">test</span> <span class="hljs-literal">false</span>...assertion failure
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m_panic<span class="hljs-number">.7</span> [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x0000000105260f34 in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m_panic [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x0000000105260d6b in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m_assert [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x0000000105260619 in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m_test <span class="hljs-literal">false</span> [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x0000000105260cfb in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m_main<span class="hljs-number">.0</span> [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x00000001052695ea in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m_callMain [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x0000000105269379 in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m_callMainWithArgs [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x00000001052692f9 in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m_main [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x0000000105269184 in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m??? [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x00007fff5c75c115 in ??? (???) [<span class="hljs-number">0</span>m
+ [<span class="hljs-number">37</span>;<span class="hljs-number">1</span>m??? [<span class="hljs-number">0</span>m:  [<span class="hljs-number">2</span>m0x0000000000000001 in ??? (???) [<span class="hljs-number">0</span>m
+
+Tests failed. Use the following command to reproduce the failure:
+./zig-cache/<span class="hljs-keyword">test</span>
+</code></pre>
+<p><a href="https://github.com/zig-lang/zig/pull/780">Stack traces on Mac are currently a WIP.</a></p>
+<p>In order to test this effectively, I need to break it up. Let&#39;s start with
+this;</p>
+
+<pre><code class="lang-zig"><span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">bf</span></span>(src: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, mem: [<span class="hljs-number">30000</span>]<span class="hljs-type">u8</span>) <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">var</span> memptr: <span class="hljs-type">u16</span> = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span> (src) |c| {
+        <span class="hljs-keyword">switch</span>(c) {
+            &#x27;+&#x27; =&gt; mem[memptr] += <span class="hljs-number">1</span>,
+            &#x27;-&#x27; =&gt; mem[memptr] -= <span class="hljs-number">1</span>,
+            &#x27;&gt;&#x27; =&gt; memptr += <span class="hljs-number">1</span>,
+            &#x27;&lt;&#x27; =&gt; memptr -= <span class="hljs-number">1</span>,
+            <span class="hljs-keyword">else</span> =&gt; {}
+        }
+    }
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">var</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;+++++&quot;</span>;
+    bf(src, mem);
+}
+</code></pre>
+<p>This looks like it will work! All the types line up and everything, right?</p>
+<p>and yet...</p>
+
+<pre><code class="lang-zig">/main.zig:<span class="hljs-number">1</span>:<span class="hljs-number">29</span>: <span class="hljs-keyword">error</span>: <span class="hljs-built_in">type</span> &#x27;[<span class="hljs-number">30000</span>]<span class="hljs-type">u8</span>&#x27; is not copyable; cannot pass by value
+</code></pre>
+<blockquote>
+<p>this is addressed by <a href="https://github.com/zig-lang/zig/issues/733">https://github.com/zig-lang/zig/issues/733</a></p>
+</blockquote>
+<p>Zig is very strict about this. Complex types, basically anything that can
+possibly be variable in size, can&#39;t be passed by value. This makes stack
+allocations incredibly predictible and consistent, and can avoid unneccessary
+copying. If you want the semantics of pass by value in your program, you are
+free to implement them in user space using a custom allocation strategy, but
+the language itself is designed to discourage this under normal circumstances.</p>
+<p>The natural way to get around this would be to pass a pointer instead (passing
+by reference). Zig prefers a different strategy, though,
+<a href="http://ziglang.org/documentation/master/#Slices">slices</a>. A slice is sort of
+just a souped up pointer with bounds checking and a <code>len</code> property attached to
+it. The syntax looks like this in the function signiture:</p>
+
+<pre><code class="lang-zig"><span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">bf</span></span>(src: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, mem: []<span class="hljs-type">u8</span>) <span class="hljs-built_in">void</span> { ... }
+</code></pre>
+<p>and this at the call site:</p>
+
+<pre><code class="lang-zig">bf(src, mem[<span class="hljs-number">0.</span>.mem.len]);
+</code></pre>
+<p>It resembles taking a sliced index! Notice that I&#39;m defining the upper bound by
+simply referencing the length of the array. There is a shorthand for this:</p>
+
+<pre><code class="lang-zig">bf(src, mem[<span class="hljs-number">0.</span>.]);
+</code></pre>
+<p>Now I can start writing tests in earnest, unit testing the <code>bf()</code> function
+directly. I can just put test blocks at the bottom of this file, for now...</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;+&quot;</span> {
+    <span class="hljs-keyword">var</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>};
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;+++&quot;</span>;
+    bf(src, mem[<span class="hljs-number">0.</span>.]);
+    assert(mem[<span class="hljs-number">0</span>] == <span class="hljs-number">3</span>);
+}
+</code></pre>
+<p>I&#39;m operating on the mem byte array (of a single byte) and then asserting that
+what I thought was going to happen (the byte is incremented three times)
+happened. It did!</p>
+
+<pre><code class="lang-shell">Test 1/1 +...OK
+</code></pre>
+<p>The <code>-</code> case is similar:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;-&quot;</span> {
+    <span class="hljs-keyword">var</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>};
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;---&quot;</span>;
+    bf(src, mem[<span class="hljs-number">0.</span>.]);
+    assert(mem[<span class="hljs-number">0</span>] == <span class="hljs-number">253</span>);
+}
+</code></pre>
+<p>But this fails! When I try to subtract <code>1</code> from <code>0</code> I get...</p>
+
+<pre><code class="lang-shell">Test 2/2 -...integer overflow
+</code></pre>
+<p><code>mem</code> is an array of <em>unsigned bytes</em>, so subtracting 1 from 0 overflows the
+type. Once again, Zig is forcing me to consider this possibility explicitly.
+In this case, it so happens that I don&#39;t care about this overflow- in fact I
+want it to default to dealing with it via <a href="https://en.wikipedia.org/wiki/Modular_arithmetic">modular
+arithmetic</a> as per the
+<a href="https://en.wikipedia.org/wiki/Brainfuck">brainfuck spec</a>, such as it is. This
+means that decrementing a cell at <code>0</code> will give me <code>255</code>, and incrementing a
+value of <code>255</code> will give me <code>0</code>.</p>
+<p>Zig has a set of auxiliary arithmetic operators that offer <a href="http://ziglang.org/documentation/master/#Wrapping-Operations">&quot;guaranteed wrap
+around
+semantics&quot;</a></p>
+
+<pre><code class="lang-zig">&#x27;+&#x27; =&gt; mem[memptr] +%= <span class="hljs-number">1</span>,
+&#x27;-&#x27; =&gt; mem[memptr] -%= <span class="hljs-number">1</span>,
+</code></pre>
+<p>This solves my integer overflow problem and does what I expect it to.</p>
+<p>For <code>&lt;</code> and <code>&gt;</code>, I&#39;ll navigate a small array and then check the value of an
+incremented cell:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;&gt;&quot;</span> {
+    <span class="hljs-keyword">var</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">5</span>;
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;&gt;&gt;&gt;+++&quot;</span>;
+    bf(src, mem[<span class="hljs-number">0.</span>.]);
+    assert(mem[<span class="hljs-number">3</span>] == <span class="hljs-number">3</span>);
+}
+</code></pre>
+<p>and...</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;&lt;&quot;</span> {
+    <span class="hljs-keyword">var</span> mem = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">5</span>;
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;&gt;&gt;&gt;+++&lt;++&lt;+&quot;</span>;
+    bf(src, mem[<span class="hljs-number">0.</span>.]);
+    assert(mem[<span class="hljs-number">3</span>] == <span class="hljs-number">3</span>);
+    assert(mem[<span class="hljs-number">2</span>] == <span class="hljs-number">2</span>);
+    assert(mem[<span class="hljs-number">1</span>] == <span class="hljs-number">1</span>);
+}
+</code></pre>
+<p>For this last one, I can directly compare the result to a static array using...</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> mem = std.mem;
+</code></pre>
+<p>Remember that I have imported <code>std</code> already. In the below example, I am calling
+into that namespace to use <code>mem.eql</code>:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;&lt;&quot;</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">5</span>;
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;&gt;&gt;&gt;+++&lt;++&lt;+&quot;</span>;
+    bf(src, storage[<span class="hljs-number">0.</span>.]);
+    assert(std.mem.eql(<span class="hljs-type">u8</span>, storage, []<span class="hljs-type">u8</span>{ <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">0</span> }));
+}
+</code></pre>
+<p>...and remember, string literals are just <code>u8</code> arrays in zig, and I can put in
+hexadecimal literals inside them, so the following would work in the exact same
+way!</p>
+
+<pre><code class="lang-zig">assert(mem.eql(<span class="hljs-type">u8</span>, storage, <span class="hljs-string">&quot;\x00\x01\x02\x03\x00&quot;</span>));
+</code></pre>
+<p>Let&#39;s add <code>.</code>! This simply prints the byte value as a character in the cell
+that is currently being pointed to. For now, I&#39;ll abuse <code>warn</code>, and revisit
+this later to properly handle <code>stdout</code> here.</p>
+
+<pre><code class="lang-zig">&#x27;.&#x27; =&gt; warn(<span class="hljs-string">&quot;{c}&quot;</span>, storage[memptr]),
+</code></pre>
+<p>For now, I&#39;ll ignore <code>,</code> as it&#39;s very simple conceptually but a little trickier
+to implement. I&#39;ll come back to it later!</p>
+<h2 id="loops">Loops</h2>
+<p><code>[</code> and <code>]</code> are where the magic happens....</p>
+
+<pre><code class="lang-brainfuck"><span class="hljs-title">[</span>   <span class="hljs-comment">if the value of current cell is zero skip to the matching bracket without executing the code</span>
+<span class="hljs-title">]</span>   <span class="hljs-comment">if the value of the current cell is NOT zero go back to the opening bracket and execute the code again</span>
+</code></pre>
+<p>I&#39;ll <em>start</em> with the test case this time, testing them together (as it doesn&#39;t
+make sense to test them in isolation). The first test case- <code>storage[2]</code> should
+end up being empty even though the loop would increment it if it ran:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;[] skips execution and exits&quot;</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">3</span>;
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;+++++&gt;[&gt;+++++&lt;-]&quot;</span>;
+    bf(src, storage[<span class="hljs-number">0.</span>.]);
+    assert(storage[<span class="hljs-number">0</span>] == <span class="hljs-number">5</span>);
+    assert(storage[<span class="hljs-number">1</span>] == <span class="hljs-number">0</span>);
+    assert(storage[<span class="hljs-number">2</span>] == <span class="hljs-number">0</span>);
+}
+</code></pre>
+<p>and I&#39;ll stub out the switch case:</p>
+
+<pre><code class="lang-zig">&#x27;[&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] == <span class="hljs-number">0</span>) {
+},
+&#x27;]&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] == <span class="hljs-number">0</span>) {
+},
+</code></pre>
+<p>Now, <em>what goes here</em>? A naive approach presents itself. I will simply advance
+the src index forward until I find a <code>]</code>! But I cannot do this in a zig <code>for</code>,
+which is designed simply to iterate over elements of a collection, never to
+skip around them. The appropriate construct then here is <code>while</code></p>
+<p>from:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">var</span> memptr: <span class="hljs-type">u16</span> = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">for</span> (src) |c| {
+    <span class="hljs-keyword">switch</span>(c) {
+      ...
+    }
+}
+</code></pre>
+<p>to...</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">var</span> memptr: <span class="hljs-type">u16</span> = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">var</span> srcptr: <span class="hljs-type">u16</span> = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">while</span> (srcptr &lt; src.len) {
+    <span class="hljs-keyword">switch</span>(src[srcptr]) {
+      ...
+    }
+    srcptr += <span class="hljs-number">1</span>;
+}
+</code></pre>
+<p>Now, I am free to reassign the <code>srcptr</code> index mid block, and I will do so.</p>
+
+<pre><code class="lang-zig">&#x27;[&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] == <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">while</span> (src[srcptr] != &#x27;]&#x27;)
+        srcptr += <span class="hljs-number">1</span>;
+},
+</code></pre>
+<p>This satisfies the test &quot;<code>[] skips execution and exits</code>&quot;, albeit flimsily, as
+we&#39;ll see.</p>
+<p>What about the closing brace? I suppose the analog will be simple enough:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;[] executes and exits&quot;</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;+++++[&gt;+++++&lt;-]&quot;</span>;
+    bf(src, storage[<span class="hljs-number">0.</span>.]);
+    assert(storage[<span class="hljs-number">0</span>] == <span class="hljs-number">0</span>);
+    assert(storage[<span class="hljs-number">1</span>] == <span class="hljs-number">25</span>);
+}
+</code></pre>
+
+<pre><code class="lang-zig">&#x27;]&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] != <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">while</span> (src[srcptr] != &#x27;[&#x27;)
+        srcptr -= <span class="hljs-number">1</span>;
+},
+</code></pre>
+<p>You might see where this is going... the naive solution to both brackets has a
+fatal flaw in it completely breaks when there are nested loops of any kind. Consider:</p>
+
+<pre><code class="lang-brainfuck"><span class="hljs-literal">++</span>&gt;<span class="hljs-title">[</span>&gt;<span class="hljs-literal">++</span><span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span><span class="hljs-literal">++</span>&lt;<span class="hljs-literal">-</span><span class="hljs-title">]</span>
+</code></pre>
+<p>This should result in <code>{ 2, 0 }</code>, but the first opening bracket will dumbly
+jump to the first available closing bracket, and then get all confused. I need
+it to be able to jump to the <em>next closing bracket at the same nesting depth</em>.
+This is a bit fiddly but it&#39;s easy to add a depth count and keep track of it
+while going through the src string. Here, for both directions:</p>
+
+<pre><code class="lang-zig">&#x27;[&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] == <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">var</span> depth:<span class="hljs-type">u16</span> = <span class="hljs-number">1</span>;
+    srcptr += <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span> (depth &gt; <span class="hljs-number">0</span>) {
+        srcptr += <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">switch</span>(src[srcptr]) {
+            &#x27;[&#x27; =&gt; depth += <span class="hljs-number">1</span>,
+            &#x27;]&#x27; =&gt; depth -= <span class="hljs-number">1</span>,
+            <span class="hljs-keyword">else</span> =&gt; {}
+        }
+    }
+},
+&#x27;]&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] != <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">var</span> depth:<span class="hljs-type">u16</span> = <span class="hljs-number">1</span>;
+    srcptr -= <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span> (depth &gt; <span class="hljs-number">0</span>) {
+        srcptr -= <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">switch</span>(src[srcptr]) {
+            &#x27;[&#x27; =&gt; depth -= <span class="hljs-number">1</span>,
+            &#x27;]&#x27; =&gt; depth += <span class="hljs-number">1</span>,
+            <span class="hljs-keyword">else</span> =&gt; {}
+        }
+    }
+},
+</code></pre>
+<p>and the corresponding tests- notice the <code>src</code> in both of these includes an
+internal loop.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">test</span> <span class="hljs-string">&quot;[] skips execution with internal braces and exits&quot;</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;++&gt;[&gt;++[-]++&lt;-]&quot;</span>;
+    <span class="hljs-keyword">try</span> bf(src, storage[<span class="hljs-number">0.</span>.]);
+    assert(storage[<span class="hljs-number">0</span>] == <span class="hljs-number">2</span>);
+    assert(storage[<span class="hljs-number">1</span>] == <span class="hljs-number">0</span>);
+}
+
+<span class="hljs-keyword">test</span> <span class="hljs-string">&quot;[] executes with internal braces and exits&quot;</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">const</span> src = <span class="hljs-string">&quot;++[&gt;++[-]++&lt;-]&quot;</span>;
+    <span class="hljs-keyword">try</span> bf(src, storage[<span class="hljs-number">0.</span>.]);
+    assert(storage[<span class="hljs-number">0</span>] == <span class="hljs-number">0</span>);
+    assert(storage[<span class="hljs-number">1</span>] == <span class="hljs-number">2</span>);
+}
+</code></pre>
+<blockquote>
+<p>As an aside, <code>[-]</code> is a brainfuck idiom that means &quot;zero out this cell&quot;. You
+can see that no matter the value of the cell you&#39;re on, it will decrement it
+until you get down to 0, then go on.</p>
+</blockquote>
+<h2 id="the-unhappy-path">the unhappy path</h2>
+<p>I&#39;ve not accounted for possibly broken bf programs yet. What happens if I feed
+my interpreter malformed input? Like just</p>
+
+<pre><code>[
+</code></pre>
+<p>... with no matching closing brace, or</p>
+
+<pre><code>&lt;
+</code></pre>
+<p>which immediately goes out of bounds of the memory space? (I could wrap this
+around, but I&#39;d rather consider it an error.)</p>
+<p>I&#39;m going to jump ahead a bit and explain all the pertinent differences in this
+code. I&#39;ll pull the <code>bf</code> interpreter function into its own file and also pull
+out the seekBack and seekForward functionalities into their own little
+functions.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> warn = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).debug.warn;
+<span class="hljs-keyword">const</span> sub = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).math.sub;
+
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">seekBack</span></span>(src: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, srcptr: <span class="hljs-type">u16</span>) !<span class="hljs-type">u16</span> {
+    <span class="hljs-keyword">var</span> depth:<span class="hljs-type">u16</span> = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">var</span> ptr: <span class="hljs-type">u16</span> = srcptr;
+    <span class="hljs-keyword">while</span> (depth &gt; <span class="hljs-number">0</span>) {
+        ptr = sub(<span class="hljs-type">u16</span>, ptr, <span class="hljs-number">1</span>) <span class="hljs-keyword">catch</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">error</span>.OutOfBounds;
+        <span class="hljs-keyword">switch</span>(src[ptr]) {
+            &#x27;[&#x27; =&gt; depth -= <span class="hljs-number">1</span>,
+            &#x27;]&#x27; =&gt; depth += <span class="hljs-number">1</span>,
+            <span class="hljs-keyword">else</span> =&gt; {}
+        }
+    }
+    <span class="hljs-keyword">return</span> ptr;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">seekForward</span></span>(src: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, srcptr: <span class="hljs-type">u16</span>) !<span class="hljs-type">u16</span> {
+    <span class="hljs-keyword">var</span> depth:<span class="hljs-type">u16</span> = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">var</span> ptr: <span class="hljs-type">u16</span> = srcptr;
+    <span class="hljs-keyword">while</span> (depth &gt; <span class="hljs-number">0</span>) {
+        ptr += <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span> (ptr &gt;= src.len) <span class="hljs-keyword">return</span> <span class="hljs-keyword">error</span>.OutOfBounds;
+        <span class="hljs-keyword">switch</span>(src[ptr]) {
+            &#x27;[&#x27; =&gt; depth += <span class="hljs-number">1</span>,
+            &#x27;]&#x27; =&gt; depth -= <span class="hljs-number">1</span>,
+            <span class="hljs-keyword">else</span> =&gt; {}
+        }
+    }
+    <span class="hljs-keyword">return</span> ptr;
+}
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">bf</span></span>(src: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, storage: []<span class="hljs-type">u8</span>) !<span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">var</span> memptr: <span class="hljs-type">u16</span> = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">var</span> srcptr: <span class="hljs-type">u16</span> = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (srcptr &lt; src.len) {
+        <span class="hljs-keyword">switch</span>(src[srcptr]) {
+            &#x27;+&#x27; =&gt; storage[memptr] +%= <span class="hljs-number">1</span>,
+            &#x27;-&#x27; =&gt; storage[memptr] -%= <span class="hljs-number">1</span>,
+            &#x27;&gt;&#x27; =&gt; memptr += <span class="hljs-number">1</span>,
+            &#x27;&lt;&#x27; =&gt; memptr -= <span class="hljs-number">1</span>,
+            &#x27;[&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] == <span class="hljs-number">0</span>) srcptr = <span class="hljs-keyword">try</span> seekForward(src, srcptr),
+            &#x27;]&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] != <span class="hljs-number">0</span>) srcptr = <span class="hljs-keyword">try</span> seekBack(src, srcptr),
+            &#x27;.&#x27; =&gt; warn(<span class="hljs-string">&quot;{c}&quot;</span>, storage[memptr]),
+            <span class="hljs-keyword">else</span> =&gt; {}
+        }
+        srcptr += <span class="hljs-number">1</span>;
+    }
+}
+</code></pre>
+<p>This makes the switch statement much easier to read, in my opinion.
+<code>seekForward</code> and <code>seekBack</code> look and act <em>very similar</em>, and I am tempted to
+refactor them into something cleverer and more compact, but in the end, they
+are doing different things, and deal with their error cases slightly
+differently. It is easier to copy paste and tweak here, and it is clearer. Also
+I will be factoring out <code>seekForward</code> later, at some point, probably in a
+follow up post.</p>
+<p>I&#39;ve added a few important things, though! Notice that all three of these
+functions now return a <code>!</code> type. This is new syntax for what used to be a <code>%T</code>
+error union type. It&#39;s saying that the function can either return a specified
+type, or some type of error. Whenever I attempt to call a function like this, I
+must <em>either</em> <code>try</code> it (with <code>try</code> in front of the function call), which will
+propogate the error up the call stack if it encounters one, or <code>catch</code> it like:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> x = functionCall() <span class="hljs-keyword">catch</span> {}
+</code></pre>
+<p>Where I deal with the error appropriately in the catch block. As written, this
+catch would swallow any error into the void. This is Bad Practice, but once
+again I&#39;ll point out that Zig <em>makes me do this explicitly.</em> If I&#39;ve caught an
+error with an empty block, I&#39;m saying that I don&#39;t think I&#39;ll ever see an error
+or that I don&#39;t need to deal with it. In practice, this should probably always
+be like a <code>TODO</code>, and in fact it is quite easy to make that explicit, too!</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> x = functionCall() <span class="hljs-keyword">catch</span> { <span class="hljs-meta">@panic</span>(<span class="hljs-string">&quot;TODO&quot;</span>) }
+</code></pre>
+<p>Recall that <em>this case should never happen in production code.</em> I&#39;m essentially
+assuring the compiler that I know what I&#39;m doing, here. If it <em>could</em> happen, I
+should add <em>proper</em> error handling.</p>
+<p>So what are the errors that I could be returning from seekBack or seekForward?</p>
+<p>In seekBack:</p>
+
+<pre><code class="lang-zig">ptr = sub(<span class="hljs-type">u16</span>, ptr, <span class="hljs-number">1</span>) <span class="hljs-keyword">catch</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">error</span>.OutOfBounds;
+</code></pre>
+<p>I&#39;ve changed this pointer decrement to use the std lib function <code>sub</code> which
+will throw a <code>Overflow</code> error if overflow does occur. I want to catch that
+error and instead return an <code>OutOfBounds</code> error, which I am instantiating here
+simply by using it.</p>
+<blockquote>
+<p>Zig errors are basically a global array of error codes that are generated by
+the compiler when you use <code>error.Whatever</code>. They are guaranteed to be unique,
+and can be <code>switched</code> on in switch blocks.</p>
+</blockquote>
+<p>I want to treat this as <code>OutOfBounds</code> because, semantically, if the memory
+pointer goes under zero, it means I&#39;ve ask the runtime to point outside of the
+memory space I&#39;ve alloted on the low end.</p>
+<p>Similarly, in the seekForward function:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">if</span> (ptr &gt;= src.len) <span class="hljs-keyword">return</span> <span class="hljs-keyword">error</span>.OutOfBounds;
+</code></pre>
+<p>In the case that the pointer is larger than the src.len is, I can catch that
+here and return the same error.</p>
+<p>at the call site:</p>
+
+<pre><code class="lang-zig">&#x27;[&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] == <span class="hljs-number">0</span>) srcptr = <span class="hljs-keyword">try</span> seekForward(src, srcptr),
+&#x27;]&#x27; =&gt; <span class="hljs-keyword">if</span> (storage[memptr] != <span class="hljs-number">0</span>) srcptr = <span class="hljs-keyword">try</span> seekBack(src, srcptr),
+</code></pre>
+<p>I <code>try</code> these functions. If they succeed, they have executed correctly and try
+returns the new srcptr value. If they fail, <code>try</code> aborts the whole function
+and returns the error to the caller <em>of <code>bf</code> itself</em>.</p>
+<p>That caller would be <code>main</code>, now!</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> bf = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;./bf.zig&quot;</span>).bf;
+
+<span class="hljs-comment">// yes, hello</span>
+<span class="hljs-keyword">const</span> hello_world = <span class="hljs-string">&quot;++++++++++[&gt;+++++++&gt;++++++++++&gt;+++&gt;+&lt;&lt;&lt;&lt;-]&gt;++.&gt;+.+++++++..+++.&gt;++.&lt;&lt;+++++++++++++++.&gt;.+++.------.--------.&gt;+.&gt;.&quot;</span>;
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+    storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+    bf(hello_world, storage[<span class="hljs-number">0.</span>.]) <span class="hljs-keyword">catch</span> {};
+}
+</code></pre>
+<p>I&#39;m swallowing this error here now, which I should not be doing, but the
+important point to note is how easy zig makes it to properly handle errors up
+the call stack. It is not the reponsibility of the caller to check for any
+particular error state, but the compiler enforces calling any errorable
+function with try and annotating the correct return values all the way up. It
+has to be dealt with eventually, <em>even if it&#39;s being ignored</em>!</p>
+<blockquote>
+<p>This new <code>try</code>/<code>catch</code> syntax also gets rid of a lot of <code>%%</code> and <code>%</code> sigils, which people
+<a href="https://github.com/zig-lang/zig/issues/632#issue-277801769">really didn&#39;t like much</a>.</p>
+</blockquote>
+<p>I&#39;ve now implemented 7 of the 8 symbols in brainfuck, all the ones I need
+to run &quot;meaningful&quot; programs.</p>
+<h2 id="-meaningful-programs">&quot;Meaningful&quot; programs</h2>
+<p>I&#39;ve got a program here:</p>
+
+<pre><code class="lang-zig"><span class="hljs-comment">// our old friend, the fibonacci sequence.</span>
+<span class="hljs-keyword">const</span> fib = <span class="hljs-string">&quot;++++++++++++++++++++++++++++++++++++++++++++&gt;++++++++++++++++++++++++++++++++&gt;++++++++++++++++&gt;&gt;+&lt;&lt;[&gt;&gt;&gt;&gt;++++++++++&lt;&lt;[-&gt;+&gt;-[&gt;+&gt;&gt;]&gt;[+[-&lt;+&gt;]&gt;+&gt;&gt;]&lt;&lt;&lt;&lt;&lt;&lt;]&gt;[&lt;+&gt;-]&gt;[-]&gt;&gt;&gt;++++++++++&lt;[-&gt;-[&gt;+&gt;&gt;]&gt;[+[-&lt;+&gt;]&gt;+&gt;&gt;]&lt;&lt;&lt;&lt;&lt;]&gt;[-]&gt;&gt;[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]&lt;[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]&lt;&lt;&lt;++++++++++++++++++++++++++++++++++++++++++++++++.[-]&lt;&lt;&lt;&lt;&lt;&lt;&lt;.&gt;.&gt;&gt;[&gt;&gt;+&lt;&lt;-]&gt;[&gt;+&lt;&lt;+&gt;-]&gt;[&lt;+&gt;-]&lt;&lt;&lt;-]&lt;&lt;++...&quot;</span>;
+</code></pre>
+<p>let me run it...</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+    storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+    bf(fib, storage[<span class="hljs-number">0.</span>.]) <span class="hljs-keyword">catch</span> {};
+}
+</code></pre>
+<p>voila!</p>
+
+<pre><code>1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 121, 98, 219,
+</code></pre>
+<blockquote>
+<p>I have this memory that always comes back to me when I think about the
+fibonacci sequence... I learned it from PBS in the 80&#39;s, and I&#39;ve always
+remembered that. I thought it was lost to time but <a href="https://youtu.be/bv8O456bNa8?t=3m46s">Youtube is amazing.</a></p>
+</blockquote>
+<h2 id="how-can-i-improve-this-">How can I improve this?</h2>
+<p>I&#39;ve already alluded to a few <code>TODO</code>s. I shouldn&#39;t be using stderr for output,
+I want to be using stdout.</p>
+<p>Whenever I invoke the interpreter, I&#39;ll open up a stream to stdout and print to that instead:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> io = std.io;
+...
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">bf</span></span>(src: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, storage: []<span class="hljs-type">u8</span>) !<span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">const</span> stdout = &amp;(io.FileOutStream.init(&amp;(io.getStdOut() <span class="hljs-keyword">catch</span> <span class="hljs-keyword">unreachable</span>)).stream);
+    ...
+            &#x27;.&#x27; =&gt; stdout.print(<span class="hljs-string">&quot;{c}&quot;</span>, storage[memptr]) <span class="hljs-keyword">catch</span> <span class="hljs-keyword">unreachable</span>,
+            ...
+</code></pre>
+<p>What is happening here? I call <code>io.getStdOut()</code>, which is failable (and again I
+am explicitly swallowing that possible error with <code>catch unreachable</code>- if this
+function failed my program would crash!). I call <code>stream</code> on that result to
+initialize a stream, take a pointer to it, and initialize it as an outstream.
+This outstream is what I assign to stdout, and what I can write to by calling
+<code>print</code> on it. <code>print</code> accepts a formatted string just like warn, so that swap
+is straightforward. <code>print</code> can also fail, and I am also swallowing those
+errors here.</p>
+<p>In a proper program, I should account for the potential failure of opening up
+stdout here, and also the possible errors of trying to write to stdout. I am
+not doing that, but I am made to say that I am not doing that. Zig makes it
+easy to ignore these errors as long as you promise you <em>know that you&#39;re
+ignoring them</em>.</p>
+<p>What happens when I decide I want to turn my prototype into a proper release?
+Do I sit down with a cup of coffee and start the thankless work of error
+handling, relying on my decades of experience and knowledge to enumerate every
+possible error case and how I want to deal with it? What if I don&#39;t have
+decades of experience and knowledge? That&#39;s ok, Zig does!</p>
+<p>I want to demonstrate a power feature now, error inference!</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> bf = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;./bf.zig&quot;</span>).bf;
+<span class="hljs-keyword">const</span> warn = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).debug.warn;
+
+<span class="hljs-keyword">const</span> serpinsky = <span class="hljs-string">&quot;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &quot;</span>;
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+    bf(serpinsky, storage[<span class="hljs-number">0.</span>.]) <span class="hljs-keyword">catch</span> <span class="hljs-keyword">unreachable</span>;
+}
+</code></pre>
+<p>I know that <code>bf</code> can fail, because it returns <code>!void</code>. I am swallowing that
+error at the call site here in <code>main</code>. When I am ready to accept my fate and do
+the right thing, I can catch that possible error like this:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> bf = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;./bf.zig&quot;</span>).bf;
+<span class="hljs-keyword">const</span> warn = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).debug.warn;
+
+<span class="hljs-keyword">const</span> serpinsky = <span class="hljs-string">&quot;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &quot;</span>;
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+    bf(serpinsky, storage[<span class="hljs-number">0.</span>.]) <span class="hljs-keyword">catch</span> |err| <span class="hljs-keyword">switch</span> (err) {
+    };
+}
+</code></pre>
+<p>The compiler is my friend now!</p>
+
+<pre><code>/Users/jfo/code/zigfuck/main.zig:7:46: error: error.OutOfBounds not handled in switch
+shell returned 1
+</code></pre>
+<p>This error should be familiar as the one that is bubbling up from <code>bf</code> and it&#39;s
+helper functions! <em>But wait there&#39;s more</em>. Let&#39;s say I&#39;m looking at the
+<code>stdout</code> related error handling that I&#39;ve been swallowing in <code>bf</code>. Instead of
+swallowing them, I&#39;m going to kick them up the chain by using <code>try</code>. Remember,
+used without a catch block on a failable call, try will abort if it encounters
+an error, forcing <em>its</em> caller to deal with any potential errors.</p>
+<p>So, instead of:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> io = std.io;
+...
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">bf</span></span>(src: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, storage: []<span class="hljs-type">u8</span>) !<span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">const</span> stdout = &amp;(io.FileOutStream.init(&amp;(io.getStdOut() <span class="hljs-keyword">catch</span> <span class="hljs-keyword">unreachable</span>)).stream);
+    ...
+            &#x27;.&#x27; =&gt; stdout.print(<span class="hljs-string">&quot;{c}&quot;</span>, storage[memptr]) <span class="hljs-keyword">catch</span> <span class="hljs-keyword">unreachable</span>,
+            ...
+</code></pre>
+<p>I do:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> io = std.io;
+...
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">bf</span></span>(src: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, storage: []<span class="hljs-type">u8</span>) !<span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">const</span> stdout = &amp;(io.FileOutStream.init(&amp;(<span class="hljs-keyword">try</span> io.getStdOut())).stream);
+    ...
+            &#x27;.&#x27; =&gt; <span class="hljs-keyword">try</span> stdout.print(<span class="hljs-string">&quot;{c}&quot;</span>, storage[memptr]),
+            ...
+</code></pre>
+<p>Now, compiling</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> bf = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;./bf.zig&quot;</span>).bf;
+<span class="hljs-keyword">const</span> warn = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>).debug.warn;
+
+<span class="hljs-keyword">const</span> serpinsky = <span class="hljs-string">&quot;++++++++[&gt;+&gt;++++&lt;&lt;-]&gt;++&gt;&gt;+&lt;[-[&gt;&gt;+&lt;&lt;-]+&gt;&gt;]&gt;+[ -&lt;&lt;&lt;[ -&gt;[+[-]+&gt;++&gt;&gt;&gt;-&lt;&lt;]&lt;[&lt;]&gt;&gt;++++++[&lt;&lt;+++++&gt;&gt;-]+&lt;&lt;++.[-]&lt;&lt; ]&gt;.&gt;+[&gt;&gt;]&gt;+ ] &quot;</span>;
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+    bf(serpinsky, storage[<span class="hljs-number">0.</span>.]) <span class="hljs-keyword">catch</span> |err| <span class="hljs-keyword">switch</span> (err) {
+    };
+}
+</code></pre>
+<p>Provides me with an enumerated list of <em>all the possible errors I could get from calling this function!</em></p>
+
+<pre><code>/Users/jfo/code/zigfuck/main.zig:7:46: error: error.SystemResources not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.OperationAborted not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.IoPending not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.BrokenPipe not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.Unexpected not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.WouldBlock not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.FileClosed not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.DestinationAddressRequired not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.DiskQuota not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.FileTooBig not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.InputOutput not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.NoSpaceLeft not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.AccessDenied not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.OutOfBounds not handled in switch
+/Users/jfo/code/zigfuck/main.zig:7:46: error: error.NoStdHandles not handled in switch
+shell returned 1
+</code></pre>
+<p>Zig empowers me to handle these cases meticulously if I need or want to! I
+switch on that <code>err</code> value, handle cases I want to, and can fall through if I
+want to.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">var</span> storage = []<span class="hljs-type">u8</span>{<span class="hljs-number">0</span>} ** <span class="hljs-number">30000</span>;
+    bf(serpinsky, storage[<span class="hljs-number">0.</span>.]) <span class="hljs-keyword">catch</span> |err| <span class="hljs-keyword">switch</span> (err) {
+        <span class="hljs-keyword">error</span>.OutOfBounds =&gt; <span class="hljs-meta">@panic</span>(<span class="hljs-string">&quot;Out Of Bounds!&quot;</span>),
+        <span class="hljs-keyword">else</span> =&gt; <span class="hljs-meta">@panic</span>(<span class="hljs-string">&quot;IO error&quot;</span>)
+    };
+}
+</code></pre>
+<p>This is still not <em>proper</em> error handling, stricly speaking, but I just wanted
+to demonstrate how clever Zig is about reporting possible error cases to the
+callsite! And when you encounter an error, you&#39;ll get an <a href="https://ziglang.org/download/0.2.0/release-notes.html#errorreturntraces"><em>error return
+trace</em></a>
+instead of just a stack trace! Cool stuff!</p>
+<h2 id="todo">Todo</h2>
+<p>There are plenty of improvements I could make to this interpreter! I need to
+actually properly handle all error cases, obviously, and I need to implement the comma
+operator &quot;,&quot; , which is brainfuck&#39;s <code>getc</code> function to allow for input into the
+program runtime. I also should probably make it possible to read a sourcefile
+into a buffer and interpret that, instead of hard coding all of the bf source
+code. There are also some improvements I have in mind that aren&#39;t strictly
+necessary but would illuminate some more of Zig itself. Instead of cramming all
+of that onto the end of this post, I&#39;m going to try splitting them into some
+upcoming posts that may be smaller and more easily digestible. Stay tuned!</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>I hope this little half finished miniature project has given you some insight
+into how Zig code looks and what it might be used for. Zig is not a swiss army
+knife language, it is not the perfect tool for every job... it has a particular
+focus in mind, to be a pragmatic systems language that can be used along with
+and in lieu of the likes of C and C++. It forces you to be meticulous and
+specific about memory usage, memory management, and error handling. In
+constrained systems environments, this is a feature not a bug. Zig is
+deterministic, it&#39;s non-ambiguous, it&#39;s trying to make it easy to write robust
+code in environments where that has traditionlly been difficult to do.</p>
+<p>I&#39;ve only covered a very small amount of Zig&#39;s syntax and features here, there
+are a lot of exciting changes coming to the language in 0.2.0 and beyond! It&#39;s
+also worth noting that Zig has wildly diverging compile modes that optimize for
+different things... all of the compilations I&#39;ve done here have been in debug
+mode, which optimizes for safety checks and fast compile times to make
+iterating easy! There are also currently <code>--release-fast</code> mode, and
+<code>--release-safe</code> mode, and there could potentially be <a href="https://github.com/zig-lang/zig/issues/531">more in the
+future</a> For more about these
+differences and the original rationale behind them, <a href="http://andrewkelley.me/post/intro-to-zig.html#debug-release">see
+here</a>.</p>
+<p>I have been continuously impressed with the velocity and direction of Zig&#39;s
+development! It&#39;s very much in flux, and will be so until 1.0.0, so if you opt
+to give it a try just keep that in mind. There will likely be plenty of
+breaking changes coming up, and there will certainly be many bugs too, but
+there are a lot of good ideas in there, and I&#39;m excited to see where it goes!</p>
+<p>Give it a try, and pop into <code>#zig</code> on freenode anytime if you have questions.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

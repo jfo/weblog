@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild is a list?</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild is a list?" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/sild-is-a-list" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild is a list?</h1>
+        <sub>Jun 06, 2016</sub>
+        <p></p>
+        <div><p>This is the first post in a series of posts that start from nothing and end up
+with a lisp interpreter. I tried very hard to keep my commits atomic
+and in parity with these posts, and for the most part I think I did that fairly
+well. You can start from <a href="https://github.com/urthbound/sild/commits/master?page=7">the first few
+commits</a> if you want
+to follow along and see the growth of the language along with these posts, but
+I won&#39;t be linking to particular commits along the way.</p>
+<hr>
+
+<p>Where would I start, if I&#39;d like to write a lisp?</p>
+<p>LISP stands for &quot;list processor,&quot; so I suppose I should start with lists.</p>
+<p>What is a list? A list is a sequential collection of somethings or anothers.
+Let&#39;s call these somethings or others &quot;cells&quot; for now.</p>
+<p>So, a &quot;list&quot; is a sequential collection of &quot;cells&quot;. So what is a cell? I could
+say that a cell is a something or another, and that wouldn&#39;t be a <em>lie</em>
+exactly, but it&#39;s not very helpful, is it? Or maybe it is helpful... certainly
+a cell is a something... let&#39;s say that something could be a number. So, a cell
+is a number!</p>
+<p>But how do we get the next thing in the list? We could put all the things in
+the list next to each other in memory, and this would make it easy to find the
+next cell- we could just look to the next slot in memory and there we would
+find it. This is actually <em>not</em> a list... this is an <em>array</em>. It is similar,
+but not the same.</p>
+<p>A list is a collection of sequential cells; a cell is a something <em>and</em> another.</p>
+<p>A <em>something</em> is a number, then <em>another</em> would be the next cell in the list.</p>
+<p>So, cells have two things in them: a value, and an address for the next cell in
+the list. Let&#39;s make a cell, in C. I&#39;ll start with creating a struct that can
+hold those two things, and I&#39;ll call it a <code>Cell</code>:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> {</span>
+    <span class="hljs-type">int</span> value;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> *<span class="hljs-title">next</span>;</span>
+};
+</code></pre>
+<p>If you don&#39;t know what a struct is, <a href="/structs-and-unions/">I wrote about them
+here</a>.</p>
+<p>I could assign values to a cell like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span>;</span> <span class="hljs-comment">// declare a_cell to be a Cell</span>
+    a_cell.value = <span class="hljs-number">1</span>;   <span class="hljs-comment">// initialize the Cell&#x27;s value</span>
+    a_cell.next = <span class="hljs-number">0x0</span>;  <span class="hljs-comment">// point to the next Cell (in this case, the null pointer)</span>
+
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;a_cell&#x27;s value is: %d\n&quot;</span>, a_cell.value);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;the next cell after a_cell is: %p&quot;</span>, a_cell.next);
+}
+</code></pre>
+<p>That dot notation is used to access the <code>members</code> of the struct. In this case,
+there is no next cell, so <code>a_cell.next</code> is the <code>NULL</code> pointer, which is
+zero. This is a <em>list</em> of one cell. Let&#39;s make a second cell.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">another_cell</span>;</span>
+    another_cell.value = <span class="hljs-number">2</span>;
+    another_cell.next = <span class="hljs-number">0x0</span>;
+
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span>;</span>
+    a_cell.value = <span class="hljs-number">1</span>;
+    a_cell.next = &amp;another_cell;
+
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;a_cell&#x27;s value is: %d\n&quot;</span>, a_cell.value);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;the next cell after a_cell is: %p, which is called another_cell\n&quot;</span>, a_cell.next);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;another_cell&#x27;s value is: %d\n&quot;</span>, another_cell.value);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;the next cell after another_cell is: %p&quot;</span>, another_cell.next);
+}
+</code></pre>
+<p>Now, <code>a_cell.next</code> is being assigned to <code>&amp;another_cell</code>. Which is taking the
+address of <code>another_cell</code>. There is now a reference to <code>another_cell</code> contained
+in <code>a_cell</code>, and the two cells are <em>linked</em>.  That is why this structure is
+called a <code>linked list</code>. It consists of cells that are <em>linked</em> together.</p>
+<p>I should be able to get to <code>another_cell</code>&#39;s values <em>through</em> the first
+cell, and I can, and it looks like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;another_cell&#x27;s value is: %d\n&quot;</span>, a_cell.next-&gt;value);
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;the next cell after another_cell is: %p&quot;</span>, a_cell.next-&gt;next);
+</code></pre>
+<p>Notice how that is different... I say &quot;tell me where the next cell after
+<code>a_cell</code> lives&quot; with <code>a_cell.next</code>, and I say &quot;give me its value&quot; with
+<code>-&gt;value</code></p>
+<p>We use the <code>.</code> notation when we are operating directly on structs, and we use
+the <code>-&gt;</code> notation when we are operating on a <em>pointer</em> to a struct. The reasons
+for this are historic, and <a href="http://stackoverflow.com/questions/13366083/why-does-the-arrow-operator-in-c-exist">this fantastic stack overflow
+    answer</a>
+explains why in great detail, if you are interested.</p>
+<p>This linked list of cells is a very simple data structure, but you can do a
+whole lot with it! Here is a function that takes a cell and prints it&#39;s value:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_cell</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car.value);
+}
+</code></pre>
+<p>But this only prints a single cell. What If I want to print a whole list? I could
+do something like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car.value);
+    print_list(*car.next);
+}
+</code></pre>
+<p>Notice that <code>car.next</code> is a pointer, and <code>print_list</code> is expecting not a
+pointer to a cell, but an <em>actual cell</em> to be passed into it. The <code>*</code>
+operator takes a pointer and <code>dereferences</code> it, which means it returns not just
+the address of a thing but the <em>actual</em> thing.</p>
+<p>If I try to run <code>print_list(a_cell)</code> though, this dies, because though it
+succeeds in passing the first  two cells through the function, when it tries to
+dereference the null pointer (<code>0x0</code>) that the second cell is still pointing to, it blows
+up. I can fix this for now by wrapping that recursive call in a null pointer check:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car.value);
+    <span class="hljs-keyword">if</span> (car.next) {
+        print_list(*car.next);
+    }
+}
+</code></pre>
+<p>Now, I have a cell structure that I can build into a list, and I have a simple
+function that can do something with that list. Progress! :D</p>
+<blockquote>
+<p>Did you know you can also initialize a struct in one line by passing a block
+of constructor args to it? It&#39;s true! And it looks like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">another_cell</span> =</span> { <span class="hljs-number">2</span>, <span class="hljs-number">0x0</span> };
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span> =</span> { <span class="hljs-number">1</span>, &amp;another_cell };
+</code></pre>
+<p>It&#39;s order dependant, so the first argument is the <code>value</code> and the second
+argument is a pointer to another cell, just like in the struct declaration.</p>
+</blockquote>
+<hr>
+
+<p>C is... not an Object Oriented language with capital O&#39;s. But often, you can
+squint your eyes, think of structs as objects, and get away with it. They
+certainly fulfill a lot of the the same roles, at least! It is useful to have
+constructor functions for objects, so it is also useful to have constructor
+functions for structs. Here is one:</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">struct</span> Cell <span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> value, <span class="hljs-keyword">struct</span> Cell *next)</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">outcell</span> =</span> { value, next };
+    <span class="hljs-keyword">return</span> outcell;
+};
+</code></pre>
+<p>Great! Now I can abstract away that creation and assignment, like this, which
+totally works.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">another_cell</span> =</span> makecell(<span class="hljs-number">2</span>, <span class="hljs-number">0x0</span>);
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span> =</span> makecell(<span class="hljs-number">1</span>, &amp;another_cell);
+
+    print_list(a_cell);
+}
+</code></pre>
+<p>But all is not well just yet. <code>makecell()</code> returns a cell, so I should be able
+to inline this whole thing by creating the next cell at the same time as the
+first one, like so:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span> =</span> makecell(<span class="hljs-number">1</span>, &amp;makecell(<span class="hljs-number">2</span>, <span class="hljs-number">0x0</span>));
+    print_list(a_cell);
+}
+</code></pre>
+<p>But this fails! With a hella cryptic error message:</p>
+
+<pre><code>sild.c:22:38: error: cannot take the address of an rvalue of type &#39;struct Cell&#39;
+     struct Cell a_cell = makecell(1, &amp;makecell(2, 0x0));
+                                      ^~~~~~~~~~~~~~~~~
+</code></pre>
+<p>What the hell is an <code>rvalue</code>? I&#39;ve found conflicting definitions, so rather than
+attempt to find a definitive answer here, I&#39;ll use the most plausible and simplest.</p>
+<p>Consider an assignment expression that looks like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> var = <span class="hljs-number">1</span>;
+</code></pre>
+<p>Or, more generally:</p>
+
+<pre><code class="lang-c">type var = value
+</code></pre>
+<p>the <code>value</code> on the right is an <code>rvalue</code>, it has some value, but does not take
+up space in memory. In fact, giving that value a place in memory is exactly
+what we&#39;re doing by assigning it to a variable.</p>
+<p>I&#39;ll give you one guess what <code>var</code> is called in this expression. Yup, <code>lvalue</code>,
+for &quot;left value&quot;.  You can also think of it as standing for &quot;location value&quot;,
+which is a useful mnemonic, since we&#39;re giving that variable a location by
+declaring it (recall that variable declaration sets aside the amount of space
+you need for whatever type you&#39;re declaring).</p>
+<p>So, an <code>lvalue</code> has a location in memory, and an <code>rvalue</code> is anything else
+that does <em>not</em> have a location in memory. It makes perfect sense, then, that you
+can&#39;t take the address of a thing that doesn&#39;t take up space! But why doesn&#39;t
+it take up space? Because <code>makecell()</code> is returning the <em>literal data</em> that
+makes up a struct of type Cell. It&#39;s basically the same thing as trying to take
+the address directly of an integer, which makes no sense! And in fact, if we
+try to do so with <code>&amp;1000</code> or something, we get the very same error:</p>
+
+<pre><code>sild.c:22:5: error: cannot take the address of an rvalue of type &#39;int&#39;
+    &amp;1000;
+    ^~~~~
+</code></pre>
+<p>This is a little bit contrived, at this point. You might say- well just don&#39;t
+do that! Assign the output of <code>makecell</code> to a var before taking the address of
+it! But this doesn&#39;t really make much sense... now I&#39;m allocating memory twice
+for the same structure. Once in <code>makecell()</code> itself, and once in <code>main()</code>, and
+presumably I would run into more opportunities for reallocating stack memory to
+pass around the whole cell later on, and, and and...</p>
+<p>This isn&#39;t great. allocating and managing memory takes computational time, even
+if the program is doing the heavy lifting. I don&#39;t want to make a Cell and
+then pass the values around wholesale like that, copying them and erasing
+them a bunch of times, I want to make the Cell once, and then pass around a
+reference to the Cell in the form of the address of where I put it. I don&#39;t
+want to <em>pass by value</em>, I want to <em>pass by reference</em>!</p>
+<blockquote>
+<p>My dad&#39;s friends always send him viral videos. But they don&#39;t send youtube or
+vimeo links, they send the entire video file along in the email! Everyone who
+gets the mail has to download a copy of the video... everytime the email is
+transmitted, all the data that constitutes the video goes with it. It gets
+copied hundreds of times! Isn&#39;t it easier to just send a URL to a youtube
+video? Then the data in the email is very small, but you still get
+to watch the
+<a href="https://www.youtube.com/watch?v=8F9jXYOH2c0&amp;app=desktop">video</a>. Also less viruses.</p>
+<p>This is the same as the difference between <em>pass by value</em> (copying the video
+each time the email is sent) and <em>pass by reference</em> (the &quot;reference&quot; being the
+address of the video, or the memory address of the structure you&#39;re referring
+to.)</p>
+</blockquote>
+<hr>
+
+<p>I can modify <code>makecell()</code> to return a pointer (which is an address) to the Cell
+I&#39;ve created instead of the cell itself, like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">struct</span> Cell *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> value, <span class="hljs-keyword">struct</span> Cell *next)</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">outcell</span> =</span> { value, next };
+    <span class="hljs-keyword">return</span> &amp;outcell;
+};
+</code></pre>
+<p>But if I try to call it with <code>makecell(1, 0x0)</code>, I get another, different warning.</p>
+
+<pre><code>sild.c:17:13: warning: address of stack memory associated with local variable &#39;outcell&#39; returned [-Wreturn-stack-address]
+    return &amp;outcell;
+           ^~~~~~~
+</code></pre>
+<p>I returned an address, why is the compiler complaining? Because I returned the
+address that the Cell inside of <code>makecell()</code> was given. But that&#39;s what I
+wanted to do! To understand why this is problematic, we have to know the difference between</p>
+<h3>the stack and the heap</h3>
+
+<p>This is a pretty big subject, but for our purposes right now, the main thing we have to understand is this:</p>
+<blockquote>
+<p>The stack is memory that is managed by the program.</p>
+<p>The heap is memory that is managed by the programmer.</p>
+</blockquote>
+<p>When <code>makecell()</code> is called, memory space is set aside for its execution, on
+the stack. This will include any arguments passed into it and any variables
+declared within its scope. It computes whatever it&#39;s supposed to, and returns
+whatever it returns, and when it&#39;s done, all the space that was set aside for
+its use is <em>freed</em> by the program. Once the memory is freed, it can be reused
+for anything else that&#39;s being executed, and likely will be reused, very
+quickly. The contents of the address that <code>makecell()</code> returned, then, are
+completely unreliable. It <em>could</em> be the data that was stored there during
+the execution of the function, but it almost definitely isn&#39;t. We need a
+more durable home for each cell that we create, with a persistent address, and
+for that, we&#39;ll need <code>malloc()</code>.</p>
+<hr>
+
+<p><code>malloc()</code> means &#39;memory allocation&#39;. It&#39;s a C standard library function that
+takes one argument, the size of the memory block you are requesting from the
+system, and returns a pointer to the block that you were given. Think of
+<code>malloc()</code> like a hotel front desk clerk. You say: &quot;Hi Mr. Malek, I would like
+a room please,&quot; and <code>malloc()</code> goes back and checks if they have the kind of
+room you wanted. If they do, it will give you the address of the room. If they
+don&#39;t, if the hotel is full, you get &#39;nothing&#39; back, in the form of the null pointer.</p>
+<blockquote>
+<p>That hotel is the heap. Once you&#39;ve allocated memory on the heap, it&#39;s yours
+for the remainder of the program&#39;s execution. You must <em>manually</em> free the
+memory by passing the address of it to <code>free()</code>, the yang to malloc&#39;s yin.
+Failure to properly manage heap memory, say by forgetting to free memory that
+you&#39;ve allocated, results in particularly nasty things, like memory leaks. In
+a long running program, you can just <em>run out</em> of memory if you have
+processes that keep requesting allocations without freeing the ones that
+they&#39;re done with.</p>
+</blockquote>
+<p>I&#39;ll modify <code>makecell()</code> to use malloc</p>
+
+<pre><code>struct Cell *makecell(int value, struct Cell *next) {
+    struct Cell *outcell = malloc(sizeof(struct Cell));
+    outcell-&gt;value = value;
+    outcell-&gt;next = next;
+    return outcell;
+};
+</code></pre>
+<p>I start now by requesting enough space on the heap for a cell. How much space
+is enough? I can figure that out by using <code>sizeof()</code>.</p>
+<p>On success, <code>malloc()</code> returns a pointer to that allocated memory. I&#39;ve told my
+program we&#39;re treating it as a pointer to a Cell. The next two lines simply
+assign the members of the new cell the values that I passed in, and then I
+return the pointer. That&#39;s it. The memory has been allocated on the heap
+instead of the stack frame of that particular function call, and so it is
+persistent (at least until I tell it otherwise). I can count on that data being
+at that address for as long as I like.</p>
+<p>I&#39;ll need to modify <code>print_list()</code> to accept and operate on a pointer instead
+of an object, but everything pretty much stays the same other than adding some
+<code>*</code>&#39;s and changing dots to arrows:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell *car)</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car-&gt;value);
+    <span class="hljs-keyword">if</span> (car-&gt;next) {
+        print_list(car-&gt;next);
+    }
+}
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> *<span class="hljs-title">a_cell</span> =</span> makecell(<span class="hljs-number">1</span>, makecell(<span class="hljs-number">2</span>, <span class="hljs-number">0x0</span>));
+    print_list(a_cell);
+}
+</code></pre>
+<hr>
+
+<p>I&#39;ll end by tightening things up a little bit. First, I&#39;ll add a typedef to the
+Cell struct and refer to it simply as C. This way, I can refer to it directly
+as <code>C</code> instead of <code>struct Cell</code>. This structure is used all over the place, and
+shortening it is an easy win for readibility. I&#39;ll also one line the member
+assignments in the <code>makecell()</code> function. I don&#39;t really have a good reason for
+this other than it feels good to me. I will likely split these up later on
+again, but for now, here&#39;s how the whole program looks so far, notice I&#39;ve
+<code>#include</code>d <code>stdio.h</code> for <code>printf()</code> and <code>stdlib.h</code> for <code>malloc()</code>:</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span>
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+    <span class="hljs-type">int</span> val;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
+} C;
+
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(C *car)</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car-&gt;val);
+    <span class="hljs-keyword">if</span> (car-&gt;next) {
+        print_list(car-&gt;next);
+    }
+}
+
+C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> val, C *next)</span> {
+    C *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(C));
+    out-&gt;val = val; out-&gt;next = next;
+    <span class="hljs-keyword">return</span> out;
+};
+
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    C *a_cell = makecell(<span class="hljs-number">1</span>, makecell(<span class="hljs-number">2</span>, <span class="hljs-literal">NULL</span>));
+    print_list(a_cell);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>As written, this program prints out.</p>
+
+<pre><code>1 2
+</code></pre>
+<p>And now we have a linked list.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

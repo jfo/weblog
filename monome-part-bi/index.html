@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>monome part bi</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="monome part bi" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/monome-part-bi" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">monome part bi</h1>
+        <sub>May 16, 2015</sub>
+        <p></p>
+        <div><p>In the last post I talked about figuring out what signals are coming from the monome when I press buttons. The obvious next goal is to find out what signals I can send <em>to</em> the monome.</p>
+<p>I&#39;d like to say I reverse engineered this bit, too, but I&#39;d be lying. I assumed it would follow a similar pattern of 3 bytes per signal- x and y coordinates and an on or off byte, in some kind of order or another, but I didn&#39;t want to start guessing. To check my intuition, I instead turned to the <a href="http://monome.org/docs/tech:serial">protocol itself</a>. I was right, for the most part.</p>
+<p>The document linked to above, I suppose, is pretty comprehensive. It details the <a href="http://opensoundcontrol.org/introduction-osc">OSC</a> grammar in addition to the bare byte serial one I was looking for. OSC seems really robust and awesome, and I imagine when I actually start writing useful things for the monome it will be using that, but I don&#39;t know anything about it yet.</p>
+<p>Around line 30 or so, under &quot;led-grid&quot;, I found what I was looking for. There are a lot of options for setting the leds to &#39;on&#39; and &#39;off&#39;, mostly in terms of groupings. Though I am most interested in controlling one light at a time, one option did catch my eye... to control all the lights at one time, you only have to send a single byte! <code>\x13</code> for on or <code>\x12</code> for off. Cool!</p>
+<p>I&#39;ve already established that it&#39;s pretty easy to send data to the device by writing directly to the file that shows up in <code>/dev/</code>, so let&#39;s try that. bash represents hex like <code>\x..</code> where &quot;.&quot; is some digit <code>0-f</code>. How about...</p>
+
+<pre><code class="lang-bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;\x13&quot;</span> &gt; dev/tty.usbserial-m1000065
+</code></pre>
+<p>Hey, this worked! The whole grid lights up!</p>
+<p><img src="https://igcdn-photos-b-a.akamaihd.net/hphotos-ak-xaf1/t51.2885-15/11271045_1648449182043465_1140557603_n.jpg" alt="A lit up monome"></p>
+<p>Now I&#39;ll try to turn it off</p>
+
+<pre><code class="lang-bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;\x12&quot;</span> &gt; dev/tty.usbserial-m1000065
+</code></pre>
+<p>Hmm. Nothing. It just sits there, brightly mocking me. Oh and when I unplug it and plug it back in to reset, sometimes it crashes my computer, so that&#39;s not great. Turns out <code>echo</code> appends a newline character (&quot;\n&quot;) to whatever you pass to it (for completely reasonable reasons, I&#39;m sure), so I was actually sending <em>two</em> bytes to the monome, the latter of which it didn&#39;t know what to do with. A <code>-n</code> flag will remove that newline:</p>
+
+<pre><code class="lang-bash"><span class="hljs-built_in">echo</span> -n <span class="hljs-string">&quot;\x12&quot;</span> &gt; dev/tty.usbserial-m1000065
+</code></pre>
+<p>Or, alternately, <code>printf</code> doesn&#39;t append a newline at all:</p>
+
+<pre><code class="lang-bash"><span class="hljs-built_in">printf</span> <span class="hljs-string">&quot;\x12&quot;</span> &gt; dev/tty.usbserial-m1000065
+</code></pre>
+<p>Really, anything that gets those bytes into standard out will work just fine, there are probably a bunch of other utilities that do this in some capacity.</p>
+<p>According to the protocol, if I want to control individual leds, I send a <em>different</em> on or off byte (&quot;\x11&quot; and &quot;\x10&quot;, respectively) followed by the x and y coordinates of the button I&#39;m targeting. So, if I want to turn on the first led:</p>
+
+<pre><code class="lang-bash"><span class="hljs-built_in">echo</span> -n <span class="hljs-string">&quot;\x11\x00\x00&quot;</span> &gt; dev/tty.usbserial-m1000065
+</code></pre>
+<p>or turn it off:</p>
+
+<pre><code class="lang-bash"><span class="hljs-built_in">echo</span> -n <span class="hljs-string">&quot;\x10\x00\x00&quot;</span> &gt; dev/tty.usbserial-m1000065
+</code></pre>
+<p>Now that I have a basic vocabulary with which to communicate in both directions with the device, I&#39;m ready to write my first &quot;application&quot; for it. It&#39;s going to be so cutting edge, y&#39;all, like when I push a button the light is going to come on, and when I release the button, the light is going to go off it&#39;s going to be so awesome oh wow.</p>
+<p>Because we&#39;re talking over serial here, any language with a serial protocol library (so I guess all of them, right?) can be used. Here&#39;s &quot;turn all the lights on, then wait a second, then turn all the lights off&quot; in Ruby...</p>
+<p>First I&#39;ll set up the port object (that I&#39;ll be using for the rest of the post)</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">require</span> <span class="hljs-string">&#x27;serialport&#x27;</span>
+ser = <span class="hljs-title class_">SerialPort</span>.new(<span class="hljs-string">&quot;/dev/tty.usbserial-m1000065&quot;</span>, <span class="hljs-number">9600</span>)
+</code></pre>
+<p><a href="https://rubygems.org/gems/serialport/versions/1.3.1">Serialport</a> is a serial comm library, as you might have been able to guess. The <code>9600</code> being passed into the object initializer is the <a href="http://en.wikipedia.org/wiki/Baud">baud rate declaration</a> for that now open port. <code>9600</code> is plenty fast for this right now.</p>
+<p>Then write the bytes to the port:</p>
+<p><code>&lt;blink&gt;</code>!</p>
+
+<pre><code class="lang-ruby">ser.write(<span class="hljs-string">&quot;\x13&quot;</span>)
+sleep <span class="hljs-number">1</span>
+ser.write(<span class="hljs-string">&quot;\x12&quot;</span>)
+</code></pre>
+<p><code>&lt;/blink&gt;</code>!</p>
+<p>Basically, I want to write a server that listens to this port and responds to signals with an instruction to do a thing based on that signal. The server is an open ear, patiently running on a loop until it hears something that it knows what to do with.</p>
+<p>There are various methods and ways to get data into the program, but for now I&#39;m going to use the Serialport class&#39;s <code>getc</code> method, which attempts to read just one character from the stream. (This is a method of Ruby&#39;s <code>IO</code> class, which is <code>SerialPort</code>&#39;s direct parent).</p>
+<p>Here is a loop that prints the input to the screen:</p>
+
+<pre><code class="lang-ruby">loop <span class="hljs-keyword">do</span>
+    print ser.getc
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>And it&#39;s our old friend &quot;!&quot;! This little program, by the way, acts exactly like <code>cat</code>ting the device file from the prompt. I&#39;ve a little more facility in this context, though, so lets get it to print something that makes sense. This is just a matter of formatting... how about the hex values, since that&#39;s what we&#39;ve been looking at thus far?</p>
+
+<pre><code class="lang-ruby">loop <span class="hljs-keyword">do</span>
+    puts ser.getc.ord.to_s(<span class="hljs-number">16</span>)
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p><code>ord</code> converts the input to its bitwise numerical value (in decimal) and <code>to_s(16)</code> changes the type from a decimal int to a string representing the value of the int you&#39;ve called it on in the base of the arg you pass to it.</p>
+<p>I know, this one is pretty confusing, but:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-number">7</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># 7</span>
+<span class="hljs-number">8</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># 8</span>
+<span class="hljs-number">9</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># 9</span>
+<span class="hljs-number">10</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># a</span>
+<span class="hljs-number">11</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># b</span>
+<span class="hljs-number">12</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># c</span>
+<span class="hljs-number">13</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># d</span>
+<span class="hljs-number">14</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># e</span>
+<span class="hljs-number">15</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># f</span>
+<span class="hljs-number">16</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># 10</span>
+<span class="hljs-number">17</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># 11</span>
+<span class="hljs-number">18</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># 12</span>
+<span class="hljs-number">19</span>.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># 13</span>
+</code></pre>
+<p>etc... or</p>
+
+<pre><code class="lang-ruby"><span class="hljs-number">7</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 111</span>
+<span class="hljs-number">8</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 1000</span>
+<span class="hljs-number">9</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 1001</span>
+<span class="hljs-number">10</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 1010</span>
+<span class="hljs-number">11</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 1011</span>
+<span class="hljs-number">12</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 1100</span>
+<span class="hljs-number">13</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 1101</span>
+<span class="hljs-number">14</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 1110</span>
+<span class="hljs-number">15</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 1111</span>
+<span class="hljs-number">16</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 10000</span>
+<span class="hljs-number">17</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 10001</span>
+<span class="hljs-number">18</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 10010</span>
+<span class="hljs-number">19</span>.to_s(<span class="hljs-number">2</span>) <span class="hljs-comment"># 10011</span>
+</code></pre>
+<p>Step last is simply to respond to a button press with a signal to turn that button&#39;s light on, and a button release to turn that button&#39;s light off.</p>
+
+<pre><code class="lang-ruby">loop <span class="hljs-keyword">do</span>
+    thinger = ser.getc().ord.to_s(<span class="hljs-number">16</span>)
+    <span class="hljs-keyword">if</span> thinger == <span class="hljs-string">&quot;21&quot;</span>
+        x = ser.getc
+        y = ser.getc
+        ser.write(<span class="hljs-string">&quot;\x11&quot;</span> + x + y)
+    <span class="hljs-keyword">elsif</span> thinger == <span class="hljs-string">&quot;20&quot;</span>
+        x = ser.getc
+        y = ser.getc
+        ser.write(<span class="hljs-string">&quot;\x10&quot;</span> + x + y)
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>And it pretty much does what I wanted now! Except, it misses a lot of events, and if you press or release a lot of buttons at one time, it will miss a lot of those as well, but this is most probably a consequence of the single threadedness of the above loop, and the fact that the signal from a button press could be lost while the program is executing other code besides the primary loop...</p>
+<p>There are a lot of problems with this model, actually, but they are problems that have no doubt been dealt with and optimized in the standard and/or mostly-in-use IO libraries for the monome, like <a href="https://github.com/monome/libmonome">libmonome</a> which I&#39;ll probably be switching over to now that I kind of feel like I get the gist of how this protocol works. This was fun to figure out though.</p>
+<p><code>&lt;blink&gt;&lt;/blink&gt;</code>!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

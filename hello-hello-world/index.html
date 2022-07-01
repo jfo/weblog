@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Hello &quot;Hello world!&quot;</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Hello &quot;Hello world!&quot;" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/hello-hello-world" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Hello &quot;Hello world!&quot;</h1>
+        <sub>Aug 15, 2020</sub>
+        <p></p>
+        <div><p>Languages are often judged initially on their &quot;<a href="https://en.wikipedia.org/wiki/%22Hello,_World!%22_program">Hello,
+world!</a>&quot; program.
+How easy is it to write? To run? How easy is it to understand? It&#39;s a very
+simple program, of course, one of the simplest, even... just produce a little
+text, and display it, what could be simpler?</p>
+<p>It&#39;s really not fair to judge a language by such a cursory impression, but it
+<em>can</em> give you an idea of what a language <em>values</em> and how it works. What does
+the syntax look like? Is it typed? Is it interpreted? You can usually tell a
+lot at a glance.</p>
+<p>For example, One of Ruby&#39;s (many) hello worlds is so simple, it&#39;s also Python!</p>
+
+<pre><code class="lang-ruby">print(<span class="hljs-string">&#x27;Hello world!&#x27;</span>)
+</code></pre>
+<p>Often, people coming from interpreted languages experience compiled, systems
+languages to be more complicated right off the bat. There is the obvious added
+complexity of compiling and running being separate steps, as opposed to simply
+pointing an executable at some source code and seeing a result right away, but
+there are often syntactical constructs to go along with that...</p>
+<p>At first glance, Rust&#39;s hello world looks fairly inert, as well:</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Hello World!&quot;</span>);
+}
+</code></pre>
+<p>But <code>println!</code> is actually a macro, what does it look like expanded?</p>
+
+<pre><code class="lang-rust"><span class="hljs-built_in">macro_rules!</span> println {
+    () =&gt; ($crate::<span class="hljs-built_in">print!</span>(<span class="hljs-string">&quot;\n&quot;</span>));
+    ($($arg:tt)*) =&gt; ({
+        $crate::io::_print($crate::format_args_nl!($($arg)*));
+    })
+}
+</code></pre>
+<p>You&#39;ll notice that this <em>also</em> has a macro <em>inside of it.</em> This matches on the
+second case (because there is an argument present) and calls into
+<code>$crate::format_args_nl!</code> and passes the result of that to <code>$crate::io::_print</code></p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">fn</span> <span class="hljs-title function_">_print</span>(args: fmt::Arguments&lt;<span class="hljs-symbol">&#x27;_</span>&gt;) {
+    <span class="hljs-title function_ invoke__">print_to</span>(args, &amp;LOCAL_STDOUT, stdout, <span class="hljs-string">&quot;stdout&quot;</span>);
+}
+</code></pre>
+<p><code>print_to</code> which looks like</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">print_to</span>&lt;T&gt;(
+    args: fmt::Arguments&lt;<span class="hljs-symbol">&#x27;_</span>&gt;,
+    local_s: &amp;<span class="hljs-symbol">&#x27;static</span> LocalKey&lt;RefCell&lt;<span class="hljs-type">Option</span>&lt;<span class="hljs-type">Box</span>&lt;<span class="hljs-keyword">dyn</span> Write + <span class="hljs-built_in">Send</span>&gt;&gt;&gt;&gt;,
+    global_s: <span class="hljs-title function_ invoke__">fn</span>() <span class="hljs-punctuation">-&gt;</span> T,
+    label: &amp;<span class="hljs-type">str</span>,
+) <span class="hljs-keyword">where</span>
+    T: Write,
+{
+    <span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = local_s
+        .<span class="hljs-title function_ invoke__">try_with</span>(|s| {
+            <span class="hljs-comment">// Note that we completely remove a local sink to write to in case</span>
+            <span class="hljs-comment">// our printing recursively panics/prints, so the recursive</span>
+            <span class="hljs-comment">// panic/print goes to the global sink instead of our local sink.</span>
+            <span class="hljs-keyword">let</span> <span class="hljs-variable">prev</span> = s.<span class="hljs-title function_ invoke__">borrow_mut</span>().<span class="hljs-title function_ invoke__">take</span>();
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> <span class="hljs-variable">Some</span>(<span class="hljs-keyword">mut</span> w) = prev {
+                <span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = w.<span class="hljs-title function_ invoke__">write_fmt</span>(args);
+                *s.<span class="hljs-title function_ invoke__">borrow_mut</span>() = <span class="hljs-title function_ invoke__">Some</span>(w);
+                <span class="hljs-keyword">return</span> result;
+            }
+            <span class="hljs-title function_ invoke__">global_s</span>().<span class="hljs-title function_ invoke__">write_fmt</span>(args)
+        })
+        .<span class="hljs-title function_ invoke__">unwrap_or_else</span>(|_| <span class="hljs-title function_ invoke__">global_s</span>().<span class="hljs-title function_ invoke__">write_fmt</span>(args));
+
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> <span class="hljs-variable">Err</span>(e) = result {
+        <span class="hljs-built_in">panic!</span>(<span class="hljs-string">&quot;failed printing to {}: {}&quot;</span>, label, e);
+    }
+}
+</code></pre>
+<p>Which is, uh, well let&#39;s just say it&#39;s not exactly <em>simple</em> looking now? There
+is a lot going on here!</p>
+<p>To be clear, I&#39;m not faulting Rust here at all, my point is exactly the
+opposite actually, in that there is <em>always</em> necessarily more going on in a
+&quot;Hello world!&quot; than <code>puts &quot;la de da&quot;</code> or similar would have you believe on its
+face. Speaking of Ruby&#39;s <code>puts</code>, what <em>is</em> the code that runs <code>puts</code> in the
+Ruby interpreter itself, which is written in C?</p>
+<p>Well it looks like <a href="https://github.com/ruby/ruby/blob/7c2bbd1c7d40a30583844d649045824161772e36/io.c#L7727-L7758">this</a></p>
+
+<pre><code class="lang-c">VALUE
+<span class="hljs-title function_">rb_io_puts</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">const</span> VALUE *argv, VALUE out)</span>
+{
+    <span class="hljs-type">int</span> i, n;
+    VALUE line, args[<span class="hljs-number">2</span>];
+
+    <span class="hljs-comment">/* if no argument given, print newline. */</span>
+    <span class="hljs-keyword">if</span> (argc == <span class="hljs-number">0</span>) {
+        rb_io_write(out, rb_default_rs);
+        <span class="hljs-keyword">return</span> Qnil;
+    }
+    <span class="hljs-keyword">for</span> (i=<span class="hljs-number">0</span>; i&lt;argc; i++) {
+        <span class="hljs-keyword">if</span> (RB_TYPE_P(argv[i], T_STRING)) {
+            line = argv[i];
+            <span class="hljs-keyword">goto</span> <span class="hljs-built_in">string</span>;
+        }
+        <span class="hljs-keyword">if</span> (rb_exec_recursive(io_puts_ary, argv[i], out)) {
+            <span class="hljs-keyword">continue</span>;
+        }
+        line = rb_obj_as_string(argv[i]);
+      <span class="hljs-built_in">string</span>:
+        n = <span class="hljs-number">0</span>;
+        args[n++] = line;
+        <span class="hljs-keyword">if</span> (RSTRING_LEN(line) == <span class="hljs-number">0</span> ||
+            !rb_str_end_with_asciichar(line, <span class="hljs-string">&#x27;\n&#x27;</span>)) {
+            args[n++] = rb_default_rs;
+        }
+        rb_io_writev(out, n, args);
+    }
+
+    <span class="hljs-keyword">return</span> Qnil;
+}
+</code></pre>
+<p>Hello world!</p>
+<p>We all know that a languages like Ruby or Python are designed explicitly to
+hide this sort of complexity from us and let us get on with the dirty business
+of munging data blobs or serving web requests or solving sudokus or whatever,
+and thank goodness for that, but wow that is <em>quite</em> a lot, isn&#39;t it?</p>
+<hr>
+<p>When people come from languages that were designed to be ergonomic to more
+systems oriented languages, they&#39;re often jarred by what they perceive to be
+code thatis inelegant, ugly, and verbose. To be sure, it sometimes <em>is</em> exactly
+that... (although anyone who has worked with a &quot;pretty&quot; language in a production
+codebase knows that those are not immune to these descriptors either).</p>
+<p>Usually, the tradeoff is explicit: elegance and simplicity for
+<em>control</em>...  specific and granular <em>control</em>, over the program that will
+eventually be run.  It isn&#39;t always necessary, in fact it is almost always _un_necessary,
+to have <em>that</em> much control over your program. Obviously, productivity matters,
+and if your business is <em><em>insert viable business</em></em>, well it&#39;s likely that your
+goals are not going to be optimally met by futzing with manual memory
+management all day (<a href="https://danluu.com/sounds-easy/">at least from the macro level, in the general
+sense</a>).</p>
+<p>But what if you <em>do</em> need that control? Well then, <em>you need it</em>. When every
+ounce of performance actually is necessary, or on embedded systems with hard
+memory constraints, or when writing code for some bespoke or otherwise uncommon
+processor.</p>
+<p>I&#39;m going to choose one language, Zig, and dive deep into its hello world, but
+it is important to note here that my point is not primarily about Zig, it&#39;s
+about how <em>all</em> languages have to contend with an enormous amount of complexity
+in order to do <em>anything</em>, even the simplest of tasks like a hello world
+program. Complexity that is, for the most part, hidden from us in our day to
+day. So what in the hello world is <em>actually</em> going on then?</p>
+<blockquote>
+<p>I&#39;ll be using the most current minor release version of Zig: 0.6.0.</p>
+</blockquote>
+<h2 id="let-s-take-a-walk">Let&#39;s take a walk</h2>
+<p><a href="https://ziglang.org/">Zig</a>&#39;s hello world looks like this, from the docs.:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> std = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>);
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() !<span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">const</span> stdout = std.io.getStdOut().outStream();
+    <span class="hljs-keyword">try</span> stdout.print(<span class="hljs-string">&quot;Hello, {}!\n&quot;</span>, .{<span class="hljs-string">&quot;world&quot;</span>});
+}
+</code></pre>
+<p>If you are new to zig, a quick word on this syntax before I get into the gritty
+details.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> std = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>);
+</code></pre>
+<p><code>@import</code> is a <a href="https://ziglang.org/documentation/0.6.0/#Builtin-Functions"><em>compiler
+builtin</em></a> function
+that assigns the namespace of the file it is referencing to the <code>const</code>
+variable on the left hand side.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() !<span class="hljs-built_in">void</span> {
+  <span class="hljs-comment">//...</span>
+}
+</code></pre>
+<p>Just like in C, <code>main</code> is a special function that marks the entry point to a
+program after it has been compiled as an executable. Unlike in C, it accepts no
+arguments (C&#39;s main function has a variety of vagaries that make it a bit
+<a href="https://stackoverflow.com/a/4207223">unique</a>) and command line input is
+available through utility functions to allow easier cross platform use.</p>
+<p>It is marked <a href="https://ziglang.org/documentation/0.6.0/#Keyword-pub"><code>pub</code></a> so
+that it is accessible from outside of the immediate module (&#39;module&#39; here
+referring to nothing more than the top level scope of the current namespace...
+i.e., the file), this is a necessary step since, as the program&#39;s entry point,
+<code>main</code> would <em>have</em> to be accessible from outside the immediate scope.</p>
+<p><code>fn</code> is the function keyword.</p>
+<p><code>main()</code> is the name of the function (and where the argument list <em>would</em> be)
+and <code>!void</code> is the return type. Looking a little closer at that return type:</p>
+<p>In C, the return type of a function is declared <em>before</em> anything else. This
+makes a certain amount of sense: it&#39;s congruent with how variables are
+declared, after all, and scanning the file you can see clearly &quot;calling this
+will get you that.&quot;</p>
+<p>In Zig, the return type comes after the function declaration but before the
+function body. This also makes sense! It&#39;s the same in Rust and Go, and seems
+to be generally a more modern approach. The reason is actually pretty simple:
+doing it this way makes it possible to have a context-free grammar! C and C++
+put the parser in a position where it <a href="https://stackoverflow.com/questions/14589346/is-c-context-free-or-context-sensitive">has to understand semantics to even just
+<em>parse</em> the source
+code.</a></p>
+<p>In Zig, <code>main</code> returns <code>void</code> (well, actually, it can return a variety of
+things, and if it returns void (which is just a way of saying it doesn&#39;t return
+anything at all)), it&#39;s actually returning
+<a href="https://github.com/jfo/zig/blob/7381aaf70e0cad92fc52b79f3aa2a0abb7c3ee04/lib/std/start.zig#L241-L244"><code>0</code></a>
+as a success code, but) there is a wrinkle!  <code>void</code> is preceded by an
+exclamation mark. This means: &quot;This function is supposed to return <code>void</code>, but
+it <em>could</em> fail and return an error.&quot; This is an <a href="https://ziglang.org/documentation/0.6.0/#Inferred-Error-Sets">inferred error
+set</a>, and
+whenever a function that <em>could</em> fail is called, the compiler will enforce that
+you handle that error at the call site. More on Zig&#39;s error handling some other
+time, for now it is enough to understand what the <code>!</code> in front of the return
+type declaration means. I want to move on to the body of the function, let&#39;s go
+line by line.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> stdout = std.io.getStdOut().outStream();
+</code></pre>
+<p>So, we can see that this is a call into a standard library function (<code>std</code>)
+that returns something that we assign to <code>const stdout</code>. Standard out (stdout) and
+standard error (stderr) may be familiar concepts from the shell, but what does it
+mean to be referring to <code>stdout</code> here in this program? What exactly <em>is</em>
+<code>stdout</code>? Whatever it is, it&#39;s being returned by the call to <code>outStream()</code>,
+which is a method called on the return value of <code>std.io.getStdOut()</code>, so we
+first need to know what <em>that</em> is.</p>
+<p>To the source! In the Zig source tree, <code>std</code> lives in <code>lib/std/std.zig</code>, which
+is a file that makes a wide variety of functionality available. It includes the line:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> io = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;io.zig&quot;</span>);
+</code></pre>
+<p>Which is referred to on the <code>std</code> variable as <code>std.io</code> (again, notice the <code>pub</code>
+keyword, without which this declared constant would be inaccesible outside of
+this immediate scope). Going deeper, into <code>lib/std/io.zig</code>...</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">getStdOut</span></span>() File {
+    <span class="hljs-keyword">return</span> File{
+        .handle = getStdOutHandle(),
+        .capable_io_mode = .blocking,
+        .intended_io_mode = default_mode,
+    };
+}
+</code></pre>
+<p>So, <code>stdout</code> is a <em>File</em> struct. Let&#39;s look at that. It is imported at the top
+of <code>io.zig</code> as</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> File = std.fs.File;
+</code></pre>
+<p>and lives in the source, perhaps unsurprisingly, at <code>lib/std/fs/File.zig</code>. This
+struct definition is quite long, so I&#39;ll focus on what we want to look at, the
+<code>outStream()</code> method.</p>
+<h2 id="an-aside-methods-vs-functions">An aside: methods vs functions</h2>
+<p>Zig doesn&#39;t <em>really</em> have methods, but it&#39;s useful to talk about a special
+class of functions <em>as</em> methods, since the calling convention supports implicit
+passing of <code>self</code> when called on a struct &quot;instance&quot; using dot syntax. Let me
+show you what I mean.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> std = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>);
+
+<span class="hljs-keyword">const</span> Thing = <span class="hljs-keyword">struct</span> {
+    instanceVariable: <span class="hljs-type">u8</span>,
+    <span class="hljs-keyword">const</span> classVariable = <span class="hljs-number">41</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">staticMethod</span></span>(y: <span class="hljs-type">u8</span>) <span class="hljs-type">u8</span> {
+        <span class="hljs-keyword">return</span> classVariable + y;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">instanceMethod</span></span>(self: Thing) <span class="hljs-type">u8</span> {
+        <span class="hljs-keyword">return</span> self.instanceVariable;
+    }
+};
+
+<span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">main</span></span>() !<span class="hljs-built_in">void</span> {
+    std.debug.warn(<span class="hljs-string">&quot;{}\n&quot;</span>, .{ Thing.staticMethod(<span class="hljs-number">1</span>) }); <span class="hljs-comment">// 42</span>
+    <span class="hljs-keyword">const</span> thing = Thing{ .instanceVariable = <span class="hljs-number">1</span> };
+    std.debug.warn(<span class="hljs-string">&quot;{}\n&quot;</span>, .{ thing.instanceMethod() }); <span class="hljs-comment">// 1</span>
+}
+</code></pre>
+<p>So, despite the lack of explicit <em>classes</em>, these patterns are available
+because of support for this calling convention. Treating a <code>struct</code> <em>like</em> a
+class definition, you can call a &quot;static method&quot; on the struct definition
+<em>itself</em>. In the example above,</p>
+
+<pre><code class="lang-zig">Thing.staticMethod(<span class="hljs-number">1</span>);
+</code></pre>
+<p>Is equivalent to the</p>
+
+<pre><code class="lang-ruby">Thing::staticMethod
+</code></pre>
+<p>syntax in Ruby. In fact, the equivalent example in Ruby looks startingly
+similar to the Zig version:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Thing</span>
+  <span class="hljs-keyword">attr_accessor</span> <span class="hljs-symbol">:instanceVariable</span>
+  <span class="hljs-variable">@@classVariable</span> = <span class="hljs-number">41</span>
+
+  <span class="hljs-keyword">def</span> <span class="hljs-title function_">initialize</span>(<span class="hljs-params">instanceVariable</span>)
+    <span class="hljs-variable">@instanceVariable</span> = instanceVariable
+  <span class="hljs-keyword">end</span>
+
+  <span class="hljs-keyword">def</span> <span class="hljs-title function_">self</span>.staticMethod(y)
+    <span class="hljs-variable">@@classVariable</span> + y
+  <span class="hljs-keyword">end</span>
+
+  <span class="hljs-keyword">def</span> <span class="hljs-title function_">instanceMethod</span>()
+    <span class="hljs-variable">@instanceVariable</span>
+  <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+
+p Thing::staticMethod(<span class="hljs-number">1</span>) <span class="hljs-comment"># 42</span>
+thing = <span class="hljs-title class_">Thing</span>.new(<span class="hljs-number">1</span>)
+p thing.instanceMethod <span class="hljs-comment"># 1</span>
+</code></pre>
+<p>There are of course notable differences here! Attempting to call a static
+method on an <em>instance</em> of a class in ruby</p>
+
+<pre><code class="lang-ruby">p thing.staticMethod <span class="hljs-number">2</span>
+</code></pre>
+<p>will not get you very far</p>
+
+<pre><code>thing.rb:21:in `&lt;main&gt;&#39;: undefined method `staticMethod&#39; for #&lt;Thing:0x0000000002284d38 @instanceVariable=1&gt; (NoMethodError)
+</code></pre>
+<p>Likewise, the other way:</p>
+
+<pre><code class="lang-ruby">p Thing::instanceMethod(<span class="hljs-number">1</span>)
+</code></pre>
+
+<pre><code>thing.rb:18:in `&lt;main&gt;&#39;: undefined method `instanceMethod&#39; for Thing:Class (NoMethodError)
+</code></pre>
+<p>Ruby is a full throated object oriented language, and so of course its
+underlying class abstraction is more robust than this facsimile of one in Zig,
+but the effect of that is that, well, there&#39;s really nothing special about a
+zig &quot;instance&quot; vs &quot;static&quot; method, as they are simply functions defined on the
+struct that <em>happen</em> to be available through multiple calling conventions.</p>
+<p>Take this again, with the same <code>Thing</code> struct definition from above:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> thing = Thing{ .instanceVariable = <span class="hljs-number">1</span> };
+std.debug.warn(<span class="hljs-string">&quot;{}\n&quot;</span>, .{ thing.staticMethod() });
+</code></pre>
+<p>You will get a compiler error:</p>
+
+<pre><code>./thing.zig:19:31: error: expected type &#39;u8&#39;, found &#39;Thing&#39;
+    std.debug.warn(&quot;{}\n&quot;, .{ thing.staticMethod() });
+</code></pre>
+<p>But it&#39;s telling you that you passed a <code>Thing</code> to the method. This is the
+important point: &quot;instance methods&quot; have special access to &quot;instance variables&quot;
+because they have a reference to the struct they are being called on, that&#39;s
+all.  That&#39;s all the magic there is here.</p>
+<blockquote>
+<p>Note also that there is nothing special about the word &#39;<em>self</em>&#39;, it is
+just a conventional variable name.</p>
+</blockquote>
+<p>For completeness, the other direction:</p>
+
+<pre><code class="lang-zig">std.debug.warn(<span class="hljs-string">&quot;{}\n&quot;</span>, .{ Thing.instanceMethod() });
+</code></pre>
+<p>You will get what you might expect, given the last example:</p>
+
+<pre><code>./thing.zig:17:51: error: expected 1 arguments, found 0
+    std.debug.warn(&quot;{}\n&quot;, .{ Thing.instanceMethod() });
+</code></pre>
+<p>No implicit passing of <code>self</code> means an arity error on this call.</p>
+<p>But, to underscore the fact that there is nothing magical happening here, you
+can indeed do this:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> thing = Thing{ .instanceVariable = <span class="hljs-number">1</span> };
+std.debug.warn(<span class="hljs-string">&quot;{}\n&quot;</span>, .{ thing.instanceMethod() });
+std.debug.warn(<span class="hljs-string">&quot;{}\n&quot;</span>, .{ Thing.instanceMethod(thing) });
+</code></pre>
+<p>Those two calls to<code>instanceMethod</code> are the same, but with differing calling
+conventions (and so the first one passes <code>self</code> implicitly!)</p>
+<h2 id="the-outstream-method-">The <code>outStream()</code> &quot;method&quot;</h2>
+<p>Back in <code>lib/std/fs/File.zig</code>, we see the definition of this &quot;instance method&quot;</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">outStream</span></span>(file: File) OutStream {
+  <span class="hljs-keyword">return</span> .{ .context = file };
+}
+</code></pre>
+<p>This is returning an <code>OutStream</code> struct that is initialized with <code>self</code> of the
+<code>File</code> it was called on (here referred to as <code>file</code>). Zig supports <a href="https://ziglang.org/documentation/0.6.0/#Anonymous-Struct-Literals">anonymous
+struct
+literals</a>
+and in this case is able to infer the type based on the return value of the
+function. Note too the odd syntax of starting an anonymous struct literal with
+<code>.</code>, which is to syntactically distinguish it from a block.</p>
+<p>So, further down again, what is an <code>OutStream</code>? Its definition is just above:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> OutStream = io.OutStream(File, WriteError, write);
+</code></pre>
+<p>Hmm, this is interesting... is this function call returning a... type
+definition? That is then assigned to <code>OutStream</code> and used as a return value for
+<code>pub fn outStream</code>?</p>
+<p>That&#39;s exactly what it&#39;s doing! In <code>lib/std/io/outStream.zig</code>:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">OutStream</span></span>(
+    <span class="hljs-keyword">comptime</span> Context: <span class="hljs-built_in">type</span>,
+    <span class="hljs-keyword">comptime</span> WriteError: <span class="hljs-built_in">type</span>,
+    <span class="hljs-keyword">comptime</span> writeFn: <span class="hljs-function"><span class="hljs-keyword">fn</span> </span>(context: Context, bytes: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>) WriteError!<span class="hljs-built_in">usize</span>,
+) <span class="hljs-built_in">type</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">struct</span> {
+        context: Context,
+        <span class="hljs-comment">//...</span>
+    }
+}
+</code></pre>
+<p>This is Zig&#39;s way of supporting generics! Given some compile time known values,
+you can create a struct definition <em>on the fly, at compile time</em>. Here is a
+more detailed post about that capability: <a href="https://kristoff.it/blog/what-is-zig-comptime/">What is Zig&#39;s
+Comptime?</a>.</p>
+<p>For now, take careful note that <code>write</code> is being passed to <code>io.OutStream</code> as
+the <code>writeFn</code> argument, which will eventually be what is called to print to
+standard out.</p>
+<p>Alright, phew, so that&#39;s</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> stdout = std.io.getStdOut().outStream();
+</code></pre>
+<p>We&#39;ve ended up with an <code>OutStream</code> struct with its <code>context</code> field initialized
+to the <code>File</code> struct returned by <code>std.io.getStdOut()</code>.</p>
+<p>Now for the money business.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">try</span> stdout.print(<span class="hljs-string">&quot;Hello, {}!\n&quot;</span>, .{<span class="hljs-string">&quot;world&quot;</span>});
+</code></pre>
+<p>The definition of this &quot;instance method&quot; lives in <code>lib/std/io/outStream.zig</code>.</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">print</span></span>(self: Self, <span class="hljs-keyword">comptime</span> format: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, args: <span class="hljs-keyword">var</span>) Error!<span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">return</span> std.fmt.format(self, format, args);
+}
+</code></pre>
+<p>This dispatces <code>self</code> to <code>std.fmt.format</code> along with two more arguments. Let&#39;s
+look at that function</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">format</span></span>(
+    out_stream: <span class="hljs-keyword">var</span>,
+    <span class="hljs-keyword">comptime</span> fmt: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>,
+    args: <span class="hljs-keyword">var</span>,
+) !<span class="hljs-built_in">void</span> {
+  <span class="hljs-comment">//...</span>
+}
+</code></pre>
+<p>Ok, getting closer: <code>out_stream</code> is in this case, the <code>File</code> from way back
+at the beginning.</p>
+<blockquote>
+<p><a href="https://andrewkelley.me">Andy</a> said: &quot;Almost - it&#39;s the file.outStream()
+return value. Which is just the &quot;Context&quot; with the write function as part of
+the type. The way streams work in zig right now is with &quot;duck typing&quot;. It
+optimizes well, the API is mostly good, but it can produce bloated code, and
+in some cases the API is annoyingly too generic. Sometimes it would be nice
+to accept a non-&quot;var&quot; type as a stream parameter.&quot;</p>
+</blockquote>
+<p>The other two arguments are being passed in at the top level
+call site, a string constant and an <a href="https://ziglang.org/documentation/0.6.0/#Anonymous-List-Literals">anonymous list
+literal</a>
+(whose behavior is unsurprisingly similar to the aforementioned anonymous struct
+literal) of positional arguments meant to be interpolated into the format
+string at points marked by <code>{}</code>. You can pass in <a href="https://ziglang.org/documentation/0.6.0/std/#std;fmt.format">formatting
+options</a> much like
+c&#39;s <code>printf</code>.</p>
+<p><code>format</code> is a long function, there is a lot of bookeeping going on, but the
+meat of it are its calls to <code>out_stream.writeAll</code>. Jumping back to that
+definition:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">writeAll</span></span>(self: File, bytes: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>) WriteError!<span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">var</span> index: <span class="hljs-built_in">usize</span> = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (index &lt; bytes.len) {
+        index += <span class="hljs-keyword">try</span> self.write(bytes[index..]);
+    }
+}
+</code></pre>
+<p>We can see that it calls into <code>self.write</code>, which looks like:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">write</span></span>(self: File, bytes: []<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>) WriteError!<span class="hljs-built_in">usize</span> {
+    <span class="hljs-keyword">if</span> (is_windows) {
+        <span class="hljs-keyword">return</span> windows.WriteFile(self.handle, bytes, <span class="hljs-literal">null</span>, self.intended_io_mode);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (self.capable_io_mode != self.intended_io_mode) {
+        <span class="hljs-keyword">return</span> std.event.Loop.instance.?.write(self.handle, bytes);
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> os.write(self.handle, bytes);
+    }
+}
+</code></pre>
+<p>And now, finally, we&#39;re down to the <code>system</code> in <code>systems programming</code> This
+method operates differently depending on the system it&#39;s being used on! At the
+top of this file <code>lib/std/fs/file.zig</code>,</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">const</span> is_windows = std.Target.current.os.tag == .windows;
+</code></pre>
+<p>I am not on windows, and I will for now ignore the second branch so I don&#39;t
+have to get into <code>async</code> (that&#39;s a <a href="https://www.youtube.com/watch?v=zeLToGnjIUM">whole other
+potato</a>!), so I end up here:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">return</span> os.write(self.handle, bytes);
+</code></pre>
+<p>I am calling into an os specific library function that accepts a place to write
+bytes and bytes to write (by this point formatted with those interpolated
+values from the call site). Here&#39;s where it gets good.</p>
+<p><code>os.write</code> calls into <code>system.write</code> which is defined <em>per architecture</em></p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> system = <span class="hljs-keyword">if</span> (<span class="hljs-meta">@hasDecl</span>(root, <span class="hljs-string">&quot;os&quot;</span>) <span class="hljs-keyword">and</span> root.os != <span class="hljs-meta">@This</span>())
+    root.os.system
+<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (builtin.link_libc)
+    std.c
+<span class="hljs-keyword">else</span> <span class="hljs-keyword">switch</span> (builtin.os.tag) {
+    .macosx, .ios, .watchos, .tvos =&gt; darwin,
+    .freebsd =&gt; freebsd,
+    .linux =&gt; linux,
+    .netbsd =&gt; netbsd,
+    .dragonfly =&gt; dragonfly,
+    .wasi =&gt; wasi,
+    .windows =&gt; windows,
+    <span class="hljs-keyword">else</span> =&gt; <span class="hljs-keyword">struct</span> {},
+};
+</code></pre>
+<p>For me, that ends up being <code>linux</code>, defined here:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> linux = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;os/linux.zig&quot;</span>);
+</code></pre>
+<p>So in my case, <code>system.write</code> ends up being:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">write</span></span>(fd: <span class="hljs-type">i32</span>, buf: [*]<span class="hljs-keyword">const</span> <span class="hljs-type">u8</span>, count: <span class="hljs-built_in">usize</span>) <span class="hljs-built_in">usize</span> {
+    <span class="hljs-keyword">return</span> syscall3(.write, <span class="hljs-meta">@bitCast</span>(<span class="hljs-built_in">usize</span>, <span class="hljs-meta">@as</span>(<span class="hljs-built_in">isize</span>, fd)), <span class="hljs-meta">@ptrToInt</span>(buf), count);
+}
+</code></pre>
+<p>where <code>syscall3</code> is imported directly into the namespace according to
+architecture:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">usingnamespace</span> <span class="hljs-keyword">switch</span> (builtin.arch) {
+    .<span class="hljs-type">i386</span> =&gt; <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;linux/i386.zig&quot;</span>),
+    .x86_64 =&gt; <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;linux/x86_64.zig&quot;</span>),
+    .aarch64 =&gt; <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;linux/arm64.zig&quot;</span>),
+    .arm =&gt; <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;linux/arm-eabi.zig&quot;</span>),
+    .riscv64 =&gt; <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;linux/riscv64.zig&quot;</span>),
+    .mips, .mipsel =&gt; <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;linux/mips.zig&quot;</span>),
+    <span class="hljs-keyword">else</span> =&gt; <span class="hljs-keyword">struct</span> {},
+};
+</code></pre>
+<blockquote>
+<p>here, the &quot;3&quot; in <em>syscall3</em> refers to the number of &quot;arguments&quot; required for
+the syscall being invoked.</p>
+</blockquote>
+<p>for me, that&#39;s <code>x86_64</code>, and it looks like this:</p>
+
+<pre><code class="lang-zig"><span class="hljs-keyword">pub</span> <span class="hljs-function"><span class="hljs-keyword">fn</span> <span class="hljs-title">syscall3</span></span>(number: SYS, arg1: <span class="hljs-built_in">usize</span>, arg2: <span class="hljs-built_in">usize</span>, arg3: <span class="hljs-built_in">usize</span>) <span class="hljs-built_in">usize</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">asm</span> <span class="hljs-keyword">volatile</span> (<span class="hljs-string">&quot;syscall&quot;</span>
+        : [ret] <span class="hljs-string">&quot;={rax}&quot;</span> (-&gt; <span class="hljs-built_in">usize</span>)
+        : [number] <span class="hljs-string">&quot;{rax}&quot;</span> (<span class="hljs-meta">@enumToInt</span>(number)),
+          [arg1] <span class="hljs-string">&quot;{rdi}&quot;</span> (arg1),
+          [arg2] <span class="hljs-string">&quot;{rsi}&quot;</span> (arg2),
+          [arg3] <span class="hljs-string">&quot;{rdx}&quot;</span> (arg3)
+        : <span class="hljs-string">&quot;rcx&quot;</span>, <span class="hljs-string">&quot;r11&quot;</span>, <span class="hljs-string">&quot;memory&quot;</span>
+    );
+}
+</code></pre>
+<p>This is <em>close to</em> but not <em>exactly</em> what the compiler will <em>actually emit</em> for
+this call. Amazingly, even all the way down here, where we&#39;re seeing register
+names invoked directly, there is still a layer of abstraction within which the
+compiler has some wiggle room.</p>
+<p>Not so <em>simple</em> a program now, is it? Remember, these syscalls differ for each
+architecture, the compiler produces machine code based on what you&#39;re
+targeting, so this is just one of <em>many</em> possible paths. I think that it is very
+easy to forget how complicated this can quickly become when you poke around in the details.</p>
+<h2 id="bottoms-up-">Bottoms up 🍺</h2>
+<p>Let me come at this from a slightly different angle now. We know that the
+Zig compiler&#39;s job, just like any compiler, is to take <em>source code</em> and turn it
+into something else. Zig is highly portable; using llvm as a backend means
+it can target basically anything that llvm targets, with the caveat that not
+all library functions will have the same amount of support on all platforms
+(see the <a href="https://ziglang.org/download/0.6.0/release-notes.html#Tier-System">support
+table</a>) for
+more detail on that).</p>
+<p>So, there are many possible targets, and so there are many possible &quot;something
+else&quot;s for the source to be turned into. But let&#39;s look at the most obvious
+case: building an executable that targets my current running system.</p>
+<p>The transformation pipeline inside the compiler goes from <code>source</code> -&gt;
+<code>intermediate representation(s)</code> -&gt; <code>target</code>, where <code>intermediate
+representations</code> could be many things and include many steps. Zig has its own
+IR, as a matter of fact, on which it runs its own static analysis processes
+before transforming it to LLVM IR and passing it along where is could be
+processed through <a href="http://llvm.org/docs/Passes.html">many possible optimazation and compilation/assemblage
+steps</a> (LLVM calls these &quot;passes&quot;).
+<code>target</code>, for me, is x86_64 machine code, but the last stop <em>before</em> that,
+conceptually as well as most probably actually, is assembly itself.</p>
+<p>Because clang is a full compiler toolchain built on llvm, and Zig can be used
+as a <a href="https://andrewkelley.me/post/zig-cc-powerful-drop-in-replacement-gcc-clang.html">drop in replacement for
+clang</a>,
+we should be able to use <code>zig cc</code> to compile assembly code directly into machine code.
+This step is actually called <em>assembling</em>, not compiling, and is done by an
+&quot;assembler,&quot; instead of a compiler, but tbqh and imho these are <a href="http://composition.al/blog/2017/07/30/what-do-people-mean-when-they-say-transpiler/">distinctions
+without much of a
+difference</a>.</p>
+<p>What is the advantage of using <code>zig cc</code>? Primarily that you are able to
+reliably use the same toolchain and version of llvm that the version of zig you
+are using relies on. No futzing around with system libraries and linkages, it&#39;s
+all just ready to work.</p>
+<p>So! I&#39;ll make an empty file:</p>
+
+<pre><code>$ touch hello.s
+</code></pre>
+<p><code>clang</code> is smart enough to detect a filetype by its extension, and so, so is
+<code>zig cc</code>.</p>
+
+<pre><code>$ zig cc hello.s
+</code></pre>
+
+<pre><code>zig: warning: argument unused during compilation: &#39;-nostdinc&#39; [-Wunused-command-line-argument]
+zig: warning: argument unused during compilation: &#39;-fno-spell-checking&#39; [-Wunused-command-line-argument]
+zig: warning: argument unused during compilation: &#39;-fno-omit-frame-pointer&#39; [-Wunused-command-line-argument]
+zig: warning: argument unused during compilation: &#39;-D _DEBUG&#39; [-Wunused-command-line-argument]
+zig: warning: argument unused during compilation: &#39;-fstack-protector-strong&#39; [-Wunused-command-line-argument]
+zig: warning: argument unused during compilation: &#39;--param ssp-buffer-size=4&#39; [-Wunused-command-line-argument]
+zig: warning: argument unused during compilation: &#39;-isystem /usr/local/include&#39; [-Wunused-command-line-argument]
+zig: warning: argument unused during compilation: &#39;-isystem /usr/include/x86_64-linux-gnu&#39; [-Wunused-command-line-argument]
+zig: warning: argument unused during compilation: &#39;-isystem /usr/include&#39; [-Wunused-command-line-argument]
+lld: error: undefined symbol: main
+&gt;&gt;&gt; referenced by start.S:104 (/home/jfo/code/zig/build/lib/zig/libc/glibc/sysdeps/x86_64/start.S:104)
+&gt;&gt;&gt;               /home/jfo/.cache/zig/stage1/o/ujWleITFBRHwV19Tq0gsSK_F_gRDc7-jgOCip86Un1bhdmx0pIXLGQRxtjMtuntC/Scrt1.o:(_start)
+</code></pre>
+<p>Most of this is just telling us that the flags zig is passing to clang by
+default weren&#39;t used for anything, which isn&#39;t much of a surprise since there
+was nothing to compile! (Strictly speaking, this is a bug in the zig compiler,
+but for our purposes it has no effect) There is a <em>real</em> error here, too.</p>
+
+<pre><code>lld: error: undefined symbol: main
+</code></pre>
+<p><code>lld</code> is the <a href="https://lld.llvm.org/"><em>linker</em></a> bundled with llvm bundled with
+clang, and so bundled with zig, and it is complaining that this program (which
+is empty) that we&#39;re trying to turn into an executable doesn&#39;t have an entry
+point. How would you run it? Where would you start? A reasonable complaint, this one.</p>
+<p>We can instead build an &quot;object file&quot; that isn&#39;t intended to be executable by
+passing the <code>-c</code> flag.</p>
+<blockquote>
+<p>These options are the <em>same</em> options as clang, as all of these arguments are
+simply being forwarded to clang along with the compiler flags set by zig as defaults.</p>
+</blockquote>
+
+<pre><code>$ zig cc -c hello.s
+</code></pre>
+<p>This throws all the same warnings as before, but it succeeds, and produces
+<code>hello.o</code>, an object file.</p>
+<p>Running <a href="https://en.wikipedia.org/wiki/File_%28command%29"><code>file</code></a> on this
+output</p>
+
+<pre><code>$ file hello.o
+</code></pre>
+<p>Will tell us what we&#39;ve got.</p>
+
+<pre><code>hello.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped
+</code></pre>
+<p>This is essentially a bundle of machine code that would be suitable for linking
+into other programs during their <a href="https://stackoverflow.com/questions/24655839/what-is-the-difference-between-executable-and-relocatable-in-elf-format">own linking
+phase</a>,
+if there was actually any code in there at all to be used. As it stands,
+there&#39;s just the <a href="https://lwn.net/Articles/631631/">ELF header</a> to identify the
+file type and what I assume to be a bit of metadata and some padding.</p>
+<p>But we wanted to actually make an executable, so we need an entry point! What
+does an entry point look like?</p>
+<p>In x86 assembly, the default entry point looks like:</p>
+
+<pre><code>_start:
+</code></pre>
+<p>I add that to the file, and try again:</p>
+
+<pre><code class="lang-bash">$ zig cc hello.s
+</code></pre>
+<p>and</p>
+
+<pre><code>lld: error: undefined symbol: main
+&gt;&gt;&gt; referenced by start.S:104 (/home/jfo/code/zig/build/lib/zig/libc/glibc/sysdeps/x86_64/start.S:104)
+&gt;&gt;&gt;               /home/jfo/.cache/zig/stage1/o/ujWleITFBRHwV19Tq0gsSK_F_gRDc7-jgOCip86Un1bhdmx0pIXLGQRxtjMtuntC/Scrt1.o:(_start)
+</code></pre>
+<p>(I have left out the assembler warnings from above).</p>
+<p>What? If the default entry point is <code>_start</code>, why is it asking for <code>main</code>, then?</p>
+<p>Looking at the error, it <em>is</em> trying to load <code>_start</code>, just not <em>our</em> start.
+When you compile a regular zig or c program with a <code>main</code> function, your
+program doesn&#39;t <em>actually</em> start at main, it <em>also</em> starts at <code>_start</code>, which
+is responsible for doing memory setup and generally getting everything tidy for
+you before your <code>main</code> function runs. Remember, here we&#39;re just using <code>zig cc</code>
+as a pass through for clang, and so the <em>real</em> definition of <code>_start</code> resides
+in libc, and looks like
+<a href="https://github.com/jfo/zig/blob/master/lib/libc/glibc/sysdeps/x86_64/start.S">this</a>.</p>
+<p>There are two ways I can solve this now. First, I can just make an assembly
+file with <code>main:</code> instead... let&#39;s try that.</p>
+
+<pre><code class="lang-asm">main:
+</code></pre>
+
+<pre><code class="lang-bash">$ zig cc hello.s
+</code></pre>
+
+<pre><code class="lang-bash">lld: error: undefined symbol: main
+&gt;&gt;&gt; referenced by start.S:104 (/home/jfo/code/zig/build/lib/zig/libc/glibc/sysdeps/x86_64/start.S:104)
+&gt;&gt;&gt;               /home/jfo/.cache/zig/stage1/o/ujWleITFBRHwV19Tq0gsSK_F_gRDc7-jgOCip86Un1bhdmx0pIXLGQRxtjMtuntC/Scrt1.o:(_start)
+</code></pre>
+<p>Ah, remember <code>pub fn main()</code>? In addition to being defined, this symbol also
+needs to be available to the linker.  In assembly, that means putting it as a
+<code>.globl</code> declaration.</p>
+
+<pre><code class="lang-asm">.globl main
+main:
+</code></pre>
+<p>Without that, the assembler is free to discard or mangle the label since it
+assumes it&#39;s not needed for any other steps.</p>
+
+<pre><code class="lang-bash">$ zig cc hello.s
+</code></pre>
+<p>This assembles! When I run the resulting executable, I get:</p>
+
+<pre><code>Trace/breakpoint trap (core dumped)
+</code></pre>
+<p>This isn&#39;t surprising, I&#39;ve written a program that has no instructions. I&#39;m not
+particularly interested in this error right now, the important thing is that I
+got this to assemble.</p>
+<p>I&#39;m also not interested in using the libc startup code and <code>_start</code> call; I
+want to do everything myself.</p>
+<p>I will try to definie my own <code>.globl _start</code>:</p>
+
+<pre><code class="lang-asm">.globl _start
+_start:
+</code></pre>
+
+<pre><code class="lang-bash">$ zig cc hello.s
+</code></pre>
+
+<pre><code>lld: error: duplicate symbol: _start
+&gt;&gt;&gt; defined at start.S:63 (/home/jfo/code/zig/build/lib/zig/libc/glibc/sysdeps/x86_64/start.S:63)
+&gt;&gt;&gt;            /home/jfo/.cache/zig/stage1/o/ujWleITFBRHwV19Tq0gsSK_F_gRDc7-jgOCip86Un1bhdmx0pIXLGQRxtjMtuntC/Scrt1.o:(_start)
+&gt;&gt;&gt; defined at zig-cache/o/UbeRHF13NXWYrl3f0cuxy3OffVcjvaAbWr5e2svkLcYXPpPG03d4JplnyJU7tFJ7/empty.o:(.text+0x0)
+</code></pre>
+<p>Given what we&#39;ve seen so far, this makes complete sense. <code>_start</code> has already
+been defined in the libc code, so simply putting it here results in this error,
+because of course it does.</p>
+<p>The linker takes an option to simply not use anything in the standard library,
+which is exactly what I want.</p>
+
+<pre><code class="lang-bash">$ zig cc -nostdlib hello.s
+</code></pre>
+
+<pre><code>./a.out
+</code></pre>
+
+<pre><code>Segmentation fault (core dumped)
+</code></pre>
+<p>Hello world!</p>
+<hr>
+<p>Alright, now I&#39;ve sussed out the precise incantations to go directly from an
+x86 assembly file (<code>.s</code>) to an executable. What is the <em>smallest assembly
+program I can write?</em></p>
+<p>That would be a program that simply exits.</p>
+
+<pre><code class="lang-asm">.intel_syntax noprefix
+.globl _start
+
+_start:
+  mov     rax, 60
+  syscall
+</code></pre>
+<blockquote>
+<p>I am using intel syntax here, the first line tells the assembler that.  An
+interesting note here, is that llvm <a href="https://github.com/llvm-mirror/llvm/blob/2c4ca6832fa6b306ee6a7010bfb80a3f2596f824/lib/Target/X86/AsmParser/X86AsmParser.cpp#L3563-L3584">doesn&#39;t need you to explicitly say <code>noprefix</code></a>
+but <code>gcc</code> <em>does</em>, so it makes sense to always use it.</p>
+</blockquote>
+<p>What&#39;s happening here? I&#39;m just putting a static value: <code>60</code>, into the <code>rax</code>
+register, and then making a <code>syscall</code>. The syscall looks at the <code>rax</code> register
+and does what the value inside of it corresponds to, which is <code>sys_exit</code>, so
+the program exits. That&#39;s it.</p>
+<p>When I compile and run this program, nothing happens, but
+<a href="https://jvns.ca/blog/2015/04/14/strace-zine/"><code>strace</code></a> tells me that it&#39;s
+doing exactly what I expected:</p>
+
+<pre><code>zig cc -nostdlib empty.s &amp;&amp; strace ./a.out
+</code></pre>
+
+<pre><code>execve(&quot;./a.out&quot;, [&quot;./a.out&quot;], 0x7ffd47b269c0 /* 104 vars */) = 0
+exit(0)                                 = ?
++++ exited with 0 +++
+</code></pre>
+<p>Futhermore, the <code>sys_exit</code> syscall looks in the <code>rdi</code> register to get the
+<em>value</em> it returns to the calling process. I can put whatever I want in there
+before executing the syscall.</p>
+
+<pre><code class="lang-asm">.intel_syntax noprefix
+.globl _start
+
+_start:
+  mov     rdi, 0xface
+  mov     rax, 60
+  syscall
+</code></pre>
+
+<pre><code>execve(&quot;./a.out&quot;, [&quot;./a.out&quot;], 0x7fffa91a9be0 /* 104 vars */) = 0
+exit(64206)                             = ?
++++ exited with 206 +++
+</code></pre>
+<blockquote>
+<p>You&#39;ll notice, that even though I loaded a 16 bit value into the register
+(<code>0xface</code>, which is equivalent to <code>64206</code>), and <code>r</code> prefixed registers are 64
+bits wide, it only looked at the bottom 8 bits (<code>0xce</code> or <code>206</code>). This leads me
+to believe that error codes must be between 1 and 255. <a href="http://mazack.org/unix/errno.php">It seems as though</a> there are only 131 actual specified
+standard errors, so I am sure this is some ancient magick that limits the
+enumerated error types to 8 bits from the kernel&#39;s perspective.</p>
+</blockquote>
+<p>Running this without strace, nothing happens, which surprised me, actually. I
+thought that <code>0</code> was a success code and anything else was an error code. This
+is <a href="https://github.com/jfo/zig/blob/7381aaf70e0cad92fc52b79f3aa2a0abb7c3ee04/lib/libc/include/generic-glibc/stdlib.h#L91-L92">conventionally the
+case</a>!
+But it&#39;s up to the <em>caller</em> to interpret that code and respond to it. For my
+little program, there is no error handling that reports back to the user what&#39;s
+going on, it just dutifully exits with the value I gave it and that&#39;s that.</p>
+<p>Though the origins of the hello world are well known (it was the very <a href="https://en.wikipedia.org/wiki/%22Hello,_World!%22_program">first
+example</a> in the
+hugely influential K&amp;R C book), the definition of a hello world has grown over
+the years. Though the canonical example is still &quot;output the literal text
+&#39;Hello World!&#39;&quot;, lots of paradigms and systems have their own version of it- my
+favorite is the arduino <a href="https://www.arduino.cc/en/Tutorial/Blink">blink</a>; it&#39;s
+the simplest thing you can do with it that proves it&#39;s working as intended.
+I&#39;ve written about this quality <a href="/fizzbuzz-is-a-jazz-standard/">previously</a>.</p>
+<p>By that measure, the above code is <em>already</em> an assembly &quot;Hello World!&quot; in that
+we&#39;ve compiled it and proved that it works. But it&#39;s a very small step from here to get
+to a <em>literal</em> &quot;Hello World!&quot;</p>
+<p>Here it is:</p>
+
+<pre><code class="lang-asm">.intel_syntax noprefix
+.globl  _start
+
+_start:
+  mov     rax, 0x1
+  mov     rdi, 0x1
+  lea     rsi, msg
+  mov     rdx, 14
+  syscall
+  xor     rdi, rdi
+  mov     rax, 60
+  syscall
+msg:
+  .ascii  &quot;Hello, world!\n&quot;
+</code></pre>
+<p>You can see that there&#39;s not really that much more here. A little more preamble
+at the top, and then <em>two</em> syscalls instead of one, followed by a little data
+section that actually holds the text we&#39;re printing to the screen. Let&#39;s go
+through this, line by line.</p>
+
+<pre><code class="lang-asm">.intel_syntax noprefix
+</code></pre>
+<p>Trying to compile in gcc gives me errors:</p>
+
+<pre><code>hello.s: Assembler messages:
+hello.s:4: Error: ambiguous operand size for `mov&#39;
+hello.s:5: Error: ambiguous operand size for `mov&#39;
+hello.s:6: Error: too many memory references for `lea&#39;
+hello.s:7: Error: ambiguous operand size for `mov&#39;
+hello.s:9: Error: ambiguous operand size for `mov&#39;
+hello.s:10: Error: too many memory references for `xor&#39;
+</code></pre>
+<p>but it works just fine with clang.</p>
+
+<pre><code class="lang-asm">.globl  _start
+</code></pre>
+<p>We know this one: marking the <code>_start</code> symbol available to the linker.</p>
+<p>Next, on the the body of the program:</p>
+
+<pre><code class="lang-asm">_start:
+  mov     rax, 0x1
+  mov     rdi, 0x1
+  lea     rsi, msg
+  mov     rdx, 14
+  syscall
+</code></pre>
+<p>Looking at <a href="https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/">this chart of linux
+syscalls</a>,
+I can see that what is going to be in <code>rax</code> when I reach <code>syscall</code> is <code>1</code>,
+which corresponds to the <code>SYSWRITE</code> system call. Its &quot;arguments&quot; live in the
+registers <code>rdi</code>, <code>rsi</code>, and <code>rdx</code>:</p>
+
+<pre><code>%rax: 1
+System call: sys_write
+%rdi:  unsigned int fd
+%rsi: const char *buf
+%rdx: size_t count
+</code></pre>
+<p>Where <code>fd</code> (file descriptor) is for the <em>output stream</em>, <code>buf</code> is a <em>pointer to
+the buffer from which we want to write</em> and <code>count</code> is the <em>number of bytes we
+want to write</em>.</p>
+<p>What are we putting into those registers, then?</p>
+<p>In <code>rax</code>, we insert the syscall number for <code>sys_write</code>: <code>1</code></p>
+<p><code>rdi</code>: The file descriptor for <code>stdout</code>, <a href="https://en.wikipedia.org/wiki/Standard_streams#Standard_output_(stdout">defined by
+POSIX</a>)
+to be <code>1</code></p>
+<p><code>rsi</code>: a pointer to the buffer we write from. Here, we see the <a href="https://stackoverflow.com/a/57796189/2727670"><code>lea</code>
+instruction</a> for &quot;load effective
+address&quot;, and the right hand value is a label <code>msg</code> that is defined at the bottom of the file:</p>
+
+<pre><code>msg:
+  .ascii  &quot;Hello, world!\n&quot;
+</code></pre>
+<p>Finally, in <code>rdx</code> we put in <code>14</code>, the length of the buffer. It is not runtime
+known, since there is no runtime!</p>
+<p>With all of these loaded into the appropriate registers,</p>
+
+<pre><code>syscall
+</code></pre>
+<p>Executes <code>sys_write</code> and writes the contents of the memory buffer to stdout.</p>
+<p>The remaining three lines:</p>
+
+<pre><code class="lang-asm">xor     rdi, rdi
+mov     rax, 60
+syscall
+</code></pre>
+<p>Might be familiar; we&#39;re loading something into <code>rdi</code> and calling <code>sys_exit</code>
+(60), just like the first example. In this case though, we&#39;re <code>xor</code>ing <code>rdi</code>
+with itself, which is the same thing as setting it to <code>0</code>: the success code.</p>
+<p>And that&#39;s it!</p>
+<h2 id="coda-">Coda:</h2>
+<p>My intention from here was to find <em>exactly</em> where the zig compiler emits these
+<em>exact</em> instructions. And it <em>does</em> do that, sort of... I mean, it <em>has</em> to,
+because these are the instructions to do this operation on x86. You may have
+noticed, too, that the pertinent registers figure prominently in the <code>syscall3</code>
+inline asm from above... <code>rax</code>, <code>rdi</code>, <code>rdx</code>, and <code>rsi</code>:</p>
+
+<pre><code>// ...
+        : [number] &quot;{rax}&quot; (@enumToInt(number)),
+          [arg1] &quot;{rdi}&quot; (arg1),
+          [arg2] &quot;{rsi}&quot; (arg2),
+          [arg3] &quot;{rdx}&quot; (arg3)
+// ...
+</code></pre>
+<p>But as alluded to earlier, even here at this lowest of levels (I mean, this is
+<em>almost</em> machine code, right?) there is flexibility for the compiler to be
+creative. And I suppose the specifics of the compiler&#39;s output from this command:</p>
+
+<pre><code>$ zig build-exe hello.zig -femit-asm --strip --single-threaded --release-small
+</code></pre>
+<p>are in the end a bit extraneous to my ultimate point, which is that <em>even hello
+world is complicated</em>.</p>
+<p>It is, canonically, the &quot;simplest&quot; program you can write, and yet it is built
+on top of <em>heaps</em> of abstracted complexity that for the most part, none of us
+ever really think about all that much. Do you remember the first time you heard
+some systems engineer refer to C as a high level langauge? Did it sound weird?
+Do you remember the first time you realized that it actually <em>is</em> a high level
+language?</p>
+<p>As programmers, our sharpest tool is abstraction, our strongest tool is
+abstraction, and our most useful tool is abstraction. It is in some sense the
+only thing we really do: turn information and transformations upon
+information into other forms of meta information that we manipulate with even
+more abstractions. The whole idea is that we deal with emergent complexity and
+then tuck it neatly beneath an interface of some sort and then don&#39;t ever think
+about it again until we have to. But it&#39;s still there, bubbling under the crust
+of the world we&#39;re continuously saying hello to, and it&#39;s worth it sometimes to
+dig down a little deeper and marvel at the gems.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

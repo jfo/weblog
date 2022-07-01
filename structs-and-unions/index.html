@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Structs and Unions</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Structs and Unions" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/structs-and-unions" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Structs and Unions</h1>
+        <sub>May 30, 2016</sub>
+        <p></p>
+        <div><p>C has a variety of <a href="https://en.wikipedia.org/wiki/C_data_types">built in data
+types</a>. But let&#39;s pick just two to
+mess around with: a <code>long long int</code> and a <code>char</code>.</p>
+<p>A <code>long long int</code> (or just <code>long long</code>) is specified to be at <em>least</em> 64 bits
+in size. That means that if we call <code>sizeof</code> on it, we should get at <em>least</em> 8
+bytes, since 8 * 8 = 64.</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> x;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(x));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Sure enough, this outputs:</p>
+
+<pre><code>8
+</code></pre>
+<p>A <code>char</code> is, by its name, one &#39;character&#39;... but this is a bit misleading. In
+ye olden days, a character was never more than one byte long, since the <a href="http://www.asciitable.com/">ascii
+standard</a> specified only a very small set of
+symbols, and they could all be accomodated in a single byte. Nowadays, a more standard
+encoding is <a href="https://www.youtube.com/watch?v=MijmeoH9LT4">Unicode</a>, in which
+many thousands of symbols can be represented by strings of bytes of somewhat
+arbitrary length. It is no longer accurate, then, to say that a <code>char</code>, in the
+sense of &quot;character&quot;, is only one byte long, but the naming convention persists
+in C, and the <code>char</code> <em>type</em> <strong>is</strong> always one byte long. It would
+be drastically more accurate to call that type a <code>byte</code>, but here we are.</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">char</span> x;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(x));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>yields:</p>
+
+<pre><code>1
+</code></pre>
+<h2 id="structs">Structs</h2>
+<p>A struct is a way for the programmer to bundle types together in one
+<em>structure</em>. Let&#39;s say we wanted to represent a point in two dimensional space,
+for example. A point is fully articulated when we have both an x value and a y
+value. A <code>Point</code> struct might look like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> {</span>
+    <span class="hljs-type">int</span> x;
+    <span class="hljs-type">int</span> y;
+};
+</code></pre>
+<p>We coud then use <code>struct Point</code> to declare a point variable just like any other type.</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> <span class="hljs-title">x</span>;</span>
+</code></pre>
+<p>How big is <code>x</code>, now, do you think? a <code>struct Point</code> contains two ints. How big is an int?</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">int</span> x;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(x));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+
+<pre><code>4
+</code></pre>
+<p>Looks like it is four bytes long. A <code>struct Point</code>, then, should be 8 bytes long, right?</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> {</span>
+    <span class="hljs-type">int</span> x;
+    <span class="hljs-type">int</span> y;
+};
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> <span class="hljs-title">x</span>;</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(x));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>And indeed it is.</p>
+
+<pre><code>8
+</code></pre>
+<p>What about a point in 5 dimensional space? We would need 5 <code>int</code>s to fully
+specify such a point, right?</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> {</span>
+    <span class="hljs-type">int</span> x;
+    <span class="hljs-type">int</span> y;
+    <span class="hljs-type">int</span> z;
+    <span class="hljs-type">int</span> a;
+    <span class="hljs-type">int</span> b;
+};
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> <span class="hljs-title">x</span>;</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(x));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>If you&#39;re guessing this is 20 bytes long, well pat yourself on the back!</p>
+
+<pre><code>20
+</code></pre>
+<p>Normally, when we declare a var, we can simply assign a value to it like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> x;
+x = <span class="hljs-number">5</span>;
+</code></pre>
+<p>Or even initialize it at the time of declaration:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> x = <span class="hljs-number">6</span>;
+</code></pre>
+<p>For structs, we can do the same type of thing! Let&#39;s look at that 2d point again.</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> {</span>
+    <span class="hljs-type">int</span> x;
+    <span class="hljs-type">int</span> y;
+};
+</code></pre>
+<p>Those <code>x</code> and <code>y</code> values are referred to as <em>members</em> of that struct. To access
+them for reading or writing, we can use dot notation.</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> <span class="hljs-title">mypoint</span>;</span>
+mypoint.x = <span class="hljs-number">2</span>;
+mypoint.y = <span class="hljs-number">5</span>;
+</code></pre>
+<p>Now, <code>mypoint</code> is fully initialized, and equal to the point <code>(2, 5)</code> in regular
+notation. You could do this in any order.</p>
+<p>What about initializing the struct at the time of declaration, in one line?
+That looks like this, with an inlined static array:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> <span class="hljs-title">mypoint</span> =</span> { <span class="hljs-number">2</span>, <span class="hljs-number">5</span> };
+</code></pre>
+<p>If you simply list the member values in order like that, it will work, but you
+can also specify which one is which by being explicit:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Point</span> <span class="hljs-title">mypoint</span> =</span> { .y = <span class="hljs-number">5</span>, .x = <span class="hljs-number">2</span> };
+</code></pre>
+<hr>
+
+<p>Let&#39;s go back to those two types from the beginning. What if we wanted a
+<code>struct</code> that contained one of each?</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Thingy</span> {</span>
+    <span class="hljs-type">char</span> letter;
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> number;
+};
+</code></pre>
+<p>Who knows why we would need that, but whatever. The size of this struct in
+memory is going to be equal to the sum of its members&#39; sizes. So a <code>char</code> (1
+byte) plus a <code>long long</code> (8 bytes), so 9 bytes.</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Thingy</span> {</span>
+    <span class="hljs-type">char</span> letter;
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> number;
+};
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Thingy</span> <span class="hljs-title">x</span>;</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(x));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Outputs:</p>
+
+<pre><code>16
+</code></pre>
+<p>Wait huh? This actually surprised me when I was writing this post! Because a
+<code>long long</code> is 8 bytes long, the <code>char</code> member must be offset by the same
+distance for optimizations! The &#39;true size&#39; of the <code>letter</code> member is still
+just one byte, but the space the member must take up in memory is now 8 bytes.
+I do not fully understand this yet, but it looks like <a href="http://c-faq.com/struct/align.esr.html">this
+document</a> explains the historical
+context and reasoning. Interesting! There appears to be some <a href="http://stackoverflow.com/questions/14332633/attribute-packed-v-s-gcc-attribute-alignedx">black
+magic</a>
+that will force the compiler to do that without padding, but in the
+absence of a very good reason, this seems unneccesary.</p>
+<h2 id="unions">Unions</h2>
+<p><code>union</code> types look and behave an awful lot like <code>struct</code>s do, syntactically, but
+there is a very important difference. Whereas structs are a collection of
+members that are assembled together in memory side by side, <code>unions</code> can <em>only ever contain
+one of their members at any one time</em>. As such, a union type will be the size of its
+<em>largest</em> member, in order to accomodate the biggest thing it will ever need to hold.</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> {</span>
+    <span class="hljs-type">int</span> x;
+    <span class="hljs-type">int</span> y;
+};
+</code></pre>
+<p><code>Thingy</code> looks like it has two <code>ints</code> inside of it. If this were a <code>struct</code>, it
+would, and it would need to be as big as two ints to hold both of them! But
+since this is a union, it will only ever need to hold one or the other.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> <span class="hljs-title">myunion</span>;</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(myunion));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Will output: <code>4</code>! In fact, so will this:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> {</span>
+    <span class="hljs-type">int</span> x;
+    <span class="hljs-type">int</span> y;
+    <span class="hljs-type">int</span> a;
+    <span class="hljs-type">int</span> b;
+    <span class="hljs-type">int</span> c;
+    <span class="hljs-type">int</span> d;
+    <span class="hljs-type">int</span> e;
+    <span class="hljs-type">int</span> f;
+};
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> <span class="hljs-title">myunion</span>;</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(myunion));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>You get the idea!</p>
+<hr>
+
+<p>Let&#39;s look at a weird thing about unions!</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> {</span>
+    <span class="hljs-type">int</span> x;
+    <span class="hljs-type">int</span> y;
+};
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> <span class="hljs-title">myunion</span> =</span> { <span class="hljs-number">156</span> };
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i\n&quot;</span>, myunion.x);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i\n&quot;</span>, myunion.y);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Outputs:</p>
+
+<pre><code class="lang-c"><span class="hljs-number">156</span>
+<span class="hljs-number">156</span>
+</code></pre>
+<p>Because <code>myunion.x</code> and <code>myunion.y</code> are referencing the <em>exact same memory
+space</em>. Because they are both <code>int</code>s, this is fine!</p>
+<p>How about this one?</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> {</span>
+    <span class="hljs-type">char</span> letter;
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> number;
+};
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> <span class="hljs-title">myunion</span>;</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lu&quot;</span>, <span class="hljs-keyword">sizeof</span>(myunion));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>No surprise this time! Because a <code>long long</code> is by far the largest member of
+this <code>union</code>, an instance of this type will have a size that is the same as the
+<code>long long</code>, which is 8.</p>
+
+<pre><code>8
+</code></pre>
+<p>I will leave you with this bit of weirdness.</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> {</span>
+    <span class="hljs-type">char</span> letter;
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> number;
+};
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">Thingy</span> <span class="hljs-title">myunion</span>;</span>
+
+    myunion = (<span class="hljs-keyword">union</span> Thingy){ .letter = <span class="hljs-string">&#x27;!&#x27;</span> };
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c\n&quot;</span>, myunion.letter);  <span class="hljs-comment">// !</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lli\n&quot;</span>, myunion.number); <span class="hljs-comment">// 33</span>
+
+    myunion = (<span class="hljs-keyword">union</span> Thingy){ .number = <span class="hljs-number">33</span> };
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c\n&quot;</span>, myunion.letter);  <span class="hljs-comment">// !</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lli\n&quot;</span>, myunion.number); <span class="hljs-comment">// 33</span>
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>All of these are just different ways to organize and get at the exact same
+data. In every case above, the same memory is being assigned the same values,
+but we&#39;re accessing it and interpreting it in different ways.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>
