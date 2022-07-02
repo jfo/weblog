@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild is a lisp dialect</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild is a lisp dialect" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild is a lisp dialect</h1>
+        <sub>Jun 05, 2016</sub>
+        <p></p>
+        <div><p>Today, I&#39;m releasing <a href="https://github.com/urthbound/sild"><strong>Sild</strong></a>, a tiny
+little intepreted lisp that I wrote in C.</p>
+<p>I&#39;ve been interested in trying to learn about language design and
+implementation for a while now. I&#39;ve also been interested in Lisp as a concept,
+and I had <em>also</em> been wanting to learn C so that I could start wrapping my head
+around systems programming. This project brought all of those objectives
+together in a really natural way!</p>
+<p>Sild is not conformant to any existing spec. It&#39;s not <em>really</em> a Scheme and it
+is <em>definitely</em> not a version of Common Lisp. It is simply my attempt to build a
+minimal lispy language in a semi-vacuum from first principles.</p>
+<p>Though I&#39;m proud of the final result, that&#39;s not what I&#39;m <em>most</em> excited about
+sharing. I also wrote blog posts as I went along. A <em>lot</em> of them. Just about
+40,000 words&#39; worth! I&#39;m going to post them here in the coming weeks. It&#39;s my
+hope that other people might be able to learn some of the things I learned!</p>
+<p>I&#39;ve tried to write those posts so that they will be understandable to someone
+who can program in some language, and who maybe knows a <em>little</em> about C, and maybe
+knows a <em>little</em> about lisp.</p>
+<p>I am open to suggestions and criticisms. The posts might seem like they are
+written from a position of authority, but do not be fooled. I was figuring
+everything out as I went along, then writing them down just after I had figured
+them out, and I most certainly did not nail everything! I am very interested to
+hear where what I tried to do diverged from historical attempts, or where I
+reinvented some wheel or another.</p>
+<hr>
+
+<p>I was inspired to try this project by a variety of things.</p>
+
+<ul>
+<li>Mary Rose Cook&#39;s <a href="https://www.recurse.com/blog/21-little-lisp-interpreter"><em>Little Lisp Interpreter</em></a></li>
+</ul>
+<p>At some point during a long flight I tried coding most of this post in Ruby. I don&#39;t
+remember what I did with that repo, and I don&#39;t think it even really worked all
+the way, but it gave me the idea that a lisp might be a lot easier to
+implement than I thought.</p>
+
+<ul>
+<li>Paul Graham&#39;s <a href="http://www.paulgraham.com/rootsoflisp.html"><em>The Roots of Lisp</em></a></li>
+</ul>
+<p>This is a very sticky essay. Graham&#39;s proceduralness possesses a certain kind
+of clarity that left me with the impression that it might be worth trying to
+write the simple lisp he describes, and indeed that&#39;s pretty much what I ended
+up with. Sild, as it is right now, has no types (like strings or numbers), and
+has no I/O save a basic <code>display</code> that prints to <code>stdout</code>. It has no real
+standard library to speak of, either, but it <em>does</em> have the basic operations
+that Graham describes as necessary to implement <code>eval</code>.</p>
+
+<ul>
+<li>Daniel Holden&#39;s <a href="http://www.buildyourownlisp.com/"><em>Build Your Own Lisp</em></a></li>
+</ul>
+<p>Google &quot;<a href="https://www.google.com/search?q=build+your+own+lisp&amp;oq=build+your+own+lisp&amp;aqs=chrome..69i57j69i60l2.2691j0j7&amp;sourceid=chrome&amp;ie=UTF-8">build your own
+lisp</a>&quot;,
+and you&#39;ll get an entire first page of results referencing this site. I <a href="https://github.com/urthbound/buildyourownlisp">gave
+it a good go</a>, making it to
+chapter 9 or so, and I have to say that it is incredibly well thought out and
+well expressed and I totally learned a lot from it! But somewhere along the way I started
+feeling like I was just typing things in until they worked without really
+understanding why, which is my personal canary in the coal mine for impending
+this-isn&#39;t-working-for-me-anymore-ness. Then I read the URL and realized what
+appealed to me so much about the site is the <em>your</em> in &quot;build your own lisp&quot;, so
+I stopped working through the tutorial and decided to try that for real! From
+there, I circled back to the Paul Graham essay and used it as a guide.</p>
+<hr>
+
+<p>There were a variety of other things I ran across while writing this language
+that I read parts of, with the intention of revisiting them with a more context
+after I was done with the project.</p>
+
+<ul>
+<li>John McCarthy&#39;s original 1960 paper <a href="http://www-formal.stanford.edu/jmc/recursive.html"><em>Recursive Functions of Symbolic
+Expressions and Their Computation by Machine (Part
+I)</em></a></li>
+</ul>
+<p>I had &quot;read&quot; this a few times, but always with the feeling I wasn&#39;t really
+getting it. Implementing what amounts to the lisp described in this paper
+(via the Paul Graham essay), has made this seminal work a lot easier to
+comprehend!</p>
+
+<ul>
+<li>Sussman and Abelson&#39;s <a href="http://repository.readscheme.org/ftp/papers/ai-lab-pubs/AIM-453.pdf"><em>The Art of the Interpreter</em></a></li>
+</ul>
+<p>I consulted this a few times when I ran into specific questions, but again, I
+didn&#39;t really grok it until after I had finished the whole thing. The finer
+points of closures and mutability and garbage collection were all lost on me
+until I banged my own head against them all for a while. The first time I read
+this paper it was a &quot;I know these words&quot; sort of situation. Now, it&#39;s more of a
+&quot;YES OMG YES SO TRUE&quot; kind of deal.</p>
+
+<ul>
+<li>Sussman and Abelson&#39;s <a href="https://mitpress.mit.edu/sicp/full-text/book/book.html">Structure and Interpretation of Computer Programs</a></li>
+</ul>
+<p>Again, I had read a lot of this before, and had gotten real value out of it. But
+now when I go back, it just reads a lot richer and more nuanced, and I find
+myself considering intricacies that simply wouldn&#39;t have occured to me before.</p>
+<h2 id="thanks">Thanks</h2>
+<p>Big thanks to <a href="https://github.com/andrewrk">Andrew Kelley</a>, whose brilliant
+code reviews levelled up my C on multiple occasions. Also to <a href="https://github.com/darius">Darius
+Bacon</a>, whose feedback had a fantastic twinge of &quot;I
+have trod where you tread&quot; that helped me appreciate all the things I must have
+missed. I look forward to finding them out in more detail!</p>
+<p>Also to <a href="http://thewebivore.com/">Pam Selle</a> and <a href="https://github.com/nickdrozd">Nick
+Drozd</a> for reading early posts, and <a href="https://github.com/stijlist">Bert
+Muthalany</a> for his enthusiasm.</p>
+<hr>
+
+<p>Working on this language was immensely rewarding, and I learned an enormous
+amount from it. While I intend to work on it more, adding some of the TODO&#39;s
+in the README, and hope to end up with a useful scripting language all to
+myself, the original motivation of the project has been satisfied. I hope you
+find it as interesting as I did!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

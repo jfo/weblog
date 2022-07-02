@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; step in the stream</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; step in the stream" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; step in the stream</h1>
+        <sub>Jul 07, 2016</sub>
+        <p></p>
+        <div><p>Alright! I&#39;ve got a nicely refactored <code>src</code> directory and a <code>makefile</code> that I&#39;m
+not embarassed to show people. I&#39;d like to turn my attention to the input mode
+for this interpreter.</p>
+<p>So far, Ive just been sending in C strings to be read by the reader. This is
+working fine for the small examples I&#39;ve been showing, but I would like the
+input mode to both be more robust and also to support reading files directly
+into it. As written, I <em>could</em> make a buffer, read some amount of a file into
+it as a string, and then read that string using the existing read function.
+This would work fine and is a straightforward way to read a file into the
+program space. But it comes with some pitfalls! How big does this buffer need
+to be? It would need to be as big as the biggest sild form I want to read in.
+How big is that? I have no idea. A program could conceivably be hundreds of
+lines of one parenthetical form, I would have to read ahead to allocate the
+appropriate amount of buffer memory, or else build a buffer that could resize
+itself if it needed to. There&#39;s nothing wrong with this idea, but I would
+prefer a read function that reads in real time and doesn&#39;t have any need to
+muck around with buffer reallocation, and I had already spent so much time
+optimizing the read function to operate in constant time on strings- why would
+I want to undermine that?</p>
+<h2 id="enter-the-stream">Enter the Stream</h2>
+<p>So C has this funny typedef called a <code>FILE*</code>, which is a file pointer. This is
+how files are represented in I/O. In some ways, the functions that operate on
+them act a lot like string functions- except that instead of a NULL byte
+(<code>&#39;\0&#39;</code>) being the terminal character, the file ends with an <code>EOF</code> (end of
+file) byte, which is a constant defined in <code>&lt;stdio.h&gt;</code> that usually equals
+<code>-1</code>. (The standard dictates that <code>EOF</code> must be negative, but does not dictate
+the value- though it is usually -1).</p>
+<p>But, <code>FILE</code> pointers are <em>not</em> strings. They are in fact structs that contain
+quite a bit of metadata about the chunk of memory that the FILE object was
+initialized to. Though the inner workings of a FILE object are implementation
+specific, here is an example of what is in my computer&#39;s <code>&lt;stdio.h&gt;</code> where
+<code>FILE</code> is typedeffed</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span>    <span class="hljs-class"><span class="hljs-keyword">struct</span> __<span class="hljs-title">sFILE</span> {</span>
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *_p;    <span class="hljs-comment">/* current position in (some) buffer */</span>
+    <span class="hljs-type">int</span>    _r;        <span class="hljs-comment">/* read space left for getc() */</span>
+    <span class="hljs-type">int</span>    _w;        <span class="hljs-comment">/* write space left for putc() */</span>
+    <span class="hljs-type">short</span>    _flags;        <span class="hljs-comment">/* flags, below; this FILE is free if 0 */</span>
+    <span class="hljs-type">short</span>    _file;        <span class="hljs-comment">/* fileno, if Unix descriptor, else -1 */</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span>    __<span class="hljs-title">sbuf</span> _<span class="hljs-title">bf</span>;</span>    <span class="hljs-comment">/* the buffer (at least 1 byte, if !NULL) */</span>
+    <span class="hljs-type">int</span>    _lbfsize;    <span class="hljs-comment">/* 0 or -_bf._size, for inline putc */</span>
+
+    <span class="hljs-comment">/* operations */</span>
+    <span class="hljs-type">void</span>    *_cookie;    <span class="hljs-comment">/* cookie passed to io functions */</span>
+    <span class="hljs-type">int</span>    (*_close)(<span class="hljs-type">void</span> *);
+    <span class="hljs-type">int</span>    (*_read) (<span class="hljs-type">void</span> *, <span class="hljs-type">char</span> *, <span class="hljs-type">int</span>);
+    <span class="hljs-type">fpos_t</span>    (*_seek) (<span class="hljs-type">void</span> *, <span class="hljs-type">fpos_t</span>, <span class="hljs-type">int</span>);
+    <span class="hljs-type">int</span>    (*_write)(<span class="hljs-type">void</span> *, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *, <span class="hljs-type">int</span>);
+
+    <span class="hljs-comment">/* separate buffer for long sequences of ungetc() */</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span>    __<span class="hljs-title">sbuf</span> _<span class="hljs-title">ub</span>;</span>    <span class="hljs-comment">/* ungetc buffer */</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> __<span class="hljs-title">sFILEX</span> *_<span class="hljs-title">extra</span>;</span> <span class="hljs-comment">/* additions to FILE to not break ABI */</span>
+    <span class="hljs-type">int</span>    _ur;        <span class="hljs-comment">/* saved _r when _r is counting ungetc data */</span>
+
+    <span class="hljs-comment">/* tricks to meet minimum requirements even when malloc() fails */</span>
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> _ubuf[<span class="hljs-number">3</span>];    <span class="hljs-comment">/* guarantee an ungetc() buffer */</span>
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> _nbuf[<span class="hljs-number">1</span>];    <span class="hljs-comment">/* guarantee a getc() buffer */</span>
+
+    <span class="hljs-comment">/* separate buffer for fgetln() when line crosses buffer boundary */</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span>    __<span class="hljs-title">sbuf</span> _<span class="hljs-title">lb</span>;</span>    <span class="hljs-comment">/* buffer for fgetln() */</span>
+
+    <span class="hljs-comment">/* Unix stdio files get aligned to block boundaries on fseek() */</span>
+    <span class="hljs-type">int</span>    _blksize;    <span class="hljs-comment">/* stat.st_blksize (may be != _bf._size) */</span>
+    <span class="hljs-type">fpos_t</span>    _offset;    <span class="hljs-comment">/* current lseek offset (see WARNING) */</span>
+} FILE;
+</code></pre>
+<p>As you can see, the FILE struct has a lot of extra stuff in it that the library
+functions operate on and with. Now, it&#39;s not super important to understand the
+details of the inner workings of a FILE object in order to use it, in fact, it
+is actively discouraged. Everywhere I see info on the FILE object, I am
+implored to &quot;let the library functions handle interactions&quot; with it, and stuff
+like that. Hey, fine with me! The basic idea is that you <code>fopen()</code> a file,
+which returns a pointer to a FILE object, which has a member <code>_p</code>_ that is a
+pointer to the beginning of the chunk of memory that the actual file lives on
+in the system. From there, you use library functions to interact with that
+file- retrieving information from it, writing to it, whatever.</p>
+<p>Here is a tiny program that opens a file, and prints each character to stdout,
+and then exits.</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    FILE *fp = fopen(<span class="hljs-string">&quot;test.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>);
+    <span class="hljs-type">char</span> current_char;
+
+    <span class="hljs-keyword">while</span> ((current_char = getc(fp)) != EOF)
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c&quot;</span>, current_char);
+
+    fclose(fp);
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>So, <code>fopen</code> opens a new stream connected to a FILE object in read mode (the
+second argument to fopen is the mode, &quot;r&quot; is read mode!) and associates it with
+the file <code>test.txt</code> which is in the working directory, assigning that pointer
+to the <code>fp</code> variable (which seems to be customary, and stands for &#39;file
+pointer&#39;). In the while loop, each iteration reassignes the var <code>current_char</code>_
+to the next character in the stream by grabbing it using <code>getc()</code>, which
+implicitly advances the pointer to the next position after returning the
+current character. Eventually, the <code>EOF</code> value is reached, and the while loop
+exits. I then <code>fclose()</code> the connection to the file because I clean up after
+myself.</p>
+<p>A FILE, despite its name, is actually usually referred to as a stream
+in C, for &quot;historical reasons&quot; (as vaguely stated in the <a href="ftp://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_chapter/libc_12.html">GNU
+manual</a>)</p>
+<p>This &quot;stream&quot; idea is a more flexible interpretation of what is happening with
+regard to FILE objects, as they serve as a universal interface to many UNIX
+systems and IO devices- consider that the same abstraction is in play when a
+device interface is represented as a &#39;device file&#39; in <code>/dev/*</code>. I wrote about
+that while playing with monomes <a href="/monome-part-mono/">here</a>. This is a FILE in
+name only, and actually serves as a powerful abstraction api over top of the
+device that it is meant to represent.</p>
+<p>Further, we&#39;ve already interfaced quite a bit with standard streams such as
+standard out (<code>stdout</code>) and standard error (<code>stderr</code>), which are both FILE
+pointers despite not <em>really</em> being files in the sense of &quot;a location of static
+memory on disk&quot;.</p>
+<p>I&#39;m sure there is plenty more interesting stuff to learn about <code>FILE</code>s and
+streams! I fully intend to learn those things! But this is enough to refactor
+my read function to accept streams instead of strings!</p>
+<p>This was actually <em>way easier</em> to do than I thought it would be. Once I had
+sorted out the details of what interacting with a stream actually entails,
+modifying <code>read</code> to accept a stream was pretty straightforward! In fact, the
+unified diff is actually a great illustration of the changes I had to make:</p>
+
+<pre><code class="lang-diff"><span class="hljs-deletion">-C * read(char **s) {</span>
+<span class="hljs-deletion">-    char current_char = **s;</span>
+<span class="hljs-addition">+C * read(FILE *s) {</span>
+<span class="hljs-addition">+    char current_char = getc(s);</span>
+
+     verify(current_char);
+
+     switch(current_char) {
+<span class="hljs-deletion">-        case &#x27;)&#x27;: case &#x27;\0&#x27;:</span>
+<span class="hljs-addition">+        case &#x27;)&#x27;: case &#x27;\0&#x27;: case EOF:</span>
+             list_depth--;
+<span class="hljs-deletion">-            (*s)++;</span>
+             return &amp;nil;
+         case &#x27; &#x27;: case &#x27;\n&#x27;:
+<span class="hljs-deletion">-            (*s)++;</span>
+             return read(s);
+         case &#x27;(&#x27;:
+             list_depth++;
+<span class="hljs-deletion">-            (*s)++;</span>
+             return makecell(LIST, (V){.list = read(s)}, read(s));
+         default: {
+<span class="hljs-addition">+            fseek(s, -1, SEEK_CUR);</span>
+             return categorize(s);
+         }
+     }
+</code></pre>
+<p>I only have to dereference the current char at the beginning of the function,
+which implicitly advances the pointer, so I can remove all the conditional
+<code>(*s)++</code>* businesses. This does mean that I have to <em>explicitly</em> retract the
+pointer before passing it into categorize, because categorize expects to see
+the <em>first</em> char in a substring. I do that with:</p>
+
+<pre><code class="lang-c">fseek(s, <span class="hljs-number">-1</span>, SEEK_CUR);
+</code></pre>
+<p>Which takes a FILE pointer (s), and moves it the offset <code>-1</code> positions from
+<code>SEEK_CUR</code>_, which is an enum that <code>fseek</code> interprets to mean &#39;the file
+pointer&#39;s current position.</p>
+<p>Naturally, the helper functions that <code>read()</code> uses will also have to be
+converted to accepting FILE pointers in a very similar way:</p>
+
+<pre><code class="lang-diff"><span class="hljs-addition">+#include &lt;stdio.h&gt;</span>
+ #include &lt;stdlib.h&gt;
+
+ #include &quot;util.h&quot;
+<span class="hljs-meta">@@ -10,16 +11,19 @@</span>
+ /* ------ */
+
+ static int is_not_delimiter(char c) {
+<span class="hljs-deletion">-    return (c != &#x27; &#x27; &amp;&amp; c != &#x27;\0&#x27; &amp;&amp; c != &#x27;(&#x27; &amp;&amp; c != &#x27;)&#x27;);</span>
+<span class="hljs-addition">+    return (c != &#x27; &#x27; &amp;&amp; c != &#x27;\0&#x27; &amp;&amp; c != &#x27;(&#x27; &amp;&amp; c != &#x27;)&#x27; &amp;&amp; c != EOF);</span>
+ };
+
+<span class="hljs-deletion">-static char *read_substring(char **s) {</span>
+<span class="hljs-addition">+static char *read_substring(FILE *s) {</span>
+     int l = 0;
+<span class="hljs-deletion">-    while (is_not_delimiter((*s)[l])) { l++; }</span>
+<span class="hljs-addition">+    while (is_not_delimiter(getc(s))) { l++; }</span>
+     char *out = malloc(l);
+     if (!out) { exit(1); }
+<span class="hljs-addition">+</span>
+<span class="hljs-addition">+    fseek(s, -l - 1, SEEK_CUR);</span>
+<span class="hljs-addition">+</span>
+     for (int i = 0; i &lt; l; i++) {
+<span class="hljs-deletion">-        out[i] = *((*s)++);</span>
+<span class="hljs-addition">+        out[i] = getc(s);</span>
+     }
+     out[l] = &#x27;\0&#x27;;
+     return out;
+<span class="hljs-meta">@@ -40,7 +44,7 @@</span> static void verify(char c) {
+     }
+ }
+
+<span class="hljs-deletion">-static C* categorize(char **s) {</span>
+<span class="hljs-addition">+static C* categorize(FILE *s) {</span>
+     char *token = read_substring(s);
+     if (scmp(token, &quot;quote&quot;)) {
+         return makecell(BUILTIN, (V){ .func = {token, quote} }, read(s));
+<span class="hljs-meta">@@ -61,24 +65,22 @@</span> static C* categorize(char **s) {
+     }
+ }
+</code></pre>
+<p>I&#39;ve added <code>EOF</code> to the list of delimiters, and replaced all the string pointer
+dereferencings with calls to <code>getc()</code>. I&#39;ve also changed the function prototype
+in <code>read.h</code> to reflect the new typing. Overall, this actually makes things a
+lot more readable, I think!</p>
+<hr>
+
+<p>So, back in <code>main.c</code>, the diff looks pretty simple!</p>
+
+<pre><code class="lang-diff"> int main() {
+
+<span class="hljs-deletion">-    char *a_string = &quot;(cons ((cond car) (quote (1))) (cdr (quote (2 3 4 5))))&quot;;</span>
+<span class="hljs-addition">+    FILE *input = fopen(&quot;./test.sld&quot;, &quot;r&quot;);</span>
+
+<span class="hljs-deletion">-    C *a_list          = read(&amp;a_string);</span>
+<span class="hljs-addition">+    C *a_list          = read(input);</span>
+     C *an_evalled_list = eval(a_list);
+                          print(an_evalled_list);
+                          /* debug_list(an_evalled_list); */
+    return 0;
+}
+</code></pre>
+<p>Now, a file called <code>test.sld</code> will open, and be read just like the string was
+read, in constant time and with <em>no buffering</em>.</p>
+<hr>
+
+<p>I will next modify read to only grab the next form in a stream, instead of
+reading in the whole thing at once. I&#39;ve implicitly been creating a top level
+sild list out of all the forms in a string, but this is not really what I want.
+A Sild file is an ordered series of atoms and lists, yes, but other than being
+next to each other they aren&#39;t actually connected in the same structure. I want
+read to take in a stream, return the next form in the stream, and advance the
+pointer past it so that the next time it is called, it returns the next form
+after that! For this, our old friend <code>list_depth</code>, that helped identify whether
+or not the pointer was currently inside of a list or not. This should happen
+inside of categorize. Basically, an atom should be stitched to the next form if
+and only if it is inside of a list, which we&#39;ll know if the list_depth is &gt; 0.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> C* <span class="hljs-title function_">categorize</span><span class="hljs-params">(FILE *s)</span> {
+    <span class="hljs-type">char</span> *token = read_substring(s);
+    C *out;
+
+    <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;quote&quot;</span>)) {
+        out = makecell(BUILTIN, (V){ .func = {token, quote} }, &amp;nil);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;car&quot;</span>)) {
+        out = makecell(BUILTIN, (V){ .func = {token, car} }, &amp;nil);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;cdr&quot;</span>)) {
+        out = makecell(BUILTIN, (V){ .func = {token, cdr} }, &amp;nil);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;cons&quot;</span>)) {
+        out = makecell(BUILTIN, (V){ .func = {token, cons} }, &amp;nil);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;atom&quot;</span>)) {
+        out = makecell(BUILTIN, (V){ .func = {token, atom} }, &amp;nil);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;eq&quot;</span>)) {
+        out = makecell(BUILTIN, (V){ .func = {token, eq} }, &amp;nil);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;cond&quot;</span>)) {
+        out = makecell(BUILTIN, (V){ .func = {token, cond} }, &amp;nil);
+    } <span class="hljs-keyword">else</span> {
+        out = makecell(LABEL, (V){ token }, &amp;nil);
+    }
+
+    <span class="hljs-keyword">if</span> (list_depth &gt; <span class="hljs-number">0</span>) {
+        out-&gt;next = read(s);
+    }
+
+    <span class="hljs-keyword">return</span> out;
+}
+</code></pre>
+<p>Now, I&#39;ve been ok with having this global var hanging around, but <em>no more</em>.
+What if I want to call <code>read</code> recursively on multiple streams? Suddenly I have
+to figure out when and where to reset list_depth to 0 in order to read
+everything in accurately. This is no good! I&#39;ll instead pass depth as an
+argument to all of the reader family functions, which avoids maintaining the
+global var list_depth completely! Just like in the print functions, depth will
+be a local variable to whatever frame is running it, allowing me to leverage
+the C stack to keep track of local depth for me!</p>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> C * <span class="hljs-title function_">read_inner</span><span class="hljs-params">(FILE *s, <span class="hljs-type">int</span> list_depth)</span> {
+    <span class="hljs-type">char</span> current_char = getc(s);
+
+    verify(current_char, list_depth);
+
+    <span class="hljs-keyword">switch</span>(current_char) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> EOF:
+            <span class="hljs-keyword">return</span> &amp;nil;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
+            <span class="hljs-keyword">return</span> &amp;nil;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27; &#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\n&#x27;</span>:
+            <span class="hljs-keyword">return</span> read_inner(s, list_depth);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;(&#x27;</span>:
+            <span class="hljs-keyword">return</span> makecell(
+                    LIST,
+                    (V){.<span class="hljs-built_in">list</span> = read_inner(s, list_depth + <span class="hljs-number">1</span>)},
+                    (list_depth &gt; <span class="hljs-number">0</span> ? read_inner(s, list_depth) : &amp;nil)
+                    );
+        <span class="hljs-keyword">default</span>:
+            fseek(s, <span class="hljs-number">-1</span>, SEEK_CUR);
+            <span class="hljs-keyword">return</span> categorize(s, list_depth);
+    }
+}
+
+C * <span class="hljs-title function_">read</span><span class="hljs-params">(FILE *s)</span> {
+    <span class="hljs-keyword">return</span> read_inner(s, <span class="hljs-number">0</span>);
+}
+</code></pre>
+<p>Just like <code>debug_list</code> and <code>print</code>, I&#39;ve not changed the interface to these
+functions at all, but wrapped them in a helper that always initializes to a
+depth of 0.</p>
+<p>Now, given a filename, I can write a little function that iterates through all
+the forms in a file, evaluates them, and frees the result before moving on to
+the next one!</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">eval_file</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *filename)</span> {
+    FILE *fp = fopen(filename, <span class="hljs-string">&quot;r&quot;</span>);
+
+    C * c;
+    <span class="hljs-keyword">while</span>((c = read(fp)) != &amp;nil) {
+        c = eval(c);
+        print(c);
+        free_cell(c);
+    }
+
+    fclose(fp);
+}
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    eval_file(<span class="hljs-string">&quot;./test.sld&quot;</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Notice that <code>eval_file</code> knows to terminate on <code>read</code> returning a <code>&amp;nil</code> cell,
+which it does at the top level only if it runs into a terminal char, in this
+case being <code>EOF</code>. Reusing that sentinal node ftw!</p>
+<p>If <code>test.sld</code> looks like this:</p>
+
+<pre><code>(car (quote (1 2 3)))
+(cdr (quote (1 2 3)))
+</code></pre>
+<p>Running it will read, evaluate, and print each form in turn, and output the following:</p>
+
+<pre><code>1
+(2 3)
+</code></pre>
+<p>Alright! I can now run sild files directly through the interpreter! This is a
+big step! Only one more thing to do with this, which is to adjust the main
+function to accept arbitrary filenames to be run through this function.</p>
+<hr>
+
+<p><code>main()</code> always implicitly accepts two arguments when an executable is invoked
+from the command line, despite the fact that the function signature as been
+declared so far doesn&#39;t seem to accept any. The real function prototype looks like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> *argv[])</span>;
+</code></pre>
+<p>Though the names of these arguments are arbitrary, these are the customary
+names. <code>argc</code> means &quot;argument count&quot; and is an integer representing the number
+of arguments passed to the executable on invocation. This number is always at
+least 1, because the first argument to an executable is the name by which it
+was invoked. <code>argv</code> is a null terminated array of strings that are the actual
+arguments passed to main. They could be anything! What you do with them is up
+to the program.</p>
+<p>Here is a program that prints out the arguments passed to it.</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> *argv[])</span> {
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; argv[i] != <span class="hljs-number">0x0</span>; i++) {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s\n&quot;</span>, argv[i]);
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>So compiling this into an executable called <code>a.out</code> and then executing that would do this:</p>
+
+<pre><code>$ ./a.out derp thing otherthing 1 2 3 -f -r -g stuff
+./a.out
+derp
+thing
+otherthing
+1
+2
+3
+-f
+-r
+-g
+stuff
+</code></pre>
+<p>Notice there is nothing <em>inherently</em> special about flag arguments, to use them
+as options etc, they have to be pulled out of the argument list by some helper
+function or something. I haven&#39;t looked yet, but I bet there are a bunch of
+libraries to healp with that! Immediate edit:
+<a href="http://www.gnu.org/software/libc/manual/html_node/Getopt.html#Getopt">yup!</a></p>
+<p>Using a loop really similar to that one, I can take in a list of file names and
+evaluate them in order, using my new <code>eval_file()</code> function!</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> *argv[])</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; argv[i] != <span class="hljs-literal">NULL</span>; i++) {
+        eval_file(argv[i]);
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Notice that I&#39;m starting with an index of 1, because I don&#39;t want to try and
+eval the executable, which is the index of 0 in argv!</p>
+<p>Final touch- what if I don&#39;t pass anything at all? Usually this would open a
+repl to the language, but I haven&#39;t implemented that yet, so I&#39;ll exit with an
+error if the argument count is equal to only 1.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> *argv[])</span> {
+    <span class="hljs-keyword">if</span> (argc == <span class="hljs-number">1</span>) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Error, no file names given and repl not yet implemented.\n&quot;</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; argv[i] != <span class="hljs-literal">NULL</span>; i++) {
+        eval_file(argv[i]);
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Now, when I <code>make</code> the project, I end up with an executable that can be run
+just like I would expect it to be run.</p>
+
+<pre><code class="lang-bash">$ ./sild test.sld
+</code></pre>
+<p>Will evaluate the file!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

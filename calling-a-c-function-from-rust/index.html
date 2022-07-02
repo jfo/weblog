@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Calling a C function from Rust</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Calling a C function from Rust" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Calling a C function from Rust</h1>
+        <sub>Mar 11, 2017</sub>
+        <p></p>
+        <div><p>Today I went to a Rust meetup. I had some ideas of what I might work on, but
+I&#39;ve started to try and be more open to random nerdsnipes and discussions at
+these things. Here&#39;s something I was thinking about and a little experiment
+that was an equally little success, that is to say, a success that was :+1: but
+isn&#39;t that big of a thing. I&#39;m happy about it though.</p>
+<p>Let&#39;s say I want to call a C function from Rust. How do I do this? What does it
+<em>mean</em> to call a C function from Rust? Initial investigations lead me straight
+to <a href="https://doc.rust-lang.org/book/ffi.html">this</a>. I&#39;ve heard &quot;ffi&quot; before,
+ok.  Foreign Function Interface. Ok.</p>
+<p>So, first I make a C file that has a single, simple function declaration and a <code>main</code> that uses it, and nothing else.</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">// main.c</span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">doubler</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> {
+    <span class="hljs-keyword">return</span> x * <span class="hljs-number">2</span>;
+}
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, doubler(<span class="hljs-number">1</span>));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+
+<pre><code>clang main.c
+./a.out
+</code></pre>
+<p>Produces, as you would expect,</p>
+
+<pre><code>2
+</code></pre>
+<p>I&#39;ll pull this into two files now, one for the function, and one for the executable.</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">// doubler.c</span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">doubler</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> {
+    <span class="hljs-keyword">return</span> x * <span class="hljs-number">2</span>;
+}
+</code></pre>
+
+<pre><code class="lang-c"><span class="hljs-comment">// main.c</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;doubler.c&quot;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, doubler(<span class="hljs-number">1</span>));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>This also &quot;just works&quot;</p>
+
+<pre><code>clang main.c
+./a.out
+</code></pre>
+<p>Of course, I don&#39;t want to <code>#include &quot;doubler.c&quot;</code>, because of reasons. See
+<a href="/sild-header-files/">here</a> for much more on why.</p>
+<p>Instead, I want to  <code>#include &quot;doubler.h&quot;</code>. What is <code>doubler.h</code>? It looks like
+this, simply stating the function signature of <code>doubler</code>:</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">// doubler.h</span>
+<span class="hljs-type">int</span> <span class="hljs-title function_">doubler</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span>;
+</code></pre>
+<p>The other two look like this now, with only the change from
+<code>#include &quot;doubler.c&quot;</code> to <code>#include &quot;doubler.h&quot;</code></p>
+
+<pre><code class="lang-c"><span class="hljs-comment">// doubler.c</span>
+<span class="hljs-type">int</span> <span class="hljs-title function_">doubler</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> {
+    <span class="hljs-keyword">return</span> x * <span class="hljs-number">2</span>;
+}
+</code></pre>
+
+<pre><code class="lang-c"><span class="hljs-comment">// main.c</span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;doubler.h&quot;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, doubler(<span class="hljs-number">1</span>));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+
+<pre><code>clang main.c
+</code></pre>
+<p>Aha.</p>
+
+<pre><code>Undefined symbols for architecture x86_64:
+  &quot;_doubler&quot;, referenced from:
+        _main in doub-715218.o
+        ld: symbol(s) not found for architecture x86_64
+        clang: error: linker command failed with exit code 1 (use -v to see invocation)
+</code></pre>
+<p>So, the header file is <em>just the symbol</em>. This is where the &#39;linking&#39; happens.
+I&#39;ll need to compile the <code>doubler.c</code> file into an object and then <em>link that
+into the main executable</em> at the compiler level.</p>
+<p>I&#39;ll compile this <code>.c</code> file into an <code>.o</code> file with the following compiler command:</p>
+
+<pre><code>clang doubler.c -c
+</code></pre>
+<p>The <code>-c</code> flag instructs the compiler to produce an object file... an <code>.o</code> file,
+that is not an executable binary and so does not need a <code>main()</code> declaration.</p>
+<p>This is a shared object file. It might be called <code>.so</code> or <code>dylib</code> (for &#39;dynamic
+library&#39;). I am not sure of the distinction if any between these suffixes, but
+the basic idea is that the file contains machine code designated by symbols
+that can be linked into other programs.</p>
+<blockquote>
+<p>Update: good <a href="https://twitter.com/dev_console/status/841071717166534661">feedback on
+Twitter</a>
+elucidated this distinction some, and <a href="https://jvns.ca/">Julia</a> pointed me to
+a <a href="https://lwn.net/Articles/276782/">much more in depth resource</a></p>
+</blockquote>
+<p>What does that <code>.o</code> file look like?</p>
+
+<pre><code>Ïúíþ^G^@^@^A^C^@^@^@^A^@^@^@^D^@^@^@°^A^@^@^@ ^@^@^@^@^@^@^Y^@^@^@8^A^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@x^@^@^@^@^@^@^@Ð^A^@^@^@^@^@^@x^@^@^@^@^@^@^@^G^@^@^@^G^@^@^@^C^@^@^@^@^@^@^@__text^@^@^@^@^@^@^@^@^@^@__TEXT^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^Q^@^@^@^@^@^@^@Ð^A^@^@^D^@^@^@^@^@^@^@^@^@^@^@^@^D^@&lt;80&gt;^@^@^@^@^@^@^@^@^@^@^@^@__compact_unwind__LD^@^@^@^@^@^@^@^@^@^@^@^@^X^@^@^@^@^@^@^@ ^@^@^@^@^@^@^@è^A^@^@^C^@^@^@H^B^@^@^A^@^@^@^@^@^@^B^@^@^@^@^@^@^@^@^@^@^@^@__eh_frame^@^@^@^@^@^@__TEXT^@^@^@^@^@^@^@^@^@^@8^@^@^@^@^@^@^@@^@^@^@^@^@^@^@^H^B^@^@^C^@^@^@^@^@^@^@^@^@^@^@^K^@^@h^@^@^@^@^@^@^@^@^@^@^@^@$^@^@^@^P^@^@^@^@^K
+^@^@^@^@^@^B^@^@^@^X^@^@^@P^B^@^@^A^@^@^@`^B^@^@^L^@^@^@^K^@^@^@P^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^A^@^@^@^A^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@UH&lt;89&gt;å&lt;89&gt;}ü&lt;8b&gt;}üÁç^A&lt;89&gt;ø]Ã^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^Q^@^@^@^@^@^@^A^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^T^@^@^@^@^@^@^@^AzR^@^Ax^P^A^P^L^G^H&lt;90&gt;^A^@^@$^@^@^@^\^@^@^@¨ÿÿÿÿÿÿÿ^Q^@^@^@^@^@^@^@^@A^N^P&lt;86&gt;^BC^M^F^@^@^@^@^@^@^@^@^@^@^@^A^@^@^F^A^@^@^@^O^A^@^@^@^@^@^@^@^@^@^@^@_doubler^@^@^@
+</code></pre>
+<p>Yeah, so like, of course that&#39;s a bunch of unprintable junk mostly, because
+it&#39;s not a text file, it&#39;s machine code, and is not designed to be printed to the
+screen directly like that. But, there is <code>_doubler</code> in there... that&#39;s the
+symbol I actually want to link to.</p>
+<p>I can link all these together simply by supplying all the names to <code>clang</code>.</p>
+
+<pre><code>clang main.c doubler.o
+</code></pre>
+<p>produces an <code>a.out</code> file that when executed prints <code>2</code>.</p>
+<p>So how do I do this from Rust, in the most basic way?</p>
+
+<pre><code class="lang-rust"><span class="hljs-comment">// main.rs</span>
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{}&quot;</span>, <span class="hljs-title function_ invoke__">doubler</span>(<span class="hljs-number">1</span>));
+}
+</code></pre>
+<p>If I try to compile this with <code>rustc main.rs</code>, I get an obvious error:</p>
+
+<pre><code>error[E0425]: unresolved name `doubler`
+ --&gt; doubler.rs:2:20
+   |
+ 2 |     println!(&quot;{}&quot;, doubler(1));
+   |                    ^^^^^^^ unresolved name
+
+     error: aborting due to previous error
+</code></pre>
+<p>I already know that I can&#39;t do the equivalent of <code>#include &quot;doubler.c&quot;</code> or
+<code>#include &quot;doubler.h&quot;</code>, because those don&#39;t make any sense in this context. I
+also know that what I need to do is direct the compiler to expect the symbol
+<code>doubler</code> to be linked <em>to</em>. I want, basically, the rust equivalent of what
+exists in the C header file, just the function signature.</p>
+<p>That equivalent can be put into an <code>extern</code> block, like this:</p>
+
+<pre><code class="lang-rust"><span class="hljs-comment">// main.rs</span>
+<span class="hljs-keyword">extern</span> {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">doubler</span>(x: <span class="hljs-type">u32</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">u32</span>;
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{}&quot;</span>, <span class="hljs-title function_ invoke__">doubler</span>(<span class="hljs-number">1</span>));
+}
+</code></pre>
+<blockquote>
+<p>I am using <code>u32</code> here because on my machine <code>sizeof(int)</code> returns <code>4</code>, which
+is 4 bytes, so 4 * 8 bits = 32 bits.</p>
+</blockquote>
+<p>Now I get a different error!</p>
+
+<pre><code>error[E0133]: call to unsafe function requires unsafe function or block
+ --&gt; /Users/jfowler/code/linkertest/doubler.rs:6:20
+  |
+6 |     println!(&quot;{}&quot;, doubler(1));
+  |                    ^^^^^^^^^^ call to unsafe function
+
+error: aborting due to previous error
+</code></pre>
+<p>Because the Rust compiler has no way of controlling what the C code is going to
+do to the data passed into it, I need to wrap this in an unsafe block.</p>
+
+<pre><code class="lang-rust"><span class="hljs-keyword">extern</span> {
+    <span class="hljs-keyword">fn</span> <span class="hljs-title function_">doubler</span>(x: <span class="hljs-type">u8</span>) <span class="hljs-punctuation">-&gt;</span> <span class="hljs-type">u8</span>;
+}
+
+<span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() {
+    <span class="hljs-keyword">unsafe</span> {
+        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{}&quot;</span>, <span class="hljs-title function_ invoke__">doubler</span>(<span class="hljs-number">1</span>));
+    }
+}
+</code></pre>
+
+<pre><code>error: linking with `cc` failed: exit code: 1
+  |
+  = note: Undefined symbols for architecture x86_64:
+  &quot;_doubler&quot;, referenced from:
+      main::main::hf64fd37c24bdc499 in doubler.0.o
+ld: symbol(s) not found for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+</code></pre>
+<p>This looks familiar! I got the same basic error on the C version when I didn&#39;t
+link the object file to the executable at compile time.</p>
+<p>Is there a way to instruct <code>rustc</code> to do this? What about simply passing the
+list of names of the files (this is after <code>clang doubler.c -c</code> has produced
+<code>doubler.o</code>)</p>
+
+<pre><code>rustc main.rs doubler.o
+</code></pre>
+<p>Nope.</p>
+
+<pre><code>error: multiple input filenames provided
+</code></pre>
+<p>Running <code>rustc</code> without arguments shows me the flags, including:</p>
+
+<pre><code>-l [KIND=]NAME      Link the generated crate(s) to the specified native
+                    library NAME. The optional KIND can be one of static,
+                    dylib, or framework. If omitted, dylib is assumed.
+</code></pre>
+<p>Perhaps...</p>
+
+<pre><code>rustc main.rs -l doubler.o
+</code></pre>
+<p>We are getting warmer:</p>
+
+<pre><code>error: linking with `cc` failed: exit code: 1
+  |
+      = note: ld: library not found for -ldoubler.o
+      clang: error: linker command failed with exit code 1 (use -v to see invocation)
+</code></pre>
+<p>This is similar to the error above, but notice an important difference- it is
+not looking for the symbol and not finding it, it is looking for the <em>library</em>
+and not finding it. We know definitely that the library <em>exists</em>, so we just
+need to know how to tell <code>rustc</code> how to <em>find it</em>. Wherever it&#39;s looking, it&#39;s not finding it. From the flags again:</p>
+
+<pre><code>-L [KIND=]PATH      Add a directory to the library search path. The
+                    optional KIND can be one of dependency, crate, native,
+                    framework or all (the default).
+</code></pre>
+<p>Aha. I will add the current directory, where the <code>.o</code> file lives, to the search
+path.</p>
+
+<pre><code>rustc main.rs -l doubler.o -L .
+</code></pre>
+<p>This works!! And produces a <code>main</code> execuatable, that when run, gives me:</p>
+
+<pre><code>2
+</code></pre>
+<blockquote>
+<p>Note: This no longer works! The <code>-l</code> flag is really only for system
+libraries, and at the time I wrote this I think it functioned by a fluke of how
+the linker was looking for them. Alas, no more! A proper linking script or
+configuration is likely necessary to do this now, refer to the links below
+for more coherent information about that. This post describes the process of
+trying to understand how objects are linked into the final executable in
+general, and was never intended to be a tutorial on best practices.</p>
+
+<ul>
+<li>11/2018</li>
+</ul>
+</blockquote>
+<hr>
+
+<p>This is a trivial example, yes! Also, I&#39;m pretty sure this is most definitely
+<em>not</em> the recommended way to do this.  Read
+<a href="https://doc.rust-lang.org/book/ffi.html">this</a>
+and <a href="https://doc.rust-lang.org/1.9.0/book/advanced-linking.html">this</a> for more
+thorough, idiomatic info. Afaict, the more normal way to do this kind of
+thing would be to link against installed libraries or use <a href="http://doc.crates.io/build-script.html">cargo and a
+build script</a> to codify how the
+external deps should be handled.  My sense is that the <code>link</code> attributes in the
+Rust ffi docs do something at the end of the pipe that isn&#39;t wholly different
+from what I&#39;ve done directly above by calling <code>rustc</code> with some flags.</p>
+<p>Also, I asked at the beginning of this post- &quot;What does it mean to call a C
+function from Rust?&quot; I hope it&#39;s pretty clear that when you do something like
+this, you&#39;re not really doing that at all! You start with source code that
+happens to be in two different languages, sure... and the compilers for those
+languages have their own flags and rules and such and such, but at the end of
+the day you&#39;re simply allowing the Rust code to access already compiled machine
+code in those object files that came from a separate compiler step. From that perspective, it&#39;s really not accurate to say that you&#39;re calling C functions from Rust!</p>
+<p>It works, though! And it is proof that it&#39;s rudimentarily not that hard to link
+together compiled outputs from different languages as long as you know the
+right incantations and have a sense of what it actually means to do that. </p>
+<p>I am looking forward to learning more about this and learning the &quot;right way&quot;
+to do it!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; lambdas p.1</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; lambdas p.1" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; lambdas p.1</h1>
+        <sub>Jul 24, 2016</sub>
+        <p></p>
+        <div><p>Strap in, it is time for lambdas. If you&#39;re just joining us, this is the maybe
+penultimate post in a long series that started
+<a href="/sild-is-a-lisp-dialect/">here</a>.</p>
+<hr>
+
+<p>A lambda is an anonymous, unnamed function that can be applied to an arbitrary
+set of inputs. Usually it looks something like:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) x)
+</code></pre>
+<p>That&#39;s the <a href="https://en.wikipedia.org/wiki/Identity_function">identity
+function</a>. If we were to want
+to perhaps call it on something, it would look like this.</p>
+
+<pre><code class="lang-scheme">((<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) x) &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<p>That call would output:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>)
+</code></pre>
+<p>You might be tempted to say, hey wait- that&#39;s the same as the builtin quote
+function! But it is in fact <em>not</em> the same thing, at all! Consider:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">quote</span></span> (<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<p>Will produce</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>)
+</code></pre>
+<p>But</p>
+
+<pre><code class="lang-scheme">((<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) x) (<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<p>Will produce</p>
+
+<pre><code>Error: unbound label: 1
+</code></pre>
+<p>Because the latter attempts to evaluate the list that&#39;s being passed to it
+before passing it into the lambda. In this case, that means trying to lookup
+the label 1 in the environment, which doesn&#39;t exist. (remember, I haven&#39;t yet
+implemented any type of number support, so, to Sild,  <code>1</code> is still just an
+arbitrary character string).</p>
+<p>So, they are different. We still do need that built in identity function, after
+all.</p>
+<hr>
+
+<p>I&#39;m going to draw a distinction now. It took me a long time to figure this out,
+but once I did it made everything a lot simpler.</p>
+<p>A lambda is an anonymous function. A function is a procedure. The <a href="http://www.lispworks.com/documentation/HyperSpec/Body/03_ababa.htm"><em>special
+form</em></a>
+&quot;lambda&quot; denotes an anonymous procedure. But from the implementation&#39;s point of
+view, <code>lambda</code> is a special form that <em>produces a procedure</em> that can <em>then</em> be
+applied to an arbitrary set of arguments.</p>
+<p>Let&#39;s think about this for a moment. The way the interpreter is written, if I were to write this:</p>
+
+<pre><code class="lang-scheme">((<span class="hljs-name"><span class="hljs-built_in">car</span></span> &#x27;(car)) &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<p>What am I going to get out of it? Let&#39;s walk through it.</p>
+<p>The interpreter sees a list, so it tries to apply the first item in that list
+to the remaining items as a function. It sees another list:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">car</span></span> &#x27;(car))
+</code></pre>
+<p>So it tries to evaluate this list before trying to apply it. What does it get
+out of that evalutation?</p>
+<p>Once again, it tries to apply the first item in the list to the remaining
+arguments, but this time, it has more luck. <code>car</code> is not a list, it&#39;s a
+builtin! We know what to do with that one, so the interpreter passes off
+control to the function that the builtin points to. As we already know, <code>car</code>
+expects a list and returns the first thing in that list. What is being passed
+to it?</p>
+
+<pre><code class="lang-scheme">&#x27;(car)
+</code></pre>
+<p>It needs to evaluate this to see if the result is a list.</p>
+<p>Remember that <code>&#39;</code> expands to a quoted form, so what the interpreter is really seeing is:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">quote</span></span> (<span class="hljs-name"><span class="hljs-built_in">car</span></span>))
+</code></pre>
+<p>Another list! But this one is easy, right? <code>quote</code> is another builtin, it just
+returns its arg unevaluated. So this whole thing returns <code>(car)</code>, which is a
+list with one thing in it, which the original, calling <code>car</code> knows what to do with.</p>
+<p>So, that call to <code>car</code> returns <code>car</code>. It could have returned anything- whatever
+was the first thing in that list. So, back to the original:</p>
+
+<pre><code class="lang-scheme">((<span class="hljs-name"><span class="hljs-built_in">car</span></span> &#x27;(car)) &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<p>ends up looking like</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">car</span></span> &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<p>Now the interpreter is able to apply the first item to the rest. Once again,
+car returns the first thing in the list that is passed to it. Round and round we go...</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">quote</span></span> (<span class="hljs-name">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>)))
+</code></pre>
+
+<pre><code class="lang-scheme"><span class="hljs-number">1</span>
+</code></pre>
+<p>This is all familiar!</p>
+<hr>
+
+<p>But what about lambdas?</p>
+<p>Ok, so... interpreter sees a list. Tries to apply the first thing in that list.
+Sees another list... same deal. Now it sees <code>lambda</code>. What is it supposed to
+do? It needs to <em>return a procedure</em>. So after it evaluates the lambda, it
+should see something like:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name">PROC</span> <span class="hljs-symbol">&#x27;9</span>)
+</code></pre>
+<p>That <code>PROC</code> object needs to hold three things inside of it: the argument list,
+for binding labels to the arguments being passed to it, the body of the
+function, and a <em>reference to the environment it was produced in</em>. That
+last one is a little hairy, but very, <em>very</em> important, and I&#39;ll come back to
+it in great detail in a later post. For now, just notice that when a lambda
+turns into a PROC, it retains a link to the env that was passed into the
+<code>lambda()</code> C function!</p>
+<p>What should that look like?</p>
+
+<pre><code class="lang-scheme"><span class="hljs-comment">; arg list    function body</span>
+<span class="hljs-comment">;       \   /</span>
+(<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) x)
+</code></pre>
+<p>so, let&#39;s say the interpreter produces this <code>PROC</code> and then tries to apply it:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name">PROC</span> <span class="hljs-symbol">&#x27;9</span>)
+</code></pre>
+<p>It should first evaluate the arguments passed to it, in this case <code>&#39;9</code>, then it
+needs to bind the result to the argument list, in this case <code>(x)</code>, so duriing
+the evaluationg of this procedure&#39;s body, <code>x = 9</code>. Then, it evaluates the
+body in that new, temporary environment, in this case the function
+body is simply <code>x</code>.  So it evaluates <code>x</code> and since <code>x = 9</code>, the whole thing
+returns <code>9</code>. The end, sleep tight.</p>
+<p>Some notes to this- for now, I think the arity should match. This should throw
+an error:</p>
+
+<pre><code class="lang-scheme">((<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x y) x) <span class="hljs-symbol">&#x27;1</span>)
+</code></pre>
+<p>So should this, I think:</p>
+
+<pre><code class="lang-scheme">((<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x y) x) <span class="hljs-symbol">&#x27;1</span> <span class="hljs-symbol">&#x27;2</span> <span class="hljs-symbol">&#x27;3</span>)
+</code></pre>
+<p>In each case, the number of arguments passed to the function is not equal to
+the number of arguments the function expects. I don&#39;t know much about flexible
+variable arity, maybe it&#39;s a good idea? But it doesn&#39;t make sense to me right
+now, especially since if you want to pass in some number of things, well...</p>
+
+<pre><code class="lang-scheme">((<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> x))) &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+<p>Seems like there is a way to do so already.</p>
+<hr>
+
+<p>So what is a <code>PROC</code>, really? Well, it&#39;s going to be a new type. We know how
+this goes.</p>
+<p>I&#39;ll add it here:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">CellType</span> {</span> NIL, LABEL, LIST, BUILTIN, PROC };
+</code></pre>
+<p>And I&#39;ll add it here:</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> {</span>
+    <span class="hljs-type">char</span> * label;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">funcval</span> <span class="hljs-title">func</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">procval</span> <span class="hljs-title">proc</span>;</span> <span class="hljs-comment">// here!</span>
+} V;
+</code></pre>
+<p>And I&#39;ll need a <code>procval</code> so that makes sense...</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">procval</span> {</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> *<span class="hljs-title">args</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> *<span class="hljs-title">body</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> *<span class="hljs-title">env</span>;</span>
+};
+`
+</code></pre>
+<p>This is a little struct to hold those three things I mentioned earlier. Back to
+the identity function example...</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) x)
+</code></pre>
+<p>when evaluated, should produce this:</p>
+
+<pre><code class="lang-c">makecell(PROC, (V){ .proc = { operand, operand2, env } }, &amp;nil);
+</code></pre>
+<p>And so, I will make a new builtin function called <code>lambda</code> that will produce
+that cell. This pattern will look familiar, it is the same as all the other
+builtin functions!</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">lambda</span><span class="hljs-params">(C *operand, Env *env)</span> {
+    <span class="hljs-comment">// check arity for only two things- arg list and function body</span>
+    arity_check(<span class="hljs-string">&quot;lambda&quot;</span>, <span class="hljs-number">2</span>, operand);
+
+    <span class="hljs-comment">// separating them from each other.</span>
+    C *operand2 = operand-&gt;next;
+    operand-&gt;next = &amp;nil;
+    operand2-&gt;next = &amp;nil;
+
+    <span class="hljs-comment">// type checking the arg list</span>
+    <span class="hljs-keyword">if</span> (operand-&gt;type != LIST) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;lambda expected a LIST as its first argument and did not get one\n&quot;</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-comment">// returning a new PROC cell</span>
+    <span class="hljs-keyword">return</span> makecell(PROC, (V){ .proc = { operand, operand2, env } }, &amp;nil);
+}
+</code></pre>
+<p>This function is fairly straightforward, it&#39;s when we try to apply that cell as
+a function that things get interesting.</p>
+<hr>
+
+<p>Now that I have a new type, I&#39;ll have to account for it in all of the various
+switch statements that operate on cell types.</p>
+<p>In <code>debug_list</code>, I&#39;ll simply output the new procval struct in the same way as
+the others:</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> PROC:
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;PROC- Address: %p, Next: %p\n| Args: \n&quot;</span>, l, l-&gt;next);
+    debug_list_inner(l-&gt;val.proc.args, depth + <span class="hljs-number">1</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;| Body: \n&quot;</span>);
+    debug_list_inner(l-&gt;val.proc.body, depth + <span class="hljs-number">1</span>);
+    debug_list_inner(l-&gt;next, depth);
+    <span class="hljs-keyword">break</span>;
+</code></pre>
+<p>similarly, in <code>print</code>:</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> PROC:
+    <span class="hljs-built_in">fprintf</span>(output_stream, <span class="hljs-string">&quot;(PROC &quot;</span>);
+    print_inner(l-&gt;val.proc.args, depth, output_stream);
+    <span class="hljs-built_in">fprintf</span>(output_stream, <span class="hljs-string">&quot; &quot;</span>);
+    print_inner(l-&gt;val.proc.body, depth, output_stream);
+    <span class="hljs-built_in">fprintf</span>(output_stream, <span class="hljs-string">&quot;)&quot;</span>);
+    <span class="hljs-keyword">break</span>;
+</code></pre>
+<p>In <code>eval</code>, a <code>PROC</code> should evaluate to itself, just like a <code>BUILTIN</code>, or <code>NIL</code></p>
+
+<pre><code class="lang-c">...
+<span class="hljs-keyword">case</span> PROC:
+<span class="hljs-keyword">case</span> BUILTIN:
+<span class="hljs-keyword">case</span> NIL:
+    <span class="hljs-keyword">return</span> c;
+...
+</code></pre>
+<p>And in <code>apply</code>, well, that&#39;s where the action happens.</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> PROC:
+    <span class="hljs-keyword">return</span> apply_proc(c, env);
+</code></pre>
+<p>Looks pretty simple until you remember that we haven&#39;t written <code>apply_proc()</code> yet!</p>
+<hr>
+
+<p><code>apply_proc</code> is a beast, it&#39;s the big kahuna of all the functions in this
+project. It&#39;s the heart of the eval/apply loop.</p>
+<p>All of the business logic of applying an anonymous procedure has to live in
+this function. Let&#39;s take it step by step.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> C *<span class="hljs-title function_">apply_proc</span><span class="hljs-params">(C* proc, Env *env)</span> {
+}
+</code></pre>
+<p>It will be static, I only need to call it from <code>apply</code>.</p>
+<p>First, I&#39;ll need to check the arity against the number of arguments that have
+been passed into it. For this, I&#39;ll need a function that can count how many
+things are in the argument list, then count how many things have been passed,
+and then compare them. Remember that the form will be:</p>
+
+<pre><code class="lang-scheme"><span class="hljs-comment">; arg list    function body</span>
+<span class="hljs-comment">;       \   /</span>
+((<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) x) <span class="hljs-symbol">&#x27;1</span>)
+<span class="hljs-comment">;                 \</span>
+<span class="hljs-comment">;                   arguments being passed</span>
+</code></pre>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> C *<span class="hljs-title function_">apply_proc</span><span class="hljs-params">(C* proc, Env *env)</span> {
+
+    <span class="hljs-comment">// first element in arg list</span>
+    C *cur = proc-&gt;val.proc.args-&gt;val.<span class="hljs-built_in">list</span>;
+    <span class="hljs-comment">// first argument being passed</span>
+    C *curarg = proc-&gt;next;
+
+    <span class="hljs-type">int</span> arity = count_list(cur);
+    <span class="hljs-type">int</span> numpassed = count_list(curarg);
+
+    <span class="hljs-keyword">if</span> (arity != numpassed) {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;arity error on proc application\n&quot;</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-comment">// etc...</span>
+</code></pre>
+<p>And I&#39;ll need to implement <code>count_list()</code>. This is relatively straightforward,
+and I&#39;ll simply do it iteratively...</p>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> <span class="hljs-type">int</span> <span class="hljs-title function_">count_list</span><span class="hljs-params">(C *c)</span>{
+    <span class="hljs-type">int</span> i= <span class="hljs-number">0</span>;
+    <span class="hljs-comment">// count args until the end of the list!</span>
+    <span class="hljs-keyword">while</span>(c-&gt;type != NIL) {
+        i++;
+        c = c-&gt;next;
+    }
+    <span class="hljs-keyword">return</span> i;
+};
+</code></pre>
+<p>Great! That wraps up a dynamic arity check.</p>
+<p>Next, I need to evaluate the arguments being passed and set them to the labels
+designated in the arg list. For this, I&#39;ll create a new environment called
+<code>frame</code> to set them in.</p>
+
+<pre><code class="lang-c">    <span class="hljs-comment">// make an env just for this procedure application!</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> *<span class="hljs-title">frame</span> =</span> new_env();
+
+    C *nextarg;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; arity; i++) {
+        <span class="hljs-comment">// retain a reference to the next arg before disconnecting it</span>
+        nextarg = curarg-&gt;next;
+
+        <span class="hljs-comment">// disconnect next arg from curarg</span>
+        curarg-&gt;next = &amp;nil;
+
+        <span class="hljs-comment">// evaluate curarg _in the enclosing environment_ and assign cur to it in the frame</span>
+        <span class="hljs-built_in">set</span>(frame, cur-&gt;val.label, eval(curarg, env));
+
+        <span class="hljs-comment">// advance to next label / value pair</span>
+        curarg = nextarg;
+        cur = cur-&gt;next;
+    }
+</code></pre>
+<p>Notice a very important point here is that the arguments being passed into the
+lambda are evaluated in the <em>enclosing</em> environment that the lambda is being
+applied <em>inside of</em> BEFORE being passed to the loop that assigns that result to
+a label in the frame. This enables us to <em>shadow</em> variables effectively.</p>
+<p>Consider the following:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> thingy &#x27;(<span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span>))
+
+(<span class="hljs-name"><span class="hljs-built_in">define</span></span> cdrer (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (thingy) (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> thingy)))
+
+(<span class="hljs-name"><span class="hljs-built_in">display</span></span>
+    (<span class="hljs-name">cdrer</span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> thingy))
+)
+</code></pre>
+<p>Here, &quot;thingy&quot; is being shadowed in the lambda application. It means one thing
+in the global env, and another in the frame, but the two definitions are
+effectively isolated from one another.</p>
+<p>Look at this expansion:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name">cdrer</span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> thingy))
+(<span class="hljs-name">cdrer</span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> &#x27;(<span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span>)))
+(<span class="hljs-name">cdrer</span> (<span class="hljs-name">3</span> <span class="hljs-number">4</span>))
+</code></pre>
+<p>and internal to the lambda...</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> thingy)
+(<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> (<span class="hljs-name">3</span> <span class="hljs-number">4</span>))
+(<span class="hljs-name">4</span>)
+</code></pre>
+<p>Which is ultimately what we get returned.</p>
+<hr>
+
+<p>Now we&#39;re ready to evaluate the body of the function in the frame! Remember,
+the PROC object contains three things: an arg list, a function body, and a
+reference to the enclosing environment that we&#39;re not going to worry about just
+yet.</p>
+<p>So far in <code>apply_proc()</code> we&#39;ve done some arity and type checking, evaluated the
+passed arguments, and assigned them to their labels in the frame env that we&#39;ve
+created.</p>
+<p>Here&#39;s the money line:</p>
+
+<pre><code class="lang-c">C *out = eval(proc-&gt;val.proc.body, frame);
+</code></pre>
+<p>And that&#39;s that. We&#39;ve evaluated the body of the lambda in the context of its
+local frame environment. All that is left is to clean up after ourselves.</p>
+<p>We free the args:</p>
+
+<pre><code class="lang-c">free_cell(proc-&gt;val.proc.args);
+</code></pre>
+<p>We free the proc cell pointer itself:</p>
+
+<pre><code class="lang-c"><span class="hljs-built_in">free</span>(proc);
+</code></pre>
+<p>and we free the frame</p>
+
+<pre><code class="lang-c">free_env(frame);
+</code></pre>
+<p>Then we can return the result that we wanted all along.</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">return</span> out;
+</code></pre>
+<p>That&#39;s it! The whole <code>apply_proc()</code> function looks like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> C *<span class="hljs-title function_">apply_proc</span><span class="hljs-params">(C* proc, Env *env)</span> {
+
+    C *cur = proc-&gt;val.proc.args-&gt;val.<span class="hljs-built_in">list</span>;
+    C *curarg = proc-&gt;next;
+
+    <span class="hljs-type">int</span> arity = count_list(cur);
+
+    <span class="hljs-type">int</span> numpassed = count_list(curarg);
+
+    <span class="hljs-keyword">if</span> (arity != numpassed) {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;arity error on proc application\n&quot;</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> *<span class="hljs-title">frame</span> =</span> new_env();
+    C *nextarg;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; arity; i++) {
+        nextarg = curarg-&gt;next;
+        curarg-&gt;next = &amp;nil;
+        <span class="hljs-built_in">set</span>(frame, cur-&gt;val.label, eval(curarg, env));
+        curarg = nextarg;
+        cur = cur-&gt;next;
+    }
+
+    <span class="hljs-comment">// eval will free the body, here:</span>
+    C *out = eval(proc-&gt;val.proc.body, frame);
+    <span class="hljs-comment">// but the args and the proc cell itself still need to be freed manually</span>
+    <span class="hljs-comment">// after application:</span>
+
+    free_cell(proc-&gt;val.proc.args);
+    <span class="hljs-built_in">free</span>(proc);
+    free_env(frame);
+
+    <span class="hljs-keyword">return</span> out;
+}
+</code></pre>
+<p>:D</p>
+<hr>
+
+<p>This is pretty spectacular, being able to apply procedures! Let&#39;s
+look at an easy way to use them!</p>
+<p>We have <code>car</code> and <code>cdr</code>, but what if we wanted to <em>second</em> item in a list?</p>
+<p>We could go like:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>)))
+</code></pre>
+
+<pre><code>2
+</code></pre>
+<p>If we did that a lot, it would be helpful to have a shortcut:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> cadr (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> x))))
+(<span class="hljs-name"><span class="hljs-built_in">cadr</span></span> &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>))
+</code></pre>
+
+<pre><code class="lang-scheme"><span class="hljs-number">2</span>
+</code></pre>
+<p>That&#39;s a traditional pattern in a lisp, we could define a whole host of helper functions!</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> caddr (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> x)))))
+(<span class="hljs-name"><span class="hljs-built_in">define</span></span> caadr (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> x)))))
+<span class="hljs-comment">; etc...</span>
+</code></pre>
+<p>But, much more impressively, we can use control flow introduced by <code>cond</code> to
+write more dynamic procedures!</p>
+<p>What if we want the last item in a list?</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> last
+    (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (l)
+        (<span class="hljs-name"><span class="hljs-built_in">cond</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> l) (<span class="hljs-name">last</span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> l))
+              (<span class="hljs-name"><span class="hljs-built_in">car</span></span> l))))
+</code></pre>
+<p>Now,</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name">last</span> &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> <span class="hljs-number">5</span> <span class="hljs-number">6</span> <span class="hljs-number">7</span>))
+</code></pre>
+<p>is <code>7</code></p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name">last</span> &#x27;(<span class="hljs-number">1</span> <span class="hljs-number">2</span>))
+</code></pre>
+<p>is <code>2</code></p>
+<p>and furthermore,</p>
+
+<pre><code class="lang-c">(display
+    (last <span class="hljs-string">&#x27;( 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100))
+)</span>
+</code></pre>
+<p>is <code>100</code>!</p>
+<p>NOW we&#39;re cooking with gas! In the next post I&#39;ll address some thorny problems
+inherent in this design and how to fix them, and we&#39;ll discover the power of
+what we&#39;ve wrought, and ... well, we&#39;ll sort of be at the end then, won&#39;t we?</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

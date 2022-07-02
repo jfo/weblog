@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Parser Combinators</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="http://dev.jfo.click:4321/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http://dev.jfo.click:4321">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Parser Combinators</h1>
+        <sub>Jan 01, 1970</sub>
+        <p></p>
+        <div><p>This is my parser combinator blogpost. There are <a href="#references">many like it</a>,
+but this one is mine.</p>
+<p>Perhaps I have a string lying around somewhere.</p>
+
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> testString = <span class="hljs-string">&quot;Abcd123&quot;</span>;
+</code></pre>
+<p>What a lovely little string.</p>
+<h2 id="a-parser-is">A parser is</h2>
+<p>a function that takes a string as input and tells you if the input passes some
+test you&#39;ve set out for it.</p>
+
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">aParser</span> = input =&gt; input === <span class="hljs-string">&quot;Abcd123&quot;</span>
+<span class="hljs-title function_">aParser</span>(testString); <span class="hljs-comment">// true</span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">anotherParser</span> = input =&gt; input === <span class="hljs-string">&quot;something else&quot;</span>
+<span class="hljs-title function_">anotherParser</span>(testString); <span class="hljs-comment">// false</span>
+</code></pre>
+<p>That&#39;s not very interesting. Maybe a more interesting question?</p>
+
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">aMoreInterestingParser</span> = input =&gt; input[<span class="hljs-number">0</span>] === <span class="hljs-string">&quot;A&quot;</span>
+<span class="hljs-title function_">aMoreInterestingParser</span>(testString); <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">aMoreInterestingParser</span>(<span class="hljs-string">&quot;Aadjfiojda&quot;</span>); <span class="hljs-comment">// true</span>
+</code></pre>
+<p>But what now?</p>
+<p>I lied before, actually,</p>
+<h2 id="a-parser-is">A parser is</h2>
+<p>a function that takes a string as input and tells you if the input passes some
+test you&#39;ve set out for it and also returns the remaining input to be parsed.</p>
+<p>I can do this quite simply as a little informal tuple:</p>
+
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">aBetterAndMoreInterestingParser</span> = input =&gt;
+  [
+    input[<span class="hljs-number">0</span>] === <span class="hljs-string">&quot;A&quot;</span>,
+    input.<span class="hljs-title function_">slice</span>(<span class="hljs-number">1</span>, input.<span class="hljs-property">length</span>)
+  ]
+<span class="hljs-title function_">aBetterAndMoreInterestingParser</span>(<span class="hljs-string">&quot;Aadjfiojda&quot;</span>); <span class="hljs-comment">// [ true, &#x27;adjfiojda&#x27; ]</span>
+<span class="hljs-title function_">aBetterAndMoreInterestingParser</span>(<span class="hljs-string">&quot;Zadjfiojda&quot;</span>); <span class="hljs-comment">// [ false, &#x27;adjfiojda&#x27; ]</span>
+</code></pre>
+<p>But wait, if the parser fails then we don&#39;t want to keep parsing the input from
+there, we want to try the same place again, don&#39;t we? Yes we do.</p>
+
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">aBetterAndMoreInterestingParser</span> = input =&gt; {
+  <span class="hljs-keyword">if</span> (input[<span class="hljs-number">0</span>] === <span class="hljs-string">&quot;A&quot;</span>) {
+    <span class="hljs-keyword">return</span> [<span class="hljs-literal">true</span>, input.<span class="hljs-title function_">slice</span>(<span class="hljs-number">1</span>, input.<span class="hljs-property">length</span>)]
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> [<span class="hljs-literal">false</span>, input]
+  }
+}
+<span class="hljs-title function_">aBetterAndMoreInterestingParser</span>(<span class="hljs-string">&quot;Aadjfiojda&quot;</span>); <span class="hljs-comment">// [ true, &#x27;adjfiojda&#x27; ]</span>
+<span class="hljs-title function_">aBetterAndMoreInterestingParser</span>(<span class="hljs-string">&quot;Zadjfiojda&quot;</span>); <span class="hljs-comment">// [ false, &#x27;Zadjfiojda&#x27; ]</span>
+</code></pre>
+<h2 id="a-parser-generator-is">A parser generator is</h2>
+<p>a function that returns a parser. Maybe you give it some input and it decides
+what to match based on that...</p>
+
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">parseChar</span> = char =&gt;
+  <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> [
+    input[<span class="hljs-number">0</span>] === char,
+    input.<span class="hljs-title function_">slice</span>(<span class="hljs-number">1</span>, input.<span class="hljs-property">length</span>)
+  ];
+
+<span class="hljs-keyword">const</span> parseA = <span class="hljs-title function_">parseChar</span>(<span class="hljs-string">&#x27;A&#x27;</span>);
+<span class="hljs-keyword">const</span> parseA = <span class="hljs-title function_">parseChar</span>(<span class="hljs-string">&#x27;B&#x27;</span>);
+<span class="hljs-title function_">parseA</span>(testString) <span class="hljs-comment">// [ true, &#x27;bcd123&#x27; ]</span>
+<span class="hljs-title function_">parseB</span>(testString) <span class="hljs-comment">// [ false, &#x27;Abcd123&#x27; ]</span>
+</code></pre>
+<h2 id="a-parser-combinator-is">A parser combinator is</h2>
+</div>
+      </article>
+    </div>
+
+  </body>
+</html>

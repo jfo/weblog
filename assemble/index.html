@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>assemble</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="http://dev.jfo.click:4321/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http://dev.jfo.click:4321">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">assemble</h1>
+        <sub>Jan 01, 1970</sub>
+        <p></p>
+        <div><p>Make nothing.</p>
+
+<pre><code>touch nothing
+</code></pre>
+<p>Point Ruby at nothing.</p>
+
+<pre><code>ruby nothing
+</code></pre>
+<p>or python</p>
+
+<pre><code>python nothing
+</code></pre>
+<p>or node</p>
+
+<pre><code>node nothing
+</code></pre>
+<p>Nothing happens.</p>
+<p>Point clang at nothing</p>
+
+<pre><code>clang nothing
+</code></pre>
+
+<pre><code>/nix/store/cg0k49h66nkdqx6ccwnqr0i4q0fnfznc-binutils-2.31.1/bin/ld: nothing: file not recognized: file truncated
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+</code></pre>
+<p>Clang is a compiler, and it is also an assembler, <em>and</em> a
+linker. It cares about what you&#39;re putting into it, it cares about what you&#39;re
+starting with, so it knows where to start from in its own process.</p>
+
+<pre><code>touch nothing.c
+</code></pre>
+
+<pre><code>clang nothing.c
+</code></pre>
+
+<pre><code>/nix/store/cg0k49h66nkdqx6ccwnqr0i4q0fnfznc-binutils-2.31.1/bin/ld: /nix/store/qn76sklvyalzw9ilnxz6sh0020gl2qn6-glibc-2.27/lib/crt1.o: in function `_start&#39;:
+/build/glibc-2.27/csu/../sysdeps/x86_64/start.S:104: undefined reference to `main&#39;
+clang-7: error: linker command failed with exit code 1 (use -v to see invocation)
+</code></pre>
+</div>
+      </article>
+    </div>
+
+  </body>
+</html>

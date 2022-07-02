@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>WebAssembly sections, part 2</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="WebAssembly sections, part 2" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">WebAssembly sections, part 2</h1>
+        <sub>Aug 29, 2019</sub>
+        <p></p>
+        <div><p><a href="/wat-is-up-with-web-assembly">Last time</a> I started from the binary format and made a little
+module that doesn&#39;t do anything.</p>
+<p>This is how the rest of this series of posts is going to go... a bunch of
+iterative examples building up to a small webassembly program in text format
+that does some useless stuff but uses all of the possible sections that can
+appear in a webassembly program. Of course, I won&#39;t be exhaustively listing all the
+instructions or every single thing that can go in any place in the file, as you
+are free to pore over the
+<a href="https://webassembly.github.io/spec/core/index.html">ur-docs</a> for
+that, as I have attempted to do in part here.  Hopefully by the end, we&#39;ll both
+have a better idea of how a wasm module is or can be structured, and why.</p>
+<p>Doing useful things with that comes later, but stick with me; maybe we&#39;ll
+get there.</p>
+<p>Like in the last post, I&#39;ll just be compiling these examples with <code>wat2wasm</code>,
+which is part of the web assembly binary toolkit (wabt), which you can get
+<a href="https://github.com/WebAssembly/wabt">here</a>. There is apparently a <a href="https://www.npmjs.com/package/wabt">node module
+port</a> of these tools, that might work too.</p>
+<p>A little test script might look something like this:</p>
+
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> { execSync } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;child_process&#x27;</span>);
+<span class="hljs-keyword">const</span> { readFileSync } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
+
+<span class="hljs-title function_">execSync</span>(<span class="hljs-string">&#x27;wat2wasm test.wat -o out.wasm&#x27;</span>);
+<span class="hljs-keyword">const</span> buf = <span class="hljs-title function_">readFileSync</span>(<span class="hljs-string">&#x27;out.wasm&#x27;</span>);
+
+<span class="hljs-title class_">WebAssembly</span>.<span class="hljs-title function_">instantiate</span>(buf).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(
+    e.<span class="hljs-property">instance</span>.<span class="hljs-property">exports</span>
+  );
+});
+</code></pre>
+<p>I&#39;m just using synchronous blocking io functions, because who cares, and you&#39;ll
+notice the interesting stuff happens in the promise resolution where right now
+I&#39;m just logging the exports.</p>
+<p>Webassembly programs are composed of some combination of the following
+sections, arranged here in not really any particular order:</p>
+
+<ul>
+<li>global</li>
+<li>export</li>
+<li>functions</li>
+<li>types</li>
+<li>tables</li>
+<li>memory</li>
+<li>elements</li>
+<li>data</li>
+<li>import</li>
+<li>start</li>
+</ul>
+<p>I ended the last time with this program:</p>
+
+<pre><code>(module
+  (global (;0;) i32 (i32.const 42))
+  (export &quot;x&quot; (global 0)))
+</code></pre>
+<p>so the first two sections, globals and exports, have already been covered.
+Let&#39;s move on!</p>
+<h2 id="functions">Functions</h2>
+<p>Here is an empty function.</p>
+
+<pre><code>(module
+  (func)
+  (global (;0;) i32 (i32.const 42))
+  (export &quot;x&quot; (global 0)))
+</code></pre>
+<p>You can declare a function signature type, and return a constant of that type.
+With no return type specified, the return type is default &quot;<code>null</code>&quot;, or
+&quot;<code>undefined</code>&quot;, or something falsy, right? notice the air quotes... wasm doesn&#39;t
+really have those types, what it <em>has</em> got is an &quot;empty stack&quot;.</p>
+<p>Let&#39;s say I try to assemble this:</p>
+
+<pre><code>(module
+  (func i32.const 123))
+</code></pre>
+<p>I&#39;ll get this error:</p>
+
+<pre><code>test.wat:2:9: error: type mismatch in function, expected [] but got [i32]
+  (func i32.const 123))
+        ^^^^^^^^^
+</code></pre>
+<p>This tracks, the function doesn&#39;t so much &quot;return&quot; as it does &quot;leave its stack
+in a state compatible with the stated expected result&quot;. This may seem hair splitting,
+and it is of course, but I think it&#39;s valuable to draw subtle distinctions
+between the way we usually think about functions in a higher level language and
+how we think about them in a stack machine environment. More on that later.</p>
+<p>Moving on, I can return a constant value:</p>
+
+<pre><code>(module
+  (func (result i32)
+    i32.const 123)
+  (global (;0;) i32 (i32.const 42))
+  (export &quot;x&quot; (global 0)))
+</code></pre>
+<p>Perhaps instead of a constant value, you can return the global value declared
+previously. It&#39;s available to you here:</p>
+
+<pre><code>(module
+  (func (result i32)
+    global.get 0)
+  (global (;0;) i32 (i32.const 42))
+  (export &quot;x&quot; (global 0)))
+</code></pre>
+<p>Now is a good time to mention you can assign an alias to a global value and
+refer to it that way.</p>
+
+<pre><code>(module
+  (func (result i32)
+    global.get $theMeaningOfLife)
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (export &quot;x&quot; (global $theMeaningOfLife)))
+</code></pre>
+<p>Also it doesn&#39;t matter what order these modules are declared in:</p>
+
+<pre><code>(module
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func (result i32)
+    global.get $theMeaningOfLife)
+  (export &quot;x&quot; (global $theMeaningOfLife)))
+</code></pre>
+<blockquote>
+<p>You may also see <code>get_global</code>, I think that&#39;s an older way to do that, I&#39;m
+not sure.</p>
+</blockquote>
+<p>Maybe we give it a parameter?</p>
+
+<pre><code>(module
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func (param i32) (result i32)
+    global.get $theMeaningOfLife)
+  (export &quot;x&quot; (global $theMeaningOfLife)))
+</code></pre>
+<p>You can also assign a name to parameters instead of referring to them by their index.</p>
+
+<pre><code>(module
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func (param $n i32) (result i32)
+    global.get $theMeaningOfLife)
+  (export &quot;x&quot; (global $theMeaningOfLife)))
+</code></pre>
+<p>Here&#39;s a good place to talk about what a stack machine <em>is</em>; really this is
+the business end of wasm computation. I won&#39;t enumerate all the instructions,
+of course, but this is where most of them would go. A stack machine is a pretty
+simple model, things get loaded into a FILO stack (first in, last out), and
+when instructions are applied to them, they pull out the number of arguments
+they need.</p>
+
+<pre><code>(module
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func (param $n i32) (result i32)
+    local.get $n
+    global.get $theMeaningOfLife
+    i32.add)
+  (export &quot;x&quot; (global $theMeaningOfLife)))
+</code></pre>
+<p>The body of this function has three lines, after this line:</p>
+
+<pre><code>local.get $n
+</code></pre>
+<p><code>local</code> here refers to the parameter passed in; now the stack looks like this
+(let&#39;s pretend we called this function in javascript with <code>10</code>):</p>
+
+<pre><code>[10]
+</code></pre>
+<p>Then after this line:</p>
+
+<pre><code>global.get $theMeaningOfLife
+</code></pre>
+
+<pre><code>[42, 10]
+</code></pre>
+<p>Now,</p>
+
+<pre><code>i32.add
+</code></pre>
+<p>pops two values off the stack and pushes the result of the operation onto the
+stack, so in the end, it looks like this</p>
+
+<pre><code>[52]
+</code></pre>
+<p>The function then &quot;returns&quot; this value by leaving it in the stack. If what&#39;s in
+the stack doesn&#39;t match the result type, you&#39;ll get an error.</p>
+<p>Of course, we may like to export the function the same way we exported the global:</p>
+
+<pre><code>(module
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func (param $n i32) (result i32)
+    local.get $n
+    global.get $theMeaningOfLife
+    i32.add)
+  (export &quot;x&quot; (global $theMeaningOfLife))
+  (export &quot;aFunction&quot; (func 0)))
+</code></pre>
+<p>In this way we can call it from javascript land, which might look like:</p>
+
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> { execSync } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;child_process&#x27;</span>);
+<span class="hljs-keyword">const</span> { readFileSync } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
+
+<span class="hljs-title function_">execSync</span>(<span class="hljs-string">&#x27;wat2wasm test.wat -o out.wasm&#x27;</span>);
+<span class="hljs-keyword">const</span> buf = <span class="hljs-title function_">readFileSync</span>(<span class="hljs-string">&#x27;out.wasm&#x27;</span>);
+
+<span class="hljs-title class_">WebAssembly</span>.<span class="hljs-title function_">instantiate</span>(buf).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(
+    e.<span class="hljs-property">instance</span>.<span class="hljs-property">exports</span>.<span class="hljs-title function_">aFunction</span>(<span class="hljs-number">10</span>)
+  );
+});
+</code></pre>
+<p>And we can name it as well, although again, this name is only textual; it
+still needs to be exported explicitly.</p>
+
+<pre><code>(module
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func $aFunction (param $n i32) (result i32)
+    get_local $n
+    get_global $theMeaningOfLife
+    i32.add)
+  (export &quot;x&quot; (global $theMeaningOfLife))
+  (export &quot;aFunction&quot; (func $aFunction)))
+</code></pre>
+<blockquote>
+<p>maybe a useful note: these alias names are thrown away on assembly, if we run
+<code>wasm2wat</code> on the output of <code>wat2wasm</code>, we get</p>
+
+<pre><code>(module
+  (global (;0;) i32 (i32.const 42))
+  (func (;0;) (type 0) (param i32) (result i32)
+    local.get 0
+    global.get 0
+    i32.add)
+  (export &quot;x&quot; (global 0))
+  (export &quot;aFunction&quot; (func 0)))
+</code></pre>
+</blockquote>
+<p>If you have two functions, you could call one from the other... maybe one of
+them is a helper and the other is exported. You call this internally with <code>call</code>, like so</p>
+
+<pre><code>(module
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func $addOne (param $x i32) (result i32)
+        i32.const 1
+        local.get $x
+        i32.add)
+  (func $aFunction (param $x i32) (result i32)
+        local.get $x
+        call $addOne
+        i32.const 42
+        i32.add)
+  (export &quot;x&quot; (global $theMeaningOfLife))
+  (export &quot;aFunction&quot; (func $aFunction)))
+</code></pre>
+<h2 id="types">types</h2>
+<p>The type section defines function signatures that can be referenced in the
+function declarations. Unfortunately it seems like the local variable name
+doesn&#39;t propogate to the function scope, but the types themselves accept an
+alias.</p>
+
+<pre><code>(module
+  (type $ourFriend (func (param i32) (result i32)))
+  (global $theMeaningOfLife i32 (i32.const 42))
+  (func $addOne (type $ourFriend)
+        i32.const 1
+        local.get $x
+        i32.add)
+  (func $aFunction (type $ourFriend)
+        local.get $x
+        call $addOne
+        i32.const 42
+        i32.add)
+  (export &quot;x&quot; (global $theMeaningOfLife))
+  (export &quot;aFunction&quot; (func $aFunction)))
+</code></pre>
+<p>It should be noted that the current spec only allows results of a single value,
+meaning you can&#39;t return a vector of more than one value. So this, which looks
+like it could or should be valid and would leave the stack in the state <code>[2, 1]</code>,</p>
+
+<pre><code>(module
+  (func (result i32 i32)
+        i32.const 1
+        i32.const 2))
+</code></pre>
+<p>Will error on assembly:</p>
+
+<pre><code>test.wat:2:4: error: multiple result values not currently supported.
+  (func (result i32 i32)
+   ^^^^
+</code></pre>
+<p>I take this to mean that it is likely to be supported in the future, if I had
+to bet.</p>
+<p>More to come.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

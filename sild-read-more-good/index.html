@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; read more good</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; read more good" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; read more good</h1>
+        <sub>Jun 13, 2016</sub>
+        <p></p>
+        <div><p>There is a complexity problem with my program!</p>
+<p>I want to iterate over each character as few times as possible in
+order to read them in. How many times am I iterating over them now?</p>
+<p>To find out, I&#39;ll add an <code>inner_reads</code> global var and initialize it
+to 0. As a reminder, you can see this code in its working form in the repo,
+right about
+<a href="https://github.com/urthbound/sild/commit/1c9d7a9d14ddf5f7cedca0f749ddc51f4e9624be">here</a>.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> inner_reads = <span class="hljs-number">0</span>;
+</code></pre>
+<p>I&#39;ll add an increment to that variable each place where a char is
+being accessed: Once in:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">char</span> *<span class="hljs-title function_">read_substring</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+    <span class="hljs-type">int</span> len = count_substring_length(s);
+    <span class="hljs-type">char</span> *out = <span class="hljs-built_in">malloc</span>(len);
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; len; i++) {
+        <span class="hljs-keyword">if</span> (s[i] == <span class="hljs-string">&#x27;i&#x27;</span>)
+            inner_reads++;
+
+        out[i] = s[i];
+    }
+    out[len] = <span class="hljs-string">&#x27;\0&#x27;</span>;
+    <span class="hljs-keyword">return</span> out;
+};
+</code></pre>
+<p>once in:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">count_substring_length</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+    <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (s[i] != <span class="hljs-string">&#x27; &#x27;</span> &amp;&amp; s[i] != <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp; s[i]!= <span class="hljs-string">&#x27;)&#x27;</span>) {
+
+        <span class="hljs-keyword">if</span> (s[i] == <span class="hljs-string">&#x27;i&#x27;</span>)
+            inner_reads++;
+
+        i++;
+    }
+    <span class="hljs-keyword">return</span> i;
+}
+</code></pre>
+<p>and once in</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">count_list_length</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+    <span class="hljs-type">int</span> depth = <span class="hljs-number">1</span>;
+    <span class="hljs-type">int</span> i = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span> (depth &gt; <span class="hljs-number">0</span>) {
+
+        <span class="hljs-keyword">if</span> (s[i] == <span class="hljs-string">&#x27;i&#x27;</span>)
+            inner_reads++;
+
+        <span class="hljs-keyword">if</span> (s[i] == <span class="hljs-string">&#x27;(&#x27;</span>) {
+            depth += <span class="hljs-number">1</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (s[i] == <span class="hljs-string">&#x27;)&#x27;</span>){
+            depth -= <span class="hljs-number">1</span>;
+        }
+        i++;
+    }
+    <span class="hljs-keyword">return</span> i;
+}
+</code></pre>
+<p>Notice I&#39;m just incrementing on the character <code>i</code>, so that I can see how many times I access just that one char, like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    C *a_list = read(<span class="hljs-string">&quot;i&quot;</span>);
+    debug_list(a_list);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, inner_reads);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>This prints out:</p>
+
+<pre><code class="lang-c">LABEL- Address: <span class="hljs-number">0x7f99684033d0</span>, Value: i Next: <span class="hljs-number">0x104197028</span>
+NIL- Address: <span class="hljs-number">0x104197028</span>
+-------------------------------------------------------
+<span class="hljs-number">3</span>
+</code></pre>
+<p>Ok, so that&#39;s not so so bad... I look at that char 3 separate times.
+Once in <code>read_substring()</code> when it calls <code>count_substring_length()</code> to figure
+out how much memory to <code>malloc</code> for the output, once when it actually copies
+over the substring to the memory that has been <code>malloc</code>&#39;d, and one final time
+in the main read function when it calls <code>count_substring_length()</code> to know how
+far to jump ahead in the input string. That, I can live with. But what about
+<code>count_list_length()</code>?</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    C *a_list = read(<span class="hljs-string">&quot;(((((((((((i)))))))))))&quot;</span>);
+    debug_list(a_list);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, inner_reads);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>yields:</p>
+
+<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7fde4b403540</span>, List_Value: <span class="hljs-number">0x7fde4b403520</span> Next: <span class="hljs-number">0x100186028</span>
+|   LIST- Address: <span class="hljs-number">0x7fde4b403520</span>, List_Value: <span class="hljs-number">0x7fde4b403500</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fde4b403500</span>, List_Value: <span class="hljs-number">0x7fde4b4034e0</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   LIST- Address: <span class="hljs-number">0x7fde4b4034e0</span>, List_Value: <span class="hljs-number">0x7fde4b4034c0</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   LIST- Address: <span class="hljs-number">0x7fde4b4034c0</span>, List_Value: <span class="hljs-number">0x7fde4b403490</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fde4b403490</span>, List_Value: <span class="hljs-number">0x7fde4b403470</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fde4b403470</span>, List_Value: <span class="hljs-number">0x7fde4b403450</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fde4b403450</span>, List_Value: <span class="hljs-number">0x7fde4b403430</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fde4b403430</span>, List_Value: <span class="hljs-number">0x7fde4b403410</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fde4b403410</span>, List_Value: <span class="hljs-number">0x7fde4b4033f0</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fde4b4033f0</span>, List_Value: <span class="hljs-number">0x7fde4b4033d0</span> Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fde4b4033d0</span>, Value: i Next: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   |   |   -------------------------------------------------------
+|   |   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   |   -------------------------------------------------------
+|   |   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   |   -------------------------------------------------------
+|   |   NIL- Address: <span class="hljs-number">0x100186028</span>
+|   -------------------------------------------------------
+|   NIL- Address: <span class="hljs-number">0x100186028</span>
+-------------------------------------------------------
+NIL- Address: <span class="hljs-number">0x100186028</span>
+-------------------------------------------------------
+<span class="hljs-number">14</span>
+</code></pre>
+<p>The way I&#39;ve got this written now, when a string is nested inside
+other lists, it gets examined 3 times for the actual reading of the
+string and <em>once more</em> for <em>each</em> list that it is nested inside. This
+is <em>really crappy</em>, and it means that for a string like</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;(((((((((((i)))))))))))&quot;</span>
+</code></pre>
+<p>The <code>i</code> char in the middle is being accessed <em>fourteen</em> times. This
+isn&#39;t including looking at all the parenthethes chars, either!</p>
+<p>I can do better than this. At the very least, I want to be assured
+that, no matter what the nesting structure, each char will only ever
+be examined the same number of times!</p>
+<hr>
+
+
+<p>Well, it turns out that I can get rid of the <code>count_list_length()</code> function
+<em>completely</em> by changing the way I approach the <code>read()</code> function itself!</p>
+<p>Right now, <code>read()</code> operates on a pointer to the head of a string.
+When you pass this pointer into the function, it creates a local copy
+of that value and binds it to the argument name in the function
+signature. Which only exists until the end of the function. So, for
+example:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">derp</span><span class="hljs-params">(<span class="hljs-type">int</span> local_i)</span> {
+    local_i++;
+    <span class="hljs-keyword">return</span> local_i;
+}
+
+<span class="hljs-type">int</span> i = <span class="hljs-number">10</span>;
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, i); <span class="hljs-comment">// 10</span>
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, derp(i)); <span class="hljs-comment">// 11</span>
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, i); <span class="hljs-comment">// 10</span>
+</code></pre>
+<p>Further, if I call <code>derp()</code> inside of itself, I am still not affecting
+anything outside of the current function call.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> i = <span class="hljs-number">10</span>;
+
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, i); <span class="hljs-comment">// 10</span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">derp</span><span class="hljs-params">(<span class="hljs-type">int</span> local_i)</span> {
+    local_i++;
+    <span class="hljs-keyword">if</span> (local_i &lt; <span class="hljs-number">100</span>) <span class="hljs-comment">// have to have a base case or it will go on forever!</span>
+        derp(local_i);
+    <span class="hljs-keyword">return</span> local_i;
+}
+
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, derp(i)); <span class="hljs-comment">// 11</span>
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, i); <span class="hljs-comment">// 10</span>
+</code></pre>
+<p>Avoiding complex global state is almost always a Good Thing. This
+seems like the expected behavior! We want the stuff that happens
+inside <code>derp()</code> to <em>stay there</em>, and not touch the global state,
+normally. But in the case of the <code>read()</code> function, because it is so
+recursive, it is much cleaner to have it operate on a <em>pointer to a
+pointer</em> instead of the pointer itself. This way, instead of copying
+the pointer each time the function is called, it copies a <em>pointer</em> to
+it, and you can operate <em>directly</em> on the pointer value itself, incrementing
+it regardless of how many stack frames you are inside!</p>
+<p>So,</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">derp</span><span class="hljs-params">(<span class="hljs-type">int</span> *local_i)</span> {
+    (*local_i)++;
+    <span class="hljs-keyword">return</span> *local_i;
+}
+
+<span class="hljs-type">int</span> i = <span class="hljs-number">10</span>;
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i\n&quot;</span>, i);        <span class="hljs-comment">// 10</span>
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i\n&quot;</span>, derp(&amp;i)); <span class="hljs-comment">// 11</span>
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i\n&quot;</span>, i);        <span class="hljs-comment">// 11</span>
+</code></pre>
+<p>Now, the increment of the pointer inside the function affects the
+actual value itself, not the local copy.</p>
+<p>How does this look in the read function? Well it looks like this:</p>
+
+<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> { <span class="hljs-comment">// **s is a &#x27;pointer to a pointer&#x27;, in this case a pointer to a string</span>
+    <span class="hljs-keyword">switch</span>(**s) {    <span class="hljs-comment">// dereferencing the pointer twice yields the actual char it points to (two levels of indirection)</span>
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
+            (*s)++;              <span class="hljs-comment">// increment the pointer at the end of a list</span>
+            <span class="hljs-keyword">return</span> &amp;nil;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27; &#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\n&#x27;</span>:
+            (*s)++;              <span class="hljs-comment">// increment the pointer after ignoring whitespace</span>
+            <span class="hljs-keyword">return</span> read(s);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;(&#x27;</span>:
+            (*s)++;              <span class="hljs-comment">// increment the pointer after starting a list</span>
+
+            <span class="hljs-comment">// this is the magic part! the first call to read increments the pointer as it goes</span>
+            <span class="hljs-comment">// so that when what looks like the same pointer is passed into the second call, it has</span>
+            <span class="hljs-comment">// already passed by the entirety of the list!</span>
+            <span class="hljs-keyword">return</span> makecell(LIST, (<span class="hljs-keyword">union</span> V){.<span class="hljs-built_in">list</span> = read(s)}, read(s));
+            <span class="hljs-comment">//                                         ^          ^</span>
+            <span class="hljs-comment">//                                 so the 1st call &amp; 2nd call are starting in different places!</span>
+        <span class="hljs-keyword">default</span>: {
+            <span class="hljs-comment">// this part works like it did before, but we&#x27;re guaranteed to never</span>
+            <span class="hljs-comment">// read a char more than the 3 times necessary to make a copy and then jump over it.</span>
+            <span class="hljs-type">char</span> *label_val = read_substring(*s);
+            (*s) += count_substring_length(*s);
+            <span class="hljs-keyword">return</span> makecell(LABEL, (<span class="hljs-keyword">union</span> V){.label = label_val}, read(s));
+        }
+    }
+}
+</code></pre>
+<p>NOW WATCH THIS</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">char</span> *a_string = <span class="hljs-string">&quot;(((((((((((i)))))))))))&quot;</span>;
+    C *a_list = read(&amp;a_string);
+    debug_list(a_list);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%i&quot;</span>, inner_reads);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>with this new version of <code>read</code>, returns:</p>
+
+<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7f8c0a403540</span>, List_Value: <span class="hljs-number">0x7f8c0a403520</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   LIST- Address: <span class="hljs-number">0x7f8c0a403520</span>, List_Value: <span class="hljs-number">0x7f8c0a403500</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   LIST- Address: <span class="hljs-number">0x7f8c0a403500</span>, List_Value: <span class="hljs-number">0x7f8c0a4034e0</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   LIST- Address: <span class="hljs-number">0x7f8c0a4034e0</span>, List_Value: <span class="hljs-number">0x7f8c0a4034c0</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   LIST- Address: <span class="hljs-number">0x7f8c0a4034c0</span>, List_Value: <span class="hljs-number">0x7f8c0a403490</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   LIST- Address: <span class="hljs-number">0x7f8c0a403490</span>, List_Value: <span class="hljs-number">0x7f8c0a403470</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7f8c0a403470</span>, List_Value: <span class="hljs-number">0x7f8c0a403450</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7f8c0a403450</span>, List_Value: <span class="hljs-number">0x7f8c0a403430</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7f8c0a403430</span>, List_Value: <span class="hljs-number">0x7f8c0a403410</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7f8c0a403410</span>, List_Value: <span class="hljs-number">0x7f8c0a4033f0</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7f8c0a4033f0</span>, List_Value: <span class="hljs-number">0x7f8c0a4033d0</span> Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7f8c0a4033d0</span>, Value: i Next: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   |   |   -------------------------------------------------------
+|   |   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   |   -------------------------------------------------------
+|   |   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   |   -------------------------------------------------------
+|   |   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+|   -------------------------------------------------------
+|   NIL- Address: <span class="hljs-number">0x10d94a028</span>
+-------------------------------------------------------
+NIL- Address: <span class="hljs-number">0x10d94a028</span>
+-------------------------------------------------------
+<span class="hljs-number">3</span>
+</code></pre>
+<p>Only those three times!</p>
+<p>What about:</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((i))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))&quot;</span>;
+</code></pre>
+
+<pre><code class="lang-c">|   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   NIL- Address: <span class="hljs-number">0x10c22f028</span>
+|   |   |   |   -------------------------------------------------------
+|   |   |   |   NIL- Address: <span class="hljs-number">0x10c22f028</span>
+|   |   |   -------------------------------------------------------
+|   |   |   NIL- Address: <span class="hljs-number">0x10c22f028</span>
+|   |   -------------------------------------------------------
+|   |   NIL- Address: <span class="hljs-number">0x10c22f028</span>
+|   -------------------------------------------------------
+|   NIL- Address: <span class="hljs-number">0x10c22f028</span>
+-------------------------------------------------------
+NIL- Address: <span class="hljs-number">0x10c22f028</span>
+-------------------------------------------------------
+<span class="hljs-number">3</span> <span class="hljs-comment">// &lt;----- Boom.</span>
+</code></pre>
+<p>With this tweak, I&#39;ve removed a potentially major computation bottleneck and
+guaranteed that the reader function will operate in linear time at a max of
+O(3n), and I&#39;ve completely eliminated the <code>count_substring_length()</code> function
+from the source. At this point, the source code is still only 116 lines long,
+and  fully 35 of those lines are devoted to the debugging code that lets me see
+what I am doing!</p>
+<hr>
+
+<p>I feel pretty good about having this in constant time, but I can do just one
+more better. I&#39;m currently calling <code>count_substring_length()</code> twice- once in
+the <code>read_substring()</code> to malloc the right amount, and again in <code>read()</code> to
+jump ahead the right amount after reading a substring in. Why not just save
+that value somewhere so I only have to count once?</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> current_substring_length = <span class="hljs-number">0</span>;
+<span class="hljs-type">char</span> *<span class="hljs-title function_">read_substring</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+    current_substring_length = count_substring_length(s);
+    <span class="hljs-type">char</span> *out = <span class="hljs-built_in">malloc</span>(current_substring_length);
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; current_substring_length; i++) {
+        out[i] = s[i];
+    }
+    out[current_substring_length] = <span class="hljs-string">&#x27;\0&#x27;</span>;
+    <span class="hljs-keyword">return</span> out;
+};
+</code></pre>
+<p>And then in the read function:</p>
+
+<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-keyword">switch</span>(**s) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> &amp;nil;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27; &#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\n&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> read(s);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;(&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> makecell(LIST, (<span class="hljs-keyword">union</span> V){.<span class="hljs-built_in">list</span> = read(s)}, read(s));
+        <span class="hljs-keyword">default</span>: {
+             <span class="hljs-type">char</span> *label_val = read_substring(*s);
+             (*s) += current_substring_length;
+             <span class="hljs-comment">//           HERE ^</span>
+             <span class="hljs-keyword">return</span> makecell(LABEL, (<span class="hljs-keyword">union</span> V){.label = label_val}, read(s));
+        }
+    }
+}
+</code></pre>
+<p>Now I&#39;ve saved a whole iteration and only need to look at each char a maximum
+of two times! This can really add up. I don&#39;t think I can go any lower than
+that- the initial lookahead is necessary to malloc appropriately, and I&#39;d have
+to reallocate any temporary buffer that I might use to try and get around that,
+which would likely take more time to computer (and be more error prone!) than
+just looking ahead for the number on each substring.</p>
+<p><em>But wait there&#39;s even more!</em></p>
+<p>I am operating on the very same pointer that I have a pointer to in the
+<code>read()</code> function... why can&#39;t I use the same trick to get rid the global var
+that holds the substring length? Spoiler alert I totally can.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">char</span> *<span class="hljs-title function_">read_substring</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-type">int</span> current_substring_length = count_substring_length(*s);
+    <span class="hljs-type">char</span> *out = <span class="hljs-built_in">malloc</span>(current_substring_length);
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; current_substring_length; i++) {
+        out[i] = **s;
+        (*s)++;
+    }
+    out[current_substring_length] = <span class="hljs-string">&#x27;\0&#x27;</span>;
+    <span class="hljs-keyword">return</span> out;
+};
+</code></pre>
+<p>I still have to pass a copy of the pointer into <code>count_substring_length()</code>, and
+it&#39;s good to assign the <code>current_substring_length</code> to a <em>local</em> var, so I only
+have to count the length once for both the <code>malloc</code> and the <code>for</code> loop, but now
+when I increment the pointer with <code>(*s)++</code>, I am affecting the global state of
+that pointer. This means that I can remove the addition of
+<code>current_substring_length</code> in the main <code>read()</code> function.</p>
+
+<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-keyword">switch</span>(**s) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> &amp;nil;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27; &#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\n&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> read(s);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;(&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = read(s)}, read(s));
+        <span class="hljs-keyword">default</span>: {
+            <span class="hljs-keyword">return</span> makecell(LABEL, (V){read_substring(s)}, read(s));
+        }
+    }
+}
+</code></pre>
+<p>Now every call to <code>read()</code> and <code>read_substring()</code> increments the global pointer
+as much as it needs to as soon as it can. I have a lot less global state to
+think about and don&#39;t have to worry about passing that information through all
+these recursive calls!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

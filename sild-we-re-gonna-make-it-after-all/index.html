@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; we&#39;re gonna Make it after all</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; we&#39;re gonna Make it after all" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; we&#39;re gonna Make it after all</h1>
+        <sub>Jul 05, 2016</sub>
+        <p></p>
+        <div><p><a href="/sild-arity-checking-and-rich-error-messaging/">...if only there were a way to automate all those compilation
+steps...</a></p>
+
+<pre><code class="lang-make">cc utils.c -o
+cc cell.c -o
+cc eval.c -o
+cc builtins.c -o
+cc print.c -o
+cc read.c -o
+cc utils.o cell.o eval.o builtins.o print.o read.o main.c -o sild
+</code></pre>
+<p>I could put this all into a shell script, maybe? Sure, but then I would be
+recompiling everything every single time I wanted to make a new build. Once
+again, not a big deal on a project of this small size, but bad practice.
+Luckily, in true Unix fashion, there is a tool just for this problem, and it&#39;s
+called <code>make</code>!</p>
+<hr>
+
+<p>Make is... well I don&#39;t know. It&#39;s pretty great! Also it&#39;s a huge nightmare!
+It&#39;s a very easy tool, in the sense that its basic usage is pretty easy to
+explain, but it&#39;s ultimately not very simple, as it&#39;s easy all the way to
+gordion knotsville. Easy is nice, but we want
+<a href="http://www.infoq.com/presentations/Simple-Made-Easy">simple</a>!</p>
+<p>Anyway, I just want a way to make my build work.</p>
+<p>Running the <code>make</code> command looks for a <code>makefile</code> in the working directory. a
+makefile can be named <code>makefile</code>, <code>Makefile</code>, or <code>GNUMakefile</code> in the case of
+gnu make. Usually they&#39;re called <code>Makefile</code> since this appears near the
+beginning of a directory listing (since it is capitalized), but I hate capital
+letters, so I&#39;m naming mine <code>makefile</code>.</p>
+<p>When <code>make</code> is invoked, it looks for a makefile, and if it finds one, it
+executes the <em>default target</em> in that makefile. A make <em>target</em> is a rule that
+described how to <code>make</code> that target file, and generally looks like this:</p>
+
+<pre><code class="lang-make">target_name : dependencies
+    commmands to create target
+</code></pre>
+<p>So, for a single file, the target would look pretty familiar (it has no
+dependencies except for its own .c file)</p>
+
+<pre><code class="lang-make">thing : thing.c
+    cc thing.c -o thing
+</code></pre>
+<p>The <em>default rule</em> will implicitly be the first rule in the file and, a note
+about formatting, that indent under the target/dependency declaration <em>must</em> be
+a hard tabstop character, or make will get wicked confused, as it used hard
+tabs to signal that that line is an actual command to execute in the shell.</p>
+<p>Let&#39;s say <code>thing</code> depends on something else, some object file or another...</p>
+
+<pre><code class="lang-make">thing : thing.c lib.o
+    cc -o thing thing.c lib.o
+</code></pre>
+<p>(I think it looks better to put the target at the beginning of the command if
+there are multiple dependencies...)</p>
+<p>But where does lib.o come from? Ostensibly, it comes from some file called
+lib.c! For that, we&#39;ll need another target.</p>
+
+<pre><code class="lang-make">thing : thing.c lib.o
+    cc -o thing thing.c lib.o
+
+<span class="hljs-section">lib.o: lib.c</span>
+    cc -c lib.c
+</code></pre>
+<p>Now, in order to execute <code>thing</code>, make will look at its dependency list and
+recursively execute any subcommands that it needs to to keep all of its
+dependencies up to date. This is the clever part of make! Let&#39;s say you compile
+the <code>thing</code> target, and out of that you are going to get both a <code>lib.o</code> file
+and the final executable <code>thing</code> file. Then you update <code>thing.c</code>, but don&#39;t
+change <code>lib.c</code>, which is the only thing <code>lib.o</code> depends on. the next time you
+run <code>make</code>, the program knows that, since lib.c is older than the thing that is
+being recompiled that depends on it, that it doesn&#39;t need to be recompiled
+itself, and the existing object file is ok to be linked! This is very cool! For
+big projects this cleverness can save a massive amount of time in the
+compile/test/edit cycle! And its convenient even in a small project like this.</p>
+<hr>
+
+<p>So, as I factored out the libraries from my old big sild.c file, I added a rule
+for each new library in my makefile. Right now, it looks like this:</p>
+
+<pre><code class="lang-make"><span class="hljs-section">sild: read.o print.o builtins.o eval.o cell.o util.o sild.c</span>
+    cc read.o print.o builtins.o eval.o cell.o util.o sild.c -o sild
+
+<span class="hljs-section">util.o: util.c</span>
+    cc util.c -c
+
+<span class="hljs-section">cell.o: cell.c</span>
+    cc cell.c -c
+
+<span class="hljs-section">eval.o: eval.c</span>
+    cc eval.c -c
+
+<span class="hljs-section">builtins.o: builtins.c</span>
+    cc builtins.c -c
+
+<span class="hljs-section">print.o: print.c</span>
+    cc print.c -c
+
+<span class="hljs-section">read.o: read.c</span>
+    cc read.c -c
+</code></pre>
+<p>This worked, but I don&#39;t like it. I felt like there was something I was missing
+about make, something I didn&#39;t quite get! That is awfully repetitive, not very
+DRY code, there must be a better way!</p>
+<p>Make supports variables internal to itself, I can start by defining <code>CC</code> (for
+&#39;C compiler) to point to my compiler of choice, which is clang, which is
+invoked on my machine via <code>cc</code></p>
+
+<pre><code class="lang-make">CC = cc
+</code></pre>
+<p>Now, I replace all the <code>cc</code> calls in my rules with a variable expansion of that var:</p>
+
+<pre><code class="lang-make">CC = cc
+
+<span class="hljs-section">sild: read.o print.o builtins.o eval.o cell.o util.o sild.c</span>
+    <span class="hljs-variable">$(CC)</span> read.o print.o builtins.o eval.o cell.o util.o sild.c -o sild
+
+<span class="hljs-section">util.o: util.c</span>
+    <span class="hljs-variable">$(CC)</span> util.c -c
+
+<span class="hljs-section">cell.o: cell.c</span>
+    <span class="hljs-variable">$(CC)</span> cell.c -c
+
+<span class="hljs-section">eval.o: eval.c</span>
+    <span class="hljs-variable">$(CC)</span> eval.c -c
+
+<span class="hljs-section">builtins.o: builtins.c</span>
+    <span class="hljs-variable">$(CC)</span> builtins.c -c
+
+<span class="hljs-section">print.o: print.c</span>
+    <span class="hljs-variable">$(CC)</span> print.c -c
+
+<span class="hljs-section">read.o: read.c</span>
+    <span class="hljs-variable">$(CC)</span> read.c -c
+</code></pre>
+<p>Now, if I want to change my compiler, I just change one line.</p>
+<p>It&#39;s useful to have a <code>clean</code> target to remove all the artifacts from a build. The commands to do that now would be like this:</p>
+
+<pre><code class="lang-make"><span class="hljs-section">clean:</span>
+    rm sild *.o
+</code></pre>
+<p>I&#39;ve also added those to my .gitignore file, as I don&#39;t need to commit any of
+these artifacts since they are derivable from the source code.</p>
+
+<pre><code class="lang-make">sild
+*.o
+</code></pre>
+<p><code>clean</code> is the traditional name for this task, but it presents a little bit of
+a problem. What if there is a file named &quot;clean&quot; in the working directory? Make
+might not execute these commands if it looks at the <code>clean</code> file and sees that
+it doesn&#39;t need to be updated. By declaring <code>clean</code> as a <code>.PHONY</code> target, this
+problem is resolved.</p>
+
+<pre><code class="lang-make"><span class="hljs-meta"><span class="hljs-keyword">.PHONY</span>: clean</span>
+<span class="hljs-section">clean:</span>
+    rm sild *.o
+</code></pre>
+<p>There are other reasons to use .PHONY targets. Anytime you&#39;re defining a rule
+that executes arbitrary commands that don&#39;t result in an artifact, you should
+declare it .PHONY.</p>
+<p>I can also add a <code>CFLAGS</code> variable that holds some options I want to pass to
+all of my compiler invocations.</p>
+
+<pre><code class="lang-make">CFLAGS = -Wall -Werror
+</code></pre>
+<p>These flags tell the compiler to report more errors than it normally would.
+It&#39;s a good idea to do this to have extra insight into how the compiler is
+viewing your code.</p>
+<p>And then in each of the rules:</p>
+
+<pre><code class="lang-make">...
+<span class="hljs-section">builtins.o: builtins.c</span>
+    <span class="hljs-variable">$(CC)</span> <span class="hljs-variable">$(CFLAGS)</span> builtins.c -c
+...
+</code></pre>
+<p>ONe of the benefits of modularizing everything is that you don&#39;t have to look
+at all the stuff you&#39;re not working with. I am keeping everything in a top
+level directory right now. This isn&#39;t so great! It is better to hold all your
+source code in a <code>src</code> or <code>source</code> directory and then build artifacts outside
+of that directory. Here, all of my source files are living in <code>src</code>, and all my
+object files are being built to a directory called <code>obj</code>, which I have also
+added to my .gitignore.</p>
+
+<pre><code class="lang-make">CC = cc
+
+<span class="hljs-section">sild: obj/read.o obj/print.o obj/builtins.o obj/eval.o obj/cell.o obj/util.o sild.c</span>
+    <span class="hljs-variable">$(CC)</span> obj/read.o obj/print.o obj/builtins.o obj/eval.o obj/cell.o obj/util.o sild.c -o sild
+
+<span class="hljs-section">obj/util.o: util.c obj</span>
+    <span class="hljs-variable">$(CC)</span> util.c -c -o obj/util.o
+
+<span class="hljs-section">obj/cell.o: cell.c obj</span>
+    <span class="hljs-variable">$(CC)</span> cell.c -c -o obj/cell.o
+
+<span class="hljs-section">obj/eval.o: eval.c obj</span>
+    <span class="hljs-variable">$(CC)</span> eval.c -c -o obj/eval.o
+
+<span class="hljs-section">obj/builtins.o: builtins.c obj</span>
+    <span class="hljs-variable">$(CC)</span> builtins.c -c -o obj/builtins.o
+
+<span class="hljs-section">obj/print.o: print.c obj</span>
+    <span class="hljs-variable">$(CC)</span> print.c -c -o obj/print.o
+
+<span class="hljs-section">obj/read.o: read.c obj</span>
+    <span class="hljs-variable">$(CC)</span> read.c -c -o obj/read.o
+
+<span class="hljs-section">obj:</span>
+    mkdir obj
+
+<span class="hljs-meta"><span class="hljs-keyword">.PHONY</span>: clean run</span>
+<span class="hljs-section">clean:</span>
+    rm sild
+    rm -r obj
+</code></pre>
+<p>This works, but is getting pretty ugly and verbose and unmaintainable. If I
+want to change where I build to, for example, I have a lot of search and
+replacing to do. I can do better!</p>
+<p>I did a lot of research on this one, and I had that experience where someone on
+stack overflow asked this <em>exact same question</em> and someone gave them the
+<em>exact answer</em> that you are looking for. Terrific! The original poster edited
+their question with their working solution, you can find it just under &quot;<a href="http://stackoverflow.com/questions/5178125/how-to-place-object-files-in-separate-subdirectory">Here
+is the working makfile:</a>&quot;</p>
+<p>Let&#39;s look at what that means for my makefile!</p>
+
+<pre><code class="lang-make">SHELL = /bin/sh
+</code></pre>
+<p>I&#39;ll add this as a best practice, in case the working shell is something other
+than bash, which is what I&#39;m expecting.</p>
+<p>These are the same as before:</p>
+
+<pre><code class="lang-make">CC = cc
+CFLAGS = -Wall -Werror
+</code></pre>
+<p>Here I&#39;ll define a var <code>OBJDIR</code> for use in the target rules. The <code>vpath</code> is
+telling make &quot;look in this path for this type of file when searching for
+dependencies.</p>
+
+<pre><code class="lang-make">OBJDIR=obj
+<span class="hljs-keyword">vpath</span> %.c src
+</code></pre>
+<p>And one that represents all of the dependencies that need to be built for the
+main executable. Notice I&#39;m using the <code>addprefix</code> make function to prepend all
+of these names with the <code>OBJDIR</code> variable:</p>
+
+<pre><code class="lang-make">objects = <span class="hljs-variable">$(<span class="hljs-built_in">addprefix</span> <span class="hljs-variable">$(OBJDIR)</span>/, util.o cell.o <span class="hljs-built_in">eval</span>.o builtins.o print.o read.o main.o)</span>
+</code></pre>
+<p>Now, the dependencies of the executable can be expanded from the var that was
+constructed above.</p>
+
+<pre><code class="lang-make"><span class="hljs-section">sild: <span class="hljs-variable">$(objects)</span></span>
+    <span class="hljs-variable">$(CC)</span> <span class="hljs-variable">$(CFLAGS)</span> -o sild <span class="hljs-variable">$(objects)</span>
+</code></pre>
+<p>Much cleaner!</p>
+<p>Here&#39;s the beastly rule:</p>
+
+<pre><code>$(OBJDIR)/%.o: %.c $(OBJDIR)
+    $(CC) -c $(CFLAGS) $&lt; -o $@
+</code></pre>
+<p>This rule make my head hurt, but it&#39;s basically saying &quot;define a target
+filename.o for every .c file in src/&quot;.</p>
+<p><code>%.c</code> is associated with <code>src</code> in the vpath assignment, and then:</p>
+
+<pre><code>$&lt;     refers to the dependency names.
+@&lt;     refers to the target name.
+</code></pre>
+<p>The <code>OBJDIR</code> target needs to know how to create itself, here that is as simple
+as a <code>mkdir</code>:</p>
+
+<pre><code class="lang-make"><span class="hljs-variable">$(OBJDIR)</span>:
+    mkdir <span class="hljs-variable">$(OBJDIR)</span>
+</code></pre>
+<p>And Bob&#39;s your uncle!</p>
+
+<pre><code class="lang-make"><span class="hljs-meta"><span class="hljs-keyword">.PHONY</span>: clean</span>
+<span class="hljs-section">clean:</span>
+    rm sild
+    rm -r obj
+</code></pre>
+<hr>
+
+<p>I&#39;ll be honest, learning about <code>make</code> was an unwelcome detour from the business
+of writing this interpreter. I found it pretty counterintuitive, at least until
+I had a handle on how to refactor out libraries like I described in the last
+post. <code>make</code> is a great tool, don&#39;t get me wrong, but it felt pretty archaic to
+be registering all my source files one by one and describing the commands
+needed to build them individually.</p>
+<p>This makefile is a lot better than what I started with, though, and if I want
+to add a new dependency to the executable I only have to add it in <em>one place</em>,
+which was really the goal! I will likely not be touching this makefile again
+except to do just that; I don&#39;t plan on adding any other built executable
+targets to this.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

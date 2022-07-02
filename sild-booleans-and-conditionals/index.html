@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; booleans and conditionals</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; booleans and conditionals" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; booleans and conditionals</h1>
+        <sub>Jun 29, 2016</sub>
+        <p></p>
+        <div><p>The first function I implemented was the identity function <code>quote</code>, and relies on
+nothing else. Anything passed in is returned unchanged.</p>
+<p>The next three functions were <code>LIST</code> operations, <code>car</code>, <code>cdr</code>, and<code>cons</code>, and
+those rely on the <code>LIST</code> structures that have been central to this whole
+project.</p>
+<p>The next two functions I&#39;ll implement are <code>atom</code> and <code>eq</code>. These functions
+return boolean values based on some criteria evaluated against the thing that
+is passed into them; a sense of true/false doesn&#39;t really exist yet in Sild, so
+that&#39;s going to be something I have to think about. Let&#39;s looks at <code>atom</code> first.</p>
+<p><code>(atom something)</code> returns <code>true</code> if the &#39;something&#39; passed in is an atom <em>or</em>
+the empty list. But what is an atom? Well, <em>everything</em> is an atom, <em>except</em>
+for a list <em>with something in it</em>. So right now that looks something like this:</p>
+
+<pre><code class="lang-c">(atom)                                                    <span class="hljs-comment">// arity error</span>
+(atom (quote LABEL))                                      <span class="hljs-comment">// true</span>
+(atom (quote ()))                                         <span class="hljs-comment">// true</span>
+(atom (quote (whatever <span class="hljs-built_in">list</span> of however (many (depths))))) <span class="hljs-comment">// false af</span>
+</code></pre>
+<p>I&#39;ll start by making a function body that returns what it is given and and
+registering <code>atom</code> in the reader.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">atom</span><span class="hljs-params">(C *operand)</span> {
+    <span class="hljs-keyword">return</span> operand;
+}
+</code></pre>
+<p>and</p>
+
+<pre><code class="lang-c">C* <span class="hljs-title function_">categorize</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-type">char</span> *token = read_substring(s);
+    <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;quote&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = {token, quote} }, read(s));
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;car&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = {token, car} }, read(s));
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;cdr&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = {token, cdr} }, read(s));
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;cons&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = {token, cons} }, read(s));
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;atom&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = {token, atom} }, read(s));
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> makecell(LABEL, (V){ token }, read(s));
+    }
+}
+</code></pre>
+<p><code>atom</code> expects a single argument, so I&#39;ll add that arity check:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">atom</span><span class="hljs-params">(C *operand)</span> {
+    arity_check(<span class="hljs-string">&quot;atom&quot;</span>, <span class="hljs-number">1</span>, operand);
+    <span class="hljs-keyword">return</span> operand;
+}
+</code></pre>
+<p>And then I&#39;ll evaluate the operand:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">atom</span><span class="hljs-params">(C *operand)</span> {
+    arity_check(<span class="hljs-string">&quot;atom&quot;</span>, <span class="hljs-number">1</span>, operand);
+    operand = eval(operand);
+    <span class="hljs-keyword">return</span> operand;
+}
+</code></pre>
+<p>And now, the test for truthiness. Remember, the <em>only</em> thing that is <em>not</em> an
+atom is a non-empty <code>LIST</code>. I can check for that case with this expression:</p>
+
+<pre><code class="lang-c">(operand-&gt;type == LIST &amp;&amp; operand-&gt;val.<span class="hljs-built_in">list</span>-&gt;type != NIL)
+</code></pre>
+<p>In context, that would look like this:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">atom</span><span class="hljs-params">(C *operand)</span> {
+    arity_check(<span class="hljs-string">&quot;atom&quot;</span>, <span class="hljs-number">1</span>, operand);
+    operand = eval(operand);
+
+    <span class="hljs-keyword">if</span> (operand-&gt;type == LIST &amp;&amp; operand-&gt;val.<span class="hljs-built_in">list</span>-&gt;type != NIL) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
+}
+</code></pre>
+<p>So anything passed into <code>atom</code> will return true except for a non empty list.</p>
+<p>But this doesn&#39;t work! Sild doesn&#39;t have a sense of truthiness or falsehood <em>at
+all</em> yet. These booleans being returned are C, not Sild, and in actuality this won&#39;t
+even compile, since <code>true</code> and <code>false</code> live in <code>&lt;stdbool.h&gt;</code>, which I&#39;m not
+including.</p>
+<p>Traditionally in Lisp, the atom &quot;T&quot; is used to denote generic truthiness, and
+the empty list itself in used to represent falsity. I can see the elegance in
+this- though I haven&#39;t yet formally decided how to represent either of these
+things, it is arguable that the <code>NIL</code> cell that terminates every list is
+adequate to represent falsehood. Since the <code>NIL</code> cell is foundationally
+terminal and can&#39;t hold a next cell, it also makes sense that to hold falsehood
+I have to have a container for it, which I also already have in the form of a
+<code>LIST</code>.</p>
+<p>I spent a long time thinking about the best way to do this, and it is far
+from an open and shut case, and I&#39;m not at all convinced the way I chose to do
+it is the best way, but it is a good place to start and is conceptually
+pleasing. People get <em>really</em> hot about it, see
+<a href="https://github.com/hylang/hy/issues/373">this</a> and note that there are solid
+arguments on both sides of the fence. Should &quot;empty&quot; values of any type
+represent falsity, like <code>0</code> or <code>&quot;&quot;</code>? Should there be special singleton values
+to represent true and false?</p>
+<p>Anyway, in my lisp, there will be <em>only one</em> thing that is false, which is
+nothingness in the form of the <code>NIL</code> cell contained in a list by itself, and
+<em>everything else</em> will be truthy. This also has the benefit of corresponding to a
+simplistic but intuitive understanding of actual reality, since everything is
+something but <em>only</em> nothing is nothing.</p>
+<p>So for the falsey value, I&#39;ll make a new, empty list.</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = &amp;nil}, &amp;nil);
+</code></pre>
+<p>and for the truthy value, since literally anything else is truthy, I&#39;ll return
+a <code>LABEL</code> cell with the string value of <code>&quot;#t&quot;</code>, which is the traditional way
+<code>T</code> is returned in Scheme, and I&#39;ve gotten used to it. Really, this value is
+arbitrary, it could be anything and still work.</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">return</span> makecell(LABEL, (V){ <span class="hljs-string">&quot;#t&quot;</span> }, &amp;nil);
+</code></pre>
+<p>It is important for me to note here that I <em>will</em> have to change this later on.
+It&#39;s fine for now as a generic truthy value, but when I start evaluating
+<code>LABEL</code>s then this will have to become a special case. Just keep that in mind!</p>
+<p>The final function looks like this:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">atom</span><span class="hljs-params">(C *operand)</span> {
+    arity_check(<span class="hljs-string">&quot;atom&quot;</span>, <span class="hljs-number">1</span>, operand);
+    operand = eval(operand);
+
+    <span class="hljs-keyword">if</span> (operand-&gt;type == LIST &amp;&amp; operand-&gt;val.<span class="hljs-built_in">list</span>-&gt;type != NIL) {
+        <span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = &amp;nil}, &amp;nil);
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> makecell(LABEL, (V){ <span class="hljs-string">&quot;#t&quot;</span> }, &amp;nil);
+    }
+}
+</code></pre>
+<p>Whoops, I lied a little... forgot to clean up after myself!</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">atom</span><span class="hljs-params">(C *operand)</span> {
+    arity_check(<span class="hljs-string">&quot;atom&quot;</span>, <span class="hljs-number">1</span>, operand);
+    operand = eval(operand);
+
+    C *out;
+    <span class="hljs-keyword">if</span> (operand-&gt;type == LIST &amp;&amp; operand-&gt;val.<span class="hljs-built_in">list</span>-&gt;type != NIL) {
+        out = makecell(LIST, (V){.<span class="hljs-built_in">list</span> = &amp;nil}, &amp;nil);
+    } <span class="hljs-keyword">else</span> {
+        out =  makecell(LABEL, (V){ <span class="hljs-string">&quot;#t&quot;</span> }, &amp;nil);
+    }
+    free_cell(operand);
+    <span class="hljs-keyword">return</span> out;
+}
+</code></pre>
+<hr>
+
+<p>With this basic idea of truthiness and falsiness in place, <code>eq</code> is easy enough
+to implement. <code>eq</code> takes two args and returns true if they are the same atom,
+and false otherwise.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eq</span><span class="hljs-params">(C *operand)</span> {
+    arity_check(<span class="hljs-string">&quot;eq&quot;</span>, <span class="hljs-number">2</span>, operand);
+    operand = eval(operand);
+    operand2 = operand-&gt;next;
+
+    C *out;
+    <span class="hljs-keyword">if</span> (
+            (
+             operand-&gt;type == BUILTIN &amp;&amp; operand2-&gt;type == BUILTIN
+             &amp;&amp;
+             (operand-&gt;val.func.addr == operand2-&gt;val.func.addr)
+            )
+            ||
+            (
+             operand-&gt;type == LABEL &amp;&amp; operand2-&gt;type == LABEL
+             &amp;&amp;
+             scmp(operand-&gt;val.label, operand2-&gt;val.label)
+            )
+            ||
+            (
+             operand-&gt;type == LIST &amp;&amp; operand2-&gt;type == LIST
+             &amp;&amp;
+             (operand-&gt;val.<span class="hljs-built_in">list</span> == &amp;nil &amp;&amp; operand2-&gt;val.<span class="hljs-built_in">list</span> == &amp;nil)
+            )
+       )
+    {
+        out = makecell(LABEL, (V){ <span class="hljs-string">&quot;#t&quot;</span> }, &amp;nil);
+    } <span class="hljs-keyword">else</span> {
+        out = makecell(LIST, (V){.<span class="hljs-built_in">list</span> = &amp;nil}, &amp;nil);
+    }
+    free_cell(operand);
+    <span class="hljs-keyword">return</span> out;
+}
+</code></pre>
+<p>This is <em>pretty ugly</em>, but it works for now. I might like to refactor it later
+on, maybe to use a switch statement, but it covers all of my cases.</p>
+<p>Separating these boolean expressions onto so many different lines makes the
+code look more verbose, but it aids readability quite a bit- the groupings are
+more readily obvious, and adding a case will show up more clearly in a diff.</p>
+<p>With the addition of an idea of boolean values to the language, we&#39;re ready to
+implement the foundational conditional statement that allows control flows to
+actually work! That&#39;s <code>cond</code>, and it is the final of the 7 built in primitive
+functions that I need to get working.</p>
+<hr>
+
+<p><code>cond</code>, like <code>quote</code>, is special. It doesn&#39;t evaluate everything
+passed in to it before returning, but only when it needs to evaluate it. It&#39;s
+going to take <em>at least</em> one argument, but should be able to accept a variable
+number of arguments that will implicitly be in pairs. It will evaluate the
+first argument, and if it sees a truthy value, (anything but <code>()</code>), it will
+free any remaining arguments and evaluate and return the second argument. If it
+sees a falsey value, it will free the first and second arguments, <em>without
+evaluating the second argument</em>, and call itself again on the next pair,
+numbers 3 and 4. Finally, if it is passed a single argument, it will evaluate
+and return that argument.</p>
+<p>I&#39;ll start by once more declaring a pass through function and registering it
+inside of <code>categorize</code>.</p>
+
+<pre><code>C *cond(C *operand) {
+    return operand;
+}
+</code></pre>
+<p>and</p>
+
+<pre><code class="lang-c">.
+.
+} <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;cond&quot;</span>)) {
+        <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = {token, cond} }, read(s));
+.
+.
+</code></pre>
+<p>Ok. This function doesn&#39;t really have an arity check in the same way the others
+do, but I can put one in manually.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">cond</span><span class="hljs-params">(C *operand)</span> {
+    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;\nArityError: cond expected at least 1 argument, got none.&quot;</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+    <span class="hljs-keyword">return</span> operand;
+}
+</code></pre>
+<p>Next, for the case of if I have only a single argument, <code>cond</code> will just eval
+and return it.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">cond</span><span class="hljs-params">(C *operand)</span> {
+    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;\nArityError: cond expected at least 1 argument, got none.&quot;</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (operand-&gt;next-&gt;type == NIL) {
+        <span class="hljs-keyword">return</span> eval(operand);
+    }
+    <span class="hljs-keyword">return</span> operand;
+}
+</code></pre>
+<p>In that case, it doesn&#39;t have to clean anything up since the eval call will do
+that for it.</p>
+<p>And now, if there are two arguments, it evaluates the first to see if it is
+falsey. If it is NOT falsey, it frees any other operands and evaluates the
+second, returning its result. To do this, it deconstructs the arguments and
+isolates them from each other. This looks like a lot is going on, but it&#39;s
+fairly straightforward.</p>
+<p>Heavily annotated:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">cond</span><span class="hljs-params">(C *operand)</span> {
+    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;\nArityError: cond expected at least 1 argument, got none.&quot;</span>);
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (operand-&gt;next-&gt;type == NIL) {
+        <span class="hljs-keyword">return</span> eval(operand);
+    }
+    <span class="hljs-comment">// assigning 3 operands to their own vars.</span>
+    C *op1 = operand;
+    C *op2 = operand-&gt;next;
+    C *op3 = operand-&gt;next-&gt;next;
+
+    <span class="hljs-comment">// isolating the first two arguments</span>
+    op1-&gt;next = &amp;nil;
+    op2-&gt;next = &amp;nil;
+    op1 = eval(op1);
+    <span class="hljs-keyword">if</span> !(op1-&gt;type == LIST &amp;&amp; op1-&gt;val.<span class="hljs-built_in">list</span>-&gt;type == NIL) {
+        <span class="hljs-comment">// free the boolean expression statement</span>
+        free_cell(op1);
+        <span class="hljs-comment">// free anything else that was passed in</span>
+        free_cell(op3);
+        <span class="hljs-comment">// return the evalled second arg.</span>
+        <span class="hljs-keyword">return</span> eval(op2);
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">// won&#x27;t need these anymore!</span>
+        free_cell(op1);
+        free_cell(op2);
+
+        <span class="hljs-keyword">if</span> (op3-&gt;type != NIL) {
+            <span class="hljs-keyword">return</span> cond(op3);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-comment">// if the op3 type is NIL, you&#x27;ve reached the end of the cond form</span>
+            <span class="hljs-comment">// without encountering any true predicates, and should return the</span>
+            <span class="hljs-comment">// empty list.</span>
+            out = makecell(LIST, (V){.<span class="hljs-built_in">list</span> = &amp;nil}, &amp;nil);
+        }
+    }
+}
+</code></pre>
+<p>Yay! YAY!!</p>
+<p>A historical note: I read somewhere that traditionally, <code>cond</code> is a macro that
+resolves to nested <code>if</code> statements. That means that something like:</p>
+
+<pre><code>(cond a 1
+      b 2
+      c 3
+      4)
+</code></pre>
+<p>Would end up being represented like:</p>
+
+<pre><code>(if a 1 (if b 2 (if c 3 4)))
+</code></pre>
+<p>I think it might be somehow &quot;purer&quot; to implement it that way, but, meh. <code>cond</code>
+can be used here as a simple if statement- when passed three arguments it
+functions exactly the same way as <code>if</code> would:</p>
+
+<pre><code>(cond condition if-statement else-statement)
+</code></pre>
+<p>So I&#39;m happy with that.</p>
+<hr>
+
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">apply</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> BUILTIN:
+            <span class="hljs-keyword">return</span> c-&gt;val.func.addr(c-&gt;next);
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> apply(eval(c));
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = &amp;nil}, &amp;nil);
+    }
+}
+</code></pre>
+<p>There are a couple of things I&#39;d like to refactor before moving on.</p>
+<p>First, attempting to apply either a <code>LABEL</code> or <code>NIL</code> should result in an error.
+I&#39;ll add those cases in <code>apply</code>:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">apply</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> BUILTIN:
+            <span class="hljs-keyword">return</span> c-&gt;val.func.addr(c-&gt;next);
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> apply(eval(c));
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;\nError: attempted to apply non-procedure %s\n&quot;</span>, c-&gt;val.label);
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;\nError: attempted to evaluate an empty list: ()\n&quot;</span>);
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+}
+</code></pre>
+<p>this is the first time I&#39;m really tightening up evaluation rules- I&#39;ve
+implemented some of the builtin functions I want to be part of the language,
+currently they are the only functions available to be applied. This will
+change, but for now, that&#39;s it!</p>
+<p>Furthermore, back when I was evaluating entire ASTs to change everything to
+<code>chicken</code>, it made sense to eval recursively. This is no longer ideal- I should
+be able to evaluate only the cells I need to evaluate without worrying about
+what they are connected to. this is pretty simple- I just remove the <code>c-&gt;next =
+eval(c-&gt;next)</code> lines inside <code>eval</code>, going from this:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> BUILTIN:
+        <span class="hljs-keyword">case</span> LABEL:
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> LIST:
+        {
+            C *out = apply(c-&gt;val.<span class="hljs-built_in">list</span>);
+            out-&gt;next = eval(c-&gt;next);
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> out;
+        }
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>to this:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> BUILTIN:
+        <span class="hljs-keyword">case</span> LABEL:
+            c-&gt;next = c-&gt;next;
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> LIST:
+        {
+            C *out = apply(c-&gt;val.<span class="hljs-built_in">list</span>);
+            out-&gt;next = c-&gt;next;
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> out;
+        }
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>This necessitates only minor tweaks to the builtins that accept more than one
+argument (excluding cond, which already deals with its own evaluation rules),
+<code>eq</code> and <code>cons</code> now need to manually evaluate their second arguments. Easy peasy!</p>
+<hr>
+
+<p>Also, this</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = &amp;nil}, &amp;nil);
+</code></pre>
+<p>business is turning into a bit of a pattern. We know that it means return
+false, or the empty list, basically, but it&#39;s a little bit verbose and unclear.
+I&#39;ll make a couple of little helper functions to replace these calls!</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">empty_list</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = &amp;nil}, &amp;nil);
+}
+
+C *<span class="hljs-title function_">truth</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">return</span> makecell(LABEL, (V){ <span class="hljs-string">&quot;#t&quot;</span> }, &amp;nil);
+}
+</code></pre>
+<p>Now, in <code>atom</code>, <code>eq</code>, and now in <code>apply</code>, I can have a little more clarity into
+what I&#39;m seeing being returned!</p>
+<p>This introduces one small bug I missed earlier- if the program attempts to free
+a <code>truth</code> cell, it will choke on the string <code>&quot;#t&quot;</code> in its <code>val.label</code> member,
+because it was passed in as a string literal and not as a malloc&#39;d address. An
+ugly but simple tweak to the <code>truth()</code> function can fix this:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">truth</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">char</span> *tru = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-type">char</span>) * <span class="hljs-number">3</span>);
+    tru[<span class="hljs-number">0</span>] = <span class="hljs-string">&#x27;#&#x27;</span>; tru[<span class="hljs-number">1</span>] = <span class="hljs-string">&#x27;t&#x27;</span>; tru[<span class="hljs-number">2</span>] = <span class="hljs-string">&#x27;\0&#x27;</span>;
+    <span class="hljs-keyword">return</span> makecell(LABEL, (V){ tru }, &amp;nil);
+}
+</code></pre>
+<p>Now, when that pointer is freed in <code>free_cell</code>, it will free the malloc&#39;d address correctly!</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

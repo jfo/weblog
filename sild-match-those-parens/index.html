@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; match those parens</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; match those parens" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; match those parens</h1>
+        <sub>Jun 16, 2016</sub>
+        <p></p>
+        <div><p>I mentioned that this isn&#39;t a very resilient reader right now.</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;1 2 3&quot;</span>
+</code></pre>
+<p>Is read in as</p>
+
+<pre><code class="lang-c">LABEL- Address: <span class="hljs-number">0x7f91eac03a70</span>, Value: <span class="hljs-number">1</span> Next: <span class="hljs-number">0x7f91eac03a50</span>
+LABEL- Address: <span class="hljs-number">0x7f91eac03a50</span>, Value: <span class="hljs-number">2</span> Next: <span class="hljs-number">0x7f91eac03a30</span>
+LABEL- Address: <span class="hljs-number">0x7f91eac03a30</span>, Value: <span class="hljs-number">3</span> Next: <span class="hljs-number">0x10d177028</span>
+NIL- Address: <span class="hljs-number">0x10d177028</span>
+-------------------------------------------------------
+</code></pre>
+<p>Which is accurate- it is just three atoms in isolation (remember, right now,
+all atoms are simpy LABELs, the language doesn&#39;t know about any other types, so
+currently a LABEL is just a string that could be any characters except for
+whitespace and parens).</p>
+<p>And</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;(1 2 3)&quot;</span>
+</code></pre>
+<p>is read as</p>
+
+<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7f9780403a90</span>, List_Value: <span class="hljs-number">0x7f9780403a70</span> Next: <span class="hljs-number">0x10bec2028</span>
+|   LABEL- Address: <span class="hljs-number">0x7f9780403a70</span>, Value: <span class="hljs-number">1</span> Next: <span class="hljs-number">0x7f9780403a50</span>
+|   LABEL- Address: <span class="hljs-number">0x7f9780403a50</span>, Value: <span class="hljs-number">2</span> Next: <span class="hljs-number">0x7f9780403a30</span>
+|   LABEL- Address: <span class="hljs-number">0x7f9780403a30</span>, Value: <span class="hljs-number">3</span> Next: <span class="hljs-number">0x10bec2028</span>
+|   NIL- Address: <span class="hljs-number">0x10bec2028</span>
+-------------------------------------------------------
+NIL- Address: <span class="hljs-number">0x10bec2028</span>
+-------------------------------------------------------
+</code></pre>
+<p>Which is also correct. The final <code>NIL</code> that comes from the <code>&#39;\0&#39;</code> byte at the
+end of the input string is a little bit offputting, but acceptable for now.</p>
+<p>But what about</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;(1 2 3&quot;</span>
+</code></pre>
+<p>? This is <em>clearly</em> a syntax error, and yet...)</p>
+
+<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7fb983403a90</span>, List_Value: <span class="hljs-number">0x7fb983403a70</span> Next: <span class="hljs-number">0x10c690028</span>
+|   LABEL- Address: <span class="hljs-number">0x7fb983403a70</span>, Value: <span class="hljs-number">1</span> Next: <span class="hljs-number">0x7fb983403a50</span>
+|   LABEL- Address: <span class="hljs-number">0x7fb983403a50</span>, Value: <span class="hljs-number">2</span> Next: <span class="hljs-number">0x7fb983403a30</span>
+|   LABEL- Address: <span class="hljs-number">0x7fb983403a30</span>, Value: <span class="hljs-number">3</span> Next: <span class="hljs-number">0x10c690028</span>
+|   NIL- Address: <span class="hljs-number">0x10c690028</span>
+-------------------------------------------------------
+NIL- Address: <span class="hljs-number">0x10c690028</span>
+-------------------------------------------------------
+</code></pre>
+<p>Harumph. At the very least this should blow up completely.</p>
+<p>What about</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;1 2 3))))))&quot;</span>
+</code></pre>
+<p>gives</p>
+
+<pre><code class="lang-c">LABEL- Address: <span class="hljs-number">0x7fe913403a70</span>, Value: <span class="hljs-number">1</span> Next: <span class="hljs-number">0x7fe913403a50</span>
+LABEL- Address: <span class="hljs-number">0x7fe913403a50</span>, Value: <span class="hljs-number">2</span> Next: <span class="hljs-number">0x7fe913403a30</span>
+LABEL- Address: <span class="hljs-number">0x7fe913403a30</span>, Value: <span class="hljs-number">3</span> Next: <span class="hljs-number">0x1052df028</span>
+NIL- Address: <span class="hljs-number">0x1052df028</span>
+-------------------------------------------------------
+</code></pre>
+<p>Psh.</p>
+<hr>
+
+<p>I need to guarantee somehow that the number of open and
+closing parens are equal at the end of the input. A simple solution is to
+create a global counter and increment it when I see an opening paren, decrement
+when I see a closing paren, and check that it is <code>0</code> at the end of the string.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> list_depth = <span class="hljs-number">0</span>;
+C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-keyword">switch</span>(**s) {
+        <span class="hljs-comment">// now I have a reason to give &#x27;\0&#x27; its own case</span>
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>:
+            <span class="hljs-keyword">if</span> (list_depth != <span class="hljs-number">0</span>) {
+                <span class="hljs-comment">// this may not be very informative as of yet but it gets the jorb done</span>
+                <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+            } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> &amp;nil;
+            }
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
+            list_depth--;
+            (*s)++;
+            <span class="hljs-keyword">return</span> &amp;nil;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27; &#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\n&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> read(s);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;(&#x27;</span>:
+            list_depth++;
+            (*s)++;
+            <span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = read(s)}, read(s));
+        <span class="hljs-keyword">default</span>: {
+            <span class="hljs-keyword">return</span> makecell(LABEL, (V){read_substring(s)}, read(s));
+        }
+    }
+}
+</code></pre>
+<p>So let&#39;s try</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;(1 2 3&quot;</span>
+</code></pre>
+
+<pre><code class="lang-c">shell returned <span class="hljs-number">1</span>
+</code></pre>
+<p>OOOOOK.</p>
+<p>How about...</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;1 2 3))))&quot;</span>
+</code></pre>
+
+<pre><code class="lang-c">LABEL- Address: <span class="hljs-number">0x7fa219403a70</span>, Value: <span class="hljs-number">1</span> Next: <span class="hljs-number">0x7fa219403a50</span>
+LABEL- Address: <span class="hljs-number">0x7fa219403a50</span>, Value: <span class="hljs-number">2</span> Next: <span class="hljs-number">0x7fa219403a30</span>
+LABEL- Address: <span class="hljs-number">0x7fa219403a30</span>, Value: <span class="hljs-number">3</span> Next: <span class="hljs-number">0x102f17030</span>
+NIL- Address: <span class="hljs-number">0x102f17030</span>
+-------------------------------------------------------
+</code></pre>
+<p>Derr, still doesn&#39;t work. If you look at the <code>read</code> case for <code>&#39;)&#39;</code>, you can see
+why. This reader never goes past the first closing paren, because there is not
+a call to <code>read</code> inside that case to move forward! This is the intended
+behavior... I&#39;m returning <code>&amp;nil</code> there, which is what I wanted.</p>
+<p>There are two cases in which the string can be in an erroneous form.</p>
+<p>1- a closing paren occurs without a preceding opening paren
+2- the end of the string is reached and the <code>list_depth</code> count is <em>not</em> 0.</p>
+<p>I need to verify that <em>each</em> char in the string satisfies that neither of these
+conditions are met. I can pull that out into a helper function, that looks like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">// this var still needs to be global so that read() can increment / decrement it</span>
+<span class="hljs-type">int</span> list_depth = <span class="hljs-number">0</span>;
+<span class="hljs-type">void</span> <span class="hljs-title function_">verify</span><span class="hljs-params">(<span class="hljs-type">char</span> c)</span> {
+    <span class="hljs-keyword">if</span> (
+            (c == <span class="hljs-string">&#x27;)&#x27;</span> &amp;&amp; list_depth == <span class="hljs-number">0</span>)
+            ||
+            (c == <span class="hljs-string">&#x27;\0&#x27;</span> &amp;&amp; list_depth != <span class="hljs-number">0</span>)
+       )
+    {
+        <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+    }
+}
+</code></pre>
+<p>And now I can call it in the <code>read()</code> function:</p>
+
+<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-type">char</span> current_char = **s;
+
+    verify(current_char);
+
+    <span class="hljs-keyword">switch</span>(current_char) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>:
+            list_depth--;
+            (*s)++;
+            <span class="hljs-keyword">return</span> &amp;nil;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27; &#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\n&#x27;</span>:
+            (*s)++;
+            <span class="hljs-keyword">return</span> read(s);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;(&#x27;</span>:
+            list_depth++;
+            (*s)++;
+            <span class="hljs-keyword">return</span> makecell(LIST, (V){.<span class="hljs-built_in">list</span> = read(s)}, read(s));
+        <span class="hljs-keyword">default</span>: {
+            <span class="hljs-keyword">return</span> makecell(LABEL, (V){read_substring(s)}, read(s));
+        }
+    }
+}
+</code></pre>
+<p>This function has no return value, it simply exits with a generic <code>1</code> exit code
+if any of these conditions exist.</p>
+<hr>
+
+<p>There is another possible error case hiding in this program.</p>
+<p><code>malloc()</code> <em>can fail</em>. If it fails, say if the system isn&#39;t able to provide the requested memory, or whatever, it returns a <code>NULL</code> pointer. No bueno. Wherever I call <code>malloc</code>, I should also check to see that it returned a valid memory address.</p>
+<p>Right now, that would be in <code>makecell()</code></p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> type, V val, C *next)</span> {
+    C *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(C));
+
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); }
+
+    out-&gt;type = type;
+    out-&gt;val = val;
+    out-&gt;next = next;
+    <span class="hljs-keyword">return</span> out;
+};
+</code></pre>
+<p>And in <code>read_substring()</code></p>
+
+<pre><code class="lang-c"><span class="hljs-type">char</span> *<span class="hljs-title function_">read_substring</span><span class="hljs-params">(<span class="hljs-type">char</span> **s)</span> {
+    <span class="hljs-type">int</span> l = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (is_not_delimiter((*s)[l])) { l++; }
+    <span class="hljs-type">char</span> *out = <span class="hljs-built_in">malloc</span>(l);
+
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); }
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; l; i++) {
+        out[i] = *((*s)++);
+    }
+    out[l] = <span class="hljs-string">&#x27;\0&#x27;</span>;
+    <span class="hljs-keyword">return</span> out;
+};
+</code></pre>
+<p>This failure case is unlikely, but it needs to be accounted for.</p>
+<p>This is <em>very basic</em> error handling. I&#39;ve just guaranteed that in these cases
+of obvious catastrophic failures- syntax errors or malloc failures, the the
+program will stop running. It doesn&#39;t report any information to the user, it&#39;s
+not very helpful, but it is a step in the right direction.</p>
+<p>I can add at least a little bit of messaging before each exit to give some
+context as to the failue. <code>fprintf()</code> can be used to write a formatted string
+to an arbitrary stream, I&#39;ll pass in <code>stderr</code> as it is the appropriate standard
+stream for messaging errors.</p>
+<p>In <code>verify()</code>:</p>
+
+<pre><code class="lang-c"><span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Syntax Error: mismatched parens&quot;</span>);
+<span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+</code></pre>
+<p>and in <code>makecell()</code> and <code>read_substring()</code>, respectively:</p>
+
+<pre><code class="lang-c"><span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;System Error: makecell failed to allocate memory.&quot;</span>);
+<span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;System Error: read_substring failed to allocate memory.&quot;</span>);
+</code></pre>
+<hr>
+
+<p>Traditionally, a LISP cell is known as a <code>cons</code> cell, its value is referred to
+as <code>car</code>, and its <code>next</code> member is referred to as <code>cdr</code> (pronounced &#39;cutter&#39;).
+The reasons for this are <a href="https://en.wikipedia.org/wiki/CAR_and_CDR#Etymology">historical</a>:</p>
+<blockquote>
+<p>Lisp was originally implemented on the IBM 704 computer, in the late 1950s.
+The 704 hardware had special support for splitting a 36-bit machine word into
+four parts, an &quot;address part&quot; and &quot;decrement part&quot; of 15 bits each and a
+&quot;prefix part&quot; and &quot;tag part&quot; of three bits each.</p>
+<p>Precursors[1] [2] to Lisp included functions:</p>
+
+<pre><code>car (short for &quot;Contents of the Address part of Register number&quot;),
+cdr (&quot;Contents of the Decrement part of Register number&quot;),
+cpr (&quot;Contents of the Prefix part of Register number&quot;), and
+ctr (&quot;Contents of the Tag part of Register number&quot;),
+</code></pre>
+<p>each of which took a machine address as an argument, loaded the corresponding
+word from memory, and extracted the appropriate bits.  A machine word could
+be reassembled by cons, which took four arguments (a,d,p,t).  The prefix and
+tag parts were dropped in the early stages of Lisp&#39;s design, leaving CAR,
+CDR, and a two-argument CONS.</p>
+</blockquote>
+<p>I&#39;ve eschewed this naming convention internally in the cell structure so far,
+because I want to avoid confusion with the functions of the same names that I
+will be implementing later on, but, the cell struct could easily have looked like
+this.</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cons</span> {</span>
+    <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">CellType</span> <span class="hljs-title">type</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> <span class="hljs-title">car</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cons</span> * <span class="hljs-title">cdr</span>;</span>
+} Cons;
+</code></pre>
+<hr>
+
+<p>This program now does a pretty good job of turning a parenthetical abstract
+syntax tree expressed in traditional LISP syntax from a string of <code>char</code>s into
+a data structure that is easy to work with inside of the program. Let&#39;s recap a
+little bit.</p>
+
+<ul>
+<li>All data is represented as a series of cells.</li>
+<li>cells have two parts, a <code>value</code> and a pointer to the <code>next</code> cell in the list
+(and a type signature, but I consider that metadata!).
+<ul>
+<li>The value of a cell can be one of two things: an atom (currently just a
+<code>LABEL</code>, represented as a string), or another <code>LIST</code> represented as a pointer
+to the first cell of a sub list.
+<ul>
+<li>lists can be nested to arbitrary depths and end when a cell inside of
+it points to <code>NIL</code> as its next value. <code>NIL</code> is a special value that
+only exists in one place in memory; since all <code>NIL</code> cells are the
+same, we can point to the same location to represent <code>NIL</code> anywhere.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

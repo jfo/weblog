@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; an initial eval</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; an initial eval" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; an initial eval</h1>
+        <sub>Jun 19, 2016</sub>
+        <p></p>
+        <div><p>With the basic read function working, it&#39;s time to write <code>eval</code>!</p>
+<p>I want eval to accept a cell, and return an evaluated cell. What exactly
+&#39;evaluated&#39; means is immaterial right now. Here&#39;s a good first go.</p>
+
+<pre><code class="lang-c">C* <span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">return</span> c;
+}
+</code></pre>
+<p>Further, a cell&#39;s evaluated version, if it has a cons component (meaning the
+<code>next</code> member of the cell struct is pointing to a cell that is not <code>NIL</code>)
+should be pointing to an evaluated cell. So before returning the cell that I
+passed in, I need to evaluate its <code>next</code> member and assign the output of
+that evaluation to the <code>next</code> member of the passed in cell.</p>
+
+<pre><code class="lang-c">C* <span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    c-&gt;next = eval(c-&gt;next);
+    <span class="hljs-keyword">return</span> c;
+}
+</code></pre>
+<p>If I try to run this right now, I&#39;ll get a familiar rupture, as there is no
+check against <code>NIL</code> and it will eventually try to pass the <code>NULL</code> pointer that
+<code>NIL</code> is wrapped around into <code>eval()</code>. Just as I did in the debug_list
+function, I&#39;ll add a switch statement to operate on the three different types
+of cells differently.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+        <span class="hljs-keyword">case</span> LIST:
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>This is now a type of transparent pass through function. If I eval a cell right
+now, I get back exactly what I put in. The only interesting thing is that I&#39;m
+necessarily evaluating all the elements that are linked to the cell I&#39;m passing
+in. To see that this is actually working, I&#39;ll change all the <code>LABEL</code>s to
+&quot;<a href="https://youtu.be/yL_-1d9OSdk?t=37://youtu.be/yL_-1d9OSdk?t=37s">chicken</a>&quot;.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            c-&gt;val.label = <span class="hljs-string">&quot;chicken&quot;</span>;
+            <span class="hljs-comment">// falling through</span>
+        <span class="hljs-keyword">case</span> LIST:
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>Notice that the fall through from the LABEL case to the LIST case is desirable,
+here. I still do want to evaluate the next cell after a label.  It is good form
+to note when this kind of situation arises, because it is <em>very</em> easy to miss
+that it&#39;s happening, and can result in pretty insidious bugs.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">char</span> *a_string = <span class="hljs-string">&quot;a b c&quot;</span>;
+    C *a_list = read(&amp;a_string);
+    debug_list(eval(a_list));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Gives me:</p>
+
+<pre><code class="lang-c">LABEL- Address: <span class="hljs-number">0x7fe970403a70</span>, Value: chicken Next: <span class="hljs-number">0x7fe970403a50</span>
+LABEL- Address: <span class="hljs-number">0x7fe970403a50</span>, Value: chicken Next: <span class="hljs-number">0x7fe970403a30</span>
+LABEL- Address: <span class="hljs-number">0x7fe970403a30</span>, Value: chicken Next: <span class="hljs-number">0x10656d040</span>
+NIL- Address: <span class="hljs-number">0x10656d040</span>
+-------------------------
+</code></pre>
+<p>Success!</p>
+<p>But that is just a linked list of atoms. It&#39;s important to note here that
+reading in a string of atoms like that gives us an <em>internal</em> representation of
+a linked list of atoms, but is <em>not</em> a LIST in the context of the language
+space. You can see that the three atoms are linked in the same way, but the enclosing linked list is not itself the <code>val.list</code> member of a <code>LIST</code> cell. This is a subtle but important distinction. For example, how &#39;bout this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">char</span> *a_string = <span class="hljs-string">&quot;a b (hi mom) c&quot;</span>;
+    C *a_list = read(&amp;a_string);
+    debug_list(eval(a_list));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+
+<pre><code class="lang-c">LABEL- Address: <span class="hljs-number">0x7fdb19403af0</span>, Value: chicken Next: <span class="hljs-number">0x7fdb19403ad0</span>
+LABEL- Address: <span class="hljs-number">0x7fdb19403ad0</span>, Value: chicken Next: <span class="hljs-number">0x7fdb19403ab0</span>
+LIST- Address: <span class="hljs-number">0x7fdb19403ab0</span>, List_Value: <span class="hljs-number">0x7fdb19403a60</span> Next: <span class="hljs-number">0x7fdb19403a90</span>
+|   LABEL- Address: <span class="hljs-number">0x7fdb19403a60</span>, Value: hi Next: <span class="hljs-number">0x7fdb19403a40</span>
+|   LABEL- Address: <span class="hljs-number">0x7fdb19403a40</span>, Value: mom Next: <span class="hljs-number">0x10b7ab040</span>
+|   NIL- Address: <span class="hljs-number">0x10b7ab040</span>
+-------------------------------------------------------
+LABEL- Address: <span class="hljs-number">0x7fdb19403a90</span>, Value: chicken Next: <span class="hljs-number">0x10b7ab040</span>
+NIL- Address: <span class="hljs-number">0x10b7ab040</span>
+-------------------------------------------------------
+</code></pre>
+<p>Hmm... the atoms at the top level have been evaluated accurately, but the atoms
+inside of the &#39;LIST&#39; have been left untouched. I need to evaluate sublists, as
+well! The fall through is no longer desirable, since I&#39;m treating the <code>LIST</code>
+and <code>LABEL</code> types differently now.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            c-&gt;val.label = <span class="hljs-string">&quot;chicken&quot;</span>;
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> LIST:
+            c-&gt;val.<span class="hljs-built_in">list</span> = eval(c-&gt;val.<span class="hljs-built_in">list</span>);
+            c-&gt;next = eval(c-&gt;next);
+            <span class="hljs-keyword">return</span> c;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>And success! Now, <code>&quot;a b (hi mom) c&quot;</code> evals to:</p>
+
+<pre><code class="lang-c">LABEL- Address: <span class="hljs-number">0x7f9282c03af0</span>, Value: chicken Next: <span class="hljs-number">0x7f9282c03ad0</span>
+LABEL- Address: <span class="hljs-number">0x7f9282c03ad0</span>, Value: chicken Next: <span class="hljs-number">0x7f9282c03ab0</span>
+LIST- Address: <span class="hljs-number">0x7f9282c03ab0</span>, List_Value: <span class="hljs-number">0x7f9282c03a60</span> Next: <span class="hljs-number">0x7f9282c03a90</span>
+|   LABEL- Address: <span class="hljs-number">0x7f9282c03a60</span>, Value: chicken Next: <span class="hljs-number">0x7f9282c03a40</span>
+|   LABEL- Address: <span class="hljs-number">0x7f9282c03a40</span>, Value: chicken Next: <span class="hljs-number">0x10219e040</span>
+|   NIL- Address: <span class="hljs-number">0x10219e040</span>
+-------------------------------------------------------
+LABEL- Address: <span class="hljs-number">0x7f9282c03a90</span>, Value: chicken Next: <span class="hljs-number">0x10219e040</span>
+NIL- Address: <span class="hljs-number">0x10219e040</span>
+-------------------------------------------------------
+</code></pre>
+<p>Now that I am evaluating sublists, it doesn&#39;t matter what depth I go to, every
+<code>LABEL</code> will be evaluated to &#39;chicken&#39;.</p>
+<p>What about</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t(u (v (w (x) y (and) (z)))))))&quot;</span>
+</code></pre>
+<p>?</p>
+<p>You guessed it.</p>
+
+<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7fede2404090</span>, List_Value: <span class="hljs-number">0x7fede2404070</span> Next: <span class="hljs-number">0x104310040</span>
+|   LABEL- Address: <span class="hljs-number">0x7fede2404070</span>, Value: chicken Next: <span class="hljs-number">0x7fede2404050</span>
+|   LABEL- Address: <span class="hljs-number">0x7fede2404050</span>, Value: chicken Next: <span class="hljs-number">0x7fede2404030</span>
+|   LIST- Address: <span class="hljs-number">0x7fede2404030</span>, List_Value: <span class="hljs-number">0x7fede2404010</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   LABEL- Address: <span class="hljs-number">0x7fede2404010</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403ff0</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fede2403ff0</span>, List_Value: <span class="hljs-number">0x7fede2403aa0</span> Next: <span class="hljs-number">0x7fede2403fd0</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403aa0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403a80</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403a80</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403a60</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403a60</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   -------------------------------------------------------
+|   |   LABEL- Address: <span class="hljs-number">0x7fede2403fd0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403fb0</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fede2403fb0</span>, List_Value: <span class="hljs-number">0x7fede2403b40</span> Next: <span class="hljs-number">0x7fede2403f90</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403b40</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403b20</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403b20</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403b00</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403b00</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   -------------------------------------------------------
+|   |   LABEL- Address: <span class="hljs-number">0x7fede2403f90</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403f70</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fede2403f70</span>, List_Value: <span class="hljs-number">0x7fede2403c40</span> Next: <span class="hljs-number">0x7fede2403f50</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403c40</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403c20</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403c20</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403c00</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403c00</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403be0</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403be0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403bc0</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403bc0</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   -------------------------------------------------------
+|   |   LABEL- Address: <span class="hljs-number">0x7fede2403f50</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403f30</span>
+|   |   LIST- Address: <span class="hljs-number">0x7fede2403f30</span>, List_Value: <span class="hljs-number">0x7fede2403f10</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403f10</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403ef0</span>
+|   |   |   LIST- Address: <span class="hljs-number">0x7fede2403ef0</span>, List_Value: <span class="hljs-number">0x7fede2403c90</span> Next: <span class="hljs-number">0x7fede2403ed0</span>
+|   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403c90</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   -------------------------------------------------------
+|   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403ed0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403eb0</span>
+|   |   |   LIST- Address: <span class="hljs-number">0x7fede2403eb0</span>, List_Value: <span class="hljs-number">0x7fede2403e90</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403e90</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403e70</span>
+|   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403e70</span>, List_Value: <span class="hljs-number">0x7fede2403e50</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403e50</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403e30</span>
+|   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403e30</span>, List_Value: <span class="hljs-number">0x7fede2403e10</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403e10</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403df0</span>
+|   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403df0</span>, List_Value: <span class="hljs-number">0x7fede2403d00</span> Next: <span class="hljs-number">0x7fede2403dd0</span>
+|   |   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403d00</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403dd0</span>, Value: chicken Next: <span class="hljs-number">0x7fede2403db0</span>
+|   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403db0</span>, List_Value: <span class="hljs-number">0x7fede2403d40</span> Next: <span class="hljs-number">0x7fede2403d90</span>
+|   |   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403d40</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   LIST- Address: <span class="hljs-number">0x7fede2403d90</span>, List_Value: <span class="hljs-number">0x7fede2403d70</span> Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   |   LABEL- Address: <span class="hljs-number">0x7fede2403d70</span>, Value: chicken Next: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   |   -------------------------------------------------------
+|   |   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   |   -------------------------------------------------------
+|   |   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   |   -------------------------------------------------------
+|   |   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   |   -------------------------------------------------------
+|   |   NIL- Address: <span class="hljs-number">0x104310040</span>
+|   -------------------------------------------------------
+|   NIL- Address: <span class="hljs-number">0x104310040</span>
+-------------------------------------------------------
+NIL- Address: <span class="hljs-number">0x104310040</span>
+-------------------------------------------------------
+</code></pre>
+<hr>
+
+<p>You know, <code>debuglist()</code> is getting a little unwieldy, as far as output is
+concerned. It is useful for seeing how the linked list cells are stiched
+together internally in the memory space of the running C program, but I don&#39;t
+strictly need to see all those memory addresses all the time, do I? It is time
+to bring back <code>print_list</code>.</p>
+<p>It will have the same basic structure as <code>debug_list()</code>, but it will print different
+things. As a reminder of what <code>debug_list_inner()</code> looks like (remember that
+<code>debug_list()</code> is just a wrapper around <code>debug_list_inner()</code> that passes in an
+initial depth of <code>0</code>):</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list_inner</span><span class="hljs-params">(C *l, <span class="hljs-type">int</span> depth)</span> {
+    printtabs(depth);
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LABEL- Address: %p, Value: %s Next: %p\n&quot;</span>, l, l-&gt;val.label, l-&gt;next);
+            debug_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LIST- Address: %p, List_Value: %p Next: %p\n&quot;</span>, l, l-&gt;val.<span class="hljs-built_in">list</span>, l-&gt;next);
+            debug_list_inner(l-&gt;val.<span class="hljs-built_in">list</span>, depth + <span class="hljs-number">1</span>);
+            debug_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;NIL- Address: %p\n&quot;</span>, &amp;nil);
+            printtabs(depth - <span class="hljs-number">1</span>);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;-------------------------------------------------------\n&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
+<p>Let&#39;s strip out all the specifics and make a skeleton:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(C *l)</span> {
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+        <span class="hljs-keyword">case</span> LIST:
+        <span class="hljs-keyword">case</span> NIL:
+    }
+}
+</code></pre>
+<p>And a first pass at what we&#39;ll want to see when we print a list, annotated:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(C *l)</span> {
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s&quot;</span>, l-&gt;val.label);
+            print_list(l-&gt;next);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;(&quot;</span>);
+            print_list(l-&gt;val.<span class="hljs-built_in">list</span>);
+            print_list(l-&gt;next);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;)&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
+<p>Let&#39;s try it!</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">char</span> *a_string = <span class="hljs-string">&quot;(a b c d)&quot;</span>;
+    C *a_list = read(&amp;a_string);
+    print_list(a_list);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>yields:</p>
+
+<pre><code>(abcd))
+</code></pre>
+<p>Not bad! Need to add some spaces between those labels, and deal with that
+trailing closing paren, as well! First, for the spaces, I simply need to print a space if the atom that I&#39;m printing is <em>not</em> the last cell in a list.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(C *l)</span> {
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s&quot;</span>, l-&gt;val.label);
+
+            <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot; &quot;</span>);
+
+            print_list(l-&gt;next);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;(&quot;</span>);
+            print_list(l-&gt;val.<span class="hljs-built_in">list</span>);
+
+            <span class="hljs-comment">// also adding here to print space after a list ends!</span>
+            <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot; &quot;</span>);
+
+            print_list(l-&gt;next);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;)&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
+<p>This gives me:</p>
+
+<pre><code>(a b c d))
+</code></pre>
+<p>Which looks pretty good!</p>
+<p>Now, as for that trailing paren! If we look back at the read function, you can see that it is treating <code>&#39;)&#39;</code> and <code>&#39;\0&#39;</code> the same way:</p>
+
+<pre><code class="lang-c">etc...
+    <span class="hljs-keyword">switch</span>(current_char) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>:
+            list_depth--;
+            (*s)++;
+            <span class="hljs-keyword">return</span> &amp;nil;
+...etc
+</code></pre>
+<p>This is functionally correct- the <code>NULL</code> byte in the string should return a
+<code>NIL</code> cell to guarantee that the list it read in is a well formed one.</p>
+<p>The answer is to keep track of the depth of the list that has been passed in,
+and only print a closing paren if the depth is greater than <code>0</code>, similar to the way I handled indention in <code>debug_list()</code>.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list_inner</span><span class="hljs-params">(C *l, <span class="hljs-type">int</span> depth)</span> {
+    <span class="hljs-keyword">switch</span> (l-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s&quot;</span>, l-&gt;val.label);
+
+            <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot; &quot;</span>);
+
+            print_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;(&quot;</span>);
+            print_list_inner(l-&gt;val.<span class="hljs-built_in">list</span>, depth + <span class="hljs-number">1</span>);
+
+            <span class="hljs-keyword">if</span> (l-&gt;next-&gt;type != NIL)
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot; &quot;</span>);
+
+            print_list_inner(l-&gt;next, depth);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">if</span> (depth &gt; <span class="hljs-number">0</span>) {
+                <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;)&quot;</span>);
+            }
+            <span class="hljs-keyword">break</span>;
+    }
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(C *l)</span> {
+    print_list_inner(l, <span class="hljs-number">0</span>);
+};
+</code></pre>
+<p>Just like <code>debug_list</code>, I&#39;ve wrapped this in a helper function that always
+starts at 0 depth. This achieves the desired effect!</p>
+
+<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">char</span> *a_string = <span class="hljs-string">&quot;(a b c d)&quot;</span>;
+    C *a_list = read(&amp;a_string);
+    print_list(a_list);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Is now outputting <code>(a b c d)</code>, just like I wanted it to!</p>
+<p>I&#39;m not conviced this is an optimal solution, but it is ok for now!</p>
+<p>How about:</p>
+
+<pre><code class="lang-c"><span class="hljs-string">&quot;(a b (c (c e f) g (h i j) k (l m n o p) q (r (s) t (u (v (w (x) y (and) (z)))))))&quot;</span>
+</code></pre>
+<p>Through the extra special <code>eval()</code> that turns everything into chickens, and
+then through this improved <code>print_list()</code> function</p>
+
+<pre><code class="lang-c">(chicken chicken (chicken (chicken chicken chicken) chicken (chicken chicken chicken) chicken (chicken chicken chicken chicken chicken) chicken (chicken (chicken) chicken (chicken (chicken (chicken (chicken) chicken (chicken) (chicken)))))))
+</code></pre>
+<p>This is real progress! I can imagine a much better way to print
+out deeply nested lists than this- this is just one long stream of cells with
+no newlines! But it looks a lot cleaner and terser than <code>debug_list()</code> does,
+and it&#39;s more familiar and easier to read.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

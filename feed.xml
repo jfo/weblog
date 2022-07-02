@@ -1,0 +1,25 @@
+<rss version="2.0">
+  <channel>
+    <title>blog.jfo.click</title>
+    <description>Recent content on blog.jfo.click</description>
+    <lastBuildDate>Sat Jul 02 2022 09:54:20 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <item>
+      <title>Week two point one</title>
+      <link>https://blog.jfo.click/week-two-point-one</link>
+      <guid isPermaLink="true">https://blog.jfo.click/week-two-point-one</guid>
+      <pubDate>Jul 01, 2022</pubDate>
+    </item>
+    <item>
+      <title>Recursing</title>
+      <link>https://blog.jfo.click/recursing</link>
+      <guid isPermaLink="true">https://blog.jfo.click/recursing</guid>
+      <pubDate>Jun 27, 2022</pubDate>
+    </item>
+    <item>
+      <title>Hello &quot;Hello world!&quot;</title>
+      <link>https://blog.jfo.click/hello-hello-world</link>
+      <guid isPermaLink="true">https://blog.jfo.click/hello-hello-world</guid>
+      <pubDate>Aug 15, 2020</pubDate>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Sild; save the environment</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Sild; save the environment" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Sild; save the environment</h1>
+        <sub>Jul 16, 2016</sub>
+        <p></p>
+        <div><p>A lot of refactoring, and makefiling, and shuffling things around in the last
+few posts, but I&#39;m to a point where I feel comfortable moving on!</p>
+<p>The next basic function in the pipe is <code>define</code>; it is going to take two
+arguments, and look something like this:</p>
+
+<pre><code>(define whatever (quote (1 2 3)))
+</code></pre>
+<p>where <code>whatever</code> is any arbitrary <code>LABEL</code> and the second argument is
+anything at all. <code>define</code> will evaluate the second argument and store it in
+some environment under the label given as the first argument, and after this,
+all references in the code to the label <code>whatever</code> should be evaluated to the
+second argument. So, for instance:</p>
+
+<pre><code>(cons (quote 0) whatever)
+</code></pre>
+<p>Should evaluate <code>(quote 0)</code> to <code>0</code> and <code>whatever</code> to <code>(1 2 3)</code>, and then cons
+them together to return:</p>
+
+<pre><code>(0 1 2 3)
+</code></pre>
+<p>I know that in order to save that association, I&#39;m going to need a place to
+store it, and for that, I&#39;ll need some concept of an &#39;environment&#39;. I don&#39;t
+really know what it&#39;s going to look like yet, but I know it&#39;s going to need a
+header file, and I have a general idea of what its interface is going to be.  I
+know I&#39;m going to have some sort of struct called an Env, I know I&#39;m going to
+need a setter function that takes an <code>Env</code> and a key value pair and returns
+void, and a getter that takes an <code>Env</code> and a key and returns a value- and I
+know I&#39;ll need a deletion function too, or at least a way to free a whole env
+up at once. This is basically a miniature little CRUD interface!  (set =
+Create, get = Read, delete+set = Update, delete = Delete)</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> ENV_GUARD</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> ENV_GUARD</span>
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">Env</span> <span class="hljs-title">Env</span>;</span>
+
+C *<span class="hljs-title function_">set</span><span class="hljs-params">(Env*,C *key, C *value)</span>;
+C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env*, C *key)</span>;
+C *<span class="hljs-title function_">delete</span><span class="hljs-params">(Env*, C *key)</span>;
+
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
+</code></pre>
+<p>I&#39;ll jump a little bit now, before implementing something for this, to where it
+will be used in the evaluation code! <code>eval</code> currently looks like this:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LIST:
+        {
+            C *out = apply(eval(c-&gt;val.<span class="hljs-built_in">list</span>));
+            out-&gt;next = c-&gt;next;
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> out;
+        }
+        <span class="hljs-keyword">case</span> LABEL:
+        <span class="hljs-keyword">case</span> BUILTIN:
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>Where evaluating a <code>LABEL</code> simply returns itself. This is silly- I want a label
+to return what it has been assigned to, or else throw an error! This is where I
+will be <code>get()</code>ting a value from an <code>Env</code></p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;eval.h&quot;</span></span>
+
+C *<span class="hljs-title function_">eval</span><span class="hljs-params">(C* c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LIST:
+        {
+            C *out = apply(eval(c-&gt;val.<span class="hljs-built_in">list</span>));
+            out-&gt;next = c-&gt;next;
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">return</span> out;
+        }
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-keyword">return</span> get(env, c);
+        <span class="hljs-keyword">case</span> BUILTIN:
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> c;
+    }
+}
+</code></pre>
+<p>Immediately we see a big problem with this- there is no <code>Env</code> to pass through
+to this getter function! I haven&#39;t added that bit yet! And sure enough:</p>
+
+<pre><code class="lang-c">src/eval.c:<span class="hljs-number">37</span>:<span class="hljs-number">24</span>: error: use of undeclared identifier <span class="hljs-string">&#x27;env&#x27;</span>
+    <span class="hljs-keyword">return</span> get(env, c);
+           ^
+</code></pre>
+<p>Get ready for a big, but boring changeset. In order to have access to that
+Environment (whatever it turns out to be!) in all of these calls to <code>eval</code> and
+all the builtin functions, I have to add an <code>Env</code> parameter to <em>every single
+function signature</em> and pass it through to every single call to eval.  I&#39;m not
+going to show that, but you can see it
+<a href="https://github.com/urthbound/sildpost/commit/38483fea3045683f5ddd0525f24bdb4d444cdca9">here</a></p>
+<p>One operative part is creating a NULL <code>Env</code> in <code>evalfile</code> and passing it
+through into <code>eval</code>:</p>
+
+<pre><code class="lang-c">    Env * env = <span class="hljs-literal">NULL</span>;
+    <span class="hljs-keyword">while</span>((c = read(fp)) != &amp;nil) {
+        c = eval(c, env);
+        print(c);
+        free_cell(c);
+    }
+</code></pre>
+<p>and that I&#39;ve set the <code>get()</code> function to simply return an empty list for <em>any</em> label.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env* env, C *key)</span> {
+    <span class="hljs-keyword">return</span> empty_list();
+}
+</code></pre>
+<p>Since <code>get</code> inside of <code>eval</code> is just returning an empty list, I can eval something like this:</p>
+
+<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">cons</span></span> something somethingelse)
+</code></pre>
+<p>And it will evaluate both of those labels to an empty list and return:</p>
+
+<pre><code class="lang-scheme">(())
+</code></pre>
+<p>Ah, I should remember to clean up the label cell that I fetched!</p>
+
+<pre><code>C *eval(C* c, Env *env) {
+    switch (c-&gt;type) {
+        case LIST:
+        {
+            C *out = apply(eval(c-&gt;val.list, env), env);
+            out-&gt;next = c-&gt;next;
+            free(c);
+            return out;
+        }
+        case LABEL:
+        {
+            C *out = get(env, c);
+            free_one_cell(c);
+            return out;
+        }
+        case BUILTIN:
+        case NIL:
+            return c;
+    }
+}
+</code></pre>
+<hr>
+
+<p><code>Env</code> has been typedeffed, so I can pass pointers to it around, but I haven&#39;t
+defined what an <code>Env</code> is, yet. Let&#39;s start with this:</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> {</span>
+    <span class="hljs-type">char</span> *key;
+    C *value;
+};
+</code></pre>
+<p>Which is super reductive, but will illustrate a point! Now, I&#39;ll set <code>get</code> to
+return <code>truth</code> if the key passed in matches the key in the env, and the empty
+list otherwise:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env* env, C *key)</span> {
+    <span class="hljs-keyword">if</span> (scmp(key-&gt;val.label, env-&gt;key)) {
+        <span class="hljs-keyword">return</span> truth();
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> empty_list();
+    }
+}
+</code></pre>
+<p>Back in the <code>eval_file</code> function, I&#39;m going to have to actually pass in a real
+live <code>Env</code> now, instead of just a NULL pointer, since I will be dereferencing
+it. BUT, I can&#39;t assign values to the <code>Env</code> from there, since I haven&#39;t made
+the internals public (for good reasons!). I&#39;ll introduce a <code>new_env()</code> function
+to <code>env.c</code> and <code>env.h</code> that will return a pointer to an env, and I&#39;ll set a key
+for it!</p>
+
+<pre><code class="lang-c">Env *<span class="hljs-title function_">new_env</span><span class="hljs-params">()</span> {
+    Env *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Env));
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>) };
+    out-&gt;key = <span class="hljs-string">&quot;derp&quot;</span>;
+    out-&gt;value = <span class="hljs-literal">NULL</span>;
+    <span class="hljs-keyword">return</span> out;
+}
+</code></pre>
+<p>Looks a lot like <code>makecell</code>, doesn&#39;t it?</p>
+<p>This Env only has one key: &#39;derp&#39;. When <code>get</code> tries to evaluate LABELS, it will
+return truth for only labels with the label <code>derp</code> and empty lists for
+everything else.</p>
+<p>Back in eval_file:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">eval_file</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *filename)</span> {
+    FILE *fp = fopen(filename, <span class="hljs-string">&quot;r&quot;</span>);
+    <span class="hljs-keyword">if</span> (!fp) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Error opening file: %s\n&quot;</span>, filename);
+        <span class="hljs-built_in">exit</span> (<span class="hljs-number">1</span>);
+    }
+
+    C * c;
+    Env *env = new_env();
+
+    <span class="hljs-keyword">while</span>((c = read(fp)) != &amp;nil) {
+        c = eval(c, env);
+        print(c);
+        free_cell(c);
+    }
+
+    fclose(fp);
+}
+</code></pre>
+<p>Now, if I evaluate something like this:</p>
+
+<pre><code>(cons something somethingelse)
+(cons derp somethingelse)
+</code></pre>
+<p>I get back:</p>
+
+<pre><code>(())
+(#t)
+</code></pre>
+<p>Which is exactly what I wanted to happen!</p>
+<p>If I:</p>
+
+<pre><code>(cons somethingelse derp)
+</code></pre>
+<p>I&#39;ll get an error, which makes sense, since that evaluates to</p>
+
+<pre><code>(cons () #t)
+</code></pre>
+<p>Which shouldn&#39;t work, since I can&#39;t cons something <em>onto</em> something that isn&#39;t
+a list.</p>
+<hr>
+
+<p>Ok, so, this is pretty contrived. I really need a way to <code>set</code> values in an
+Env, and to search through the entries to try and find a match. First of all,
+that struct definition of Env is completely useless for this, as it only holds
+one key value pair. That&#39;s really an <code>Entry</code>, which I will define internally
+above <code>Env</code></p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Entry</span> {</span>
+    <span class="hljs-type">char</span> *key;
+    C *value;
+} Entry;
+</code></pre>
+<p>Env, now, should just hold a single thing: a pointer to the first entry in a
+dictionary!</p>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> {</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Entry</span> *<span class="hljs-title">head</span>;</span>
+};
+</code></pre>
+<p>Now, I can change what was <code>new_env</code> to <code>new_entry</code> and add a new <code>new_env</code>:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> Entry *<span class="hljs-title function_">new_entry</span><span class="hljs-params">()</span> {
+    Entry *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Entry));
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); };
+    out-&gt;key = <span class="hljs-string">&quot;derp&quot;</span>;
+    out-&gt;value = <span class="hljs-literal">NULL</span>;
+    <span class="hljs-keyword">return</span> out;
+}
+
+Env *<span class="hljs-title function_">new_env</span><span class="hljs-params">()</span> {
+    Env *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Env));
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); };
+    out-&gt;head = new_entry();
+    <span class="hljs-keyword">return</span> out;
+}
+</code></pre>
+<p>This works!</p>
+
+<pre><code>(())
+(#t)
+</code></pre>
+<p>Now, as I&#39;m passing around Env pointers outside of this file, I&#39;m really
+passing around a pointer to a pointer of the first entry in a list of entries!
+Just like I did in the first few posts defining cells, I&#39;m going to use a
+singly linked list structure to define these Entrys. That means they need to
+have a reference to the next cell in the series:</p>
+
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Entry</span> {</span>
+    <span class="hljs-type">char</span> *key;
+    C *value;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Entry</span> *<span class="hljs-title">next</span>;</span>
+} Entry;
+</code></pre>
+<p>Let&#39;s make two entries!</p>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> Entry *<span class="hljs-title function_">new_entry</span><span class="hljs-params">()</span> {
+    Entry *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Entry));
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); };
+    out-&gt;key = <span class="hljs-string">&quot;derp&quot;</span>;
+    out-&gt;value = <span class="hljs-literal">NULL</span>;
+    out-&gt;next = <span class="hljs-literal">NULL</span>;
+    <span class="hljs-keyword">return</span> out;
+}
+
+<span class="hljs-type">static</span> Entry *<span class="hljs-title function_">new_entry2</span><span class="hljs-params">()</span> {
+    Entry *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Entry));
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); };
+    out-&gt;key = <span class="hljs-string">&quot;another&quot;</span>;
+    out-&gt;value = <span class="hljs-literal">NULL</span>;
+    out-&gt;next = new_entry();
+    <span class="hljs-keyword">return</span> out;
+}
+
+Env *<span class="hljs-title function_">new_env</span><span class="hljs-params">()</span> {
+    Env *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Env));
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); };
+    out-&gt;head = new_entry2();
+    <span class="hljs-keyword">return</span> out;
+}
+</code></pre>
+<p>Boy, that&#39;s ugly! Now, the Env looks like this:</p>
+
+<pre><code>Env
+  \
+   Entry[another] -&gt; Entry[derp] -&gt; NULL
+</code></pre>
+<p>I need to adjust the get function to traverse this list, and to know how to
+handle a NULL pointer.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env* env, C *key)</span> {
+    Entry *cur = env-&gt;head;
+
+    <span class="hljs-keyword">while</span> (cur) {
+        <span class="hljs-keyword">if</span> (scmp(key-&gt;val.label, cur-&gt;key)) {
+            <span class="hljs-keyword">return</span> truth();
+        }
+        cur = cur-&gt;next;
+    }
+    <span class="hljs-keyword">return</span> empty_list();
+}
+</code></pre>
+<p>I&#39;m going to skip the sentinel node this time, because I&#39;m only implementing
+that method that looks through everything, and I can keep that as is!</p>
+<p>Now, both <code>&quot;derp&quot;</code> and <code>&quot;another&quot;</code> will return <code>#t</code>, and still everything else
+will return an empty list.</p>
+
+<pre><code>(cons another somethingelse)
+(cons derp literallyanything)
+</code></pre>
+<p>Will yield;</p>
+
+<pre><code>(#t)
+(#t)
+</code></pre>
+<p>This is getting interesting, eh?</p>
+<p><hr>
+Let&#39;s look back at those <code>new_entry</code> functions. I can totally generalize that!</p>
+
+<pre><code>static Entry *new_entry(char *key, C *value) {
+    char *keyval = malloc(sizeof(key));
+    if (!keyval) { exit(1); };
+    strcpy(keyval, key);
+
+    Entry *out = malloc(sizeof(Entry));
+    if (!out) { exit(1); };
+
+    out-&gt;key = keyval;
+    out-&gt;value = value;
+    out-&gt;next = NULL;
+    return out;
+}
+</code></pre>
+<p>Now, I can make those entries using this function inside of <code>new_env</code> itself.</p>
+
+<pre><code>Env *new_env() {
+
+    struct Entry *entry1 = new_entry(&quot;one&quot;, NULL);
+    struct Entry *entry2 = new_entry(&quot;two&quot;, NULL);
+    entry1-&gt;next = entry2;
+
+    Env *out = malloc(sizeof(Env));
+    if (!out) { exit(1); };
+    out-&gt;head = entry1;
+    return out;
+}
+</code></pre>
+<p>And I get the same effect!</p>
+<hr>
+
+<p>We&#39;re getting close, now! Back in the <code>get</code> function, I&#39;m just returning true
+if I find a match, but what I really want is arbitrary values being assigned
+and returned.</p>
+
+<pre><code class="lang-diff"> C *get(Env* env, C *key) {
+     Entry *cur = env-&gt;head;
+     while (cur) {
+         if (scmp(key-&gt;val.label, cur-&gt;key)) {
+<span class="hljs-deletion">-            return truth();</span>
+<span class="hljs-addition">+            return cur-&gt;value;</span>
+         }
+         cur = cur-&gt;next;
+     }
+     return NULL;
+ }
+</code></pre>
+<p>and down in <code>new_env()</code>:</p>
+
+<pre><code class="lang-diff"> Env *new_env() {
+
+<span class="hljs-deletion">-    struct Entry *entry1 = new_entry(&quot;one&quot;, NULL);</span>
+<span class="hljs-deletion">-    struct Entry *entry2 = new_entry(&quot;two&quot;, NULL);</span>
+<span class="hljs-addition">+    struct Entry *entry1 = new_entry(&quot;one&quot;, truth());</span>
+<span class="hljs-addition">+    struct Entry *entry2 = new_entry(&quot;two&quot;, truth());</span>
+     entry1-&gt;next = entry2;
+
+     Env *out = malloc(sizeof(Env));
+     if (!out) { exit(1); };
+     out-&gt;head = entry1;
+     return out;
+ }
+</code></pre>
+<p>This works great for something like:</p>
+
+<pre><code>one
+two
+anything
+</code></pre>
+<p>which yields:</p>
+
+<pre><code>#t
+#t
+
+Error: unbound label: anything
+
+shell returned 1
+</code></pre>
+<p>Just as we want, but what about this?</p>
+
+<pre><code>one
+one
+</code></pre>
+<p>Can you guess? When <code>eval</code> looks at the first <code>one</code>, it retrieves the cell
+pointer to the <code>Entry</code>&#39;s <code>value</code> member. Remember that eval as I&#39;ve written it
+always cleans up after itself:</p>
+
+<pre><code class="lang-c">        <span class="hljs-keyword">case</span> LABEL:
+        {
+            C *out = get(env, c);
+            <span class="hljs-keyword">if</span> (out) {
+                free_one_cell(c); <span class="hljs-comment">// right here!</span>
+                <span class="hljs-keyword">return</span> out;
+            } <span class="hljs-keyword">else</span> {
+</code></pre>
+<p>Which means that the second time I try to evaluate <code>one</code>, it tries to clean up after itself and blows up, because that pointer has already been freed:</p>
+
+<pre><code class="lang-c">sild(<span class="hljs-number">76627</span>,<span class="hljs-number">0x7fff7b607000</span>) <span class="hljs-built_in">malloc</span>: *** error <span class="hljs-keyword">for</span> object <span class="hljs-number">0x7f88f0403380</span>: pointer being freed was not allocated
+*** <span class="hljs-built_in">set</span> a breakpoint in malloc_error_break to debug
+
+Command terminated
+</code></pre>
+<p>When I fetch a value from the Environment, I need to be fetching a <em>copy</em> of
+it, so that when it passes through the rest of the evaluation, and gets cleaned
+up afterwards, the original entry is still intact and can be fetched again.</p>
+<p>this function will live back in <code>cell.c</code>, and will look exactly like
+<code>free_cell</code> and <code>free_one_cell</code>, which look like this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">free_cell</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">free</span>(c-&gt;val.label);
+            free_cell(c-&gt;next);
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            free_cell(c-&gt;val.<span class="hljs-built_in">list</span>);
+            free_cell(c-&gt;next);
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> BUILTIN:
+            <span class="hljs-built_in">free</span>(c-&gt;val.func.name);
+            free_cell(c-&gt;next);
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">break</span>;
+    }
+}
+
+<span class="hljs-type">void</span> <span class="hljs-title function_">free_one_cell</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-built_in">free</span>(c-&gt;val.label);
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> LIST:
+            free_cell(c-&gt;val.<span class="hljs-built_in">list</span>);
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> BUILTIN:
+            <span class="hljs-built_in">free</span>(c-&gt;val.func.name);
+            <span class="hljs-built_in">free</span>(c);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">break</span>;
+    }
+}
+</code></pre>
+<p>This is some wordy code, but it&#39;s necessary to handle all the different types
+of cells. Let&#39;s adapt them! Remember that the only substantive difference
+between <code>copy</code> and <code>copy_one</code> is that <code>copy_one</code> doesn&#39;t propogate through
+<code>next</code> addresses!</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">copy_cell</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-keyword">return</span> makecell(LABEL, (V){ c-&gt;val.label }, copy_cell(c-&gt;next));
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> makecell(LIST, (V){ .<span class="hljs-built_in">list</span> = copy_cell(c-&gt;val.<span class="hljs-built_in">list</span>) }, copy_cell(c-&gt;next));
+        <span class="hljs-keyword">case</span> BUILTIN:
+            <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = { c-&gt;val.func.name, c-&gt;val.func.addr} }, copy_cell(c-&gt;next));
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> &amp;nil;
+    }
+}
+</code></pre>
+<p>and <code>copy_one_cell</code>, with the <code>next</code> members pointing to <code>&amp;nil</code>:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">copy_one_cell</span><span class="hljs-params">(C *c)</span> {
+    <span class="hljs-keyword">switch</span> (c-&gt;type) {
+        <span class="hljs-keyword">case</span> LABEL:
+            <span class="hljs-keyword">return</span> makecell(LABEL, (V){ c-&gt;val.label }, &amp;nil);
+        <span class="hljs-keyword">case</span> LIST:
+            <span class="hljs-keyword">return</span> makecell(LIST, (V){ .<span class="hljs-built_in">list</span> = copy_cell(c-&gt;val.<span class="hljs-built_in">list</span>) }, &amp;nil);
+        <span class="hljs-keyword">case</span> BUILTIN:
+            <span class="hljs-keyword">return</span> makecell(BUILTIN, (V){ .func = { c-&gt;val.func.name, c-&gt;val.func.addr} }, &amp;nil);
+        <span class="hljs-keyword">case</span> NIL:
+            <span class="hljs-keyword">return</span> &amp;nil;
+    }
+}
+</code></pre>
+<p>You might notice a problem right away with this! <code>makecell</code> allocates memory
+for the contents of a cell, but those contents sometimes include pointers to
+strings that also need to be allocated! I can pull this into a helper function
+that allocates some memory, copies a string into it.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">char</span> *<span class="hljs-title function_">scpy</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+    <span class="hljs-type">int</span> l = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (s[l] != <span class="hljs-string">&#x27;\0&#x27;</span>) { l++; }
+    <span class="hljs-type">char</span> *out = <span class="hljs-built_in">malloc</span>(l);
+    <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); }
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; l; i++) {
+        out[i] = s[i];
+    }
+    out[l] = <span class="hljs-string">&#x27;\0&#x27;</span>;
+    <span class="hljs-keyword">return</span> out;
+};
+</code></pre>
+<p>I&#39;ll plop this into <code>utils.c</code> and use it in the <code>env.c</code> file to return a copy instead of the original.</p>
+
+<pre><code class="lang-c">...
+            <span class="hljs-keyword">return</span> copy_one_cell(cur-&gt;value);
+...
+</code></pre>
+<p>Now, everything cleans itself up correctly when it is evaluated.</p>
+<blockquote>
+<h2 id="a-word-about-perf">A word about perf</h2>
+<p>You might be reading this and saying something like: &quot;Hey, making copies all
+the time seems pretty wasteful, and malloc system calls can be pretty
+expensive, and this isn&#39;t very performative, you&#39;re an idiot!&quot;</p>
+<p>I wouldn&#39;t really argue with you! (except <em>maybe</em> on the idiot thing, which
+seems a little harsh). All of these things, in fact, are very very true.
+There are lots of opportunities for making this faster, better, and generally
+more perfomant, in fact, I&#39;m trying to keep a running tally of those things
+in my head, and am looking forward to a lot of refactoring after I get
+everything working! The goal of this iteration is clarity and consistency in
+implementation, not performance. I&#39;d love to make that a priority later
+though!</p>
+</blockquote>
+<hr>
+
+<h2 id="let-s-set-">Let&#39;s set.</h2>
+<p>So, I&#39;ve got a way to get stuff out of an <code>Env</code>, but I&#39;m currently setting it by hand.
+This is silly! I want a corresponding <code>set</code> function that takes an env, and a
+key value pair, and inserts a new entry into that Env (at the head of it, which
+becomes important later for scoping!) and then updates that Env&#39;s internal
+<code>head</code> member to point to this new entry.</p>
+<p>First, the function signature, which I had already put into the <code>h</code> file:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">set</span><span class="hljs-params">(Env* env, C *key, C *value)</span> {
+}
+</code></pre>
+<p>Except, you know what? now that I think of it, this function needn&#39;t return
+anything at all, since if it fails I want to exit. And though I&#39;m always going
+to be returning a value, I might as well pass in a string so I don&#39;t have to
+muck around with new cells.</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">set</span><span class="hljs-params">(Env* env, <span class="hljs-type">char</span> *key, C *value)</span> {
+}
+</code></pre>
+<p>So I&#39;ll make a new entry out of the key value pair with my shiny <code>new_entry()</code> function:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">set</span><span class="hljs-params">(Env* env, <span class="hljs-type">char</span> *key, C *value)</span> {
+    new_entry(key, value);
+}
+</code></pre>
+<p>And I&#39;ll tell the new_entry that its <code>next</code> member should be the current head
+of the Env:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">set</span><span class="hljs-params">(Env* env, <span class="hljs-type">char</span> *key, C *value)</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Entry</span> *<span class="hljs-title">new</span> =</span> new_entry(key, value);
+    new-&gt;next = Env-&gt;head;
+}
+</code></pre>
+<p>And I&#39;ll tell the Env that its head is now the new entry:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">set</span><span class="hljs-params">(Env* env, <span class="hljs-type">char</span> *key, C *value)</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Entry</span> *<span class="hljs-title">new</span> =</span> new_entry(key, value);
+    new-&gt;next = Env-&gt;head;
+    env-&gt;head = new;
+}
+</code></pre>
+<p>And that&#39;s it! If the <code>malloc</code>ing happening inside of new_entry fails, I&#39;ll have
+an <code>exit(1)</code> call to cath it. I&#39;ve been falling behind on setting up good exit error
+messaging, but I&#39;ll make a sweep on that at some point.</p>
+<p>Back in the <code>eval_file</code> function, then, I can do this:</p>
+
+<pre><code class="lang-c">Env *env = new_env();
+<span class="hljs-built_in">set</span>(env, <span class="hljs-string">&quot;hi&quot;</span>, truth());
+<span class="hljs-built_in">set</span>(env, <span class="hljs-string">&quot;mom&quot;</span>, truth());
+</code></pre>
+<p>And I have an env with two entries!</p>
+
+<pre><code>hi
+mom
+</code></pre>
+<p>Gives me:</p>
+
+<pre><code>#t
+#t
+</code></pre>
+<p>Success!</p>
+<p>There&#39;s one interesting aspect of this env thing that is implicit in its design! What if I do this?</p>
+
+<pre><code class="lang-c">Env *env = new_env();
+<span class="hljs-built_in">set</span>(env, <span class="hljs-string">&quot;hi&quot;</span>, truth());
+<span class="hljs-built_in">set</span>(env, <span class="hljs-string">&quot;hi&quot;</span>, empty_list());
+</code></pre>
+<p>Two entries with the same key but different values. Now, in sild land, what
+will I get if I evaluate the LABEL <code>hi</code>? How does my <code>get</code> function choose?</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env* env, C *key)</span> {
+    Entry *cur = env-&gt;head;
+
+    <span class="hljs-keyword">while</span> (cur) {
+        <span class="hljs-keyword">if</span> (scmp(key-&gt;val.label, cur-&gt;key)) {
+            <span class="hljs-keyword">return</span> copy_one_cell(cur-&gt;value);
+        }
+        cur = cur-&gt;next;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+}
+</code></pre>
+<p>I didn&#39;t put any special logic in there- how does it know which one? Well...</p>
+
+<pre><code>()
+</code></pre>
+<p>It returns the first one it finds! This doesn&#39;t seem like a big deal, but in a
+way it will be the backbone of my language&#39;s variable scoping, later on.</p>
+<hr>
+
+<p>Now that I have all these helpers defined, and a concept of an Env defined,
+it&#39;s a short walk in the park to implement a new <code>sild</code> builtin function that
+can utilize them! The signature will look like all the builtin functions:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">define</span><span class="hljs-params">(C *operand, Env *env)</span>;
+</code></pre>
+<p>it will take two arguments, a key and a value. (in sild land):</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">define</span><span class="hljs-params">(C *operand, Env *env)</span> {
+    arity_check(<span class="hljs-string">&quot;define&quot;</span>, <span class="hljs-number">2</span>, operand);
+}
+</code></pre>
+<p>The key <em>must</em> be a label:</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">define</span><span class="hljs-params">(C *operand, Env *env)</span> {
+    arity_check(<span class="hljs-string">&quot;define&quot;</span>, <span class="hljs-number">2</span>, operand);
+    <span class="hljs-keyword">if</span> (operand-&gt;type != LABEL) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); }
+}
+</code></pre>
+<p>Then it will <code>set</code> the arguments to a key value pair inside the given env,
+evalling the 2nd operand.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">define</span><span class="hljs-params">(C *operand, Env *env)</span> {
+    arity_check(<span class="hljs-string">&quot;define&quot;</span>, <span class="hljs-number">2</span>, operand);
+    <span class="hljs-keyword">if</span> (operand-&gt;type != LABEL) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); }
+    <span class="hljs-built_in">set</span>(env, operand-&gt;val.label, eval(operand-&gt;next, env));
+}
+</code></pre>
+<p>Then it will free the label! I don&#39;t need to free the evalled operand, because
+that will serve as the master copy in the env.</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">define</span><span class="hljs-params">(C *operand, Env *env)</span> {
+    arity_check(<span class="hljs-string">&quot;define&quot;</span>, <span class="hljs-number">2</span>, operand);
+    <span class="hljs-keyword">if</span> (operand-&gt;type != LABEL) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); }
+    <span class="hljs-built_in">set</span>(env, operand-&gt;val.label, eval(operand-&gt;next, env));
+    free_one_cell(operand);
+}
+</code></pre>
+<p>And that&#39;s really that! It has to return something, so how about nil? I won&#39;t
+be doing anything with that return value ever (you will see why soon!)</p>
+
+<pre><code class="lang-c">C *<span class="hljs-title function_">define</span><span class="hljs-params">(C *operand, Env *env)</span> {
+    arity_check(<span class="hljs-string">&quot;define&quot;</span>, <span class="hljs-number">2</span>, operand);
+    <span class="hljs-keyword">if</span> (operand-&gt;type != LABEL) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); }
+    <span class="hljs-built_in">set</span>(env, operand-&gt;val.label, eval(operand-&gt;next, env));
+    free_one_cell(operand);
+    <span class="hljs-keyword">return</span> &amp;nil;
+}
+</code></pre>
+<p>Now, I can add <code>define</code> into the reader, just like the other ones:</p>
+
+<pre><code>...
+} else if (scmp(token, &quot;define&quot;)) {
+    out = makecell(BUILTIN, (V){ .func = {token, define} }, &amp;nil);
+...
+</code></pre>
+<p>And lo and behold, this totally works!</p>
+
+<pre><code>(define thing (quote (1 2 3)))
+thing
+</code></pre>
+<p>Will print out</p>
+
+<pre><code>(1 2 3)
+</code></pre>
+<p>And I could use <code>thing</code> wherever it makes sense to use (1 2 3)</p>
+
+<pre><code>(define thing (quote (1 2 3)))
+(define otherthing (quote 0))
+(cons otherthing thing)
+</code></pre>
+<p>yields:</p>
+
+<pre><code>(0 1 2 3)
+</code></pre>
+<p>You can even compose them! For example:</p>
+
+<pre><code>(define thing (quote (1 2 3)))
+(define otherthing (quote 0))
+(define wat (cons otherthing thing))
+wat
+</code></pre>
+<p>Now, <code>wat</code> is equal to <code>(0 1 2 3)</code>!</p>
+<h2 id="one-more-thing">One more thing</h2>
+<p>Well, a couple more things! <code>define</code> is the first builtin function that has any
+sort of side effect- in this case, it is mutating the only possessor of state
+in the running program: the top level environment. Its return value, if it were
+a C function, would be <code>void</code>, since it&#39;s being called only for those side
+effect. I don&#39;t have a <code>void</code> type in sild (yet?), but I assigned it to return
+<code>nil</code> as an expediency. To see why this might be problematic, consider:</p>
+
+<pre><code>(cons (quote 1) (define thing (quote ())))
+</code></pre>
+<p>This, er, sort of makes sense, right? You would kind of half expect this to
+return</p>
+
+<pre><code>(1)
+</code></pre>
+<p>Since <code>thing</code> is supposed to be equal to <code>()</code> now, right?</p>
+<p>It doesn&#39;t, since <code>define</code> is returning <code>nil</code>, <code>cons</code> really gets called on:</p>
+
+<pre><code>(cons (quote 1))
+</code></pre>
+<p>I don&#39;t know... should define return its label? Blargh...</p>
+<p>This is venturing into some interesting language design question territory, and
+I&#39;m not ready to make a decision! I am going to default to parity with scheme,
+which solves this problem by making <code>define</code> to return <code>undefined</code>, which is
+kind of funny, and <em>disallowing</em> define statements outside of the top level
+forms.</p>
+<p>This looks a little funny compared to the other calls, but i can catch this in
+the reader step by throwing an error if the reader encounters a <code>define</code>
+keyword when the depth is greater than 1!</p>
+
+<pre><code class="lang-c">...
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (scmp(token, <span class="hljs-string">&quot;define&quot;</span>)) {
+        <span class="hljs-keyword">if</span> (depth &gt; <span class="hljs-number">1</span>) {
+            <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Error: define found in inner form.&quot;</span>);
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+        }
+        out = makecell(BUILTIN, (V){ .func = {token, define} }, &amp;nil);
+...
+</code></pre>
+<p>This solves the problem. Defines will now only be able to happen in the top
+level, and I don&#39;t really need to make another sild language void type or
+whatever, since I&#39;ll never be able to call define anywhere that would matter.</p>
+<p>I can even have the C function <code>define</code> return <code>void</code>, and all will be well.</p>
+
+<pre><code>void define(C *operand, Env *env) {
+    arity_check(&quot;define&quot;, 2, operand);
+    if (operand-&gt;type != LABEL) {
+        fprintf(stderr, &quot;define expected a LABEL as its first argument and did not get one\n&quot;);
+        exit(1);
+    }
+    set(env, operand-&gt;val.label, eval(operand-&gt;next, env));
+    free_one_cell(operand);
+}
+</code></pre>
+<p>&quot;But what about <code>delete()</code> in the env?&quot;</p>
+<p>I don&#39;t want to expose a deletion function to the sild space just yet, if at
+all, once a variable is bound using <code>define</code> in the global environment, I want
+it to remain that way. But I do need to free the environment itself after I&#39;m
+done with it, or I&#39;ll have a memory leak.</p>
+<p>Just as I free the results of an evaluation of a form after I don&#39;t need it anymore in <code>eval_file</code></p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">eval_file</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *filename)</span> {
+
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Error opening file: %s\n&quot;</span>, filename);
+        <span class="hljs-built_in">exit</span> (<span class="hljs-number">1</span>);
+    }
+
+    C * c;
+
+    Env *env = new_env();
+    <span class="hljs-keyword">while</span>((c = read(fp)) != &amp;nil) {
+        c = eval(c, env);
+        free_cell(c);           <span class="hljs-comment">// here!</span>
+    }
+
+    fclose(fp);
+}
+</code></pre>
+<p>So too will I free the environment I created for that file after I&#39;m done
+reading the file! It will go here:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">eval_file</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span> *filename)</span> {
+    FILE *fp = fopen(filename, <span class="hljs-string">&quot;r&quot;</span>);
+    <span class="hljs-keyword">if</span> (!fp) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;Error opening file: %s\n&quot;</span>, filename);
+        <span class="hljs-built_in">exit</span> (<span class="hljs-number">1</span>);
+    }
+
+    C * c;
+
+    Env *env = new_env();
+    <span class="hljs-keyword">while</span>((c = read(fp)) != &amp;nil) {
+        c = eval(c, env);
+        free_cell(c);
+    }
+    free_env(env);              <span class="hljs-comment">// here!</span>
+
+    fclose(fp);
+}
+</code></pre>
+<p>And it will look like this:</p>
+
+<pre><code>void free_env(Env* env) {
+    // get the first entry in the env
+    Entry *cur = env-&gt;head;
+
+    //holding place for the next entry
+    Entry *next;
+
+    while (cur) {
+        // free the char* key
+        free(cur-&gt;key);
+
+        // free the cell that is the value
+        free_cell(cur-&gt;value);
+
+        // hold pointer to next cell here, so that I can ...
+        next = cur-&gt;next;
+
+        // free the entry space for cur
+        free(cur);
+
+        // reassign cur to what was its next entry...
+        cur = next;
+    }
+    // finally, when there are no more entries, free the environment itself.
+    free(env);
+}
+</code></pre>
+<p>Now, I am being a good memory citizen and cleaning up after myself when I am
+done reading all the forms in a file.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>

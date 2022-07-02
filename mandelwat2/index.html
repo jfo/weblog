@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>mandelwat2</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="http://dev.jfo.click:4321/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http://dev.jfo.click:4321">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">mandelwat2</h1>
+        <sub>Jan 01, 1970</sub>
+        <p></p>
+        <div><p>Last year I wrote <a href="/the-mandelwat-set/">this</a>. I said I would write about using
+webgl to create a real time renderer, so now I finally got around to that and
+this post is that so here we go.</p>
+<p>My usual disclaimer goes here and that is this: I am far from a subject matter
+expert, in this case of graphics programming; this is more of a devlog
+concerned with this one project.  I think it is useful to share this way and to
+write about process, without trying to maintain a stance of authority. I should
+probably write a general disclaimer sometime about this but I haven&#39;t yet.</p>
+<p>That said, I&#39;ve tried as always to include links to resources I found helpful,
+chief among them the <em>excellent</em> <a href="https://webglfundamentals.org/">WebGL
+Fundamentals</a>, from which most of the working
+boilerplate below is cribbed and which I highly recommend.  WebGL, like its
+native counterparts OpenGL and Cuda, is, for very good reasons, <em>extremely
+complicated</em>, and I&#39;m only barely scratching the surface of what these
+technologies are capable of, just enough to accomplish my goal. In fact, It&#39;s
+likely to be worth reading over the
+<a href="https://webglfundamentals.org/webgl/lessons/webgl-fundamentals.html">introduction</a>
+if anything in the next section doesn&#39;t make enough sense. I&#39;m just barely
+skimming it here. I&#39;ve used WebGL 1.0 because it&#39;s better supported and honestly
+I&#39;m not doing anything that sophisticated from a graphics programming
+perspective- I haven&#39;t checked but it&#39;s likely the WebGL 2.0 would be almost
+the exact same.</p>
+<p>With that said, let&#39;s get into it.</p>
+<h2 id="what-is-webgl-">What is WebGL?</h2>
+<p>WebGL is a <a href="https://caniuse.com/#search=webgl">well supported</a> browser protocol
+that allows direct access to graphics hardware. The fact that we are dealing
+with a <em>different piece of hardware</em> that also has a different computing paradigm is
+what introduces all of the the technical complexity into this protocol. This is
+<em>not</em> a javascript library that utilizes graphics hardware, it&#39;s the <em>bridge</em>
+between that browser and that hardware that software like that <em>uses</em>.</p>
+<p><a href="https://d3js.org/">D3.js</a> is probably the most well known library that uses webGL
+or maybe three.js.</p>
+<p>WebGL is a <em>rasterization engine</em>. This means that it takes geometries and
+converts them into the pixels that actually draw on the screen at runtime.
+Let&#39;s say I ask it to &quot;draw a triangle whose vertices are in <code>x</code>, <code>y</code>, and <code>z</code>
+places.  &quot;Ok,&quot; it dutifully responds, &quot;then I will draw the shape that has
+those vertices for you&quot;. You do not need to specifically express which pixels
+to fill in to create that shape, the engine does that part. <em>But</em>, you <em>do</em>
+need to tell it how to decide what color each pixel will be. This is naturally
+a two step process, expressing geometries through vertices, and expressing
+color choice of the resulting fragment&#39;s constituent pixels.</p>
+<p>We need to create one <em>shader</em> for each of these two steps: the first is a
+<code>vertex shader</code> and the second is a <code>fragment shader</code>.</p>
+<p>Here is a very simple example of each of those- this is written in OpenGL
+Shading Language, or
+<a href="https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language">GLSL</a>, a C like
+domain specific language designed for this purpose.</p>
+<p>Here is a vertex shader:</p>
+
+<pre><code class="lang-glsl"><span class="hljs-keyword">attribute</span> <span class="hljs-type">vec2</span> a_position;
+<span class="hljs-type">void</span> main() {
+  <span class="hljs-built_in">gl_Position</span> = <span class="hljs-type">vec4</span>(a_position, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+}
+</code></pre>
+<p>and here is a fragment shader:</p>
+
+<pre><code class="lang-glsl"><span class="hljs-keyword">precision</span> <span class="hljs-keyword">mediump</span> <span class="hljs-type">float</span>;
+<span class="hljs-type">void</span> main() {
+  <span class="hljs-built_in">gl_FragColor</span> = <span class="hljs-type">vec4</span>( <span class="hljs-number">1.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span> );
+}
+</code></pre>
+<p>You&#39;ll notice that, like C and many other compiled languages, each shader has a
+<code>main</code> function which will execute at runtime.</p>
+</div>
+      </article>
+    </div>
+
+  </body>
+</html>

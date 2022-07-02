@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Advent of Learning About MD5 and OpenCL</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Advent of Learning About MD5 and OpenCL" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/" />
+    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="title-thing">Advent of Learning About MD5 and OpenCL</h1>
+        <sub>Dec 28, 2016</sub>
+        <p></p>
+        <div><p>So Hi, hello. <a href="/adventure-of-advent-of-code">Last post</a> I was talking about <a href="http://adventofcode.com/">Advent of
+Code</a> and how it can help you discover new things and
+ideas to learn about and also rabbit holes to go down. This post is about one
+of those rabbit holes! It&#39;s a really deep one, too. I got nerdsniped on day 5
+and I totally couldn&#39;t let it go.</p>
+<p>This post got kind of ridiculously long. I&#39;m sorry. But this snipe definitely
+took me for a ride. I hope it&#39;s interesting!</p>
+<div id="toc"></div>
+
+<h1 id="table-of-contents">Table of Contents</h1>
+
+<ul>
+<li><a href="#chess">How about a nice game of chess?</a></li>
+<li><a href="#expense">This is Expensive</a></li>
+<li><a href="#hole">Down the Hole</a></li>
+<li><a href="#own">My own md5 function</a></li>
+<li><a href="#padding">Padding</a></li>
+<li><a href="#time">Time to actually process the hash</a></li>
+<li><a href="#output">Output</a></li>
+<li><a href="#quite">I am quite sure my homegrown hashing function will outperform Ruby&#39;s built in version</a></li>
+<li><a href="#c">Let&#39;s C</a></li>
+<li><a href="#opencl">Act III: OpenCL</a></li>
+<li><a href="#crackin">Crackin&#39;</a></li>
+<li><a href="#coda">Advent of Coda</a></li>
+</ul>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="chess"></div>
+
+<h1 id="how-about-a-nice-game-of-chess-">How about a nice game of chess?</h1>
+<p>Day 5 this year asks us to calculate an 8 digit code based on the <a href="https://en.wikipedia.org/wiki/MD5">md5
+digest</a> of a user-specific input
+concatenated with the string representations of incrementing numbers.</p>
+<p><img src="https://pbs.twimg.com/media/CzwETWbUsAALRtW.jpg" alt="img"></p>
+<blockquote>
+<p><sub>
+<a href="https://twitter.com/jon_bottarini/status/809526790494375937">Source</a>, sort of,
+not that it matters, not that anything matters, since that&#39;s not even the
+source and the real source is
+<a href="http://poorlydrawnlines.com/comic/a-message/">this</a> and copyright law is broken
+and we live in a creative post scarcity society.
+<a href="https://media.giphy.com/media/Wgx6zPreg4aac/giphy.gif" ><img height=20 style="display:inline;" src="https://imgflip.com/s/meme/But-Thats-None-Of-My-Business.jpg" /></a>
+</sub></p>
+</blockquote>
+<p><a href="http://adventofcode.com/2016/day/5">You should go read the question here!</a></p>
+<blockquote>
+<p>Spoiler alert, etc, cause I&#39;m about to just explain how I did this one so if
+you want to solve it yourself you should go do that first.</p>
+</blockquote>
+<p>My door input was <code>abbhdwsy</code>. With just two small lines, I can compute the MD5
+hash for that basic input like this using Ruby&#39;s built in library method:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">require</span> <span class="hljs-string">&#x27;digest&#x27;</span>
+puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy&quot;</span>)
+</code></pre>
+<p>Which gives me:</p>
+
+<pre><code>b0d0113e0f3745b2eb8d0db1b6aad818
+</code></pre>
+<p>But the problem states that I need to to compute the md5&#39;s for that input
+<em>plus a number</em>. To be clear, that&#39;s <em>the string representation of a number</em>
+concatenated onto the end of the input, not the numerical value itself.</p>
+<p>That might look like this, right?</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">require</span> <span class="hljs-string">&#x27;digest&#x27;</span>
+
+puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy0&quot;</span>)
+</code></pre>
+<p>Yields:</p>
+
+<pre><code>7e51386949e56ddab4f31c503de50f83
+</code></pre>
+<p>That&#39;s... really really different than the first hash!</p>
+<p>Maybe I&#39;d like to get a few more of these?</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">require</span> <span class="hljs-string">&#x27;digest&#x27;</span>
+
+puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy1&quot;</span>)
+puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy2&quot;</span>)
+puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy3&quot;</span>)
+puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy4&quot;</span>)
+puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy5&quot;</span>)
+</code></pre>
+
+<pre><code>917b4f767f6713624ae0e4b4a4cd3cc9
+1e2ec6125cc3e05cfd556134ae10e8ac
+475a5869d93ec860881f9805460dc8fe
+41ceab0f4edefdb821d47e8682adef7a
+3c91defeee434cf792491e1d0e58876a
+</code></pre>
+<p>Look how different all those hashes are!</p>
+<p>You may have noticed that my strategy here is to increment the number that I&#39;m
+appending to my unique input. This seems like it might take a while to do
+manually, oh if only there were a way to automate it! Luckily computers</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">require</span> <span class="hljs-string">&#x27;digest&#x27;</span>
+
+i = <span class="hljs-number">0</span>
+loop <span class="hljs-keyword">do</span>
+    puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy&quot;</span> + i.to_s)
+    i += <span class="hljs-number">1</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>I increment that <code>i</code> value on each loop, and append it to the static input by
+calling <code>to_s</code> on it (again, this gives back the <em>string</em> of the number)! Easy
+peasy. This, as you would expect, fills my screen with hashes, all different,
+all unique, like snowflakes, or little babies!</p>
+<blockquote>
+<p>Lol jk no they are not unique! They are... <em>mostly</em> different from each
+other, of course, but although MD5 hashes are guaranteed to be reproducible
+for any given input, they are decidedly <em>not</em> guaranteed to always be unique.
+When two different inputs result in the same hash, it&#39;s called a <em>hash
+collision</em>, and you can read a lot more about that
+<a href="http://www.mscs.dal.ca/~selinger/md5collision/">here</a>.</p>
+</blockquote>
+<p>From there, it&#39;s a pretty straightforward exercise to collect the hashes I need
+to compute the password. I need the first 8 hashes in this series that begin
+with 5 zeros. I&#39;ll just throw a test case in the loop and push them into an
+accumulator if they match:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">require</span> <span class="hljs-string">&#x27;digest&#x27;</span>
+
+i = <span class="hljs-number">0</span>
+acc = []
+loop <span class="hljs-keyword">do</span>
+    candidate = Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy&quot;</span> + i.to_s)
+    acc &lt;&lt; candidate <span class="hljs-keyword">if</span> candidate[<span class="hljs-number">0</span>..<span class="hljs-number">4</span>] == <span class="hljs-string">&quot;00000&quot;</span>
+    i += <span class="hljs-number">1</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>That&#39;s almost it, really! This loop goes forever... all I need is the first 8
+matches, so I can terminate the loop once I have those:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">require</span> <span class="hljs-string">&#x27;digest&#x27;</span>
+
+i = <span class="hljs-number">0</span>
+acc = []
+<span class="hljs-keyword">until</span> acc.length == <span class="hljs-number">8</span>
+    candidate = Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-string">&quot;abbhdwsy&quot;</span> + i.to_s)
+    acc &lt;&lt; candidate <span class="hljs-keyword">if</span> candidate[<span class="hljs-number">0</span>..<span class="hljs-number">4</span>] == <span class="hljs-string">&quot;00000&quot;</span>
+    i += <span class="hljs-number">1</span>
+<span class="hljs-keyword">end</span>
+puts acc
+</code></pre>
+<p>running this will give me the output I need:</p>
+
+<pre><code>000008bfb72caf77542c32b53a73439b
+0000004ed0ede071d293b5f33de2dc2f
+0000012be6057b2554c26bfddab18b08
+00000bf3f1ca8d1f229aa50b3093b2be
+00000512874cc40b764728993dd71ffb
+0000069710beec5f9a1943a610be52d8
+00000a8da36ee9b7e193f956cf701911
+00000776b6ff41a7e30ed2d4b6663351
+</code></pre>
+<p>All that&#39;s left is to concatenate the 6th characters in these hashes into the
+password. I can just do this with my eyes, of course, or I can write a little
+map to do it for me!</p>
+
+<pre><code class="lang-ruby">puts acc.map { |<span class="hljs-params">e</span>| e[<span class="hljs-number">5</span>] }.join
+</code></pre>
+<p>This returns <code>801b56a7</code>, which is, in fact, my password.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="expense"></div>
+
+<h1 id="this-is-expensive">This is Expensive</h1>
+<p>This was the first puzzle of the year that could be considered
+at all <em>computationally expensive.</em>. Indeed, it is a <em>feature</em>, not a bug, for
+a cryptographic hashing function to be at least somewhat difficult to compute.
+Though md5&#39;s are now mostly considered broken for cryptography, it&#39;s still what
+they were designed to do. If it takes actual time to compute a hash, it&#39;s that
+much harder to brute force guess a password if all you have is a hash.</p>
+<p>But how long does this solution take, anyway?</p>
+
+<pre><code>real    0m14.256s
+user    0m14.011s
+sys    0m0.096s
+</code></pre>
+<blockquote>
+<p>This is the output of <code>time</code>. If you aren&#39;t familiar with that, <a href="http://stackoverflow.com/questions/556405/what-do-real-user-and-sys-mean-in-the-output-of-time1">read
+this</a>.</p>
+</blockquote>
+<p>That&#39;s not terrible, that&#39;s not even really <em>bad</em>, considering all
+the processing we&#39;re doing. How much is that? How many
+hashes did we process? If I just add <code>puts i</code> after the loop breaks out:</p>
+
+<pre><code>7777890
+</code></pre>
+<p>So, almost 8 million. That&#39;s, a lot? I mean, not really, by computering
+standards, but it&#39;s enough to kind of take a little while, I guess?</p>
+<p>None of that is the point really, though, because it&#39;s not that I needed to
+have faster or better code to solve the problem. 15 seconds is not that long to
+wait. But- what if I want it to go faster! What if I had to process 800 million
+hashes? Or 80 billion? Then we&#39;d be bumping up against some more aggressive
+limits.</p>
+<p>And that&#39;s the rabbit. &quot;What is a hashing algorithm, and how fast can I make it run.&quot;</p>
+<p>And here is where I followed it.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="hole"></div>
+
+<h1 id="down-the-hole">Down the hole</h1>
+<p>I wonder if I can write a faster implementation of the <a href="https://en.wikipedia.org/wiki/MD5">md5 hashing
+algorithm</a> than the one that Ruby is using?
+I don&#39;t know if I can, maybe? First I would have to be able to write <em>any</em>
+implementation of the md5 hashing algorithm. How would I do that?</p>
+<p>To start with, I can read the <a href="https://en.wikipedia.org/wiki/MD5">wiki page</a>, which contains
+some psuedocode, that&#39;s helpful.</p>
+<p>I can read the <a href="https://rosettacode.org/wiki/MD5">rosetta code</a> page for this
+task, which contains working examples in many different languages, that is also
+helpful.</p>
+<p>And I also have access to the <a href="https://www.ietf.org/rfc/rfc1321.txt">original md5
+specification</a> which contains both the
+canonical explanation of the algorithm and a reference implementation.</p>
+<p>So that&#39;s a good start. This is enough information to allow me to write my own
+version.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="own"></div>
+
+<h1 id="my-own-md5-function">My own md5 function</h1>
+<p>Let&#39;s say I want the md5 hash sum of my door key. It would look like this:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">input</span>)
+    <span class="hljs-comment"># stuff stuff stuff</span>
+<span class="hljs-keyword">end</span>
+
+puts md5 <span class="hljs-string">&quot;abbhdwsy&quot;</span>
+</code></pre>
+<p>and it should return</p>
+
+<pre><code>b0d0113e0f3745b2eb8d0db1b6aad818
+</code></pre>
+<p>The first thing I need to do is turn the ruby string into an array of bytes.</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">input</span>)
+    message = input.bytes
+<span class="hljs-keyword">end</span>
+
+puts md5 <span class="hljs-string">&quot;abbhdwsy&quot;</span>
+</code></pre>
+<p>yields:</p>
+
+<pre><code class="lang-ruby">[<span class="hljs-number">97</span>, <span class="hljs-number">98</span>, <span class="hljs-number">98</span>, <span class="hljs-number">104</span>, <span class="hljs-number">100</span>, <span class="hljs-number">119</span>, <span class="hljs-number">115</span>, <span class="hljs-number">121</span>]
+</code></pre>
+<p>Which are the <em>numerical values</em> of the characters in my string. These are
+&quot;bytes&quot; in the sense that each value in the byte array is guaranteed to be no
+more than 255, even if the input is unicode, you&#39;re going to get the bytes back
+in byte format. This unicode lambda is a single character when it is outputted to the
+screen,</p>
+
+<pre><code class="lang-ruby">p <span class="hljs-string">&quot;λ&quot;</span>.bytes
+</code></pre>
+<p>but its machine representation is in fact two bytes long:</p>
+
+<pre><code>[206, 187]
+</code></pre>
+<p><a href="https://www.youtube.com/watch?v=MijmeoH9LT4">Unicode!</a></p>
+<p>Externally to the interpreter, I have no way of really knowing how ruby is
+storing these values. They could be signed 64 bit ints for all I know!
+And even if they are being stored as bytes- they get autopromoted just fine.</p>
+
+<pre><code class="lang-ruby">[<span class="hljs-number">97</span>, <span class="hljs-number">98</span>, <span class="hljs-number">98</span>, <span class="hljs-number">104</span>, <span class="hljs-number">100</span>, <span class="hljs-number">119</span>, <span class="hljs-number">115</span>, <span class="hljs-number">121</span>].map {|<span class="hljs-params">e</span>| e ** <span class="hljs-number">10</span>}
+</code></pre>
+
+<pre><code class="lang-ruby">[<span class="hljs-number">73742412689492826049</span>, <span class="hljs-number">81707280688754689024</span>, <span class="hljs-number">81707280688754689024</span>, <span class="hljs-number">148024428491834392576</span>, <span class="hljs-number">100000000000000000000</span>, <span class="hljs-number">569468379011812486801</span>, <span class="hljs-number">404555773570791015625</span>, <span class="hljs-number">672749994932560009201</span>]
+</code></pre>
+<p>:shrug:! Ruby has plenty of ways to work with bits and bytes, as you&#39;ll see,
+but this is definitely not its strong point. This is usually a Good Thing- all
+these messy little details are left to the interpreter and I can just focus on
+expressing a problem and solution, or whatever. But when you&#39;re trying to
+implement something to a spec and doing bit fiddly things... well...</p>
+<p>The next step is to add some padding! All md5 input gets padded to add up to a
+multiple of 512 bits. If it&#39;s <em>already</em> a multiple of 512, it gets padded one whole
+new chunk.</p>
+<p>The padding always starts with a 1 and then contains a bunch of 0&#39;s until the
+last NTH bytes, which are the length of the original input value&#39;s length <em>in bits</em>
+in little endian format. Does this sound confusing? It kind of is! But let&#39;s go
+through it &#39;bit by bit&#39;</p>
+<blockquote>
+<p>lol</p>
+</blockquote>
+<p>First, we&#39;ll grab the length after we split the input string into a byte array
+but before we do anything else to it.</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">input</span>)
+    message = input.bytes
+    orig_length = message.bytes.length
+<span class="hljs-keyword">end</span>
+
+puts md5 <span class="hljs-string">&quot;abbhdwsy&quot;</span>
+</code></pre>
+<p>It&#39;s important to split it into bytes first! In the case of our earlier unicode
+example and how ruby thinks about things...</p>
+
+<pre><code class="lang-ruby"><span class="hljs-string">&quot;λλλ&quot;</span>.length <span class="hljs-comment"># 3</span>
+<span class="hljs-string">&quot;λλλ&quot;</span>.bytes.length <span class="hljs-comment"># 6</span>
+</code></pre>
+<p>this gives me</p>
+
+<pre><code>8
+</code></pre>
+<p>Which makes sense, because <code>&quot;abbhdwsy&quot;</code> is 8 characters long and none of them
+are more than one byte long in unicode because they all used to be ascii!</p>
+<p>But remember, I&#39;m going to want the length <em>in bits</em>. Ok, I&#39;ve already got 8
+bytes, and there are 8 bits in a byte, so</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">input</span>)
+    message = input.bytes
+    orig_length_in_bits = message.length * <span class="hljs-number">8</span>
+<span class="hljs-keyword">end</span>
+
+puts md5 <span class="hljs-string">&quot;abbhdwsy&quot;</span>
+</code></pre>
+
+<pre><code>64
+</code></pre>
+<p>I&#39;ll just hold onto that for later.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="padding"></div>
+
+<h1 id="padding">Padding</h1>
+<p>Next, comes the padding. I&#39;m doing everything with byte sized operations since
+I am simply building this as a little prototype for turning strings into md5
+hashes... a real md5 implementation has to support streams of arbitrary numbers
+of bits, but assuming the smallest unit I&#39;m going to deal with is a byte is ok
+for learning.</p>
+<p>I know I need to append a single <code>1</code> bit to the input and then start padding
+with zeros. I might be tempted to do this:</p>
+
+<pre><code class="lang-ruby">message &lt;&lt; <span class="hljs-number">1</span>
+</code></pre>
+<p>But don&#39;t be fooled! This is a 1, yes, but it&#39;s a whole byte at least on its
+own! This operation would give me this:</p>
+
+<pre><code class="lang-ruby">[<span class="hljs-number">97</span>, <span class="hljs-number">98</span>, <span class="hljs-number">98</span>, <span class="hljs-number">104</span>, <span class="hljs-number">100</span>, <span class="hljs-number">119</span>, <span class="hljs-number">115</span>, <span class="hljs-number">121</span>, <span class="hljs-number">1</span>]
+</code></pre>
+<p>that might look right? But it&#39;s not! Consider if I look at the binary values of
+all of these, padded to make them output as if they are indeed 8 bits long:</p>
+
+<pre><code class="lang-ruby">p [<span class="hljs-number">97</span>, <span class="hljs-number">98</span>, <span class="hljs-number">98</span>, <span class="hljs-number">104</span>, <span class="hljs-number">100</span>, <span class="hljs-number">119</span>, <span class="hljs-number">115</span>, <span class="hljs-number">121</span>, <span class="hljs-number">1</span>].map {|<span class="hljs-params">e</span>| e.to_s(<span class="hljs-number">2</span>).rjust(<span class="hljs-number">8</span>, <span class="hljs-string">&#x27;0&#x27;</span>)}
+</code></pre>
+<p>gives me:</p>
+
+<pre><code class="lang-ruby">[<span class="hljs-string">&quot;01100001&quot;</span>, <span class="hljs-string">&quot;01100010&quot;</span>, <span class="hljs-string">&quot;01100010&quot;</span>, <span class="hljs-string">&quot;01101000&quot;</span>, <span class="hljs-string">&quot;01100100&quot;</span>, <span class="hljs-string">&quot;01110111&quot;</span>, <span class="hljs-string">&quot;01110011&quot;</span>, <span class="hljs-string">&quot;01111001&quot;</span>, <span class="hljs-string">&quot;00000001&quot;</span>]
+</code></pre>
+<p>As you can see, if we think of each integer in the array as a full byte, that
+<code>1</code> is indeed worth 8 bits by itself! What we really wanted is a single bit set
+to one followed by some number of other bits set to zero. We really want that last byte to read:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-number">10000000</span>
+</code></pre>
+<p>So this is interesting, right? We can&#39;t just append a single bit to this byte
+array, because ruby doesn&#39;t make that easy (there may be a way, but work with
+me!). Plus, as I said, we&#39;re sort of just working with bytes here, right? So
+what needs to be appended to the array if not <code>1</code>?</p>
+
+<pre><code class="lang-ruby">p <span class="hljs-string">&quot;10000000&quot;</span>.to_i(<span class="hljs-number">2</span>)
+</code></pre>
+<p>Of course!</p>
+
+<pre><code class="lang-ruby"><span class="hljs-number">128</span>
+</code></pre>
+<p>so we want to append <code>128</code> to the byte array to start the padding!</p>
+
+<pre><code class="lang-ruby">message &lt;&lt; <span class="hljs-number">128</span>
+</code></pre>
+<blockquote>
+<p>You could also write <code>128</code> in its binary format as <code>0b10000000</code> or its
+hexadecimal format as <code>0x80</code>. These are all exactly the same value.</p>
+</blockquote>
+<p>Now, I pad this array with <code>0</code>&#39;s until it&#39;s length in bytes is a multiple of
+512 bits. (That&#39;s 64 bytes!)</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">while</span> message.length % <span class="hljs-number">64</span> != <span class="hljs-number">0</span>
+    message &lt;&lt; <span class="hljs-number">0</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>That gives me,</p>
+
+<pre><code class="lang-ruby">[<span class="hljs-number">97</span>, <span class="hljs-number">98</span>, <span class="hljs-number">98</span>, <span class="hljs-number">104</span>, <span class="hljs-number">100</span>, <span class="hljs-number">119</span>, <span class="hljs-number">115</span>, <span class="hljs-number">121</span>, <span class="hljs-number">128</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>]
+</code></pre>
+<p>But ah! I missed something, right? I need to use the last 64 bits of this
+padding to fill in the length that I collected from the original message!</p>
+<p>So I stop that modulo 8 bytes early:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">while</span> message.length % <span class="hljs-number">64</span> != <span class="hljs-number">56</span>
+    message &lt;&lt; <span class="hljs-number">0</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>Now I need to get <code>orig_length_in_bits</code> into the right format! This part was
+tricky to me, because I am not good at <code>pack</code> and <code>unpack</code> in Ruby, which
+afaict is a thing that it inherited from perl and could probably do this. But
+oh well, this worked too!</p>
+<p>I&#39;ll take that original value I had grabbed earlier:</p>
+
+<pre><code class="lang-ruby">orig_len_in_bits <span class="hljs-comment"># 64</span>
+</code></pre>
+<p>And I&#39;ll turn it into a string of its hexadecimal representation!</p>
+
+<pre><code class="lang-ruby">orig_len_in_bits.to_s(<span class="hljs-number">16</span>) <span class="hljs-comment"># &quot;40&quot;</span>
+</code></pre>
+<p>This will ensure that every two characters represents one byte.</p>
+<p>Now, I pad this string with zeros to fill out the rest of the space I need to
+fill on the remainder of the message space that I left for this! Remember, I
+left 64 bits, which is 8 bytes, which is 16 characters long in hexadecimal
+representation...</p>
+
+<pre><code class="lang-ruby"> orig_len_in_bits.to_s(<span class="hljs-number">16</span>).rjust(<span class="hljs-number">16</span>, <span class="hljs-string">&#x27;0&#x27;</span>) <span class="hljs-comment"># &quot;0000000000000040&quot;</span>
+</code></pre>
+<blockquote>
+<p>Hey ps if you find this really confusing then let&#39;s start a club! There is a
+reason why bit twiddling is hard, and very arguably much <em>harder</em> in higher
+level languages that normally take great pains to shield you from this
+befuddlery.</p>
+</blockquote>
+<p>Right, so now I just need to split this up into its constituent hexadecimal
+byte character pairs! I can do this with <code>scan</code>, which will return an array of
+matches to a regular expression that are ordered by where they are in the string.</p>
+
+<pre><code class="lang-ruby">orig_len_in_bits
+    .to_s(<span class="hljs-number">16</span>)
+    .rjust(<span class="hljs-number">16</span>, <span class="hljs-string">&#x27;0&#x27;</span>)
+    .scan(<span class="hljs-regexp">/../</span>)
+</code></pre>
+<p>That returns:</p>
+
+<pre><code class="lang-ruby">[<span class="hljs-string">&quot;00&quot;</span>, <span class="hljs-string">&quot;00&quot;</span>, <span class="hljs-string">&quot;00&quot;</span>, <span class="hljs-string">&quot;00&quot;</span>, <span class="hljs-string">&quot;00&quot;</span>, <span class="hljs-string">&quot;00&quot;</span>, <span class="hljs-string">&quot;00&quot;</span>, <span class="hljs-string">&quot;40&quot;</span>]
+</code></pre>
+<blockquote>
+<p>Almost there hang in there</p>
+</blockquote>
+<p>Now, we map over this array and replace each string with an actual numerical
+value that is not a string. Notice that <code>hex</code> parses the string and returns its
+actual integer value for that byte.</p>
+
+<pre><code class="lang-ruby">orig_len_in_bits
+    .to_s(<span class="hljs-number">16</span>)
+    .rjust(<span class="hljs-number">16</span>, <span class="hljs-string">&#x27;0&#x27;</span>)
+    .scan(<span class="hljs-regexp">/../</span>)
+    .map{|<span class="hljs-params">e</span>| e.hex}
+</code></pre>
+
+<pre><code class="lang-ruby">[<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">64</span>]
+</code></pre>
+<p>Hey guess what? that&#39;s it. Actually wait not because it&#39;s gotta be <em>little
+endian</em> again. Whatevs nbd.</p>
+
+<pre><code class="lang-ruby">message &lt;&lt; (orig_len_in_bits
+    .to_s(<span class="hljs-number">16</span>)
+    .rjust(<span class="hljs-number">16</span>, <span class="hljs-string">&#x27;0&#x27;</span>)
+    .scan(<span class="hljs-regexp">/../</span>)
+    .map{|<span class="hljs-params">e</span>| e.hex}
+    .reverse).flatten!
+</code></pre>
+<p>Now that I&#39;ve completed the padding operation, my message looks like this:</p>
+
+<pre><code class="lang-ruby">[<span class="hljs-number">97</span>, <span class="hljs-number">98</span>, <span class="hljs-number">98</span>, <span class="hljs-number">104</span>, <span class="hljs-number">100</span>, <span class="hljs-number">119</span>, <span class="hljs-number">115</span>, <span class="hljs-number">121</span>, <span class="hljs-number">128</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">64</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>]
+</code></pre>
+<p>Each of these elements represents one byte, and the array itself is 64 bytes
+long, which is 512 bits. Keep in mind that this is a byte array, and because of
+the way we generated it, no number in the array will ever be more than 255,
+which is the maximum value of a byte. But to reiterate, I have neither insight
+nor control over how ruby is storing these values, so I have to be careful
+about maintaining it in that state!</p>
+<p>I&#39;ll just pull this into its own little helper function:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">msg_to_byte_array</span>(<span class="hljs-params">message</span>)
+    message = message.bytes
+    orig_len_in_bits = (<span class="hljs-number">8</span> * message.length) &amp; <span class="hljs-number">0xffffffffffffffff</span>
+    message &lt;&lt; <span class="hljs-number">0x80</span>
+    <span class="hljs-keyword">while</span> message.length % <span class="hljs-number">64</span> != <span class="hljs-number">56</span>
+        message &lt;&lt; <span class="hljs-number">0</span>
+    <span class="hljs-keyword">end</span>
+    message
+    (message &lt;&lt;
+        orig_len_in_bits
+        .to_s(<span class="hljs-number">16</span>)
+        .rjust(<span class="hljs-number">16</span>, <span class="hljs-string">&#x27;0&#x27;</span>)
+        .scan(<span class="hljs-regexp">/../</span>)
+        .map{|<span class="hljs-params">e</span>| e.hex}
+        .reverse).flatten!
+    <span class="hljs-keyword">return</span> message
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>This is obviously the most efficient way you could ever perform this operation
+in any language. This hashing function is going to be <em>ludicrous speed!</em></p>
+<p>Oh yeah, one more detail to note! The spec says that in the event that the
+length of the input is more than the maximum number you can encode in the 64
+bits of padding left over to hold the size, that you&#39;ll just take the 64 least
+significant bits and discard the rest. This is like, really really long.
+18446744073709551615 bits long, in fact, or 2305843009213693952 bytes. Which is
+2 <a href="https://en.wikipedia.org/wiki/Exbibyte">exbibytes</a>, which are actual things
+I didn&#39;t know existed until right now.</p>
+<blockquote>
+<p>Wait really? That&#39;s <em>really</em> a lot. I don&#39;t think we&#39;re going to be using md5s
+very often on exbibytes worth of data. But what do I know.</p>
+</blockquote>
+<p>Anyway, just bitwise <code>and</code>ing (<code>&amp;</code>) the length in bits against
+18446744073709551615 will discard those higher order bits that we&#39;re very
+likely to run into in the many applications this implementation will be used
+for.</p>
+
+<pre><code class="lang-ruby">orig_len_in_bits = (<span class="hljs-number">8</span> * message.length) &amp; <span class="hljs-number">0xffffffffffffffff</span>
+</code></pre>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="time"></div>
+
+<h1 id="time-to-actually-process-the-hash">Time to actually process the hash</h1>
+<p>We&#39;re here:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">message</span>)
+    message = msg_to_byte_array(message)
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>...and now it&#39;s time to <em>actually process the hash</em>. If you haven&#39;t already, jump back
+to the wiki for the <a href="https://en.wikipedia.org/wiki/MD5">md5 algorithm</a> and give
+it a once over. It&#39;s not really that it&#39;s complicated per se- all of the most
+complex operations are straightforwardly laid out for me there, but it is definitely
+really fiddly, and easy to mess up.</p>
+<p>First, we initialize an accumulator with some predefined constants.</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">message</span>)
+    message = msg_to_byte_array(message)
+    <span class="hljs-variable">@acc</span> = [ <span class="hljs-number">0x67452301</span>, <span class="hljs-number">0xefcdab89</span>, <span class="hljs-number">0x98badcfe</span>, <span class="hljs-number">0x10325476</span> ]
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>On first glance this looks like nothing, but if you squint you might notice
+that it&#39;s actually these nibbles in this order:</p>
+
+<pre><code>01234567 89abcdef fedcba98 76543210
+</code></pre>
+<p>expressed in <em>little endian</em>.</p>
+<p>Next we&#39;re going to loop over the input message in chunks and adjust the
+accumulator values as we go on each pass in a predetermined way. We&#39;re always
+going to end.</p>
+<p>We do the outer loop one 512 byte chunk at a time. For this input, it&#39;s only
+one chunk, but we might as well write it to accomodate more.</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">message</span>)
+    message = msg_to_byte_array(message)
+    <span class="hljs-variable">@acc</span> = [ <span class="hljs-number">0x67452301</span>, <span class="hljs-number">0xefcdab89</span>, <span class="hljs-number">0x98badcfe</span>, <span class="hljs-number">0x10325476</span> ]
+
+    (<span class="hljs-number">0</span>...message.count/<span class="hljs-number">64</span>).each <span class="hljs-keyword">do</span> |<span class="hljs-params">message_index_base</span>|
+    <span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>In this example, <code>message.count / 64</code> equals <code>1</code>, but ruby&#39;s three dotted range
+is exclusive, so this loop is really saying &quot;do this one time, for
+<code>message_index_base</code> of <code>0</code>.</p>
+<p>Within this loop, we perform some specific operations 64 times. So, an inner
+loop would look like:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">message</span>)
+    message = msg_to_byte_array(message)
+    <span class="hljs-variable">@acc</span> = [ <span class="hljs-number">0x67452301</span>, <span class="hljs-number">0xefcdab89</span>, <span class="hljs-number">0x98badcfe</span>, <span class="hljs-number">0x10325476</span> ]
+
+    (<span class="hljs-number">0</span>...message.count / <span class="hljs-number">64</span>).each <span class="hljs-keyword">do</span> |<span class="hljs-params">message_index_base</span>|
+        (<span class="hljs-number">0</span>..<span class="hljs-number">63</span>).each <span class="hljs-keyword">do</span> |<span class="hljs-params">i</span>|
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>In the outer loop, we&#39;ll prepare a few variables to use in the inner loop.</p>
+<p>First, we extract the chunk of the input message that we&#39;re interested in by
+using the <code>message_index_base</code>:</p>
+
+<pre><code class="lang-ruby">(<span class="hljs-number">0</span>...message.count/<span class="hljs-number">64</span>).each <span class="hljs-keyword">do</span> |<span class="hljs-params">message_index_base</span>|
+    message_index = message_index_base * <span class="hljs-number">64</span>
+    chunk = message[message_index..message_index + <span class="hljs-number">64</span>]
+
+    (<span class="hljs-number">0</span>..<span class="hljs-number">63</span>).each <span class="hljs-keyword">do</span> |<span class="hljs-params">i</span>|
+    <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>Again, in this case, it&#39;s going to be the whole message.</p>
+<p>Oh, we&#39;ll also destructure the accumulator values into some temporary vars that
+we can manipulate in the inner loop.</p>
+
+<pre><code class="lang-ruby">a, b, c, d = @acc
+</code></pre>
+<p>Now, for each iteration of this inner loop, we&#39;ll perform a few bit fiddles and
+then mutate the temporary variables. The operations are different depending on
+the position we&#39;re at in the chunk</p>
+
+<pre><code class="lang-ruby">a, b, c, d = <span class="hljs-variable">@acc</span>
+(<span class="hljs-number">0</span>..<span class="hljs-number">63</span>).each <span class="hljs-keyword">do</span> |<span class="hljs-params">i</span>|
+    <span class="hljs-keyword">if</span> i &lt; <span class="hljs-number">16</span>
+        f = (b &amp; c) |<span class="hljs-params"> (~b &amp; d)
+        g = i
+    <span class="hljs-keyword">elsif</span> i &lt; 32
+        f = (d &amp; b) </span>| (~d &amp; c)
+        g = (<span class="hljs-number">5</span> * i + <span class="hljs-number">1</span>) % <span class="hljs-number">16</span>
+    <span class="hljs-keyword">elsif</span> i &lt; <span class="hljs-number">48</span>
+        f = b ^ c ^ d
+        g = (<span class="hljs-number">3</span> * i + <span class="hljs-number">5</span>) % <span class="hljs-number">16</span>
+    <span class="hljs-keyword">elsif</span> i &lt; <span class="hljs-number">64</span>
+        f = c ^ (b |<span class="hljs-params"> ~d)
+        g = (7 * i) % 16
+    <span class="hljs-keyword">end</span>
+
+    to_rotate = a + f + @constants[i] + chunk[4*g...4*g+4].to_int
+    new_b = b + left_rotate(to_rotate, @rotate_amounts[i])
+    a, b, c, d = d, new_b, b, c
+<span class="hljs-keyword">end</span></span>
+</code></pre>
+<p>Gross, right? :D</p>
+<p>I don&#39;t have much to say about why these operations are what they are or the
+cryptography behind them. Maybe I&#39;ll read up on that sometime, but for now,
+this is just a play by play of an implementation of the existing spec.</p>
+<p>The three lines at the end of the inner loop take the computed <code>f</code> and <code>g</code>
+values and <em>doooo stuffff</em> with them. Let&#39;s unpack those lines!</p>
+
+<pre><code class="lang-ruby">to_rotate = a + f + <span class="hljs-variable">@constants</span>[i] + chunk[<span class="hljs-number">4</span>*g...<span class="hljs-number">4</span>*g+<span class="hljs-number">4</span>].to_int
+</code></pre>
+<p>This is a preperatory step. The only thing here we haven&#39;t seen before is the
+<code>@constants</code> array that we&#39;re grabbing something out of. We can compute them
+like this:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-comment"># Use binary integer part of the sines of integers (Radians) as constants:</span>
+<span class="hljs-variable">@constants</span> = (<span class="hljs-number">0</span>.. <span class="hljs-number">63</span>).map { |<span class="hljs-params">i</span>| (<span class="hljs-number">2</span>**<span class="hljs-number">32</span> * Math.sin(i + <span class="hljs-number">1</span>).abs).floor }
+</code></pre>
+<p>We take that and &#39;rotate&#39; it using a little helper function:</p>
+
+<pre><code class="lang-ruby">new_b = b + left_rotate(to_rotate, <span class="hljs-variable">@rotate_amounts</span>[i])
+</code></pre>
+<p>That looks like this:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">left_rotate</span>(<span class="hljs-params">x, amount</span>)
+    x &amp;= <span class="hljs-number">0xffffffff</span>
+    ((x &lt;&lt; amount) |<span class="hljs-params"> (x &gt;&gt; (32 - amount))) &amp; 0xffffffff
+<span class="hljs-keyword">end</span></span>
+</code></pre>
+<p>(notice the conservative <code>&amp;</code>&#39;s)</p>
+<p>Oh, and <code>@rotate_amounts</code> is another collection of constants.</p>
+<p>They look like this!</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@rotate_amounts</span> = [ <span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>,  <span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>,  <span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>,  <span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>,
+                    <span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>,  <span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>,  <span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>,  <span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>,
+                    <span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>,  <span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>,  <span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>,  <span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>,
+                    <span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span>,  <span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span>,  <span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span>,  <span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span> ]
+</code></pre>
+<p>Which can be generated a little less verbosely as:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@rotate_amounts</span> = [[<span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>],
+                   [<span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>],
+                   [<span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>],
+                   [<span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span>]].map{|<span class="hljs-params">e</span>|[e,e,e,e]}.flatten
+</code></pre>
+<p>(yay ruby!)</p>
+<p>Lastly, reassign the the temporary vars before starting the next loop:</p>
+
+<pre><code class="lang-ruby">a, b, c, d = d, new_b, b, c
+</code></pre>
+<p>After this chunk has been processed, we just add the values back into the accumulator:</p>
+
+<pre><code class="lang-ruby">[a,b,c,d].each_with_index <span class="hljs-keyword">do</span> |<span class="hljs-params">val, i</span>|
+    <span class="hljs-variable">@acc</span>[i] += val
+    <span class="hljs-variable">@acc</span>[i] &amp;= <span class="hljs-number">0xffffffff</span>
+<span class="hljs-keyword">end</span>
+</code></pre>
+<p>(notice we&#39;re again guarding against overflow with an <code>&amp;</code>)</p>
+<p>Hey that&#39;s it! (almost).</p>
+<p>The whole function looks like this now:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">def</span> <span class="hljs-title function_">md5</span>(<span class="hljs-params">message</span>)
+    message = msg_to_byte_array(message)
+    <span class="hljs-variable">@acc</span> = [ <span class="hljs-number">0x67452301</span>, <span class="hljs-number">0xefcdab89</span>, <span class="hljs-number">0x98badcfe</span>, <span class="hljs-number">0x10325476</span> ]
+
+    (<span class="hljs-number">0</span>...message.count.send(<span class="hljs-symbol">:/</span>, <span class="hljs-number">64</span>)).each <span class="hljs-keyword">do</span> |<span class="hljs-params">message_index_base</span>|
+        message_index = message_index_base * <span class="hljs-number">64</span>
+        chunk = message[message_index..message_index + <span class="hljs-number">63</span>]
+
+        a, b, c, d = <span class="hljs-variable">@acc</span>
+
+        (<span class="hljs-number">0</span>..<span class="hljs-number">63</span>).each <span class="hljs-keyword">do</span> |<span class="hljs-params">i</span>|
+            <span class="hljs-keyword">if</span> i &lt; <span class="hljs-number">16</span>
+                f = (b &amp; c) |<span class="hljs-params"> (~b &amp; d)
+                g = i
+            <span class="hljs-keyword">elsif</span> i &lt; 32
+                f = (d &amp; b) </span>| (~d &amp; c)
+                g = (<span class="hljs-number">5</span> * i + <span class="hljs-number">1</span>) % <span class="hljs-number">16</span>
+            <span class="hljs-keyword">elsif</span> i &lt; <span class="hljs-number">48</span>
+                f = b ^ c ^ d
+                g = (<span class="hljs-number">3</span> * i + <span class="hljs-number">5</span>) % <span class="hljs-number">16</span>
+            <span class="hljs-keyword">elsif</span> i &lt; <span class="hljs-number">64</span>
+                f = c ^ (b |<span class="hljs-params"> ~d)
+                g = (7 * i) % 16
+            <span class="hljs-keyword">end</span>
+
+            to_rotate = a + f + @constants[i] + chunk[4*g...4*g+4].to_int
+            new_b = b + left_rotate(to_rotate, @rotate_amounts[i])
+            a, b, c, d = d, new_b, b, c
+        <span class="hljs-keyword">end</span>
+
+        [a,b,c,d].each_with_index <span class="hljs-keyword">do</span> </span>|val, i|<span class="hljs-params">
+            @acc[i] += val
+            @acc[i] &amp;= 0xffffffff
+        <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+    @acc
+<span class="hljs-keyword">end</span></span>
+</code></pre>
+<blockquote>
+<p>If you&#39;re wondering about that stupid <code>.send(:/, 64)</code> thing, blame my syntax highlighter.</p>
+</blockquote>
+<p>Now,</p>
+
+<pre><code>md5(&quot;abbhdwsy&quot;)
+</code></pre>
+<p>Yields:</p>
+
+<pre><code class="lang-ruby">[<span class="hljs-number">1041354928</span>, <span class="hljs-number">2990880527</span>, <span class="hljs-number">2970455531</span>, <span class="hljs-number">416852662</span>]
+</code></pre>
+<p>Ah, oh yeah, we gotta transform those values into a hexadecimal output string!
+This is a little tricky but not too bad. First, we need to shift each of these
+values over so that when we &quot;or&quot; (<code>|</code>) all 4 32 bits together, we get a single 128 bit
+number.</p>
+<p>First we&#39;ll turn the accumulator into an enumerator:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@acc</span>.each_with_index
+</code></pre>
+<p>then map over the tuple pairs of element and index to shift the bits:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@acc</span>.each_with_index
+    .map{|<span class="hljs-params">e,i</span>| e &lt;&lt; (<span class="hljs-number">32</span> * i)}
+</code></pre>
+<p>then reduce the resulting elements by or-ring them all together:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@acc</span>.each_with_index
+    .map{|<span class="hljs-params">e,i</span>| e &lt;&lt; (<span class="hljs-number">32</span> * i)}
+    .reduce{|<span class="hljs-params">acc, e</span>| acc |<span class="hljs-params"> e}</span>
+</code></pre>
+<p>Ok still going... turn the resulting number into a hexadecimal string:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@acc</span>.each_with_index
+    .map{|<span class="hljs-params">e,i</span>| e &lt;&lt; (<span class="hljs-number">32</span> * i)}
+    .reduce{|<span class="hljs-params">acc, e</span>| acc |<span class="hljs-params"> e}
+    .to_s(16)</span>
+</code></pre>
+<p>then pad the string to make sure we have the right number of digits:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@acc</span>.each_with_index
+    .map{|<span class="hljs-params">e,i</span>| e &lt;&lt; (<span class="hljs-number">32</span> * i)}
+    .reduce{|<span class="hljs-params">acc, e</span>| acc |<span class="hljs-params"> e}
+    .to_s(16)
+    .rjust(32, &#x27;0&#x27;)</span>
+</code></pre>
+<p><em>then</em> split <em>that</em> string up into pairs of characters to isolate the bytes</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@acc</span>.each_with_index
+    .map{|<span class="hljs-params">e,i</span>| e &lt;&lt; (<span class="hljs-number">32</span> * i)}
+    .reduce{|<span class="hljs-params">acc, e</span>| acc |<span class="hljs-params"> e}
+    .to_s(16)
+    .rjust(32, &#x27;0&#x27;)
+    .scan(/../)</span>
+</code></pre>
+<p><em>then</em> reverse the whole thing and join it together to get you...</p>
+
+<pre><code class="lang-ruby"><span class="hljs-variable">@acc</span>.each_with_index
+    .map{|<span class="hljs-params">e,i</span>| e &lt;&lt; (<span class="hljs-number">32</span> * i)}
+    .reduce{|<span class="hljs-params">acc, e</span>| acc |<span class="hljs-params"> e}
+    .to_s(16)
+    .rjust(32, &#x27;0&#x27;)
+    .scan(/../)
+    .reverse.join</span>
+</code></pre>
+<p><em>gasp</em> <em>the final output</em>.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="output"></div>
+
+<h1 id="output">Output</h1>
+<p>Did it work?</p>
+
+<pre><code class="lang-ruby"><span class="hljs-keyword">require</span> <span class="hljs-string">&quot;digest&quot;</span>
+<span class="hljs-variable">@door</span> = <span class="hljs-string">&quot;abbhdwsy&quot;</span>
+puts md5(<span class="hljs-variable">@door</span>)
+puts Digest::<span class="hljs-variable constant_">MD5</span>.hexdigest(<span class="hljs-variable">@door</span>)
+</code></pre>
+
+<pre><code>b0d0113e0f3745b2eb8d0db1b6aad818
+b0d0113e0f3745b2eb8d0db1b6aad818
+</code></pre>
+<p>Sweet.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="quite"></div>
+
+<h1 id="i-am-quite-sure-my-homegrown-hashing-function-will-outperform-ruby-s-built-in-version">I am quite sure my homegrown hashing function will outperform Ruby&#39;s built in version</h1>
+<p>Now that I have my custom built md5 hashing function, I bet I can use it to
+compute the answer to this question a lot faster.</p>
+<p>I swapped the function out and tried it out with the same solution code from above.</p>
+
+<pre><code>real    38m18.696s
+</code></pre>
+<p>Wow ok, that&#39;s hella slow, but why? I thought I was using Ruby&#39;s built in
+function, so shouldn&#39;t my own version written in Ruby be comparable on the same task?</p>
+<p>The answer to this is pretty simple. Ruby&#39;s built in function isn&#39;t written in
+Ruby at all, it&#39;s a compiled C extension! The business end of the
+<code>Digest::MD5.hexdigest()</code> is <em>all</em> C, and it turns out it&#39;s already <em>really
+fast</em>. <a href="https://github.com/ruby/ruby/blob/trunk/ext/digest/md5/md5.c">It lives here in the
+source</a>, and was
+first commited by Matz himself in 1998 as a migration commit from Subversion.</p>
+
+<pre><code>commit 3db12e8b236ac8f88db8eb4690d10e4a3b8dbcd4
+Author: matz &lt;matz@b2dd03c8-39d4-4d8f-98ff-823fe69b080e&gt;
+Date:   Fri Jan 16 12:13:05 1998 +0000
+
+    Initial revision
+
+
+    git-svn-id: svn+ssh://ci.ruby-lang.org/ruby/trunk@2 b2dd03c8-39d4-4d8f-98ff-823fe69b080e
+</code></pre>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="c"></div>
+
+<h1 id="let-s-c-">Let&#39;s C.</h1>
+<p>So it&#39;s pretty obvious that writing my own md5 function in pure Ruby is never
+going to cut it. Regardless of how many (of the probably many) inefficiencies
+in the above code I find, stamp out, or reduce, I&#39;m never going to come close
+to the pure C extension that ruby already has built in.</p>
+<p>Here&#39;s an aside about speed. Like many beginners, when I was first learning to
+code I absorbed a lot of information and chatter about programming in general
+and specific programming languages and how they related to each other. But at
+the time, I had no perspective on anything. People often said things like &quot;Ruby
+is slow&quot;. And I thought that meant &quot;Ruby is like, actually really slow and
+useless.&quot; It turns out, well yeah no shit Ruby is slow for really
+computationally intensive tasks like computing an MD5, it&#39;s just <em>not designed</em>
+to excel for that type of application. It&#39;s designed to be flexible, and
+expressive, and a joy to work in, and it&#39;s plenty fast enough for almost
+anything you might want to use it for in a general context like that... but if
+you have a task like this that <em>really is</em> this computationally expensive, well
+<em>of course</em> it&#39;s too slow, and blaming ruby for that just straight up <em>isn&#39;t
+fair,</em> and totally misses the point.</p>
+<p>This goes for Python too! Or other dynamic languages! Python might be faster
+than Ruby for some things, and vice versa, but they are essentially in the same
+class, and designed with similar goals in mind. We can nitpick the differences
+of course, but when you&#39;re talking about apples to oranges, yeah they&#39;re
+different but they&#39;re a lot more similar to each other than say, apples to
+rocketships, you know what I mean?</p>
+<p>The most logical thing to do when you find an application that a dynamic
+language is ill suited to because of speed constraints is simply to not use
+that language. So with that in mind, let&#39;s port that solution to C!</p>
+<p>It&#39;s going to basically have the same shape, let&#39;s start with this:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">char</span> *<span class="hljs-title function_">md5digest</span><span class="hljs-params">(<span class="hljs-type">char</span>* msg)</span> {
+    <span class="hljs-comment">// stuff stuff stuff</span>
+}
+</code></pre>
+<p>Just like in the ruby version, we&#39;re passing in a &quot;string&quot;. C strings are
+<em>already</em> basically represented as contiguous bytes in memory, so we don&#39;t need
+to convert them or anything like that!</p>
+<p>We do have to pad the input though, here&#39;s what I ended up with:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">char</span> *<span class="hljs-title function_">md5digest</span><span class="hljs-params">(<span class="hljs-type">char</span>* msg)</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Message</span>* <span class="hljs-title">padded_msg</span> =</span> md5padding(msg);
+}
+</code></pre>
+<p>A wild helper function appears!</p>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> Message* <span class="hljs-title function_">md5padding</span><span class="hljs-params">(<span class="hljs-type">char</span>* msg)</span> {
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> orig_length_in_bytes = <span class="hljs-built_in">strlen</span>(msg);
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> orig_length_in_bits = (orig_length_in_bytes * <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xffffffffffffffff</span>;
+
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> padded_length = orig_length_in_bytes;
+
+    padded_length += <span class="hljs-number">4</span>;
+    <span class="hljs-keyword">while</span> (padded_length % <span class="hljs-number">64</span> != <span class="hljs-number">0</span>) {
+        padded_length += <span class="hljs-number">1</span>;
+    }
+
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *output_buffer = <span class="hljs-built_in">malloc</span>(padded_length + <span class="hljs-number">1</span>);
+    <span class="hljs-built_in">memcpy</span>(output_buffer, msg, orig_length_in_bytes);
+
+    output_buffer[orig_length_in_bytes] = <span class="hljs-number">0x80</span>;
+    <span class="hljs-type">int</span> i;
+    <span class="hljs-keyword">for</span> (i = orig_length_in_bytes + <span class="hljs-number">1</span>; i % <span class="hljs-number">64</span> != <span class="hljs-number">56</span>; i++) {
+        output_buffer[i] = <span class="hljs-number">0x0</span>;
+    }
+
+<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> proper bit shifting here instead of this garbage &lt;&lt;&lt;</span>
+    output_buffer[i] = orig_length_in_bits;
+    <span class="hljs-keyword">for</span> (++i; i % <span class="hljs-number">64</span> != <span class="hljs-number">0</span>; i++) {
+        output_buffer[i] = <span class="hljs-number">0</span>;
+    }
+<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> proper bit shifting here instead of this garbage ^^^</span>
+
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Message</span>* <span class="hljs-title">output_msg</span> =</span> <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">struct</span> Message));
+    output_msg-&gt;start = output_buffer;
+    output_msg-&gt;size = padded_length;
+    <span class="hljs-keyword">return</span> output_msg;
+}
+</code></pre>
+<p>This function is basically doing the same thing as the ruby version! I grab the
+original length of the input in bytes and bits...</p>
+
+<pre><code class="lang-c">    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> orig_length_in_bytes = <span class="hljs-built_in">strlen</span>(msg);
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> orig_length_in_bits = (orig_length_in_bytes * <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xffffffffffffffff</span>;
+</code></pre>
+<p>Then I compute what the final padded length of the message will be by adding 4
+(4 bytes for the initial <code>1</code> bit followed by zeros...) and then counting how
+many bytes it will take to have a multiple of 64 bytes.</p>
+
+<pre><code class="lang-c">    padded_length += <span class="hljs-number">4</span>;
+    <span class="hljs-keyword">while</span> (padded_length % <span class="hljs-number">64</span> != <span class="hljs-number">0</span>) {
+        padded_length += <span class="hljs-number">1</span>;
+    }
+</code></pre>
+<p>Next I <code>malloc</code> an output buffer with this computed size and copy the original input into it:</p>
+
+<pre><code class="lang-c">    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> *output_buffer = <span class="hljs-built_in">malloc</span>(padded_length);
+    <span class="hljs-built_in">memcpy</span>(output_buffer, msg, orig_length_in_bytes);
+</code></pre>
+<p>Finally, we&#39;ll actually pad the output, with the initial <code>128</code> byte
+(<code>1000000</code>), a bunch of zeros, followed by the original size in bits and a few
+more zeros.</p>
+
+<pre><code class="lang-c">    output_buffer[orig_length_in_bytes] = <span class="hljs-number">0x80</span>;
+    <span class="hljs-type">int</span> i;
+    <span class="hljs-keyword">for</span> (i = orig_length_in_bytes + <span class="hljs-number">1</span>; i % <span class="hljs-number">64</span> != <span class="hljs-number">56</span>; i++) {
+        output_buffer[i] = <span class="hljs-number">0x0</span>;
+    }
+
+<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> proper bit shifting here instead of this garbage &lt;&lt;&lt;</span>
+    output_buffer[i] = orig_length_in_bits;
+    <span class="hljs-keyword">for</span> (++i; i % <span class="hljs-number">64</span> != <span class="hljs-number">0</span>; i++) {
+        output_buffer[i] = <span class="hljs-number">0</span>;
+    }
+<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> proper bit shifting here instead of this garbage ^^^</span>
+</code></pre>
+<p>That TODO is there because as it stands, I&#39;m only saving one byte worth of
+length- the input could only be up to 256 bits (32 bytes) long. This is just
+laziness on my part since my input will never be longer than that for this
+problem space, but it <em>should</em> be a little endian 64 bit (unsigned long) value
+(that conversion from an <code>unsigned long</code> to a little endian long is the &#39;proper
+bit shifting&#39; I&#39;m referring to).</p>
+<blockquote>
+<p>A reminder that also neither of these implementations support arbitrarily
+long bit streams as input, which is part of the official spec. So like, don&#39;t
+use these for anything I guess? Whatevah.</p>
+</blockquote>
+<p>You might have noticed the return value of this padding function is something
+called a <code>Message</code> which is not yet a real thing! I&#39;ll make a simple little
+struct that will hold a pointer to the beginning of the padded message I just
+constructed, and the size of the whole thing. I can&#39;t use <code>strlen()</code> on the padded message because it contains all those padded zeros, which would be incorrectly interpreted as terminating null bytes).</p>
+<blockquote>
+<p>Also like, this is one of those things about C that I feel like really screws
+beginners up. For a while it was easiest for me to think about <code>char*</code> typed
+variables as &quot;strings&quot; which, they are of course, but <em>really</em> they&#39;re a pointer
+to the beginning of a contiguous memory array of indeterminate length, of which
+a null terminated string is a special case. <a href="http://queue.acm.org/detail.cfm?id=2010365">Here&#39;s a neat post about the
+history of null terminated
+strings.</a></p>
+</blockquote>
+
+<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Message</span> {</span>
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>* start;
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> size;
+};
+</code></pre>
+<p>So anyway, I malloc space for that <code>Message</code> and fill the space with both the
+pointer to the beginning of the <code>output_buffer</code> and also the <code>padded_length</code> I
+computed earlier.</p>
+
+<pre><code class="lang-c">    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Message</span>* <span class="hljs-title">output_msg</span> =</span> <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">struct</span> Message));
+    output_msg-&gt;start = output_buffer;
+    output_msg-&gt;size = padded_length;
+    <span class="hljs-keyword">return</span> output_msg;
+}
+</code></pre>
+<p>And I&#39;ve got my thing I need to operate on!</p>
+
+<pre><code class="lang-c"><span class="hljs-type">char</span> *<span class="hljs-title function_">md5digest</span><span class="hljs-params">(<span class="hljs-type">char</span>* msg)</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Message</span>* <span class="hljs-title">padded_msg</span> =</span> md5padding(msg);
+}
+</code></pre>
+<p>From there, the code is essentially identical to the ruby version, with obvious differences for C syntax and types, etc:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">char</span> *<span class="hljs-title function_">md5digest</span><span class="hljs-params">(<span class="hljs-type">char</span>* msg)</span> {
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Message</span>* <span class="hljs-title">padded_msg</span> =</span> md5padding(msg);
+
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> acc[<span class="hljs-number">4</span>] = { <span class="hljs-number">0x67452301</span>, <span class="hljs-number">0xefcdab89</span>, <span class="hljs-number">0x98badcfe</span>, <span class="hljs-number">0x10325476</span> };
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> chunk_index = <span class="hljs-number">0</span>; chunk_index &lt; padded_msg-&gt;size / <span class="hljs-number">64</span>; chunk_index += <span class="hljs-number">64</span>) {
+        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> a,b,c,d; a = acc[<span class="hljs-number">0</span>]; b = acc[<span class="hljs-number">1</span>]; c = acc[<span class="hljs-number">2</span>]; d = acc[<span class="hljs-number">3</span>];
+
+        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> f = <span class="hljs-number">0</span>;
+        <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> g = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">64</span>; i++) {
+            <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">16</span>) {
+                f = (b &amp; c) | (~b &amp; d);
+                g = i;
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">32</span>) {
+                f = (d &amp; b) | (~d &amp; c);
+                g = (<span class="hljs-number">5</span> * i + <span class="hljs-number">1</span>) % <span class="hljs-number">16</span>;
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">48</span>) {
+                f = b ^ c ^ d;
+                g = (<span class="hljs-number">3</span> * i + <span class="hljs-number">5</span>) % <span class="hljs-number">16</span>;
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">64</span>) {
+                f = c ^ (b | ~d);
+                g = (<span class="hljs-number">7</span> * i) % <span class="hljs-number">16</span>;
+            }
+            <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> to_rotate = a + f + constants[i] +
+               (padded_msg-&gt;start[g*<span class="hljs-number">4</span> + <span class="hljs-number">0</span>]       |
+                padded_msg-&gt;start[g*<span class="hljs-number">4</span> + <span class="hljs-number">1</span>] &lt;&lt; <span class="hljs-number">8</span>  |
+                padded_msg-&gt;start[g*<span class="hljs-number">4</span> + <span class="hljs-number">2</span>] &lt;&lt; <span class="hljs-number">16</span> |
+                padded_msg-&gt;start[g*<span class="hljs-number">4</span> + <span class="hljs-number">3</span>] &lt;&lt; <span class="hljs-number">24</span>);
+
+            <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> new_b = b + left_rotate(to_rotate, rotate_amounts[i]);
+            a = d;
+            d = c;
+            c = b;
+            b = new_b;
+        }
+        acc[<span class="hljs-number">0</span>] += a;
+        acc[<span class="hljs-number">0</span>] &amp;= <span class="hljs-number">0xffffffff</span>;
+        acc[<span class="hljs-number">1</span>] += b;
+        acc[<span class="hljs-number">1</span>] &amp;= <span class="hljs-number">0xffffffff</span>;
+        acc[<span class="hljs-number">2</span>] += c;
+        acc[<span class="hljs-number">2</span>] &amp;= <span class="hljs-number">0xffffffff</span>;
+        acc[<span class="hljs-number">3</span>] += d;
+        acc[<span class="hljs-number">3</span>] &amp;= <span class="hljs-number">0xffffffff</span>;
+
+
+    }
+    <span class="hljs-built_in">free</span>(padded_msg-&gt;start);
+    <span class="hljs-built_in">free</span>(padded_msg);
+
+    <span class="hljs-type">char</span> *outstr = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">128</span>);
+
+    <span class="hljs-built_in">sprintf</span>(outstr, <span class="hljs-string">&quot;%08lx%08lx%08lx%08lx&quot;</span>,
+            bitswap(acc[<span class="hljs-number">0</span>]),
+            bitswap(acc[<span class="hljs-number">1</span>]),
+            bitswap(acc[<span class="hljs-number">2</span>]),
+            bitswap(acc[<span class="hljs-number">3</span>])
+          );
+
+    <span class="hljs-keyword">return</span> outstr;
+}
+</code></pre>
+<p>A couple of things to point out! There&#39;s actually a lot <em>less</em> fuckery going on
+with this version, since C is ideal for operating on arrays of bytes in a way
+ruby is most definitely <em>not</em>. Gone is that convoluted string cast to
+facilitate turning a hex representation into a little endian version- instead I
+simply use a little macro I defined called <code>bitswap</code> to shuffle those bytes
+around directly:</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> bitswap(NUM) ((NUM&gt;&gt;24)&amp;0xff) | ((NUM<span class="hljs-string">&lt;&lt;8)&amp;0xff0000) | ((NUM&gt;</span>&gt;8)&amp;0xff00) | ((NUM&lt;&lt;24)&amp;0xff000000)</span>
+</code></pre>
+<p>Oh and also I have that old friend <code>left_rotate()</code> defined as well:</p>
+
+<pre><code class="lang-c"><span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-title function_">left_rotate</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> x, <span class="hljs-type">int</span> amount)</span> {
+    x = x &amp; <span class="hljs-number">0xffffffff</span>;
+    <span class="hljs-keyword">return</span> ((x &lt;&lt; amount) | (x &gt;&gt; (<span class="hljs-number">32</span> - amount))) &amp; <span class="hljs-number">0xffffffff</span>;
+}
+</code></pre>
+<p>Oh and instead of being clever with computing both <code>constants</code> and
+<code>rotate_amounts</code>, I think it&#39;s much preferable to define them explicitly as
+constant arrays. This will simply be loaded into memory and accessed directly,
+and defining them as constant arrays I suspect will make compile time
+optimizations easier.</p>
+<blockquote>
+<p>This is just a guess though, I honestly haven&#39;t dipped lower than C yet.
+Wouldn&#39;t mind learning more about compilers and assembly (probably x86) this
+coming year, but we&#39;ll see.</p>
+</blockquote>
+
+<pre><code class="lang-c"><span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> constants[<span class="hljs-number">64</span>] =
+{ <span class="hljs-number">0xd76aa478</span>, <span class="hljs-number">0xe8c7b756</span>, <span class="hljs-number">0x242070db</span>, <span class="hljs-number">0xc1bdceee</span>,
+ <span class="hljs-number">0xf57c0faf</span>, <span class="hljs-number">0x4787c62a</span>, <span class="hljs-number">0xa8304613</span>, <span class="hljs-number">0xfd469501</span>,
+ <span class="hljs-number">0x698098d8</span>, <span class="hljs-number">0x8b44f7af</span>, <span class="hljs-number">0xffff5bb1</span>, <span class="hljs-number">0x895cd7be</span>,
+ <span class="hljs-number">0x6b901122</span>, <span class="hljs-number">0xfd987193</span>, <span class="hljs-number">0xa679438e</span>, <span class="hljs-number">0x49b40821</span>,
+ <span class="hljs-number">0xf61e2562</span>, <span class="hljs-number">0xc040b340</span>, <span class="hljs-number">0x265e5a51</span>, <span class="hljs-number">0xe9b6c7aa</span>,
+ <span class="hljs-number">0xd62f105d</span>, <span class="hljs-number">0x02441453</span>, <span class="hljs-number">0xd8a1e681</span>, <span class="hljs-number">0xe7d3fbc8</span>,
+ <span class="hljs-number">0x21e1cde6</span>, <span class="hljs-number">0xc33707d6</span>, <span class="hljs-number">0xf4d50d87</span>, <span class="hljs-number">0x455a14ed</span>,
+ <span class="hljs-number">0xa9e3e905</span>, <span class="hljs-number">0xfcefa3f8</span>, <span class="hljs-number">0x676f02d9</span>, <span class="hljs-number">0x8d2a4c8a</span>,
+ <span class="hljs-number">0xfffa3942</span>, <span class="hljs-number">0x8771f681</span>, <span class="hljs-number">0x6d9d6122</span>, <span class="hljs-number">0xfde5380c</span>,
+ <span class="hljs-number">0xa4beea44</span>, <span class="hljs-number">0x4bdecfa9</span>, <span class="hljs-number">0xf6bb4b60</span>, <span class="hljs-number">0xbebfbc70</span>,
+ <span class="hljs-number">0x289b7ec6</span>, <span class="hljs-number">0xeaa127fa</span>, <span class="hljs-number">0xd4ef3085</span>, <span class="hljs-number">0x04881d05</span>,
+ <span class="hljs-number">0xd9d4d039</span>, <span class="hljs-number">0xe6db99e5</span>, <span class="hljs-number">0x1fa27cf8</span>, <span class="hljs-number">0xc4ac5665</span>,
+ <span class="hljs-number">0xf4292244</span>, <span class="hljs-number">0x432aff97</span>, <span class="hljs-number">0xab9423a7</span>, <span class="hljs-number">0xfc93a039</span>,
+ <span class="hljs-number">0x655b59c3</span>, <span class="hljs-number">0x8f0ccc92</span>, <span class="hljs-number">0xffeff47d</span>, <span class="hljs-number">0x85845dd1</span>,
+ <span class="hljs-number">0x6fa87e4f</span>, <span class="hljs-number">0xfe2ce6e0</span>, <span class="hljs-number">0xa3014314</span>, <span class="hljs-number">0x4e0811a1</span>,
+ <span class="hljs-number">0xf7537e82</span>, <span class="hljs-number">0xbd3af235</span>, <span class="hljs-number">0x2ad7d2bb</span>, <span class="hljs-number">0xeb86d391</span> };
+
+<span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> rotate_amounts[<span class="hljs-number">64</span>] =
+{ <span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>,  <span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>,  <span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>,  <span class="hljs-number">7</span>, <span class="hljs-number">12</span>, <span class="hljs-number">17</span>, <span class="hljs-number">22</span>,
+  <span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>,  <span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>,  <span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>,  <span class="hljs-number">5</span>,  <span class="hljs-number">9</span>, <span class="hljs-number">14</span>, <span class="hljs-number">20</span>,
+  <span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>,  <span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>,  <span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>,  <span class="hljs-number">4</span>, <span class="hljs-number">11</span>, <span class="hljs-number">16</span>, <span class="hljs-number">23</span>,
+  <span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span>,  <span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span>,  <span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span>,  <span class="hljs-number">6</span>, <span class="hljs-number">10</span>, <span class="hljs-number">15</span>, <span class="hljs-number">21</span> };
+</code></pre>
+<p>Now! I can port my original solution to the problem to C and see waht kinds of
+/l33t p3rf gAiNs/ I&#39;ve earned myself.</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;string.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&quot;md5.h&quot;</span></span>
+
+<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">char</span> door[<span class="hljs-number">32</span>];
+    <span class="hljs-type">char</span> test[<span class="hljs-number">6</span>];
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">7777890</span>; i++) {
+        <span class="hljs-built_in">sprintf</span>(door, <span class="hljs-string">&quot;abbhdwsy%i&quot;</span>, i);
+        <span class="hljs-type">char</span> *cand = md5digest(door);
+
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> x = <span class="hljs-number">0</span>; x &lt; <span class="hljs-number">5</span>; x++)
+            test[x] = cand[x];
+
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(test, <span class="hljs-string">&quot;00000&quot;</span>) == <span class="hljs-number">0</span>)
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%c&quot;</span>, cand[<span class="hljs-number">5</span>]);
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);
+
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>prints out:</p>
+
+<pre><code>801b56a7
+</code></pre>
+<p>Seems familiar! This looks fine. How long does it take?</p>
+
+<pre><code>real    0m17.296s
+</code></pre>
+<p>That&#39;s a LOT better than the pure ruby version, of course! And it&#39;s in the same
+ballpark as the original ruby solution I started with that uses the built in
+hash function, which makes sense, since they are both in C. I am not at all
+surprised that the library function is slightly faster than my half assed
+version, even despite the ruby interpreter&#39;s overhead, whatever that is.</p>
+<p>I could probably work harder on my C version and shave off some of those extra
+seconds, I could probably even beat the built in Ruby version if I found enough
+tricks and traps to optimize it... but I&#39;ve got a better idea.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="opencl"></div>
+
+<h1 id="act-iii-opencl">Act III: OpenCL</h1>
+<p>Strap in things are about to get <em>really fast</em></p>
+<p>Ok so a disclaimer before I really get into this part:</p>
+<p><img src="http://i0.kym-cdn.com/photos/images/newsfeed/000/234/142/196.jpg" alt="img"></p>
+<p>I mean, that&#39;s not <em>entirely</em> true of course, I am happy to report that after a
+lot of research and trial and error I was able to make this thing work the way
+I hoped I would be able to.</p>
+<p>But I will refrain from explaining everything in minute detail in this section
+because I don&#39;t have enough experience with OpenCL to feel completely
+comfortable doing that. And to be honest, I&#39;m really tired and I really want to
+post this, and this post is already super long, and I might just write more
+detailed info about OpenCL after I learn more about it. I&#39;ll cover the broad
+strokes about what I learned though!</p>
+<p>So, OpenCL is a framework for writing general purpose code that can be run on
+your GPU. The GPU (graphics processing unit) is <em>completely separate</em>
+physically from the CPU (central processing unit) in your computer.</p>
+<blockquote>
+<p>(if you have one that is! also there are now integrated graphics chipsets that
+do the work of the gpu on the cpu, and some other stuff I don&#39;t know about</p>
+
+<pre><code>much!).
+</code></pre>
+</blockquote>
+<p>The GPU is highly optimized for doing many many small tasks in parallel. As its
+name suggests, it it mostly used for graphics processing, which is a perfect
+use case for highly paralellized computations.</p>
+<p>It&#39;s often compared to its closed source sibling CUDA, which is nvidia&#39;s
+proprietary framework that does basically the same thing. Linux MDFL Linus
+Torvalds is a <a href="https://www.youtube.com/watch?v=55XVnJ_0qhg">big fan</a>.</p>
+<hr>
+
+<p>I started by using
+<a href="https://www.fixstars.com/en/opencl/book/OpenCLProgrammingBook/first-opencl-program/">this</a>
+as a template. It&#39;s a LOT of boilerplate to get the environment set up! I am
+going to refrain from explaining that in detail for a couple of reasons. I
+don&#39;t <em>really</em> understand it well enough yet to provide a helpful perspective,
+it&#39;s a little bit not necessary to understand the broad strokes, and also that book
+does an <em>excellent</em> job of going through <a href="https://www.fixstars.com/en/opencl/book/OpenCLProgrammingBook/basic-program-flow/">line by
+line</a>.</p>
+<p>I have to write <em>two different</em> programs here- one to run on the
+<em>host</em> side and another that runs on the <em>device</em> side. The device side code is
+basically c99, but is subject to a set of restrictions that follow from the
+limitations of the hardware and how the program actually runs on it.</p>
+<p>Let&#39;s look at the kernel function from the hello world example above:</p>
+
+<pre><code class="lang-c">__kernel <span class="hljs-type">void</span> <span class="hljs-title function_">hello</span><span class="hljs-params">(__global <span class="hljs-type">char</span>* <span class="hljs-built_in">string</span>)</span> {
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">0</span>] = <span class="hljs-string">&#x27;H&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">1</span>] = <span class="hljs-string">&#x27;e&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">2</span>] = <span class="hljs-string">&#x27;l&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">3</span>] = <span class="hljs-string">&#x27;l&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">4</span>] = <span class="hljs-string">&#x27;o&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">5</span>] = <span class="hljs-string">&#x27;,&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">6</span>] = <span class="hljs-string">&#x27; &#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">7</span>] = <span class="hljs-string">&#x27;W&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">8</span>] = <span class="hljs-string">&#x27;o&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">9</span>] = <span class="hljs-string">&#x27;r&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">10</span>] = <span class="hljs-string">&#x27;l&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">11</span>] = <span class="hljs-string">&#x27;d&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">12</span>] = <span class="hljs-string">&#x27;!&#x27;</span>;
+    <span class="hljs-built_in">string</span>[<span class="hljs-number">13</span>] = <span class="hljs-string">&#x27;\0&#x27;</span>;
+}
+</code></pre>
+<p>Notice a few things! This function returns nothing (<code>void</code>). It actually
+doesn&#39;t make any sense for a kernel function to return anything at all- where
+would that return value go? Instead, we pass in a pointer to a shared memory
+object (in this case <code>string</code>) which can be manipulated from within the device
+code and accessed after that task has been run from the host&#39;s code.</p>
+<p>Let&#39;s follow that backwards! Where does that pointer get &#39;passed in&#39;?</p>
+<p>The relevant line in the host code are here on line 66:</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">/* Set OpenCL Kernel Parameters */</span>
+ret = clSetKernelArg(kernel, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(cl_mem), (<span class="hljs-type">void</span> *)&amp;memobj);
+</code></pre>
+<p>A few things! The return value of this function is an integer that is 0 on
+success and an <a href="https://streamcomputing.eu/blog/2013-04-28/opencl-error-codes/">error
+code</a> on error.
+It&#39;s being assigned to <code>ret</code> to capture that in case it isn&#39;t successful. What
+are these arguments? <a href="https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clSetKernelArg.html">The docs can tell
+us!</a></p>
+
+<ul>
+<li><p><code>kernel</code> is the compiled kernel object that is being manipulated.</p>
+</li>
+<li><p><code>0</code> is the index of the argument I&#39;m passing in as it related to the arg list
+of the kernel function (whose signature is just <code>__global char *string</code>, so
+there is only that one argument)</p>
+</li>
+<li><p><code>sizeof(cl_mem)</code> is the size of what is being passed in</p>
+
+<ul>
+<li><code>cl_mem</code> is the return value of
+<a href="https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clCreateBuffer.html"><code>clCreateBuffer</code></a>, which I&#39;ll come back to in a sec</li>
+</ul>
+</li>
+<li><p>and finally <code>(void *)&amp;memobj</code> is a pointer to the memory on the host that I
+want to be copied into from the host buffer into the device buffer. It&#39;s
+being cast to a void pointer because that&#39;s the signature of <code>clSetKernelArg</code>
+I guess? Seems legit.</p>
+</li>
+</ul>
+<p>So where is <code>memobj</code> coming from? Line 54!</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">/* Create Memory Buffer */</span>
+memobj = clCreateBuffer(context, CL_MEM_READ_WRITE, MEM_SIZE * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">char</span>), <span class="hljs-literal">NULL</span>, &amp;ret);
+</code></pre>
+<p>I won&#39;t enumerate these args, but basically this function creates a memory
+buffer suitable for copying into the device code. <a href="https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clCreateBuffer.html">More in the
+docs!</a></p>
+<p>When the kernel is actually
+<a href="https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clEnqueueTask.html"><em>executed</em></a>
+in line 70:</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">/* Execute OpenCL Kernel */</span>
+ret = clEnqueueTask(command_queue, kernel, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>,<span class="hljs-literal">NULL</span>);
+</code></pre>
+<p>the kernel code from above is run and the memory object that was &quot;passed in&quot; is
+manipulated on the device side.</p>
+<p>Getting that memory back out of the device is <a href="https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clEnqueueReadBuffer.html">just as
+convoluted</a>.</p>
+
+<pre><code class="lang-c"><span class="hljs-comment">/* Copy results from the memory buffer */</span>
+ret = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, <span class="hljs-number">0</span>,
+MEM_SIZE * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">char</span>),<span class="hljs-built_in">string</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>);
+</code></pre>
+<blockquote>
+<p>(Just as there is a <code>clEnqueueReadBuffer</code>, there is also a
+<a href="https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clEnqueueWriteBuffer.html"><code>clEnqueueWriteBuffer</code></a>
+to move data from host to device side)</p>
+</blockquote>
+<p>The memory object was read into <code>string</code> which is now just in the host side
+memory space, and lo it is done:</p>
+
+<pre><code class="lang-c"> <span class="hljs-comment">/* Display Result */</span>
+ <span class="hljs-built_in">puts</span>(<span class="hljs-built_in">string</span>);
+</code></pre>
+
+<pre><code>Hello World!
+</code></pre>
+<p>Phew.</p>
+<hr>
+
+<p>So let&#39;s think for a second about the original problem space. I want to compute
+a bunch of md5 hashes and then save a few that fulfill a criteria (in this case
+having those five leading <code>0</code>s)</p>
+<p>The only relation these input strings have to each other is that I want to find
+a way to compute each one only once. None of the actual computations inside of
+an individual kernel depend at all on any of the others. This is a perfect task
+to parallelize! Everything is awesome!</p>
+<p>Not only that, but the code I want to write for the md5 function needs to be in
+C! I&#39;ve basically already written it! All I need to do is make a kernel
+function that computes an md5, find a way to distribute the work effectively
+over the gpu cores, and I should have that leet perf gain I wanted since the
+very beginning of this nerd snipe! Let&#39;s get crackin.</p>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="crackin"></div>
+
+<h1 id="crackin-">Crackin&#39;</h1>
+<p>So yeah, I&#39;ve basically already written this, but to get it running on the GPU
+I&#39;ll have to make some small changes!</p>
+<p>First, I need both <code>bitswap</code> and <code>left_rotate</code> completely as is:</p>
+
+<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> bitswap(NUM) ((NUM&gt;&gt;24)&amp;0xff) | ((NUM<span class="hljs-string">&lt;&lt;8)&amp;0xff0000) | ((NUM&gt;</span>&gt;8)&amp;0xff00) | ((NUM&lt;&lt;24)&amp;0xff000000)</span>
+
+<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> <span class="hljs-title function_">left_rotate</span><span class="hljs-params">(<span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> x, <span class="hljs-type">int</span> amount)</span> {
+    x = x &amp; <span class="hljs-number">0xffffffff</span>;
+    <span class="hljs-keyword">return</span> ((x &lt;&lt; amount) | (x &gt;&gt; (<span class="hljs-number">32</span> - amount))) &amp; <span class="hljs-number">0xffffffff</span>;
+}
+</code></pre>
+<p>Next, I&#39;ll show the signature of the function!</p>
+
+<pre><code class="lang-c">__kernel <span class="hljs-type">void</span> <span class="hljs-title function_">md5thing</span><span class="hljs-params">(
+        __global <span class="hljs-type">long</span>* constants,
+        __global <span class="hljs-type">long</span>* rotate_amounts
+)</span> {
+</code></pre>
+<p>I&#39;m just going to pass in the <code>constants</code> and <code>rotate_amounts</code> arrays as
+globally accessibly memory. They don&#39;t need to be written to, and all the cores
+can share them.</p>
+<p>On the host side, we can pass these in:</p>
+
+<pre><code class="lang-c">    cl_mem constantsmem = <span class="hljs-literal">NULL</span>;
+    constantsmem = clCreateBuffer(context, CL_MEM_READ_ONLY, <span class="hljs-number">64</span> * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">long</span>), <span class="hljs-literal">NULL</span>, &amp;ret);
+    ret = clEnqueueWriteBuffer(command_queue, constantsmem, CL_TRUE, <span class="hljs-number">0</span>,
+            <span class="hljs-number">64</span> * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">long</span>), constants, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>);
+    ret = clSetKernelArg(kernel, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(cl_mem), (<span class="hljs-type">void</span> *)&amp;constantsmem);
+
+    cl_mem rotatemem = <span class="hljs-literal">NULL</span>;
+    rotatemem = clCreateBuffer(context, CL_MEM_READ_ONLY, <span class="hljs-number">64</span> * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">long</span>), <span class="hljs-literal">NULL</span>, &amp;ret);
+    ret = clEnqueueWriteBuffer(command_queue, rotatemem, CL_TRUE, <span class="hljs-number">0</span>,
+            <span class="hljs-number">64</span> * <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">long</span>), rotate_amounts, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span>);
+    ret = clSetKernelArg(kernel, <span class="hljs-number">1</span>, <span class="hljs-keyword">sizeof</span>(cl_mem), (<span class="hljs-type">void</span> *)&amp;rotatemem);
+</code></pre>
+<p>Both <code>constants</code> and <code>rotate_amounts</code> are defined elsewhere in the file in the
+same way they were before as constant arrays of values.</p>
+<p>I&#39;m going to eschew the <code>Message</code> struct thing and just inline all the padding
+and such.</p>
+
+<pre><code class="lang-c">    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> acc[<span class="hljs-number">4</span>] = { <span class="hljs-number">0x67452301</span>, <span class="hljs-number">0xefcdab89</span>, <span class="hljs-number">0x98badcfe</span>, <span class="hljs-number">0x10325476</span> };
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span> output_buffer[<span class="hljs-number">64</span>];
+
+    <span class="hljs-type">char</span> input[<span class="hljs-number">16</span>] = <span class="hljs-string">&quot;abbhdwsy&quot;</span>;
+    <span class="hljs-type">char</span> med[<span class="hljs-number">16</span>] = { <span class="hljs-number">0</span> } ;
+    <span class="hljs-type">int</span> num = get_global_id(<span class="hljs-number">0</span>);
+    <span class="hljs-type">int</span> in = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (num != <span class="hljs-number">0</span>) {
+        <span class="hljs-type">int</span> rem = num % <span class="hljs-number">10</span>;
+        med[in++] = (rem &gt; <span class="hljs-number">9</span>)? (rem<span class="hljs-number">-10</span>) + <span class="hljs-string">&#x27;a&#x27;</span> : rem + <span class="hljs-string">&#x27;0&#x27;</span>;
+        num = num/<span class="hljs-number">10</span>;
+    }
+    <span class="hljs-type">int</span> thing = <span class="hljs-number">8</span>;
+    <span class="hljs-keyword">while</span> (in != <span class="hljs-number">0</span>) {
+        in = in - <span class="hljs-number">1</span>;
+        input[thing++] = med[in];
+    }
+
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> orig_length_in_bytes;
+    <span class="hljs-keyword">for</span> (orig_length_in_bytes = <span class="hljs-number">0</span>; input[orig_length_in_bytes] != <span class="hljs-number">0x0</span>; ++orig_length_in_bytes);
+
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> orig_length_in_bits = (orig_length_in_bytes * <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xffffffffffffffff</span>;
+
+    <span class="hljs-type">unsigned</span> <span class="hljs-type">long</span> padded_length = orig_length_in_bytes;
+
+    padded_length += <span class="hljs-number">4</span>;
+    <span class="hljs-keyword">while</span> (padded_length % <span class="hljs-number">64</span> != <span class="hljs-number">0</span>) {
+        padded_length += <span class="hljs-number">1</span>;
+    }
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt;= orig_length_in_bytes; i++)
+        output_buffer[i] = input[i];
+
+    <span class="hljs-type">int</span> i;
+    output_buffer[orig_length_in_bytes] = <span class="hljs-number">0x80</span>;
+    <span class="hljs-keyword">for</span> (i = orig_length_in_bytes + <span class="hljs-number">1</span>; i % <span class="hljs-number">64</span> != <span class="hljs-number">56</span>; i++) {
+        output_buffer[i] = <span class="hljs-number">0x0</span>;
+    }
+
+<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> proper bit shifting here instead of this garbage &lt;&lt;&lt;</span>
+    output_buffer[i] = orig_length_in_bits;
+    i++;
+    <span class="hljs-keyword">for</span> (; i % <span class="hljs-number">64</span> != <span class="hljs-number">0</span>; i++) {
+        output_buffer[i] = <span class="hljs-number">0</span>;
+    }
+<span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> proper bit shifting here instead of this garbage ^^^</span>
+</code></pre>
+<blockquote>
+<p>So hey, a gentle reminder that I&#39;m not going to say this is the best code evah,
+but it gets the job done and boy did I learn a lot.</p>
+</blockquote>
+<p>It&#39;s essentially the same as the vanilla C version, but I have to allocate
+memory blocks statically with array notation instead of char pointers. And I
+don&#39;t have library functions like <code>memcpy</code> and <code>strlen</code>, so I just do those
+things manually. The <em>real</em> magic happens here though!</p>
+
+<pre><code class="lang-c">    <span class="hljs-type">char</span> input[<span class="hljs-number">16</span>] = <span class="hljs-string">&quot;abbhdwsy&quot;</span>;
+    <span class="hljs-type">char</span> med[<span class="hljs-number">16</span>] = { <span class="hljs-number">0</span> } ;
+    <span class="hljs-type">int</span> num = get_global_id(<span class="hljs-number">0</span>);
+    <span class="hljs-type">int</span> in = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (num != <span class="hljs-number">0</span>) {
+        <span class="hljs-type">int</span> rem = num % <span class="hljs-number">10</span>;
+        med[in++] = (rem &gt; <span class="hljs-number">9</span>)? (rem<span class="hljs-number">-10</span>) + <span class="hljs-string">&#x27;a&#x27;</span> : rem + <span class="hljs-string">&#x27;0&#x27;</span>;
+        num = num/<span class="hljs-number">10</span>;
+    }
+    <span class="hljs-type">int</span> intwo = <span class="hljs-number">8</span>;
+    <span class="hljs-keyword">while</span> (in != <span class="hljs-number">0</span>) {
+        in = in - <span class="hljs-number">1</span>;
+        input[intwo++] = med[in];
+    }
+</code></pre>
+<p>There is my input key. And then I use
+<a href="https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/get_global_id.html"><code>get_global_id(0)</code></a>
+to get a unique id number for that work item, turn that number into a string
+with that first while loop, and then concatenate it onto the end of my original
+input key.</p>
+<p>Now, I can run this code in complete parallel over as many cores on the GPU as
+I want, and each process will be running a differently numbered key!</p>
+<blockquote>
+<p>So, the usual shape of Open[C|G]L code is to compute values based on some 2 or
+3 dimensional space. Consider a canvas- each pixel would be uniquely identified
+by two coordinates. Those coordinates are available inside the kernel function
+by calling <code>get_global_id</code> with <code>0</code> and <code>1</code> respectively. You&#39;ll pass in a 2
+dimensional vecotr of values representing what you&#39;re trying to transform, like a photo or a frame of a video,
+then address the vector by using those coordinates, and write back to an output
+vector. To see this in action, try playing with
+<a href="https://www.shadertoy.com/new">Shadertoy</a>, which is a really awesome little
+thing to play with <a href="https://www.khronos.org/webgl/">WebGL</a>!</p>
+</blockquote>
+<p>Back in the host code, when I execute the kernel this time, I&#39;ll use
+<a href="https://www.khronos.org/registry/cl/sdk/1.0/docs/man/xhtml/clEnqueueNDRangeKernel.html">clEnqueueNDRangeKernel</a>,
+which allows the code to be run across many cores in parallel!</p>
+
+<pre><code class="lang-c">    <span class="hljs-comment">/* Execute OpenCL Kernel */</span>
+    <span class="hljs-type">size_t</span> gws[<span class="hljs-number">1</span>] = { <span class="hljs-number">8000000</span> };
+    <span class="hljs-type">size_t</span> lws[<span class="hljs-number">1</span>] = { <span class="hljs-number">2</span> };
+    ret = clEnqueueNDRangeKernel(command_queue, kernel, <span class="hljs-number">1</span>, <span class="hljs-literal">NULL</span>, gws, lws, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>,<span class="hljs-literal">NULL</span>);
+</code></pre>
+<p>That first array stands for &#39;global work size&#39;, and I&#39;m telling it that I want
+<em>one dimension</em> of global work ids that go up to 8 million. This means that
+calling <code>get_global_id()</code> in the kernel functions will be numbered individually
+from 0 to 8 million!</p>
+<p>That&#39;s the magic sauce. The rest of the md5 implementation is basically the
+same as before.</p>
+<p>For now, I&#39;m going to put the test to see if it&#39;s a keeper hash <em>in the kernel
+code</em>. If it matches, I&#39;ll just format and print out the complete hash:</p>
+
+<pre><code class="lang-c">    <span class="hljs-keyword">if</span> ((acc[<span class="hljs-number">0</span>] | <span class="hljs-number">0x00000fff</span>) == <span class="hljs-number">0x00000fff</span>) {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%08lx%08lx%08lx%08lx\n&quot;</span>,
+                acc[<span class="hljs-number">0</span>],
+                acc[<span class="hljs-number">1</span>],
+                acc[<span class="hljs-number">2</span>],
+                acc[<span class="hljs-number">3</span>]
+              );
+    }
+</code></pre>
+<p>If I compile and run this, Here&#39;s the output:</p>
+
+<pre><code>000008bfb72caf77542c32b53a73439b
+0000004ed0ede071d293b5f33de2dc2f
+0000012be6057b2554c26bfddab18b08
+00000bf3f1ca8d1f229aa50b3093b2be
+00000512874cc40b764728993dd71ffb
+0000069710beec5f9a1943a610be52d8
+00000a8da36ee9b7e193f956cf701911
+00000776b6ff41a7e30ed2d4b6663351
+</code></pre>
+<p>Oh snap, does this look familiar?</p>
+
+<pre><code>00000 8 bfb72caf77542c32b53a73439b
+00000 0 4ed0ede071d293b5f33de2dc2f
+00000 1 2be6057b2554c26bfddab18b08
+00000 b f3f1ca8d1f229aa50b3093b2be
+00000 5 12874cc40b764728993dd71ffb
+00000 6 9710beec5f9a1943a610be52d8
+00000 a 8da36ee9b7e193f956cf701911
+00000 7 76b6ff41a7e30ed2d4b6663351
+</code></pre>
+<p>Wait what? did it work? DID IT WORK? But... how long does it take??</p>
+
+<pre><code>real    0m1.802s
+</code></pre>
+<p><em>Oh shit.</em> I just computed 8 million md5 hashes in <em>1.8 seconds</em>. And I am
+almost sure that this is not terribly awesome OpenCL code and could probably be
+attuned to go even faster than that. But 1.8 seconds is about 8 times faster
+than my original solution would run, so I am pretty happy with that.</p>
+<blockquote>
+<p>So the TODO here is that I would like to write the chars out to a global output
+buffer and then print the output to the screen from the host&#39;s side. Also,
+there&#39;s a huge problem with the CL code as written here, and that is that all
+the work items are running in parallel and there is no guarantee that the
+output will come out &quot;in order.&quot; I have solutions to these problems but they
+don&#39;t have anything to do with the performance gains and I am very very tired
+right now. Maybe I&#39;ll write it up later but no promises.</p>
+</blockquote>
+<p><sub><a href='#toc'>toc</a></sub></p>
+<div id="coda"></div>
+
+<h1 id="advent-of-coda">Advent of Coda</h1>
+<p>So, this was a major rabbit hole, but I learned a hell of a lot! I learned a
+lot more about OpenCL than I was able to explain here or feel comfortable
+explaining just now, but I might have more on that in the future. It&#39;s really
+cool stuff!</p>
+<p>A very cool thing / huge pain in the ass about Advent of Code is that if you
+let it, almost every day can lead you down a rabbit hole like this! I just
+decided to follow this one, but I traded doing the rest of the problems after
+about day 9 for it. Now I have to go back and do those!</p>
+<p>This was a really long post. I hope it was interesting. I&#39;m glad it&#39;s done. Have a Happy New Year!</p>
+<p>Oh one more thing, <a href="https://github.com/jfo/md5">here is the source code for this,
+basically</a>. No warranty.  It&#39;s really messy right
+now and I should really have cleaned it up but #yolo and I want to go to bed.
+Also if you read <em>this far</em> I hope the explanations above have been sufficient
+to explain the context.</p>
+</div>
+      </article>
+    </div>
+
+    <script async defer src="https://analytics.jfo.click/latest.js"></script>
+    <noscript
+      ><img src="https://analytics.jfo.click/noscript.gif" alt=""
+    /></noscript>
+  </body>
+</html>
