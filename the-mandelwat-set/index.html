@@ -8,20 +8,23 @@
       href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
       rel="icon"
     />
-    <link href="https://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <link href="http://blog.jfo.click/style.css" type="text/css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <meta property="og:title" content="The Mandelwat Set" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https:&#x2F;&#x2F;blog.jfo.click/the-mandelwat-set" />
-    <meta property="og:image" content="https:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+    <meta property="og:url" content="http:&#x2F;&#x2F;blog.jfo.click/the-mandelwat-set" />
+    <meta property="og:image" content="http:&#x2F;&#x2F;blog.jfo.click/desk.jpg" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@jeffowler" />
   </head>
 
   <body>
     <div id="content">
       <header class="site-header">
         <h5>jfo</h5> &mdash;
-        <a href="https://blog.jfo.click">archive</a> &mdash;
+        <a href="http://blog.jfo.click">archive</a> &mdash;
         <a href="mailto:jfo@jfo.click">contact</a>
       </header>
 
@@ -36,7 +39,7 @@
     }
 </script>
 
-<p><image src="https://blog.jfo.click/mb/mb01.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb01.jpg" /></p>
 <p>If you&#39;ve never seen the Mandelbrot set, do me and also yourself a favor and
 <a href="https://www.youtube.com/results?search_query=mandelbrot+zoom">watch some amount of time of one or two of these
 videos</a> real
@@ -55,7 +58,7 @@ this because JavaScript is the best lol!&quot; And so here we are.</p>
 little lost or want something reinforced, jump down to the
 <a href="#references">references</a> at the bottom for some good resources and videos to
 watch!</p>
-<p><image src="https://blog.jfo.click/mb/mb02.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb02.jpg" /></p>
 <p>So before I can draw a Mandlebrot set, I have to have something to draw on! In
 html5 land, that thing is a <code>&lt;canvas&gt;</code></p>
 <p>That looks like this:</p>
@@ -90,7 +93,7 @@ I&#39;ll just set the attributes directly.</p>
 </code></pre>
 <p>That&#39;s it from the HTML side. All the rest of the canvases will look the same
 except with incrementing ids!</p>
-<p><image src="https://blog.jfo.click/mb/mb03.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb03.jpg" /></p>
 <p>You can do many wonderful things on a canvas! First you need to grab a
 reference to the thing:</p>
 
@@ -244,7 +247,7 @@ context.<span class="hljs-title function_">stroke</span>();
 
 <p>So, clearly, I have to account for the size of the canvas myself- it&#39;s not
 really designed to do that for me. Just keep that in mind!</p>
-<p><image src="https://blog.jfo.click/mb/mb12.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb12.jpg" /></p>
 <p>It seems like this is really how you&#39;re supposed to interact with the canvas...
 it&#39;s definitely hinted at by the name, you draw strokes and shapes on it to
 achieve a final result.</p>
@@ -373,7 +376,7 @@ position to the color of the canvas and changes it as you move it around?
 These are just some ideas. You wouldn&#39;t have to use ImageData exclusively,
 of course, there are easier ways to simply change the background color.</p>
 </blockquote>
-<p><image src="https://blog.jfo.click/mb/mb04.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb04.jpg" /></p>
 <p>It is a minor inconvenience to have to address the pixel values linearly like
 this, what I&#39;d really like to be able to do is address coordinates inside the
 canvas. I can remedy this problem with a little bit of math and a helper function!</p>
@@ -567,7 +570,7 @@ graph.render()
 <p>Each pixel, now, can be viewed as a single discrete coordinate on a plane that
 can be centered anywhere in the two dimensional plane and scaled up or down
 depending on what you want to see!</p>
-<p><image src="https://blog.jfo.click/mb/mb05.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb05.jpg" /></p>
 <p>Before packing away this abstraction and explaining sets, I want to add one
 more thing. This render function above just randomly sets all the pixel values,
 but of course I want more control than that. I will change the <code>render()</code>
@@ -704,7 +707,7 @@ multiple of the size of the canvas, it&#39;s much more likely to be filled!</p>
 <p>If I were building a fully functional graphing library, I would have to deal
 with this issue (and many more!). But I&#39;m not, so I won&#39;t! This is adequate for
 now. Let&#39;s talk about sets!</p>
-<p><image src="https://blog.jfo.click/mb/mb06.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb06.jpg" /></p>
 <h1 id="sets-wtf-is-a-set">Sets wtf is a set</h1>
 <blockquote>
 <p>I&#39;m not going to get into set theory because I don&#39;t know really anything
@@ -804,7 +807,7 @@ thing1 === thing2 <span class="hljs-comment">// true</span>
 coordinates, or build the coordinates into a real object that has a function
 that can do that, but I don&#39;t really want to. Instead I&#39;m going to talk
 about sets more generally!</p>
-<p><image src="https://blog.jfo.click/mb/mb13.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb13.jpg" /></p>
 <p>So, you can have a set that is just a defined set of whatever, and write all
 the whatevers out, like the example above.. That works great! But what about
 something like this:</p>
@@ -870,7 +873,7 @@ graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword
 </code></pre>
 <p>This is cool, then, I have a way of &quot;graphing&quot; sets! These sets are pretty
 boring though. But you know what&#39;s not boring??</p>
-<p><image src="https://blog.jfo.click/mb/mb07.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb07.jpg" /></p>
 <h1 id="the-mandelbrot-set">The Mandelbrot Set</h1>
 <p>Ok, The Mandelbrot set is:</p>
 <blockquote>
@@ -991,7 +994,7 @@ Infinity
 -1
 </code></pre>
 <p><em>But this one does!</em> -1 is thus <em>in the Mandelbrot set</em>, and 2 <em>is not</em>.</p>
-<p><image src="https://blog.jfo.click/mb/mb08.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb08.jpg" /></p>
 <p>Wait, though, we were talking about <em>complex numbers</em>. And the numbers -1 and 2
 are not coordinates, they are integers. How do you make a 2 dimensional graph
 with one number?</p>
@@ -1020,7 +1023,7 @@ this</a>,
 but I&#39;m not going to use any of them, because reasons!</p>
 <p>No but seriously. It&#39;s just one application and I can do it by hand and that&#39;s
 how we learn new things.</p>
-<p><image src="https://blog.jfo.click/mb/mb09.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb09.jpg" /></p>
 <p>So, A complex number is made up of a real part and an imaginary part. Never the
 two shall meet. What if I wanted to add two complex numbers together?</p>
 
@@ -1076,7 +1079,7 @@ outer, inner, last.&quot;</p>
 </blockquote>
 <p>Remember that <code>i</code> is actually the square root of -1, so i<sup>2</sup> is...
 <code>-1</code>!</p>
-<p><image src="https://blog.jfo.click/mb/mb13.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb13.jpg" /></p>
 <p>So... let&#39;s go back to our testing function from before! All I need to do is
 replace <code>z</code> and <code>c</code> with &quot;complex numbers&quot; made up of <code>zr</code> (z real), <code>zi</code> (z
 imaginary), <code>cr</code> (c real), and <code>ci</code> (c imaginary). I&#39;ll keep that index var <code>i</code> around
@@ -1206,7 +1209,7 @@ what we&#39;ve got above?</p>
 graph.<span class="hljs-title function_">render</span>(isMandlebrot);
 </code></pre>
 <p>There it is. Our old friend. The Mandelbrot set.</p>
-<p><image src="https://blog.jfo.click/mb/mb44.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb44.jpg" /></p>
 <h1 id="that-looks-like-a-fuzzy-potato">That looks like a fuzzy potato</h1>
 <p>Yeah, it might look boring from where we&#39;re sitting, <em>but it&#39;s totally not</em></p>
 <p>Remember when I built that &quot;Graph&quot; object, I made both <code>r</code> (the zoom factor)
@@ -1432,7 +1435,7 @@ grained the Mandlebrot can be displayed. Look at this!</p>
 get more definition. That could go on infinitely, though what you see above is
 about as high fidelity as we can get at that zoom level, since pixels have a
 definite size, small as they may seem.</p>
-<p><image src="https://blog.jfo.click/mb/mb10.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb10.jpg" /></p>
 <h1 id="colors-come-out-of-the-speakers">Colors come out of the speakers</h1>
 <p>Let&#39;s talk about those trippy ass colors you see on all the zooms on youtube.</p>
 <p>Right now we&#39;ve got a pretty simple true false test that tells us if a pixel is
@@ -1600,7 +1603,7 @@ mb.<span class="hljs-title function_">render</span>();
 })();
 </script>
 
-<p><image src="https://blog.jfo.click/mb/mb50.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb50.jpg" /></p>
 <p>Alright! This totally works and is beautiful! But, it&#39;s <em>slow.</em> On the one hand
 <em>of course it is</em>, this is a lot of computation. But on the other hand... we can do better.</p>
 <p>Way, way better.</p>
@@ -1650,7 +1653,7 @@ the set- the set goes on <em>forever.</em> There are techniques to work around t
 and achieve a higher precision, but my mandelbrot bike shed doesn&#39;t need
 <em>another</em> coat of paint before shipping. I&#39;ll likely try to get around to that
 sometime, or just put it off until 64 bit floats are native to the platform!</p>
-<p><image src="https://blog.jfo.click/mb/mb11.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb11.jpg" /></p>
 <hr>
 
 
@@ -1688,7 +1691,7 @@ messing up and which produced weird blobs on the canvas.</p>
 <p>I hope this was interesting. I&#39;m going to shut off my computer for the rest of
 the day now. I&#39;ve been thinking of picking one day a week and not looking at
 any screens, or at least not staring at the computer screen for the whole day.</p>
-<p><image src="https://blog.jfo.click/mb/mb57.jpg" /></p>
+<p><image src="http://blog.jfo.click/mb/mb57.jpg" /></p>
 <p>(That one is secretely my favorite :))</p>
 <div id="update"></div>
 

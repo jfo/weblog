@@ -1,25 +1,55 @@
 <rss version="2.0">
   <channel>
     <title>blog.jfo.click</title>
+    <link>http:&#x2F;&#x2F;blog.jfo.click</link>
     <description>Recent content on blog.jfo.click</description>
-    <lastBuildDate>Fri Jul 01 2022 21:11:05 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <language>en</language>
+    <image>
+      <title>blog.jfo.click</title>
+      <link>http:&#x2F;&#x2F;blog.jfo.click</link>
+      <url>http:&#x2F;&#x2F;blog.jfo.click/desk.jpg</url>
+    </image>
+    <lastBuildDate>Mon Jul 04 2022 13:49:45 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <item>
+      <title>The Ur-question of Blogging</title>
+      <link>https://blog.jfo.click/the-ur-question-of-blogging</link>
+      <description>![CDATA[&lt;p&gt;{{#img}}
+beach.jpg
+{{&#x2F;img}}&lt;&#x2F;p&gt;
+&lt;p&gt;Until my couple of recent posts, it had been a long while since I had posted
+anything.  There were good reasons for this...  and bad reasons.&lt;&#x2F;p&gt;
+&lt;p&gt;The good reasons are pretty standard issue. In mid 2017, I started a new job,
+had a baby, and moved to a new country within a few weeks. Between all those
+things going on all at once it was tough to make the time and spend the energy
+on writing very many substant...]]</description>
+      <guid isPermaLink="true">https://blog.jfo.click/the-ur-question-of-blogging</guid>
+      <pubDate>Jul 04, 2022</pubDate>
+    </item>
     <item>
       <title>Week two point one</title>
       <link>https://blog.jfo.click/week-two-point-one</link>
+      <description>![CDATA[&lt;p&gt;My goals for this week were fairly modest. Here are some of them with notes and
+links to resources I found useful.&lt;&#x2F;p&gt;
+&lt;p&gt;{{#img}}keyboard-closeup.jpg{{&#x2F;img}}&lt;&#x2F;p&gt;
+&lt;h2 id&#x3D;&quot;get-my-feet-under-me-for-fully-remote-interaction&quot;&gt;Get my feet under me for fully remote interaction&lt;&#x2F;h2&gt;
+&lt;p&gt;This is going pretty well. I&amp;#39;ve set up a good mic and I have a decent enough
+webcam, I think the zoom experience is as good as can be expected at the moment
+given ...]]</description>
       <guid isPermaLink="true">https://blog.jfo.click/week-two-point-one</guid>
       <pubDate>Jul 01, 2022</pubDate>
     </item>
     <item>
       <title>Recursing</title>
       <link>https://blog.jfo.click/recursing</link>
+      <description>![CDATA[&lt;p&gt;For the past few weeks, I&amp;#39;ve been on a leave of absence from work. There are a
+variety of reasons for this, and I may well write more about that in the
+future, but the short version is pretty simple, and as you might suspect: I was
+starting to feel burnt out.&lt;&#x2F;p&gt;
+&lt;p&gt;In 2017, I quickly changed jobs, moved countries, and had my first child within
+the span of 2 months, and ever since then there has been very little breathing
+space in my perso...]]</description>
       <guid isPermaLink="true">https://blog.jfo.click/recursing</guid>
       <pubDate>Jun 27, 2022</pubDate>
-    </item>
-    <item>
-      <title>Hello &quot;Hello world!&quot;</title>
-      <link>https://blog.jfo.click/hello-hello-world</link>
-      <guid isPermaLink="true">https://blog.jfo.click/hello-hello-world</guid>
-      <pubDate>Aug 15, 2020</pubDate>
     </item>
   </channel>
 </rss>
