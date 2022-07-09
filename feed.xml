@@ -1,15 +1,28 @@
 <rss version="2.0">
   <channel>
     <title>blog.jfo.click</title>
-    <link>http:&#x2F;&#x2F;blog.jfo.click</link>
+    <link>https://blog.jfo.click</link>
     <description>Recent content on blog.jfo.click</description>
     <language>en</language>
     <image>
       <title>blog.jfo.click</title>
-      <link>http:&#x2F;&#x2F;blog.jfo.click</link>
-      <url>http:&#x2F;&#x2F;blog.jfo.click/desk.jpg</url>
+      <link>https://blog.jfo.click</link>
+      <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Mon Jul 04 2022 14:20:20 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <lastBuildDate>Sat Jul 09 2022 12:42:33 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <item>
+      <title>Week two point two</title>
+      <link>https://blog.jfo.click/week-two-point-two</link>
+      <description><![CDATA[<p>Week two! I spend a lot less time shaving yaks, which is good. Though I am
+still trying to get around to a few more improvements there...</p>
+<p>This week was both frustrating and satisfying... frustrating because I don&#39;t
+feel like I really <em>completed</em> anything, but satisfying because I managed to
+get unstuck a few times off really big challenges.</p>
+<p>I spent a fair bit of time trying to implement parser combinators and made it
+<...]]></description>
+      <guid isPermaLink="true">https://blog.jfo.click/week-two-point-two</guid>
+      <pubDate>Jul 09, 2022</pubDate>
+    </item>
     <item>
       <title>The Ur-question of Blogging</title>
       <link>https://blog.jfo.click/the-ur-question-of-blogging</link>
@@ -37,19 +50,6 @@ webcam, I think the zoom experience is as good as can be expected at the moment
 given ...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/week-two-point-one</guid>
       <pubDate>Jul 01, 2022</pubDate>
-    </item>
-    <item>
-      <title>Recursing</title>
-      <link>https://blog.jfo.click/recursing</link>
-      <description><![CDATA[<p>For the past few weeks, I&#39;ve been on a leave of absence from work. There are a
-variety of reasons for this, and I may well write more about that in the
-future, but the short version is pretty simple, and as you might suspect: I was
-starting to feel burnt out.</p>
-<p>In 2017, I quickly changed jobs, moved countries, and had my first child within
-the span of 2 months, and ever since then there has been very little breathing
-space in my perso...]]></description>
-      <guid isPermaLink="true">https://blog.jfo.click/recursing</guid>
-      <pubDate>Jun 27, 2022</pubDate>
     </item>
   </channel>
 </rss>
