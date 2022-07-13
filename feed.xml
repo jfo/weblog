@@ -9,7 +9,19 @@
       <link>https://blog.jfo.click</link>
       <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Sat Jul 09 2022 12:42:33 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <lastBuildDate>Wed Jul 13 2022 14:08:02 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <item>
+      <title>An Unnamed Static Site Generator</title>
+      <link>https://blog.jfo.click/an-unnamed-static-site-generator</link>
+      <description><![CDATA[<p>I wrote a static site generator; to dispense with the &quot;why.&quot;</p>
+<p>This blog has been, in order, wordpress, middleman, jekyll, and hugo. Each time
+I become comfortable with one, inevitably they will become too slow for my
+needs (jekyll) or introduce subtle, minute breaking changes into some version
+or another, offering me an opportunity to jump ship (middleman and hugo) or
+just be not fit for purpose / total overkill (wordpress). I ...]]></description>
+      <guid isPermaLink="true">https://blog.jfo.click/an-unnamed-static-site-generator</guid>
+      <pubDate>Jul 13, 2022</pubDate>
+    </item>
     <item>
       <title>Week two point two</title>
       <link>https://blog.jfo.click/week-two-point-two</link>
@@ -37,19 +49,6 @@ things going on all at once it was tough to make the time and spend the energy
 on writing very many substant...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/the-ur-question-of-blogging</guid>
       <pubDate>Jul 04, 2022</pubDate>
-    </item>
-    <item>
-      <title>Week two point one</title>
-      <link>https://blog.jfo.click/week-two-point-one</link>
-      <description><![CDATA[<p>My goals for this week were fairly modest. Here are some of them with notes and
-links to resources I found useful.</p>
-<p>{{#img}}keyboard-closeup.jpg{{/img}}</p>
-<h2 id="get-my-feet-under-me-for-fully-remote-interaction">Get my feet under me for fully remote interaction</h2>
-<p>This is going pretty well. I&#39;ve set up a good mic and I have a decent enough
-webcam, I think the zoom experience is as good as can be expected at the moment
-given ...]]></description>
-      <guid isPermaLink="true">https://blog.jfo.click/week-two-point-one</guid>
-      <pubDate>Jul 01, 2022</pubDate>
     </item>
   </channel>
 </rss>
