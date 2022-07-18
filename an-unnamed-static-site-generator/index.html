@@ -251,14 +251,14 @@ where <code>./templates/post.mustache</code> maybe looks, oversimplified, someth
 <pre><code class="lang-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>{{title}}<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
 
   <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
    <span class="hljs-tag">&lt;<span class="hljs-name">article</span>&gt;</span>
-     <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>{{title}}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-     <span class="hljs-tag">&lt;<span class="hljs-name">sub</span>&gt;</span>{{date}}<span class="hljs-tag">&lt;/<span class="hljs-name">sub</span>&gt;</span>
-     <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>{{content}}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">sub</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">sub</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
    <span class="hljs-tag">&lt;/<span class="hljs-name">article</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
@@ -274,7 +274,7 @@ to interpolate in the yaml frontmatter. I can also do neat things like the
 </code></pre>
 <p>Inside a post, now I can use this like a function like so:</p>
 
-<pre><code>{{#img}}name-of-file.jpg{{/img}}
+<pre><code>name-of-file.jpg
 </code></pre>
 <p>I hope you can see how flexible and easy this could be for extending things!</p>
 <p>This is basically all it does. The code I&#39;ve ended up with has a couple more steps

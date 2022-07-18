@@ -9,7 +9,27 @@
       <link>https://blog.jfo.click</link>
       <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Wed Jul 13 2022 14:08:02 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <lastBuildDate>Mon Jul 18 2022 18:48:38 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <item>
+      <title>Zig translate-c and linking equal best friends</title>
+      <link>https://blog.jfo.click/zig-translate-c-and-linking-equal-best-friends</link>
+      <description><![CDATA[<p>We have a weekly one hour interest group for Zig programming going at Recurse
+this batch. It&#39;s called the <em>Zig Zone</em>, which is both descriptive and
+alliterative. This is a pattern, other examples on my calendar include:</p>
+
+<ul>
+<li>Rust Rodeo</li>
+<li>OCamel Oasis</li>
+<li>Clojure Conclave</li>
+<li>Shader Shindig</li>
+<li>Haskell Hangout</li>
+<li>Django Discovery</li>
+</ul>
+<p>Anyway you get the idea.</p>
+<p>We all just show up wi...]]></description>
+      <guid isPermaLink="true">https://blog.jfo.click/zig-translate-c-and-linking-equal-best-friends</guid>
+      <pubDate>Jul 14, 2022</pubDate>
+    </item>
     <item>
       <title>An Unnamed Static Site Generator</title>
       <link>https://blog.jfo.click/an-unnamed-static-site-generator</link>
@@ -34,21 +54,6 @@ get unstuck a few times off really big challenges.</p>
 <...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/week-two-point-two</guid>
       <pubDate>Jul 09, 2022</pubDate>
-    </item>
-    <item>
-      <title>The Ur-question of Blogging</title>
-      <link>https://blog.jfo.click/the-ur-question-of-blogging</link>
-      <description><![CDATA[<p>{{#img}}
-beach.jpg
-{{/img}}</p>
-<p>Until my couple of recent posts, it had been a long while since I had posted
-anything.  There were good reasons for this...  and bad reasons.</p>
-<p>The good reasons are pretty standard issue. In mid 2017, I started a new job,
-had a baby, and moved to a new country within a few weeks. Between all those
-things going on all at once it was tough to make the time and spend the energy
-on writing very many substant...]]></description>
-      <guid isPermaLink="true">https://blog.jfo.click/the-ur-question-of-blogging</guid>
-      <pubDate>Jul 04, 2022</pubDate>
     </item>
   </channel>
 </rss>
