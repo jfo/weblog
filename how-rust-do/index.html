@@ -33,7 +33,11 @@
         <h1 class="title-thing">How Rust Do?</h1>
         <sub>Oct 16, 2016</sub>
         <p></p>
-        <div><p>Hey how does <a href="https://www.rust-lang.org/en-US/">Rust</a> do?</p>
+        <div><blockquote>
+<p>Note: I&#39;ve updated the <a href="https://github.com/jfo/rav/blob/3e5db5f9cdbd1a3458ad166175b9c64626bc7e8c/src/main.rs">source code</a>
+for this post to run on 1.62.0 and be suitable for linking from <a href="/makin&#39;-wavs">Makin&#39; wavs</a></p>
+</blockquote>
+<p>Hey how does <a href="https://www.rust-lang.org/en-US/">Rust</a> do?</p>
 <p>I&#39;ve been kind of interested in Rust since my <a href="https://www.recurse.com">Recurse
 Center</a> batch in 2014. A <a href="http://src.codes/">batchmate of mine was
 getting interested in it</a>, and it sounded hella neat.</p>
@@ -1275,10 +1279,8 @@ Result. If it&#39;s an Error, it return an <code>E</code> type wrapped in a Resu
 way, the return value of a potentially failable function call is a <em>something</em>
 wrapped in a Result.</p>
 <blockquote>
-<p>This has something to do / a lot in common with the <a href="https://hackage.haskell.org/package/category-extras-0.52.0/docs/Control-Monad-Either.html">Either monad in
-Haskell</a>, and
-the <a href="http://danielwestheide.com/blog/2012/12/19/the-neophytes-guide-to-scala-part-5-the-option-type.html">Option type in
-Scala</a>
+<p>This has something to do / a lot in common with the <a href="https://hackage.haskell.org/package/category-extras-0.52.0/docs/Control-Monad-Either.html">Either monad in Haskell</a>, and
+the <a href="http://danielwestheide.com/blog/2012/12/19/the-neophytes-guide-to-scala-part-5-the-option-type.html">Option type in Scala</a>
 and the <a href="http://sml-family.org/Basis/option.html">option datatype</a> in ML. I
 don&#39;t really know about how those things work other than to mention them as
 probably pertinent here! Rust is my first encounter with this concept in a

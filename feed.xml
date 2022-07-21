@@ -9,7 +9,19 @@
       <link>https://blog.jfo.click</link>
       <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Mon Jul 18 2022 18:48:38 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <lastBuildDate>Thu Jul 21 2022 23:46:47 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <item>
+      <title>Makin&#39; wavs</title>
+      <link>https://blog.jfo.click/makin-wavs</link>
+      <description><![CDATA[<p>I&#39;ve been gearing up to do some audio programming and more generally learn
+about digital signal processing. As a first exercise, I decided to revisit a
+simple program I wrote while trying out rust a few years ago. <a href="/how-rust-do/">I blogged about
+that here</a>. There is, of course, a lot of Rust specific
+information in that post, but if you&#39;d like background on the <code>.wav</code> format it
+is specified <a href="/how-rust-do/#...]]></description>
+      <guid isPermaLink="true">https://blog.jfo.click/makin-wavs</guid>
+      <pubDate>Jul 20, 2022</pubDate>
+    </item>
     <item>
       <title>Zig translate-c and linking equal best friends</title>
       <link>https://blog.jfo.click/zig-translate-c-and-linking-equal-best-friends</link>
@@ -41,19 +53,6 @@ or another, offering me an opportunity to jump ship (middleman and hugo) or
 just be not fit for purpose / total overkill (wordpress). I ...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/an-unnamed-static-site-generator</guid>
       <pubDate>Jul 13, 2022</pubDate>
-    </item>
-    <item>
-      <title>Week two point two</title>
-      <link>https://blog.jfo.click/week-two-point-two</link>
-      <description><![CDATA[<p>Week two! I spend a lot less time shaving yaks, which is good. Though I am
-still trying to get around to a few more improvements there...</p>
-<p>This week was both frustrating and satisfying... frustrating because I don&#39;t
-feel like I really <em>completed</em> anything, but satisfying because I managed to
-get unstuck a few times off really big challenges.</p>
-<p>I spent a fair bit of time trying to implement parser combinators and made it
-<...]]></description>
-      <guid isPermaLink="true">https://blog.jfo.click/week-two-point-two</guid>
-      <pubDate>Jul 09, 2022</pubDate>
     </item>
   </channel>
 </rss>
