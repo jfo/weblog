@@ -9,16 +9,17 @@
       <link>https://blog.jfo.click</link>
       <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Thu Jul 21 2022 23:50:52 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <lastBuildDate>Fri Jul 22 2022 15:28:40 GMT+0200 (Central European Summer Time)</lastBuildDate>
     <item>
       <title>Makin&#39; wavs with Zig</title>
       <link>https://blog.jfo.click/makin-wavs-with-zig</link>
-      <description><![CDATA[<p>I&#39;ve been gearing up to do some audio programming and more generally learn
+      <description><![CDATA[<blockquote>
+<p>Update: Felix Queißner has written a <a href="https://zig.news/xq/re-makin-wavs-with-zig-1jjd">response to this post on zig.news</a> that shows how to
+make the zig code cleaner and more idiomatic. Thanks Felix!</p>
+</blockquote>
+<p>I&#39;ve been gearing up to do some audio programming and more generally learn
 about digital signal processing. As a first exercise, I decided to revisit a
-simple program I wrote while trying out rust a few years ago. <a href="/how-rust-do/">I blogged about
-that here</a>. There is, of course, a lot of Rust specific
-information in that post, but if you&#39;d like background on the <code>.wav</code> format it
-is specified <a href="/how-rust-do/#...]]></description>
+simple program I wrote while trying out rust a...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/makin-wavs-with-zig</guid>
       <pubDate>Jul 20, 2022</pubDate>
     </item>
