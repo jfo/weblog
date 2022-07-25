@@ -92,14 +92,17 @@ input&quot; should include the current character in this case:</p>
 <p>A <em>parser generator</em> is a function that returns a parser. Maybe you give it
 some input and it decides what to match based on that...</p>
 
-<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> <span class="hljs-title function_">parseChar</span> = char =&gt;
-  <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> [
-    input[<span class="hljs-number">0</span>] === char,
-    input.<span class="hljs-title function_">slice</span>(<span class="hljs-number">1</span>, input.<span class="hljs-property">length</span>)
-  ];
+<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> <span class="hljs-title function_">parseChar</span> = (<span class="hljs-params">char</span>) =&gt;
+  <span class="hljs-function">(<span class="hljs-params">input</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (input[<span class="hljs-number">0</span>] === char) {
+      <span class="hljs-keyword">return</span> [<span class="hljs-literal">true</span>, input.<span class="hljs-title function_">slice</span>(<span class="hljs-number">1</span>, input.<span class="hljs-property">length</span>)];
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> [<span class="hljs-literal">false</span>, input];
+    }
+  };
 
 <span class="hljs-keyword">const</span> parseA = <span class="hljs-title function_">parseChar</span>(<span class="hljs-string">&#x27;A&#x27;</span>);
-<span class="hljs-keyword">const</span> parseA = <span class="hljs-title function_">parseChar</span>(<span class="hljs-string">&#x27;B&#x27;</span>);
+<span class="hljs-keyword">const</span> parseB = <span class="hljs-title function_">parseChar</span>(<span class="hljs-string">&#x27;B&#x27;</span>);
 <span class="hljs-title function_">parseA</span>(testString) <span class="hljs-comment">// [ true, &#x27;bcd123&#x27; ]</span>
 <span class="hljs-title function_">parseB</span>(testString) <span class="hljs-comment">// [ false, &#x27;Abcd123&#x27; ]</span>
 </code></pre>
