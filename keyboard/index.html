@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>keyboard</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="http://dev.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="keyboard" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://dev.jfo.click/keyboard" />
+    <meta property="og:image" content="http://dev.jfo.click/desk.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@jeffowler" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http://dev.jfo.click">archive</a> &mdash;
+        <a href="http://dev.jfo.click/feed.xml">feed</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="post-title">keyboard</h1>
+        <sub>Jan 01, 1970</sub>
+        <p></p>
+        <div><p>This is the ultimate yak shave. How much further down can you go, really? I
+could design my own processor out of switches, or
+<a href="https://www.youtube.com/watch?v=OpLU__bhu2w(">dominoes</a>), or silicone I guess.
+And then write my own bytecode for it? I love making things myself but even I
+have limits.</p>
+<p>But building my own keyboard firmware is not beyond those limits!
+It&#39;s going to be the best firmware, yuge.  Fantastic, luxurious firmware.</p>
+<h2 id="no-seriously-why-are-you-doing-this-what-a-huge-waste-of-time-use-this-https-github-com-tmk-tmk_keyboard-instead">No seriously why are you doing this what a huge waste of time use <a href="https://github.com/tmk/tmk_keyboard">this</a> instead</h2>
+<p>I want to learn things and stuff and that&#39;s why I&#39;m doing this the hard way. I
+don&#39;t have occasion to write embedded systems software, normally... and so the
+toolchains and techniques that are used to write them remain pretty obscure to
+me. I know that there is a chip- I know that I can write C (or something else
+maybe!) and compile it and assemble it and link it and flash it, and I know the
+chip can run the code I&#39;ve written to do things. Things! Imagine it!</p>
+<p>I have an understanding, conceptually, of how that process works, and how
+bytecode is interpreted and how memory is laid out, and I&#39;ve heard the word
+&#39;cache&#39; before and also &#39;interrupt&#39; and I kind of know what they mean. But I
+don&#39;t <em>really</em> know what they mean.</p>
+<p>And there aren&#39;t all that many entry vector level resources floating around out
+there, either. I discovered a dearth of accessible writing bounded on the upper
+end by cool af Arduino projects and on the lower end by <a href="http://www.usb.org/developers/docs/usb20_docs/">giant
+specs</a> and
+<a href="http://www.atmel.com/images/Atmel-0856-AVR-Instruction-Set-Manual.pdf">manuals</a>.
+The latter are definitely great resources and it would be really beneficial to sit
+down and go through them with a fine tooth comb, but without context and a
+general understanding of what I&#39;m reading about, I probably wouldn&#39;t get super
+far. I need to start from a contained project and hit a bunch of roadblocks to
+gain that context, and keyboard firmware seemed like a good candidate for that.</p>
+<p>Also, I wanted to <a href="/keyboard">build a keyboard from scratch.</a>.</p>
+<p>It seems that a lot of people that do embedded systems stuff seem to come
+<em>up</em> from electrical engineering rather than <em>down</em> from interpreted and &#39;high
+level&#39; compiled languages. Arduinos are very cool and do amazing things to make
+hardware programming accessible for driven folks from artists to enthusiasts to
+programmers of all stripes, but I want more and deeper understanding of what
+I&#39;m actually doing. I know that I can write C and compile it and get it on the
+chip and have it run, and that&#39;s what I really want to know how about.</p>
+<p>So here is an excruciatingly detailed post about that!</p>
+<h2 id="start-from-what-i-know-">Start from what I know.</h2>
+<p>Here is a tiny arduino program.</p>
+
+<pre><code class="lang-arduino">
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setup</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-built_in">pinMode</span>(<span class="hljs-number">13</span>, <span class="hljs-literal">OUTPUT</span>);
+  <span class="hljs-built_in">digitalWrite</span>(<span class="hljs-number">13</span>, <span class="hljs-literal">HIGH</span>);
+}
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">loop</span><span class="hljs-params">()</span> </span>{
+}
+</code></pre>
+<p>This program powers pin 13, which has a LED attached to it. The LED is on
+because I&#39;ve set the pin to <code>HIGH</code>, that makes sense.</p>
+<p>If I take a small wire and connect pin 13 to ground, the led will go off. This also makes sense.</p>
+<blockquote>
+<p>more about that</p>
+</blockquote>
+
+<pre><code class="lang-arduino">
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setup</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-built_in">pinMode</span>(<span class="hljs-number">13</span>, <span class="hljs-literal">OUTPUT</span>);
+  <span class="hljs-built_in">digitalWrite</span>(<span class="hljs-number">13</span>, <span class="hljs-literal">HIGH</span>);
+
+  <span class="hljs-built_in">Serial</span>.<span class="hljs-built_in">begin</span>(<span class="hljs-number">9600</span>);
+}
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">loop</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">digitalRead</span>(<span class="hljs-number">13</span>) == <span class="hljs-number">0</span>) {
+      <span class="hljs-built_in">Serial</span>.<span class="hljs-built_in">println</span>(<span class="hljs-string">&quot;Yeah alright yeah!&quot;</span>);
+  }
+}
+</code></pre>
+<p>When the LED is on, <code>digitalRead(13)</code> will return <code>1</code> because the pin has
+power. When it&#39;s connected to ground, it loses that power, because the power
+goes to ground.</p>
+<p>So now, in the arduino IDE, you can open the serial monitor and see &quot;Yeah
+alright yeah!&quot; print to it everytime you press down the switch.</p>
+<p>As it turns out, it&#39;s actually pretty easy to make the computer think your
+arduino is a keyboard!</p>
+<p>Take it away, built in libs!</p>
+
+<pre><code class="lang-arduino"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">setup</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-built_in">pinMode</span>(<span class="hljs-number">12</span>, <span class="hljs-literal">OUTPUT</span>);
+  <span class="hljs-built_in">digitalWrite</span>(<span class="hljs-number">12</span>, <span class="hljs-literal">HIGH</span>);
+
+  <span class="hljs-built_in">Keyboard</span>.<span class="hljs-built_in">begin</span>();
+}
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">loop</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">digitalRead</span>(<span class="hljs-number">12</span>) == <span class="hljs-number">1</span>) {
+    <span class="hljs-built_in">Keyboard</span>.<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;a&quot;</span>);
+  }
+}
+</code></pre>
+<p>So, this will totally work. I now have a functioning keyboard of just one key
+that presses &quot;a&quot;.</p>
+<p>How do I turn a switch into a signal on the arduino?  what is a signal on the
+arduino? HIGH LOW the signal going through the pull up resistor when grounded
+gives a signal.  could be the other way around but then you couldn&#39;t stack them
+the same way.  do the arduino with a single switch, sending serial chars.
+switch to sending a single keystroke.</p>
+<p>explain the matrix, links to those good posts</p>
+<p><a href="http://blog.komar.be/how-to-make-a-keyboard-the-matrix/">http://blog.komar.be/how-to-make-a-keyboard-the-matrix/</a>
+<a href="http://pcbheaven.com/wikipages/How_Key_Matrices_Works/">http://pcbheaven.com/wikipages/How_Key_Matrices_Works/</a></p>
+<p>Introduce the teensy.
+compile and run the arduino code for the teensy?</p>
+<p>talk about wanting to write my own stuff. How far down do you go? do you write
+the bootloader? do you write the usb stuff? what does the teensy have?</p>
+<p>I decided to use the loader.</p>
+<p>Talk about the example code from pjcr, use that as a base.</p>
+<p>can I do it in rust?</p>
+<p><a href="http://hackaday.com/2012/06/29/turning-an-arduino-into-a-usb-keyboard/">http://hackaday.com/2012/06/29/turning-an-arduino-into-a-usb-keyboard/</a></p>
+<p>step one:</p>
+<p>send a keycode to the computer every 2 seconds.</p>
+</div>
+      </article>
+    </div>
+
+  </body>
+</html>

@@ -1,9 +1,4 @@
 @font-face {
-  font-family: "Inconsolata";
-  src: url("/inconsolata.woff") format("woff");
-}
-
-@font-face {
   font-family: "Literata";
   src: url("/literata.ttf") format("truetype");
 }
@@ -19,20 +14,10 @@
 
 body {
   font-family: Literata, serif;
-  font-size: 1.1em;
 }
 
-h1 {
-  font-size: 2em;
-}
-
-.title-thing {
+.post-title {
   margin: 0;
-}
-
-p,
-li {
-  line-height: 1.5;
 }
 
 a {
@@ -51,9 +36,9 @@ a:visited {
 }
 
 #content {
-  max-width: 720px;
+  max-width: 45em;
   margin: 0 auto;
-  padding: 1em 0 1em 0;
+  padding: 1em;
 }
 
 pre {

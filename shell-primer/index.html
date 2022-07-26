@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>shell-primer</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="http://dev.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="shell-primer" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://dev.jfo.click/shell-primer" />
+    <meta property="og:image" content="http://dev.jfo.click/desk.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@jeffowler" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http://dev.jfo.click">archive</a> &mdash;
+        <a href="http://dev.jfo.click/feed.xml">feed</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="post-title">shell-primer</h1>
+        <sub>Jan 01, 1970</sub>
+        <p></p>
+        <div><h2 id="a-filesystem-is-a-tree">A filesystem is a tree</h2>
+<p>A computer that has storage stores data in what you can think of as one long
+continuous block of ones and zeros.</p>
+<p><a href="https://blog.jfo.click/c-and-simple-types/">https://blog.jfo.click/c-and-simple-types/</a></p>
+<p>This data needs to be organized <em>somehow</em>.  Imagine a huge library whose books
+are in no particular order.  Not very useful, right? Or how about a good chunk
+of those books&#39; pages are split up and spread out among all the shelves and
+crammed in between each other. Even less useful! They need to be organized
+according to some sort of system. A filing system.</p>
+<p>This is what a filesystem does on a computer. <a href="https://arstechnica.com/gadgets/2008/03/past-present-future-file-systems/">Here&#39;s a longer
+article</a>
+that goes into some more technical details about that!</p>
+<p>Those details are very interesting! But for now, all you need to know is that
+the filesystem organizes your data into a <em>tree</em> consisting of a series of
+<em>nodes</em> each of which can be one of either:</p>
+<p>1- a file of any type
+2- a directory that can contain files and other directories</p>
+<p>This maps pretty well to the common understanding of files and folders that you
+will likely be used to, just from navigating the graphical user interface of
+your computer.</p>
+<h2 id="tilde-sweet-tilde">tilde sweet tilde</h2>
+<p><img src="http://tilde.club/~ford/tildepoint.jpg" alt="img"></p>
+<p>Open up <code>terminal</code>. You&#39;ll be greeted with something that looks a little like
+this:</p>
+<p><style>
+  @keyframes blinker {
+    70% { opacity: 0; }
+  }
+</style></p>
+<pre>
+  <code>
+    <div>Last login: Wed Mar 21 11:55:32 on ttys013 </div>
+    <div>~ $<span style="animation: blinker 1s linear infinite;"> ▓</span></div>
+  </code>
+</pre>
+
+<p>This is the command line, and you&#39;re looking at the command prompt. The tilde
+<code>~</code> is the directory you&#39;re in right now, it defaults to your home directory,
+<a href="https://medium.com/message/tilde-club-i-had-a-couple-drinks-and-woke-up-with-1-000-nerds-a8904f0a2ebf&lt;Paste">which tilde is a shorthand
+for</a>.</p>
+<p>Let&#39;s learn us a couple of commands! For each command, just type it in and then
+press <code>enter</code>.</p>
+
+<pre><code>pwd
+</code></pre>
+<p>This stands for &quot;print working directory,&quot; and does what it says on the tin.
+The &quot;working directory&quot; is the directory that you&#39;re currently <em>in</em>, and this
+command prints the <em>full path</em> of that directory. Mine looks like this:</p>
+
+<pre><code>~ $ pwd
+/Users/jfo
+</code></pre>
+<p>Yep, that&#39;s where I am, that&#39;s my home directory, it&#39;s the <em>full path</em> of what
+<code>~</code> is short for.</p>
+<p>Remember how I said that the filesystem is structured as a tree? the <em>root</em> of
+that tree has a full path as well, and it looks like this:</p>
+
+<pre><code>/
+</code></pre>
+<p>Every file and every folder on your computer has a full path that starts right
+there, at the root directory. We&#39;ll visit it in a minute! Let&#39;s learn a couple
+more commands first.</p>
+
+<pre><code>ls
+</code></pre>
+<p>Applications
+Desktop
+Documents
+Downloads
+Library
+Movies
+Music
+Pictures
+Public
+Sites
+VirtualBox VMs
+bird.png
+code
+development
+dotfiles
+github
+go
+local
+notes
+sandbox</p>
+<h2 id="every-command-is-a-program">Every command is a program</h2>
+<p>$PATH</p>
+<h2 id="you-have-an-identity">You have an identity</h2>
+<p>how do you move around the file system?</p>
+<p>cd for change directory.</p>
+<p>cd . and cd .. and cd ~ are special. cd by itself is like cd ~</p>
+<p>how about cd - that&#39;s a special trick!</p>
+<p>ls</p>
+<p>touch maybe</p>
+<p>what a file <em>is</em></p>
+<p>editor - subl nano vim emacs
+mac osx &#39;open&#39; will launch whatever the default handler is</p>
+<p>man</p>
+<p>running a program.
+ruby python node php</p>
+</div>
+      </article>
+    </div>
+
+  </body>
+</html>

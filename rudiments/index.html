@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>rudiments</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="http://dev.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="rudiments" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://dev.jfo.click/rudiments" />
+    <meta property="og:image" content="http://dev.jfo.click/desk.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@jeffowler" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http://dev.jfo.click">archive</a> &mdash;
+        <a href="http://dev.jfo.click/feed.xml">feed</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="post-title">rudiments</h1>
+        <sub>Jan 01, 1970</sub>
+        <p></p>
+        <div><p>Sometimes people ask me about learning to program. That&#39;s great! I am always
+happy to talk about it! There are so many resources available these days that I
+can point people to, especially for beginners.</p>
+<p>But I often find that folks can get stuck on rudimentary concepts that can
+slow them down with learning other things. This is usually not that big a deal!
+But sometimes it might be enough to derail momentum, and at an early stage,
+that can spell the end of things.</p>
+<p>Sandboxed environments like Codeacademy mean well, they are just trying to hide
+a lot of the complexity of what&#39;s running what so you can focus on learning
+concepts, but I think there are some rudimentary concepts that are really,
+really important, and not really that hard to understand, that can help a lot.</p>
+<h2 id="what-data-_is_">What data <em>is</em></h2>
+<p>Everything in a computer is data. Data is <code>1</code>&#39;s and <code>0</code>&#39;s organized in specific
+ways and interpreted in specific ways. Everything a computer touches is data.</p>
+<p>Every file on your computer is just data, that&#39;s it. Different file formats
+encode things in different ways, but they all boil down to <code>1</code> and <code>0</code> in the
+end, at least until we get quantum computers working at a consumer pricepoint.</p>
+<h2 id="interacting-with-your-computer-">Interacting with your computer.</h2>
+<p>The computer is a machine... a &quot;calculator with benefits.&quot; But we are so
+used to interacting with it graphically that it can seem like that&#39;s all there
+is. We click, we scroll, we read. When I started, the command line terrified
+me, and why wouldn&#39;t it? It seemed so alien and dangerous.</p>
+<p>Of course, you should never run a command that you don&#39;t understand or that
+doesn&#39;t come from a trusted source, but there really isn&#39;t anything to be
+afraid of.  The command line, or terminal, is just another way to interact with
+the computer.</p>
+<p>There&#39;s nothing inherently better about this as compared to a graphical user
+interface (GUI) like the ones everyone who touches a computer these days is
+used to,</p>
+<p>How do you interface with computers? We are so used to a gui, and that&#39;s fine,
+but an understanding of command line work is vital to being able to grok the
+system as a whole</p>
+<p>what is the file system? a tree, mostly. How do you navigate that system?</p>
+<p>Some commands to definitely, definitely know:</p>
+<p>man
+pwd
+ls
+cd
+cp
+mv
+cat
+mkdir
+tree maybe</p>
+<p>Understanding that code is text files. That&#39;s it! That&#39;s all they are! html,
+for example, is simply a text file written to a spec that a browser knows how
+to read to produce an output.</p>
+<p>Similarly, a ruby file is a text file written to a spec that the Ruby
+interpreter knows how to read as instructions to do something. A <code>.py</code> file is
+a text file written to a spec that the python interpreter knows how to
+interpret as instructions. There is nothing special about the file itself other
+than that it is written in valid python or valid ruby, in fact, some
+expressions that the two languages have in common can be run through both
+interpreters to obtain a result:</p>
+
+<pre><code class="lang-ruby"><span class="hljs-comment"># thing.txt</span>
+print <span class="hljs-number">2</span> + <span class="hljs-number">2</span>
+</code></pre>
+<p>Is valid Ruby, and it is valid Python.</p>
+
+<pre><code>ruby thing.txt
+</code></pre>
+<p>and</p>
+
+<pre><code>python thing.txt
+</code></pre>
+<p>Both print out <code>4</code>. The suffix is arbitrary to a mac or linux system. (I think
+the suffixes matter more in windows land.)</p>
+</div>
+      </article>
+    </div>
+
+  </body>
+</html>

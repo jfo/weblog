@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Hello world, and all that.</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link
+      href="data:image/gif;base64,R0lGODlhEAAQAPMKAAAAAAAAAFBxYfKRAOLSIJGhgfKRkfCxkPKykf7+/v///wAAAAAAAAAAAAAAAAAAACH5BAEAAAAALAAAAAAQABAAAARdEMhAa5UYBMJ7D9nGDQRJcqC2mWVLUtpHIdU3UUoe5MqlEjtFITgEggKIZIU2U04M0KQUakg9DdIk1IoJYJfVTChLE3cFgl0AzZ0g2BR0OqSgpXtpQdltVwj8SFYRADs="
+      rel="icon"
+    />
+    <link href="http://dev.jfo.click/style.css" type="text/css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content="Hello world, and all that." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://dev.jfo.click/hello-world-and-all-that" />
+    <meta property="og:image" content="http://dev.jfo.click/desk.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@jeffowler" />
+  </head>
+
+  <body>
+    <div id="content">
+      <header class="site-header">
+        <h5>jfo</h5> &mdash;
+        <a href="http://dev.jfo.click">archive</a> &mdash;
+        <a href="http://dev.jfo.click/feed.xml">feed</a> &mdash;
+        <a href="mailto:jfo@jfo.click">contact</a>
+      </header>
+
+      <article>
+        <p></p>
+        <h1 class="post-title">Hello world, and all that.</h1>
+        <sub>Jan 01, 1970</sub>
+        <p></p>
+        <div><p>I&#39;ve heard somewhere, before, that a toolmaker should make their own tools.  I
+can&#39;t quite remember the source, but it&#39;s got that folksy wisdom quality that
+makes it stick with you. &quot;Ah, of course,&quot; you will say to yourself knowingly,
+&quot;a toolmaker makes tools, and they use tools, so they should make their own
+tools.&quot; And a programmer does nothing if not toolmaking, so I should be making
+my own tools, right? <a href="/s3-hugo-and-static-asset-hosting/">The spectre of &quot;write your own&quot; is always
+looming.</a> and well, here it is.</p>
+<h1 id="question-why-don-t-you-just-write-html-">Question: Why don&#39;t you just write html?</h1>
+<p>Is this a real question? Because if you&#39;re <em>writing prose</em>, dealing with html
+is a bummer. I mean, it doesn&#39;t have to be, it&#39;s not <em>that</em> big a deal, I&#39;m not
+<em>complaining</em>, I <em>could</em> do that, but the truth is, I really do like markdown!
+Despite it&#39;s troubled upbringing, it feels very natural as a format for writing
+medium length or longform posts, and the interoperability with html makes it
+uniquely suited to blogish static site generation. So, step one will be simple:
+take in a markdown file and put out a processed html file.</p>
+<p>In deno this turns out to be quite easy, here it is in its entireity:</p>
+<p>TODO. make this only one post, that doesn&#39;t process it.</p>
+
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> {
+  ensureDirSync,
+  expandGlobSync,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;https://deno.land/std@0.91.0/fs/mod.ts&quot;</span>;
+<span class="hljs-keyword">import</span> { paramCase } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;https://deno.land/x/case/mod.ts&quot;</span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Marked</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;https://deno.land/x/markdown@v2.0.0/mod.ts&quot;</span>;
+
+<span class="hljs-comment">// We create the output directory:</span>
+<span class="hljs-title function_">ensureDirSync</span>(<span class="hljs-string">&quot;./build&quot;</span>);
+
+<span class="hljs-keyword">const</span> inputFiles = <span class="hljs-title function_">expandGlobSync</span>(<span class="hljs-string">&quot;**/*.md&quot;</span>);
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> file <span class="hljs-keyword">of</span> inputFiles) {
+  <span class="hljs-comment">// Everything is synchronous, we read in the file:</span>
+  <span class="hljs-keyword">const</span> input = <span class="hljs-title class_">Deno</span>.<span class="hljs-title function_">readTextFileSync</span>(file.<span class="hljs-property">path</span>);
+
+  <span class="hljs-comment">// We write the file processed through markdown:</span>
+  <span class="hljs-keyword">const</span> markup = <span class="hljs-title class_">Marked</span>.<span class="hljs-title function_">parse</span>(input);
+  <span class="hljs-title class_">Deno</span>.<span class="hljs-title function_">writeTextFileSync</span>(
+    <span class="hljs-string">`./build/<span class="hljs-subst">${paramCase(markup.meta.title)}</span>.html`</span>,
+    markup.<span class="hljs-property">content</span>,
+  );
+}
+</code></pre>
+<p>A few things of note, here. First, I&#39;m pulling in <em>everything</em> with the suffix
+<code>.md</code> in any level of the source directory, which in this case is the working
+directory.</p>
+<p>then process it through markdown,
+then make it look at multiple files
+then make a template file / main css file / frontmatter
+then make an index file with a list of all the things
+static assets hosting
+configurations setups
+build steps to have javascript arbitrary in there
+dark / light theming, and noscript version (that can also be exported to pdf if I&#39;m feeling ambitious)</p>
+<p>development tooling: tests, incremental build, live reload server?
+hosting apparatus
+  static so can be anywhere, what do I do if I want my own metrics? deno on edge servers?</p>
+</div>
+      </article>
+    </div>
+
+  </body>
+</html>
