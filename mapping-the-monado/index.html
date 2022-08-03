@@ -66,12 +66,12 @@ potato!</a></p>
 <ol>
 <li><p>The term is <a href="https://en.wikipedia.org/wiki/Monad">imprecise</a> across
 disciplines, and even many professed experts
-<a href="https://en.wikipedia.org/wiki/Talk:Monad_(functional_programming">disagree</a>/Archive_1)
+<a href="https://en.wikipedia.org/wiki/Talk:Monad">disagree</a>
 on what constitutes a reasonable approach to explaining them in a programming
 context.</p>
 </li>
-<li><p>...despite this, the term <em>is</em> precise within <a href="https://en.wikipedia.org/wiki/Monad_(category_theory">category
-theory</a>), which is a
+<li><p>...despite this, the term <em>is</em> precise within
+<a href="https://en.wikipedia.org/wiki/Monad_(category_theory)">category theory</a>, which is a
 fascinating but also particularly advanced and abstract branch of mathematics.</p>
 </li>
 <li><p>...and the term is <em>also</em> precise <a href="https://wiki.haskell.org/Monad">within
@@ -406,7 +406,7 @@ check with, but we can just look at the output!</p>
 <pre><code class="lang-scheme"><span class="hljs-comment">; this is a bare value to start with, it&#x27;s just a list with a few symbols in it.</span>
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> y &#x27;(a b c))
 <span class="hljs-comment">; and here&#x27;s a monadic version of that, created with `unit`!</span>
-(<span class="hljs-name"><span class="hljs-built_in">define</span></span> My (<span class="hljs-name">unit</span> y ))
+(<span class="hljs-name"><span class="hljs-built_in">define</span></span> My (<span class="hljs-name">unit</span> y))
 
 <span class="hljs-comment">; left identity</span>
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> (<span class="hljs-name">bind</span> pop My))  <span class="hljs-comment">; ((b c))</span>
@@ -421,13 +421,13 @@ check with, but we can just look at the output!</p>
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> ((<span class="hljs-name">compose</span> pop push_c) (<span class="hljs-name">bind</span> push_a My))) <span class="hljs-comment">; ((c a b c))</span>
 </code></pre>
 <p>This is the identity monad!</p>
-<h2 id="a-digression-monads-are-_-like-_-functions">A digression Monads are <em>&quot;like&quot;</em> functions</h2>
+<h2 id="a-digression-monads-are-_-like-_-functions">A digression: Monads are <em>&quot;like&quot;</em> functions</h2>
 <p>Monads, like functions, are an <em>abstraction</em>. Functions can be thought of in
 metaphorical terms... a black box, a machine with inputs and outputs, these are
 intuitively correct but insufficient descriptions of what a function <em>is</em>.
 Monads can also be thought of in metaphorical terms. A monad is a container, a
 monad is a burrito, a bucket, or a package... more abstractly (and accurately,
-but not completely) as a sort of composition of functions on types... likewise,
+but not completely) it is a composition of functions over types... likewise,
 these metaphors can be intuitively correct but insufficient. Consider much of
 the language I use above... &quot;get at that internal value&quot; accurately describes
 what &quot;bind&quot; is doing for me right now, <em>but</em> it&#39;s not at all sufficient to
