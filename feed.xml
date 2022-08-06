@@ -9,7 +9,20 @@
       <link>https://blog.jfo.click</link>
       <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Tue Jul 26 2022 14:46:47 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <lastBuildDate>Sat Aug 06 2022 22:29:30 GMT+0200 (Central European Summer Time)</lastBuildDate>
+    <item>
+      <title>Batch no. 2 return statement</title>
+      <link>https://blog.jfo.click/batch-no-2-return-statement</link>
+      <description><![CDATA[<p>My Recurse center half-batch ended yesterday. This is my reflections post. We
+used to call these &quot;return statements,&quot; because that&#39;s what happens at the end
+of a function, and also I guess it&#39;s like a return to normalcy. So this is my
+return statement.</p>
+<p>Six weeks is really not a very long time, and I was conscious of that going in.
+Going to RC and being surrounded by interesting ideas and interesting people
+and also, cr...]]></description>
+      <guid isPermaLink="true">https://blog.jfo.click/batch-no-2-return-statement</guid>
+      <pubDate>Aug 06, 2022</pubDate>
+    </item>
     <item>
       <title>Building a tiny little broken calculator with parser combinators</title>
       <link>https://blog.jfo.click/building-a-tiny-little-broken-calculator-with-parser-combinators</link>
@@ -36,26 +49,6 @@ about digital signal processing. As a first exercise, I decided to revisit a
 simple program I wrote while trying out rust a...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/makin-wavs-with-zig</guid>
       <pubDate>Jul 20, 2022</pubDate>
-    </item>
-    <item>
-      <title>Zig translate-c and linking equal best friends</title>
-      <link>https://blog.jfo.click/zig-translate-c-and-linking-equal-best-friends</link>
-      <description><![CDATA[<p>We have a weekly one hour interest group for Zig programming going at Recurse
-this batch. It&#39;s called the <em>Zig Zone</em>, which is both descriptive and
-alliterative. This is a pattern, other examples on my calendar include:</p>
-
-<ul>
-<li>Rust Rodeo</li>
-<li>OCaml Oasis</li>
-<li>Clojure Conclave</li>
-<li>Shader Shindig</li>
-<li>Haskell Hangout</li>
-<li>Django Discovery</li>
-</ul>
-<p>Anyway you get the idea.</p>
-<p>We all just show up wit...]]></description>
-      <guid isPermaLink="true">https://blog.jfo.click/zig-translate-c-and-linking-equal-best-friends</guid>
-      <pubDate>Jul 14, 2022</pubDate>
     </item>
   </channel>
 </rss>
