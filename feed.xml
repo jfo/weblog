@@ -9,7 +9,20 @@
       <link>https://blog.jfo.click</link>
       <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Thu Dec 22 2022 20:27:44 GMT+0100 (Central European Standard Time)</lastBuildDate>
+    <lastBuildDate>Sun Jan 08 2023 12:11:26 GMT+0100 (Central European Standard Time)</lastBuildDate>
+    <item>
+      <title>It&#39;s _Just_ a Function</title>
+      <link>https://blog.jfo.click/it-s-just-a-function</link>
+      <description><![CDATA[<p><span style="color: red;">Bob</span>: yeah, it&#39;s simple, see? it&#39;s just a
+function.</p>
+<p><span style="color: blue;">Alice</span>: So this is a just a function, which is
+what... a type of generalized description of some arbitrary algorithmic
+procedure, and in this particular case a textual representation of same in a
+particular but likewise arbitrary programming language and syntax, and is in
+practice here interpreted by a <em>virtual...]]></description>
+      <guid isPermaLink="true">https://blog.jfo.click/it-s-just-a-function</guid>
+      <pubDate>Jan 08, 2023</pubDate>
+    </item>
     <item>
       <title>Batch no. 2 return statement</title>
       <link>https://blog.jfo.click/batch-no-2-return-statement</link>
@@ -36,19 +49,6 @@ input passes some test you&#39;ve set out for it. This is not yet a parser, not
 really. Usually, a parser does quite a lot mor...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/building-a-tiny-little-broken-calculator-with-parser-combinators</guid>
       <pubDate>Jul 25, 2022</pubDate>
-    </item>
-    <item>
-      <title>Makin&#39; wavs with Zig</title>
-      <link>https://blog.jfo.click/makin-wavs-with-zig</link>
-      <description><![CDATA[<blockquote>
-<p>Update: Felix Queißner has written a <a href="https://zig.news/xq/re-makin-wavs-with-zig-1jjd">response to this post on zig.news</a> that shows how to
-make the zig code cleaner and more idiomatic. Thanks Felix!</p>
-</blockquote>
-<p>I&#39;ve been gearing up to do some audio programming and more generally learn
-about digital signal processing. As a first exercise, I decided to revisit a
-simple program I wrote while trying out rust a...]]></description>
-      <guid isPermaLink="true">https://blog.jfo.click/makin-wavs-with-zig</guid>
-      <pubDate>Jul 20, 2022</pubDate>
     </item>
   </channel>
 </rss>
