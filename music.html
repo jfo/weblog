@@ -1,55 +1,62 @@
-<body>
-  <div id="scale"></div>
-  <div id="quality"></div>
-  <div id="attack"></div>
-  <button onClick="scale()">scale</button>
-</body>
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
 
-<script>
-  function random(arr) {
-    const x = Math.floor(Math.random() * arr.length);
-    console.log(x);
-    return arr[x];
-  }
-  const scales = [
-    "C",
-    "G",
-    "D",
-    "A",
-    "E",
-    "B",
-    "F#",
-    "Gb",
-    "Db",
-    "Ab",
-    "Eb",
-    "Bb",
-    "F",
-  ];
+  <body>
+    <div id="scale"></div>
+    <div id="quality"></div>
+    <div id="attack"></div>
+    <button onClick="scale()">scale</button>
+  </body>
 
-  const qualities = [
-    "Major",
-    "Melodic Minor",
-    "Harmonic Minor",
-    "Harmonic Major",
-  ];
+  <script>
+    function random(arr) {
+      const x = Math.floor(Math.random() * arr.length);
+      console.log(x);
+      return arr[x];
+    }
+    const scales = [
+      "C",
+      "G",
+      "D",
+      "A",
+      "E",
+      "B",
+      "F#",
+      "Gb",
+      "Db",
+      "Ab",
+      "Eb",
+      "Bb",
+      "F",
+    ];
 
-  const attacks = [
-    "Alternate DU",
-    "Alternate UD",
-    "Full Legato",
-    "Half Legato",
-    "Economy",
-  ];
+    const qualities = [
+      "Major",
+      "Melodic Minor",
+      "Harmonic Minor",
+      "Harmonic Major",
+    ];
 
-  const scaleDiv = document.getElementById("scale");
-  const qualityDiv = document.getElementById("quality");
-  const attackDiv = document.getElementById("attack");
+    const attacks = [
+      "Alternate DU",
+      "Alternate UD",
+      "Full Legato",
+      "Half Legato",
+      "Economy",
+    ];
 
-  function scale() {
-    scaleDiv.innerHTML = random(scales);
-    qualityDiv.innerHTML = random(qualities);
-    attackDiv.innerHTML = random(attacks);
-  }
-  scale();
-</script>
+    const scaleDiv = document.getElementById("scale");
+    const qualityDiv = document.getElementById("quality");
+    const attackDiv = document.getElementById("attack");
+
+    function scale() {
+      scaleDiv.innerHTML = random(scales);
+      qualityDiv.innerHTML = random(qualities);
+      attackDiv.innerHTML = random(attacks);
+    }
+    scale();
+  </script>
+</html>
