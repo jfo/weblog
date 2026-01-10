@@ -34,57 +34,40 @@
         <sub>Jul 31, 2016</sub>
         <p></p>
         <div><p>Consider this:</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
     (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x y)
         (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> (<span class="hljs-name">x</span> y))))
-</code></pre>
-<p>And now,</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;a</span> &#x27;(b c))
-</code></pre>
-<p>Will return</p>
-
-<pre><code class="lang-scheme">&#x27;(a b c)
-</code></pre>
-<p>Furthermore,</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> z &#x27;(b c))
-</code></pre>
-<p>And now,</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;a</span> z)
-</code></pre>
-<p>Will evaluate <code>z</code> in the global env before passing it to <code>conser</code>, returning:</p>
-
-<pre><code class="lang-scheme">&#x27;(a b c)
-</code></pre>
-<p>But what about this?</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> z &#x27;(b c))
+</code></pre><p>And now,</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;a</span> &#x27;(b c))
+</code></pre><p>Will return</p>
+<pre><code class="hljs language-scheme">&#x27;(a b c)
+</code></pre><p>Furthermore,</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> z &#x27;(b c))
+</code></pre><p>And now,</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;a</span> z)
+</code></pre><p>Will evaluate <code>z</code> in the global env before passing it to <code>conser</code>, returning:</p>
+<pre><code class="hljs language-scheme">&#x27;(a b c)
+</code></pre><p>But what about this?</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> z &#x27;(b c))
 
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
     (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x)
         (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> x z)))
 
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> (<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;a</span>))
-</code></pre>
-<p>You&#39;ll notice, that at the time of <code>conser</code>&#39;s invocation, <code>z</code> is defined in the
+</code></pre><p>You&#39;ll notice, that at the time of <code>conser</code>&#39;s invocation, <code>z</code> is defined in the
 global environment. Unlike the second example above, however, <code>z</code> is <em>not</em>
 being evaluated in that environment. The <code>z</code> here is being evaluated within the
 frame environment created by <code>apply_proc</code> during the evaluation <code>(conser &#39;a)</code>,
 an environment that currently has no assignment for <code>z</code>.</p>
 <p>And so we get:</p>
-
 <pre><code>Error: unbound label: z
-</code></pre>
-<p>This is obviously not the behavior we would expect! The interpreter <em>should</em> be
+</code></pre><p>This is obviously not the behavior we would expect! The interpreter <em>should</em> be
 examining the frame for <code>z</code>, and then when not finding it, trying to look it up
 in the enclosing environment, which in this case is the global one!</p>
 <p>This actually turns out to be a fairly easy fix!</p>
 <p>Right now, <code>get()</code> looks like this:</p>
-
-<pre><code class="lang-c">C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env* env, C *key)</span> {
+<pre><code class="hljs language-c">C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env* env, C *key)</span> {
     Entry *cur = env-&gt;head;
 
     <span class="hljs-keyword">while</span> (cur) {
@@ -96,39 +79,31 @@ in the enclosing environment, which in this case is the global one!</p>
 
     <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
 }
-</code></pre>
-<p>You can see right there that if a variable is not found in an environment, then
+</code></pre><p>You can see right there that if a variable is not found in an environment, then
 it just returns NULL, and that&#39;s it!</p>
 <p>In a pattern that is becoming fairly familiar by now, we need yet another
 linked list of environments. An environment should be linked to whatever
 environment it is being evaluated inside.</p>
 <p>Currently, an <code>Env</code> is a struct that contains just one pointer:</p>
-
-<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> {</span>
+<pre><code class="hljs language-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> {</span>
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Entry</span> *<span class="hljs-title">head</span>;</span>
 } Env;
-</code></pre>
-<p>We&#39;ll add a <code>next</code> member.</p>
-
-<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> {</span>
+</code></pre><p>We&#39;ll add a <code>next</code> member.</p>
+<pre><code class="hljs language-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> {</span>
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Entry</span> *<span class="hljs-title">head</span>;</span>
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Env</span> *<span class="hljs-title">next</span>;</span>
 } Env;
-</code></pre>
-<p>and initialize it to <code>NULL</code> in the &quot;constructor&quot; function:</p>
-
-<pre><code class="lang-c">Env *<span class="hljs-title function_">new_env</span><span class="hljs-params">()</span> {
+</code></pre><p>and initialize it to <code>NULL</code> in the &quot;constructor&quot; function:</p>
+<pre><code class="hljs language-c">Env *<span class="hljs-title function_">new_env</span><span class="hljs-params">()</span> {
     Env *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(Env));
     <span class="hljs-keyword">if</span> (!out) { <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>); };
     out-&gt;head = <span class="hljs-literal">NULL</span>;
     out-&gt;next = <span class="hljs-literal">NULL</span>;
     <span class="hljs-keyword">return</span> out;
 }
-</code></pre>
-<p>Now, back in the get function, simply check and see if there is a next member
+</code></pre><p>Now, back in the get function, simply check and see if there is a next member
 to attempt to look up a given value in if it isn&#39;t found in the provided Env:</p>
-
-<pre><code class="lang-c">C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env* env, C *key)</span> {
+<pre><code class="hljs language-c">C *<span class="hljs-title function_">get</span><span class="hljs-params">(Env* env, C *key)</span> {
     Entry *cur = env-&gt;head;
 
     <span class="hljs-keyword">while</span> (cur) {
@@ -144,11 +119,9 @@ to attempt to look up a given value in if it isn&#39;t found in the provided Env
 
     <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
 }
-</code></pre>
-<p>The final change to hook all of this up lives back in <code>apply_proc()</code>, which
+</code></pre><p>The final change to hook all of this up lives back in <code>apply_proc()</code>, which
 currently looks like:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">static</span> C *<span class="hljs-title function_">apply_proc</span><span class="hljs-params">(C* proc, Env *env)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">static</span> C *<span class="hljs-title function_">apply_proc</span><span class="hljs-params">(C* proc, Env *env)</span> {
 
     C *cur = proc-&gt;val.proc.args-&gt;val.<span class="hljs-built_in">list</span>;
     C *curarg = proc-&gt;next;
@@ -180,80 +153,59 @@ currently looks like:</p>
 
     <span class="hljs-keyword">return</span> out;
 }
-</code></pre>
-<p>As you can see, the <code>frame</code> env that we&#39;ve created has no <code>next</code> member yet,
+</code></pre><p>As you can see, the <code>frame</code> env that we&#39;ve created has no <code>next</code> member yet,
 since it was initialized to NULL Before we evaluate the <code>proc</code> body inside the
 frame, we just have to hook up the frame to the parent environment. One line
 will do it!</p>
-
-<pre><code class="lang-c"><span class="hljs-comment">// etc...</span>
+<pre><code class="hljs language-c"><span class="hljs-comment">// etc...</span>
 
     frame-&gt;next = env;
     C *out = eval(proc-&gt;val.proc.body, frame);
 
 <span class="hljs-comment">// ...etc</span>
-</code></pre>
-<p>Now, back in the example:</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> z &#x27;(b c))
+</code></pre><p>Now, back in the example:</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> z &#x27;(b c))
 
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
     (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x)
         (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> x z)))
 
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> (<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;a</span>))
-</code></pre>
-<p>The frame created to evalute <code>conser</code> in will have access to the global env
+</code></pre><p>The frame created to evalute <code>conser</code> in will have access to the global env
 when it can&#39;t find the <code>z</code> variable inside of the frame, and it will find it, and lo</p>
-
-<pre><code class="lang-c">(a b c)
-</code></pre>
-<hr>
+<pre><code class="hljs language-c">(a b c)
+</code></pre><hr>
 
 <p>Not quite done! Consider this.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
     (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (a)
         (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> () (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> a &#x27;(hello)))))
-</code></pre>
-<p><code>conser</code>, now, is a function that takes an argument and <em>returns a function</em>
+</code></pre><p><code>conser</code>, now, is a function that takes an argument and <em>returns a function</em>
 that, when invoked, will cons that original argument onto the list <code>&#39;(hello)</code>.</p>
 <p>Will this work?</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
     (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (a)
         (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> () (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> a &#x27;(hello)))))
 
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> myconser (<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;1</span>))
 
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> myconser)
-</code></pre>
-<p>yields a procedure that takes no arguments but <em>contains a closed over variable
+</code></pre><p>yields a procedure that takes no arguments but <em>contains a closed over variable
 <code>a</code></em> whose definition lives in the invocation of <code>conser</code> from the line:</p>
-
 <pre><code>(define myconser (conser &#39;1))
-</code></pre>
-<p>... and it looks like this:</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">PROC</span> () (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> a (<span class="hljs-name"><span class="hljs-built_in">quote</span></span> (<span class="hljs-name">hello</span>))))
-</code></pre>
-<p>This is what we would expect, but if we try to apply that function:</p>
-
+</code></pre><p>... and it looks like this:</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name">PROC</span> () (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> a (<span class="hljs-name"><span class="hljs-built_in">quote</span></span> (<span class="hljs-name">hello</span>))))
+</code></pre><p>This is what we would expect, but if we try to apply that function:</p>
 <pre><code>(display (myconser))
-</code></pre>
-
-<pre><code>Error: unbound label: a
-</code></pre>
-<p>Yikes! What&#39;s the problem exactly?</p>
-
-<pre><code class="lang-c"><span class="hljs-comment">// etc...</span>
+</code></pre><pre><code>Error: unbound label: a
+</code></pre><p>Yikes! What&#39;s the problem exactly?</p>
+<pre><code class="hljs language-c"><span class="hljs-comment">// etc...</span>
 
     frame-&gt;next = env;
     C *out = eval(proc-&gt;val.proc.body, frame);
 
 <span class="hljs-comment">// ...etc</span>
-</code></pre>
-<p>This <code>-&gt;next</code> member is referring to the environment that the PROC is being
+</code></pre><p>This <code>-&gt;next</code> member is referring to the environment that the PROC is being
 <em>evaluated inside of</em>. But that is not what we want here! We want access to the
 <em>environment inside of which the procedure was <strong>defined</strong>!</em></p>
 <p>Oh, if only we had a reference to that lying around!</p>
@@ -262,37 +214,29 @@ that, when invoked, will cons that original argument onto the list <code>&#39;(h
 reference to a procedure&#39;s enclosing environment <em>inside the proc object
 itself</em>. Well, this is why.</p>
 <p>So, instead of this inside of apply_proc:</p>
-
-<pre><code class="lang-c">    frame-&gt;next = env;
+<pre><code class="hljs language-c">    frame-&gt;next = env;
     C *out = eval(proc-&gt;val.proc.body, frame);
-</code></pre>
-<p>We want this!</p>
-
-<pre><code class="lang-c">    frame-&gt;next = proc-&gt;val.proc.env;
+</code></pre><p>We want this!</p>
+<pre><code class="hljs language-c">    frame-&gt;next = proc-&gt;val.proc.env;
     C *out = eval(proc-&gt;val.proc.body, frame);
-</code></pre>
-<p>::jazz hands::</p>
+</code></pre><p>::jazz hands::</p>
 <p>BUT OH NO!</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
     (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (a)
         (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> () (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> a &#x27;(hello)))))
 
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> myconser (<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;1</span>))
 
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> myconser)
-</code></pre>
-<p>Is now crashing!</p>
+</code></pre><p>Is now crashing!</p>
 <p>I have written this interpreter to always clean up after itself when it is done
 evaluating an expression. By design, the only persistent memory objects are
 explicitly <code>defined</code> in the sild code. The implicit temporary assignments in
 the frame environments used to evaluate the lambda procedures are destroyed
 after the lambda is evaluated.</p>
 <p>The pertinent line above, in <code>apply_proc</code>, is:</p>
-
-<pre><code class="lang-c">free_env(frame);
-</code></pre>
-<p>This <em>is</em> the behavior I wanted! But in the case of <code>conser</code>, I need to persist the
+<pre><code class="hljs language-c">free_env(frame);
+</code></pre><p>This <em>is</em> the behavior I wanted! But in the case of <code>conser</code>, I need to persist the
 environment that <code>myconser</code> was <em>defined</em> in so that when I try to evaluate
 <code>myconser</code>, I can still look up <code>a</code> in that enclosing environment. Currently,
 the procedure I am trying to apply contains a <em>danging pointer</em> to the
@@ -300,25 +244,21 @@ environment that it was defined in, because that environment was <code>free</cod
 after evaluation. That&#39;s why the program crashes; it encounters a
 <a href="https://en.wikipedia.org/wiki/Segmentation_fault">segfault</a>.</p>
 <p>This is a
-<a href="https://simple.wikipedia.org/wiki/Closure_(computer_science"><em>closure</em></a>), that
+<a href="https://simple.wikipedia.org/wiki/Closure_(computer_science)"><em>closure</em></a>, that
 enclosing environment, and maintaining them correctly is <em>difficult</em>, and non
 trivial.</p>
 <p>For now, simply removing that line will achieve what I want.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> conser
     (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (a)
         (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> () (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> a &#x27;(hello)))))
 
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> myconser (<span class="hljs-name">conser</span> <span class="hljs-symbol">&#x27;1</span>))
 
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> (<span class="hljs-name">myconser</span>))
-</code></pre>
-<p>Can now look up <code>a</code> and displays:</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">1</span> hello)
-</code></pre>
-<p>\o/</p>
-<h2 id="a-preliminary-coda">A preliminary coda</h2>
+</code></pre><p>Can now look up <code>a</code> and displays:</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name">1</span> hello)
+</code></pre><p>\o/</p>
+<h2>A preliminary coda</h2>
 <p>So... this fixes the problem with the segfault, yes, but it introduces a new
 problem- a giant memory leak. Now, everytime I evaluate a procedure and create a
 frame environment to help me with that, I have one more Env that may or

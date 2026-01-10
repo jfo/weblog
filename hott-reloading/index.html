@@ -54,20 +54,15 @@ Let&#39;s start with that. I&#39;ll be using <a href="https://expressjs.com/">ex
 <p>As always, I&#39;m starting from nothing, just assuming you have
 <a href="https://nodejs.org">node</a> installed.</p>
 <p>Make a folder...</p>
-
-<pre><code class="lang-bash"><span class="hljs-built_in">mkdir</span> hott
+<pre><code class="hljs language-bash"><span class="hljs-built_in">mkdir</span> hott
 <span class="hljs-built_in">cd</span> hott
-</code></pre>
-<p>initialize a package...</p>
-
-<pre><code class="lang-bash">npm init
-</code></pre>
-<p>This will ask you a bunch of questions that you can answer however your heart
+</code></pre><p>initialize a package...</p>
+<pre><code class="hljs language-bash">npm init
+</code></pre><p>This will ask you a bunch of questions that you can answer however your heart
 desires, because we&#39;re about to go in and delete most of it for reasons I will
 elaborate on in a moment.</p>
 <p>This will create a <code>package.json</code> file that looks something like this.</p>
-
-<pre><code class="lang-json"><span class="hljs-punctuation">{</span>
+<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
   <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;hott&quot;</span><span class="hljs-punctuation">,</span>
   <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;0.0.0&quot;</span><span class="hljs-punctuation">,</span>
   <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;whatevs idc&quot;</span><span class="hljs-punctuation">,</span>
@@ -78,31 +73,24 @@ elaborate on in a moment.</p>
   <span class="hljs-attr">&quot;author&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Ur boi&quot;</span><span class="hljs-punctuation">,</span>
   <span class="hljs-attr">&quot;license&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ISC&quot;</span>
 <span class="hljs-punctuation">}</span>
-</code></pre>
-<p>Usually, <code>npm</code> is assuming we&#39;re initializing a package in order to publish it
+</code></pre><p>Usually, <code>npm</code> is assuming we&#39;re initializing a package in order to publish it
 on the
 <a href="https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry">registry</a>.
 This is all well and good, but I don&#39;t care about most of these fields until I
 actually decide I want to do that, or publish or distribute it somewhere else
 through some other means. So, let&#39;s delete them!</p>
-
-<pre><code class="lang-json"><span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
-</code></pre>
-<p>Now your <code>package.json</code> is empty. Why do you need an empty package.json file?
+<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span><span class="hljs-punctuation">}</span>
+</code></pre><p>Now your <code>package.json</code> is empty. Why do you need an empty package.json file?
 Because the next command needs it.</p>
 <p>Install express:</p>
-
-<pre><code class="lang-bash">npm install --save-dev express
-</code></pre>
-<p>Now, <code>cat package.json</code> and you will find something like this:</p>
-
-<pre><code class="lang-json"><span class="hljs-punctuation">{</span>
+<pre><code class="hljs language-bash">npm install --save-dev express
+</code></pre><p>Now, <code>cat package.json</code> and you will find something like this:</p>
+<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
   <span class="hljs-attr">&quot;devDependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
     <span class="hljs-attr">&quot;express&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^4.17.1&quot;</span>
   <span class="hljs-punctuation">}</span>
 <span class="hljs-punctuation">}</span>
-</code></pre>
-<p>Where <code>4.17.1</code> is whatever the most recent version of express is.</p>
+</code></pre><p>Where <code>4.17.1</code> is whatever the most recent version of express is.</p>
 <p>If you have no <code>package.json</code> file, it would not have created it for you. This
 is why we needed the empty one.</p>
 <p>Why <code>devDependencies</code>? Well, we&#39;re playing around with a development tool set.
@@ -118,21 +106,15 @@ it is a beefy full featured multiplexing web server, the lockfile comes in at
 somewhere around 500 lines.</p>
 <p>Now, we&#39;re also going to ignore that. In fact, just delete everything and start
 over.</p>
-
-<pre><code class="lang-bash"><span class="hljs-built_in">cd</span> ..
+<pre><code class="hljs language-bash"><span class="hljs-built_in">cd</span> ..
 <span class="hljs-built_in">rm</span> -r hott
 <span class="hljs-built_in">mkdir</span> hott
 <span class="hljs-built_in">cd</span> hott
-</code></pre>
-<p>But instead of <code>npm init</code>, this time simply</p>
-
-<pre><code class="lang-bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;{}&#x27;</span> &gt; package.json
-</code></pre>
-<p>and now</p>
-
-<pre><code class="lang-bash">npm i --save-dev --no-package-lock express
-</code></pre>
-<p>This gives us the minimalist version of what we want. a <code>package.json</code> file that
+</code></pre><p>But instead of <code>npm init</code>, this time simply</p>
+<pre><code class="hljs language-bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;{}&#x27;</span> &gt; package.json
+</code></pre><p>and now</p>
+<pre><code class="hljs language-bash">npm i --save-dev --no-package-lock express
+</code></pre><p>This gives us the minimalist version of what we want. a <code>package.json</code> file that
 reflects just what we need and nothing else, and no lockfile cluttering up the place.</p>
 <p>A digression: lockfiles are <em>super useful</em> and <em>super important</em> for creating
 packages that reliably build identically over time. If a lockfile exists in a
@@ -146,12 +128,9 @@ actually need right now, while I&#39;m just playing around.</p>
 <p>So! Getting somewhere, I suppose.</p>
 <p>One more thing. We don&#39;t really want to write <code>--no-lock-file</code> every time we
 install a dependency, so let&#39;s put that in an rc file too.</p>
-
-<pre><code class="lang-bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;package-lock=false&#x27;</span> &gt; .npmrc
-</code></pre>
-<p>Let us now define a simple server using express. In <code>index.js</code>:</p>
-
-<pre><code class="lang-bash">const express = require(<span class="hljs-string">&#x27;express&#x27;</span>);
+<pre><code class="hljs language-bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;package-lock=false&#x27;</span> &gt; .npmrc
+</code></pre><p>Let us now define a simple server using express. In <code>index.js</code>:</p>
+<pre><code class="hljs language-bash">const express = require(<span class="hljs-string">&#x27;express&#x27;</span>);
 
 const app = express();
 
@@ -161,20 +140,13 @@ app.get(<span class="hljs-string">&#x27;/&#x27;</span>, (req, res) =&gt; {
 
 const port = 8765;
 app.listen(port, () =&gt; console.log(`Listening on port <span class="hljs-variable">${port}</span>.`));
-</code></pre>
-<p>Now, running</p>
-
-<pre><code class="lang-bash">node index.js
-</code></pre>
-<p>Will echo the log line. The server is now listening. Navigate to:</p>
-
+</code></pre><p>Now, running</p>
+<pre><code class="hljs language-bash">node index.js
+</code></pre><p>Will echo the log line. The server is now listening. Navigate to:</p>
 <pre><code>localhost:8765
-</code></pre>
-<p>In a browser. You should see <code>Hello World!</code> there. Great job.</p>
-<p>We can also add a script to <code>package.json</code> to run this using, for example, <code>npm
-run start</code>. That looks like:</p>
-
-<pre><code class="lang-json"><span class="hljs-punctuation">{</span>
+</code></pre><p>In a browser. You should see <code>Hello World!</code> there. Great job.</p>
+<p>We can also add a script to <code>package.json</code> to run this using, for example, <code>npm run start</code>. That looks like:</p>
+<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
   <span class="hljs-attr">&quot;scripts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
     <span class="hljs-attr">&quot;start&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;node index.js&quot;</span>
   <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
@@ -182,12 +154,10 @@ run start</code>. That looks like:</p>
     <span class="hljs-attr">&quot;express&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^4.17.1&quot;</span>
   <span class="hljs-punctuation">}</span>
 <span class="hljs-punctuation">}</span>
-</code></pre>
-<p>I&#39;m probably interested in letting this little server return some information
+</code></pre><p>I&#39;m probably interested in letting this little server return some information
 from a file somewhere else on my computer, right? Let&#39;s put the text somewhere
 else then.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
 <span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
 
 <span class="hljs-keyword">const</span> app = <span class="hljs-title function_">express</span>();
@@ -199,28 +169,22 @@ app.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x2
 
 <span class="hljs-keyword">const</span> port = <span class="hljs-number">8765</span>;
 app.<span class="hljs-title function_">listen</span>(port, <span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Listening on port <span class="hljs-subst">${port}</span>.`</span>));
-</code></pre>
-<p>And of course, <code>hello.html</code> in the same directory:</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World! From another file this time!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-</code></pre>
-<p>This now reads the file into memory (as a <code>utf-8</code> string) and the server sends
+</code></pre><p>And of course, <code>hello.html</code> in the same directory:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World! From another file this time!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+</code></pre><p>This now reads the file into memory (as a <code>utf-8</code> string) and the server sends
 it along.</p>
 <p>If you write this and navigate to it, you&#39;ll notice that the browser tries to
 let you download an octet stream. This is not what we want, we need to set the
 <a href="https://stackoverflow.com/questions/23714383/what-are-all-the-possible-values-for-http-content-type-header"><code>Content-Type</code> header on the
 response</a>
 so that the browser knows what I am sending to it.</p>
-
-<pre><code class="lang-js">app.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+<pre><code class="hljs language-js">app.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
   res.<span class="hljs-title function_">set</span>(<span class="hljs-string">&#x27;Content-Type&#x27;</span>, <span class="hljs-string">&#x27;text/html&#x27;</span>);
   res.<span class="hljs-title function_">send</span>(content);
 })
-</code></pre>
-<p>Express can do both the reading of the file and the content type in one pass
+</code></pre><p>Express can do both the reading of the file and the content type in one pass
 with <code>sendFile</code>:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
 <span class="hljs-keyword">const</span> app = <span class="hljs-title function_">express</span>();
 
 app.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
@@ -229,8 +193,7 @@ app.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x2
 
 <span class="hljs-keyword">const</span> port = <span class="hljs-number">8765</span>;
 app.<span class="hljs-title function_">listen</span>(port, <span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Listening on port <span class="hljs-subst">${port}</span>.`</span>));
-</code></pre>
-<p>This will do what you think!</p>
+</code></pre><p>This will do what you think!</p>
 <p>Now we&#39;re getting close to the fun bits. I want changes I make locally to
 <code>hello.html</code> to immediately propagate to the running browser window, but I have
 a problem. The client <em>knows</em> where to find the server (it&#39;s at it&#39;s childhood
@@ -243,22 +206,18 @@ for, they&#39;re long gone.</p>
 <p>In a vacuum, this is <em>also</em> relatively straightforward. <code>fs.watch</code> takes a file
 path, and it takes a callback to run every time something happens to the file.
 Try this for example, just in another scratch file <code>scratch.js</code>:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
 fs.<span class="hljs-title function_">watch</span>(<span class="hljs-string">&#x27;./hello.html&#x27;</span>, <span class="hljs-variable language_">console</span>.<span class="hljs-property">log</span>);
-</code></pre>
-<p>Remember that a callback is just a function, and console.log is just a
+</code></pre><p>Remember that a callback is just a function, and console.log is just a
 function, so you can just straight pass console.log up in there just like that.</p>
 <p>That&#39;s it. Now run <code>node scratch.js</code>. Open <code>hello.html</code>, and make some changes
 to it. Save it. In the other window, where the script is running, observe:</p>
-
 <pre><code>change hello.html
-</code></pre>
-<p>So we&#39;ve answered the question of how the server can know when the file is
+</code></pre><p>So we&#39;ve answered the question of how the server can know when the file is
 changed.</p>
 <p>But again, how does that propagate to the client?</p>
-<h2 id="websockets">Websockets</h2>
-<p>Http is not the only protocol game in town! The <a href="https://duckduckgo.com/?q=websocket+protocaol&amp;t=ffab&amp;ia=web">websocket
+<h2>Websockets</h2>
+<p>Http is not the only protocol game in town! The <a href="https://duckduckgo.com/?q=websocket+protocaol&t=ffab&ia=web">websocket
 protocol</a> defines
 a system of two-way communication between entities. This is exactly what we
 need!</p>
@@ -292,8 +251,7 @@ heavy lifting is likely happening in a package I have already decided is worth
 using. If I were going to deploy this somewhere, I would probably reconsider.</p>
 <p>Anyway... websockets.</p>
 <p>Here&#39;s a working example of a websocket, let&#39;s pick it apart a bit.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
 <span class="hljs-keyword">const</span> expressWs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express-ws&#x27;</span>);
 <span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
 
@@ -320,8 +278,7 @@ app.<span class="hljs-title function_">ws</span>(<span class="hljs-string">&#x27
 })
 
 app.<span class="hljs-title function_">listen</span>(port, <span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Listening on port <span class="hljs-subst">${port}</span>.`</span>));
-</code></pre>
-<p>Most of this is the same. What is new? Well, first of all, the server is
+</code></pre><p>Most of this is the same. What is new? Well, first of all, the server is
 appending a script tag with some <em>client side</em> javascript to the file we&#39;re
 returning. When the client loads the response, it will also be running this
 code. <em>On the client</em>. I&#39;ve gone back to using <code>res.send</code> because I am
@@ -342,10 +299,9 @@ invoked for every connection. So... each client will have instigated its own
 interval counter, and none of them will see the same number at the same time.
 This is grade A enterprise software right here. As an exercise for the reader,
 how would you make the state report consistently to n websocket clients?</p>
-<h2 id="finally-an-implementation">Finally, an implementation</h2>
+<h2>Finally, an implementation</h2>
 <p>We have all the ingredients, let&#39;s put them together.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
 <span class="hljs-keyword">const</span> expressWs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express-ws&#x27;</span>);
 <span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
 
@@ -371,8 +327,7 @@ app.<span class="hljs-title function_">ws</span>(<span class="hljs-string">&#x27
 })
 
 app.<span class="hljs-title function_">listen</span>(port, <span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Listening on port <span class="hljs-subst">${port}</span>.`</span>));
-</code></pre>
-<p>This is a <em>live</em> reloading server now. A couple of important things have
+</code></pre><p>This is a <em>live</em> reloading server now. A couple of important things have
 changed! The websocket endpoint now has a file watcher inside of it, which
 sends the <code>go</code> message to the client. There is nothing special about that since
 the client has been instructed to simply reload the whole page on <em>any</em> message
@@ -380,8 +335,7 @@ received. Similarly, the content from the file is loaded from disk on each
 request. It must be, since the file has changed, and in order to get it to the
 client, we have to load the changed version.</p>
 <p>This is almost what I want, but I can do one better.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
 <span class="hljs-keyword">const</span> expressWs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express-ws&#x27;</span>);
 <span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
 
@@ -409,8 +363,7 @@ app.<span class="hljs-title function_">ws</span>(<span class="hljs-string">&#x27
 })
 
 app.<span class="hljs-title function_">listen</span>(port, <span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Listening on port <span class="hljs-subst">${port}</span>.`</span>));
-</code></pre>
-<p>What&#39;s new? Well, now, the file is being read in the callback to the
+</code></pre><p>What&#39;s new? Well, now, the file is being read in the callback to the
 file watcher, immediately before being sent back to the client as a string. The
 client, instead of simply reloading the whole page, is just dumping the thing
 it got back into the dom in the simplest way possible. Now running this server

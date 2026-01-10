@@ -61,17 +61,14 @@ but not the same.</p>
 <p>So, cells have two things in them: a value, and an address for the next cell in
 the list. Let&#39;s make a cell, in C. I&#39;ll start with creating a struct that can
 hold those two things, and I&#39;ll call it a <code>Cell</code>:</p>
-
-<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> {</span>
+<pre><code class="hljs language-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> {</span>
     <span class="hljs-type">int</span> value;
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> *<span class="hljs-title">next</span>;</span>
 };
-</code></pre>
-<p>If you don&#39;t know what a struct is, <a href="/structs-and-unions/">I wrote about them
+</code></pre><p>If you don&#39;t know what a struct is, <a href="/structs-and-unions/">I wrote about them
 here</a>.</p>
 <p>I could assign values to a cell like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span>;</span> <span class="hljs-comment">// declare a_cell to be a Cell</span>
     a_cell.value = <span class="hljs-number">1</span>;   <span class="hljs-comment">// initialize the Cell&#x27;s value</span>
     a_cell.next = <span class="hljs-number">0x0</span>;  <span class="hljs-comment">// point to the next Cell (in this case, the null pointer)</span>
@@ -79,12 +76,10 @@ here</a>.</p>
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;a_cell&#x27;s value is: %d\n&quot;</span>, a_cell.value);
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;the next cell after a_cell is: %p&quot;</span>, a_cell.next);
 }
-</code></pre>
-<p>That dot notation is used to access the <code>members</code> of the struct. In this case,
+</code></pre><p>That dot notation is used to access the <code>members</code> of the struct. In this case,
 there is no next cell, so <code>a_cell.next</code> is the <code>NULL</code> pointer, which is
 zero. This is a <em>list</em> of one cell. Let&#39;s make a second cell.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">another_cell</span>;</span>
     another_cell.value = <span class="hljs-number">2</span>;
     another_cell.next = <span class="hljs-number">0x0</span>;
@@ -98,18 +93,15 @@ zero. This is a <em>list</em> of one cell. Let&#39;s make a second cell.</p>
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;another_cell&#x27;s value is: %d\n&quot;</span>, another_cell.value);
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;the next cell after another_cell is: %p&quot;</span>, another_cell.next);
 }
-</code></pre>
-<p>Now, <code>a_cell.next</code> is being assigned to <code>&amp;another_cell</code>. Which is taking the
+</code></pre><p>Now, <code>a_cell.next</code> is being assigned to <code>&amp;another_cell</code>. Which is taking the
 address of <code>another_cell</code>. There is now a reference to <code>another_cell</code> contained
 in <code>a_cell</code>, and the two cells are <em>linked</em>.  That is why this structure is
 called a <code>linked list</code>. It consists of cells that are <em>linked</em> together.</p>
 <p>I should be able to get to <code>another_cell</code>&#39;s values <em>through</em> the first
 cell, and I can, and it looks like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;another_cell&#x27;s value is: %d\n&quot;</span>, a_cell.next-&gt;value);
+<pre><code class="hljs language-c"><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;another_cell&#x27;s value is: %d\n&quot;</span>, a_cell.next-&gt;value);
 <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;the next cell after another_cell is: %p&quot;</span>, a_cell.next-&gt;next);
-</code></pre>
-<p>Notice how that is different... I say &quot;tell me where the next cell after
+</code></pre><p>Notice how that is different... I say &quot;tell me where the next cell after
 <code>a_cell</code> lives&quot; with <code>a_cell.next</code>, and I say &quot;give me its value&quot; with
 <code>-&gt;value</code></p>
 <p>We use the <code>.</code> notation when we are operating directly on structs, and we use
@@ -119,20 +111,16 @@ for this are historic, and <a href="http://stackoverflow.com/questions/13366083/
 explains why in great detail, if you are interested.</p>
 <p>This linked list of cells is a very simple data structure, but you can do a
 whole lot with it! Here is a function that takes a cell and prints it&#39;s value:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_cell</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_cell</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car.value);
 }
-</code></pre>
-<p>But this only prints a single cell. What If I want to print a whole list? I could
+</code></pre><p>But this only prints a single cell. What If I want to print a whole list? I could
 do something like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car.value);
     print_list(*car.next);
 }
-</code></pre>
-<p>Notice that <code>car.next</code> is a pointer, and <code>print_list</code> is expecting not a
+</code></pre><p>Notice that <code>car.next</code> is a pointer, and <code>print_list</code> is expecting not a
 pointer to a cell, but an <em>actual cell</em> to be passed into it. The <code>*</code>
 operator takes a pointer and <code>dereferences</code> it, which means it returns not just
 the address of a thing but the <em>actual</em> thing.</p>
@@ -140,23 +128,23 @@ the address of a thing but the <em>actual</em> thing.</p>
 succeeds in passing the first  two cells through the function, when it tries to
 dereference the null pointer (<code>0x0</code>) that the second cell is still pointing to, it blows
 up. I can fix this for now by wrapping that recursive call in a null pointer check:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell car)</span> {
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car.value);
     <span class="hljs-keyword">if</span> (car.next) {
         print_list(*car.next);
     }
 }
-</code></pre>
-<p>Now, I have a cell structure that I can build into a list, and I have a simple
+</code></pre><p>Now, I have a cell structure that I can build into a list, and I have a simple
 function that can do something with that list. Progress! :D</p>
 <blockquote>
 <p>Did you know you can also initialize a struct in one line by passing a block
 of constructor args to it? It&#39;s true! And it looks like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">another_cell</span> =</span> { <span class="hljs-number">2</span>, <span class="hljs-number">0x0</span> };
+</blockquote>
+<blockquote>
+<pre><code class="hljs language-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">another_cell</span> =</span> { <span class="hljs-number">2</span>, <span class="hljs-number">0x0</span> };
 <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span> =</span> { <span class="hljs-number">1</span>, &amp;another_cell };
-</code></pre>
+</code></pre></blockquote>
+<blockquote>
 <p>It&#39;s order dependant, so the first argument is the <code>value</code> and the second
 argument is a pointer to another cell, just like in the struct declaration.</p>
 </blockquote>
@@ -167,48 +155,36 @@ squint your eyes, think of structs as objects, and get away with it. They
 certainly fulfill a lot of the the same roles, at least! It is useful to have
 constructor functions for objects, so it is also useful to have constructor
 functions for structs. Here is one:</p>
-
-<pre><code class="lang-c"><span class="hljs-keyword">struct</span> Cell <span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> value, <span class="hljs-keyword">struct</span> Cell *next)</span> {
+<pre><code class="hljs language-c"><span class="hljs-keyword">struct</span> Cell <span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> value, <span class="hljs-keyword">struct</span> Cell *next)</span> {
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">outcell</span> =</span> { value, next };
     <span class="hljs-keyword">return</span> outcell;
 };
-</code></pre>
-<p>Great! Now I can abstract away that creation and assignment, like this, which
+</code></pre><p>Great! Now I can abstract away that creation and assignment, like this, which
 totally works.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">another_cell</span> =</span> makecell(<span class="hljs-number">2</span>, <span class="hljs-number">0x0</span>);
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span> =</span> makecell(<span class="hljs-number">1</span>, &amp;another_cell);
 
     print_list(a_cell);
 }
-</code></pre>
-<p>But all is not well just yet. <code>makecell()</code> returns a cell, so I should be able
+</code></pre><p>But all is not well just yet. <code>makecell()</code> returns a cell, so I should be able
 to inline this whole thing by creating the next cell at the same time as the
 first one, like so:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">a_cell</span> =</span> makecell(<span class="hljs-number">1</span>, &amp;makecell(<span class="hljs-number">2</span>, <span class="hljs-number">0x0</span>));
     print_list(a_cell);
 }
-</code></pre>
-<p>But this fails! With a hella cryptic error message:</p>
-
+</code></pre><p>But this fails! With a hella cryptic error message:</p>
 <pre><code>sild.c:22:38: error: cannot take the address of an rvalue of type &#39;struct Cell&#39;
      struct Cell a_cell = makecell(1, &amp;makecell(2, 0x0));
                                       ^~~~~~~~~~~~~~~~~
-</code></pre>
-<p>What the hell is an <code>rvalue</code>? I&#39;ve found conflicting definitions, so rather than
+</code></pre><p>What the hell is an <code>rvalue</code>? I&#39;ve found conflicting definitions, so rather than
 attempt to find a definitive answer here, I&#39;ll use the most plausible and simplest.</p>
 <p>Consider an assignment expression that looks like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> var = <span class="hljs-number">1</span>;
-</code></pre>
-<p>Or, more generally:</p>
-
-<pre><code class="lang-c">type var = value
-</code></pre>
-<p>the <code>value</code> on the right is an <code>rvalue</code>, it has some value, but does not take
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> var = <span class="hljs-number">1</span>;
+</code></pre><p>Or, more generally:</p>
+<pre><code class="hljs language-c">type var = value
+</code></pre><p>the <code>value</code> on the right is an <code>rvalue</code>, it has some value, but does not take
 up space in memory. In fact, giving that value a place in memory is exactly
 what we&#39;re doing by assigning it to a variable.</p>
 <p>I&#39;ll give you one guess what <code>var</code> is called in this expression. Yup, <code>lvalue</code>,
@@ -223,12 +199,10 @@ it take up space? Because <code>makecell()</code> is returning the <em>literal d
 makes up a struct of type Cell. It&#39;s basically the same thing as trying to take
 the address directly of an integer, which makes no sense! And in fact, if we
 try to do so with <code>&amp;1000</code> or something, we get the very same error:</p>
-
 <pre><code>sild.c:22:5: error: cannot take the address of an rvalue of type &#39;int&#39;
     &amp;1000;
     ^~~~~
-</code></pre>
-<p>This is a little bit contrived, at this point. You might say- well just don&#39;t
+</code></pre><p>This is a little bit contrived, at this point. You might say- well just don&#39;t
 do that! Assign the output of <code>makecell</code> to a var before taking the address of
 it! But this doesn&#39;t really make much sense... now I&#39;m allocating memory twice
 for the same structure. Once in <code>makecell()</code> itself, and once in <code>main()</code>, and
@@ -248,7 +222,9 @@ transmitted, all the data that constitutes the video goes with it. It gets
 copied hundreds of times! Isn&#39;t it easier to just send a URL to a youtube
 video? Then the data in the email is very small, but you still get
 to watch the
-<a href="https://www.youtube.com/watch?v=8F9jXYOH2c0&amp;app=desktop">video</a>. Also less viruses.</p>
+<a href="https://www.youtube.com/watch?v=8F9jXYOH2c0&app=desktop">video</a>. Also less viruses.</p>
+</blockquote>
+<blockquote>
 <p>This is the same as the difference between <em>pass by value</em> (copying the video
 each time the email is sent) and <em>pass by reference</em> (the &quot;reference&quot; being the
 address of the video, or the memory address of the structure you&#39;re referring
@@ -258,19 +234,15 @@ to.)</p>
 
 <p>I can modify <code>makecell()</code> to return a pointer (which is an address) to the Cell
 I&#39;ve created instead of the cell itself, like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-keyword">struct</span> Cell *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> value, <span class="hljs-keyword">struct</span> Cell *next)</span> {
+<pre><code class="hljs language-c"><span class="hljs-keyword">struct</span> Cell *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> value, <span class="hljs-keyword">struct</span> Cell *next)</span> {
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> <span class="hljs-title">outcell</span> =</span> { value, next };
     <span class="hljs-keyword">return</span> &amp;outcell;
 };
-</code></pre>
-<p>But if I try to call it with <code>makecell(1, 0x0)</code>, I get another, different warning.</p>
-
+</code></pre><p>But if I try to call it with <code>makecell(1, 0x0)</code>, I get another, different warning.</p>
 <pre><code>sild.c:17:13: warning: address of stack memory associated with local variable &#39;outcell&#39; returned [-Wreturn-stack-address]
     return &amp;outcell;
            ^~~~~~~
-</code></pre>
-<p>I returned an address, why is the compiler complaining? Because I returned the
+</code></pre><p>I returned an address, why is the compiler complaining? Because I returned the
 address that the Cell inside of <code>makecell()</code> was given. But that&#39;s what I
 wanted to do! To understand why this is problematic, we have to know the difference between</p>
 <h3>the stack and the heap</h3>
@@ -311,15 +283,13 @@ processes that keep requesting allocations without freeing the ones that
 they&#39;re done with.</p>
 </blockquote>
 <p>I&#39;ll modify <code>makecell()</code> to use malloc</p>
-
 <pre><code>struct Cell *makecell(int value, struct Cell *next) {
     struct Cell *outcell = malloc(sizeof(struct Cell));
     outcell-&gt;value = value;
     outcell-&gt;next = next;
     return outcell;
 };
-</code></pre>
-<p>I start now by requesting enough space on the heap for a cell. How much space
+</code></pre><p>I start now by requesting enough space on the heap for a cell. How much space
 is enough? I can figure that out by using <code>sizeof()</code>.</p>
 <p>On success, <code>malloc()</code> returns a pointer to that allocated memory. I&#39;ve told my
 program we&#39;re treating it as a pointer to a Cell. The next two lines simply
@@ -331,8 +301,7 @@ at that address for as long as I like.</p>
 <p>I&#39;ll need to modify <code>print_list()</code> to accept and operate on a pointer instead
 of an object, but everything pretty much stays the same other than adding some
 <code>*</code>&#39;s and changing dots to arrows:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell *car)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">print_list</span><span class="hljs-params">(<span class="hljs-keyword">struct</span> Cell *car)</span> {
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>, car-&gt;value);
     <span class="hljs-keyword">if</span> (car-&gt;next) {
         print_list(car-&gt;next);
@@ -343,8 +312,7 @@ of an object, but everything pretty much stays the same other than adding some
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Cell</span> *<span class="hljs-title">a_cell</span> =</span> makecell(<span class="hljs-number">1</span>, makecell(<span class="hljs-number">2</span>, <span class="hljs-number">0x0</span>));
     print_list(a_cell);
 }
-</code></pre>
-<hr>
+</code></pre><hr>
 
 <p>I&#39;ll end by tightening things up a little bit. First, I&#39;ll add a typedef to the
 Cell struct and refer to it simply as C. This way, I can refer to it directly
@@ -354,8 +322,7 @@ assignments in the <code>makecell()</code> function. I don&#39;t really have a g
 this other than it feels good to me. I will likely split these up later on
 again, but for now, here&#39;s how the whole program looks so far, notice I&#39;ve
 <code>#include</code>d <code>stdio.h</code> for <code>printf()</code> and <code>stdlib.h</code> for <code>malloc()</code>:</p>
-
-<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
+<pre><code class="hljs language-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
 <span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span>
 
 <span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
@@ -383,12 +350,9 @@ C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(
     print_list(a_cell);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
-</code></pre>
-<p>As written, this program prints out.</p>
-
+</code></pre><p>As written, this program prints out.</p>
 <pre><code>1 2
-</code></pre>
-<p>And now we have a linked list.</p>
+</code></pre><p>And now we have a linked list.</p>
 </div>
       </article>
     </div>

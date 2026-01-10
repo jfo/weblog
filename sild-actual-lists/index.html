@@ -36,37 +36,29 @@
         <div><p><a href="/sild-reading-substrings">So far</a> I&#39;ve made a linked list whose cells have an
 arbitrary string as their value. I can read in an input string and turn it into
 a linked list of words, like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     C *a_list = read(<span class="hljs-string">&quot;here are some words&quot;</span>);
     debug_list(a_list);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
-</code></pre>
-<p>Gives me a series of cells like this:</p>
-
-<pre><code class="lang-c">Address: <span class="hljs-number">0x7fed51403460</span>, Value: here, Next: <span class="hljs-number">0x7fed51403440</span>
+</code></pre><p>Gives me a series of cells like this:</p>
+<pre><code class="hljs language-c">Address: <span class="hljs-number">0x7fed51403460</span>, Value: here, Next: <span class="hljs-number">0x7fed51403440</span>
 Address: <span class="hljs-number">0x7fed51403440</span>, Value: are, Next: <span class="hljs-number">0x7fed51403420</span>
 Address: <span class="hljs-number">0x7fed51403420</span>, Value: some, Next: <span class="hljs-number">0x7fed51403400</span>
 Address: <span class="hljs-number">0x7fed51403400</span>, Value: words, Next: <span class="hljs-number">0x0</span>
-</code></pre>
-<p>Alright! That is a <em>list</em> of words, for sure. What if I read in a <em>lisp</em> list?
+</code></pre><p>Alright! That is a <em>list</em> of words, for sure. What if I read in a <em>lisp</em> list?
 (notice the surrounding parens on the inside of the double quotes now)...</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     C *a_list = read(<span class="hljs-string">&quot;(here are some words)&quot;</span>);
     debug_list(a_list);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
-</code></pre>
-<p>This gives me:</p>
-
-<pre><code class="lang-c">Address: <span class="hljs-number">0x7f9852c03460</span>, Value: (here, Next: <span class="hljs-number">0x7f9852c03440</span>
+</code></pre><p>This gives me:</p>
+<pre><code class="hljs language-c">Address: <span class="hljs-number">0x7f9852c03460</span>, Value: (here, Next: <span class="hljs-number">0x7f9852c03440</span>
 Address: <span class="hljs-number">0x7f9852c03440</span>, Value: are, Next: <span class="hljs-number">0x7f9852c03420</span>
 Address: <span class="hljs-number">0x7f9852c03420</span>, Value: some, Next: <span class="hljs-number">0x7f9852c03400</span>
 Address: <span class="hljs-number">0x7f9852c03400</span>, Value: words), Next: <span class="hljs-number">0x0</span>
-</code></pre>
-<p>Which is not at all what I want! Of course, as written, the parser doesn&#39;t know
+</code></pre><p>Which is not at all what I want! Of course, as written, the parser doesn&#39;t know
 anything about lists, or lisp syntax. It simply doesn&#39;t make a distinction
 between the opening and closing parens and any other <code>char</code>. Further, though
 I&#39;ve been referring to the structure that results from linking a bunch of these
@@ -83,27 +75,22 @@ to add another type of value to the cell that is itself a list. Because lists
 are represented by a pointer address to the first element in the list, I simply
 need to add another member to the cell struct that can hold one of those, like
 so:</p>
-
-<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+<pre><code class="hljs language-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
     <span class="hljs-type">char</span> * val;
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list_val</span>;</span>
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
 } C;
-</code></pre>
-<p>I&#39;ll also add this member to the <code>makecell()</code> constructor function:</p>
-
-<pre><code class="lang-c">C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">char</span> *val, C *list_val, C *next)</span> {
+</code></pre><p>I&#39;ll also add this member to the <code>makecell()</code> constructor function:</p>
+<pre><code class="hljs language-c">C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">char</span> *val, C *list_val, C *next)</span> {
     C *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(C));
     out-&gt;val = val;
     out-&gt;list_val = list_val;
     out-&gt;next = next;
     <span class="hljs-keyword">return</span> out;
 };
-</code></pre>
-<p>And because I&#39;ve added it there, I&#39;ll also have to pass in a <code>NULL</code> if I&#39;m not
+</code></pre><p>And because I&#39;ve added it there, I&#39;ll also have to pass in a <code>NULL</code> if I&#39;m not
 assigning it to anything when I call it.</p>
-
-<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+<pre><code class="hljs language-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
     <span class="hljs-keyword">switch</span>(*s) {
         <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
             <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
@@ -113,14 +100,12 @@ assigning it to anything when I call it.</p>
             <span class="hljs-keyword">return</span> makecell(read_substring(s), <span class="hljs-literal">NULL</span>, read(s + count_substring_length(s) + <span class="hljs-number">1</span>));
     }
 }
-</code></pre>
-<p>Now, I need to teach the reader about parens, and what to do when it sees one.
+</code></pre><p>Now, I need to teach the reader about parens, and what to do when it sees one.
 The closing paren is easy, it represents the end of a list, just like the NULL
 byte <code>&#39;\0&#39;</code> does, so that will also return <code>NULL</code>. The opening paren needs to
 return a different type of cell, a list. It will also call <code>makecell()</code>. Take a
 look at this new read function:</p>
-
-<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+<pre><code class="hljs language-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
     <span class="hljs-keyword">switch</span>(*s) {
         <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
             <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
@@ -132,8 +117,7 @@ look at this new read function:</p>
             <span class="hljs-keyword">return</span> makecell(read_substring(s), <span class="hljs-literal">NULL</span>, read(s + count_substring_length(s) + <span class="hljs-number">1</span>));
     }
 }
-</code></pre>
-<p>Now, if the reader sees an opening paren, it will begin to create a new list as
+</code></pre><p>Now, if the reader sees an opening paren, it will begin to create a new list as
 the <code>list_val</code> member of the cell it is creating. When it is done making that
 sublist, it needs to jump ahead past the end of the list it just made and read
 in the next value <em>from there</em>.</p>
@@ -141,17 +125,14 @@ in the next value <em>from there</em>.</p>
 that knows how to figure out how many chars to jump ahead after reading a list
 in. It looks like this, for now, and increments a pointer until it hits a
 closing paren:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">count_list_length</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">count_list_length</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
     <span class="hljs-type">int</span> i = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">while</span> (s[i] != <span class="hljs-string">&#x27;)&#x27;</span> &amp;&amp; s[i] != <span class="hljs-string">&#x27;\0&#x27;</span>)
         i++;
     <span class="hljs-keyword">return</span> i;
 }
-</code></pre>
-<p>After adding printing of a <code>list_val</code> to <code>debug_list()</code>, like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
+</code></pre><p>After adding printing of a <code>list_val</code> to <code>debug_list()</code>, like this:</p>
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Address: %p, Value: %s, list_value: %p, Next: %p\n&quot;</span>,
             car,
             car-&gt;val,
@@ -164,16 +145,13 @@ closing paren:</p>
         debug_list(car-&gt;next);
     }
 }
-</code></pre>
-<p>I can see what I&#39;m reading in. The <code>read()</code> function now ignores parens as regular chars and does something like what I want:</p>
-
-<pre><code class="lang-c">Address: <span class="hljs-number">0x7fbdd0403480</span>, Value: (null), list_value: <span class="hljs-number">0x7fbdd0403460</span>, Next: <span class="hljs-number">0x0</span>
+</code></pre><p>I can see what I&#39;m reading in. The <code>read()</code> function now ignores parens as regular chars and does something like what I want:</p>
+<pre><code class="hljs language-c">Address: <span class="hljs-number">0x7fbdd0403480</span>, Value: (null), list_value: <span class="hljs-number">0x7fbdd0403460</span>, Next: <span class="hljs-number">0x0</span>
 Address: <span class="hljs-number">0x7fbdd0403460</span>, Value: here, list_value: <span class="hljs-number">0x0</span>, Next: <span class="hljs-number">0x7fbdd0403440</span>
 Address: <span class="hljs-number">0x7fbdd0403440</span>, Value: are, list_value: <span class="hljs-number">0x0</span>, Next: <span class="hljs-number">0x7fbdd0403420</span>
 Address: <span class="hljs-number">0x7fbdd0403420</span>, Value: some, list_value: <span class="hljs-number">0x0</span>, Next: <span class="hljs-number">0x7fbdd0403400</span>
 Address: <span class="hljs-number">0x7fbdd0403400</span>, Value: words, list_value: <span class="hljs-number">0x0</span>, Next: <span class="hljs-number">0x0</span>
-</code></pre>
-<p>As you can see, the very first cell has nothing set as its <code>val</code> member, so it
+</code></pre><p>As you can see, the very first cell has nothing set as its <code>val</code> member, so it
 prints <code>(null)</code>.</p>
 <hr>
 
@@ -183,24 +161,19 @@ cannot, for example, have a <code>list_val</code> member that points to some oth
 <em>and</em> have a <code>val</code> member that contains a string. I need to type these cells,
 and attach a bit of metadata to each one that can help me to interpret it
 correctly. I&#39;ll add one more member to the struct, then, like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
+<pre><code class="hljs language-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> {</span>
     <span class="hljs-type">int</span> type;
     <span class="hljs-type">char</span> * val;
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list_val</span>;</span>
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
 } C;
-</code></pre>
-<p>And I&#39;ll define a couple of constants to use to represent these types:</p>
-
-<pre><code class="lang-c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> LABEL 0</span>
+</code></pre><p>And I&#39;ll define a couple of constants to use to represent these types:</p>
+<pre><code class="hljs language-c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> LABEL 0</span>
 <span class="hljs-meta">#<span class="hljs-keyword">define</span> LIST 1</span>
-</code></pre>
-<p>I&#39;m calling the string <code>val</code> members a <em>label</em>.</p>
+</code></pre><p>I&#39;m calling the string <code>val</code> members a <em>label</em>.</p>
 <p>Now, we can do something like this, to treat them differently in the
 <code>debug_list()</code> function, for example.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
     <span class="hljs-keyword">if</span> (car-&gt;type == LABEL) {
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LABEL- Address: %p, Value: %s Next: %p\n&quot;</span>,
             car,
@@ -219,11 +192,9 @@ correctly. I&#39;ll add one more member to the struct, then, like this:</p>
         debug_list(car-&gt;next);
     }
 }
-</code></pre>
-<p>I&#39;ll of course have to add this <code>type</code> as a member of the cell struct to both
+</code></pre><p>I&#39;ll of course have to add this <code>type</code> as a member of the cell struct to both
 the makecell function:</p>
-
-<pre><code class="lang-c">C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> type, <span class="hljs-type">char</span> *val, C *list_val, C *next)</span> {
+<pre><code class="hljs language-c">C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> type, <span class="hljs-type">char</span> *val, C *list_val, C *next)</span> {
     C *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(C));
     out-&gt;type = type;
     out-&gt;val = val;
@@ -231,10 +202,8 @@ the makecell function:</p>
     out-&gt;next = next;
     <span class="hljs-keyword">return</span> out;
 };
-</code></pre>
-<p>and the read function:</p>
-
-<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+</code></pre><p>and the read function:</p>
+<pre><code class="hljs language-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
     <span class="hljs-keyword">switch</span>(*s) {
         <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
             <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
@@ -246,12 +215,9 @@ the makecell function:</p>
             <span class="hljs-keyword">return</span> makecell(LABEL, read_substring(s), <span class="hljs-literal">NULL</span>, read(s + count_substring_length(s) + <span class="hljs-number">1</span>));
     }
 }
-</code></pre>
-<p>Also, instead of defining constants longhand with <code>#define</code>, it is much simpler to use an <code>enum</code> type that does that for us:</p>
-
-<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">enum</span> {</span> LABEL, LIST };
-</code></pre>
-<p><code>LABEL</code> is still a constant that represents <code>0</code> and <code>LIST</code> is still a constant
+</code></pre><p>Also, instead of defining constants longhand with <code>#define</code>, it is much simpler to use an <code>enum</code> type that does that for us:</p>
+<pre><code class="hljs language-c"><span class="hljs-class"><span class="hljs-keyword">enum</span> {</span> LABEL, LIST };
+</code></pre><p><code>LABEL</code> is still a constant that represents <code>0</code> and <code>LIST</code> is still a constant
 that represents <code>1</code>, this is just an easier, and more extensible, way to do
 that.</p>
 <hr>
@@ -265,8 +231,7 @@ those members even when I&#39;m not using them.</p>
 <p>It&#39;s much better to use a <code>union</code>, which I wrote about before <a href="/structs-and-unions">here</a>.</p>
 <p>A cell, now, will have only three members ever: a <code>type</code>, a generic <code>value</code> and
 the <code>next</code> pointer to the next cell.</p>
-
-<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> {</span>
+<pre><code class="hljs language-c"><span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> {</span>
     <span class="hljs-type">char</span> * label;
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">list</span>;</span>
 };
@@ -276,29 +241,23 @@ the <code>next</code> pointer to the next cell.</p>
     <span class="hljs-class"><span class="hljs-keyword">union</span> <span class="hljs-title">V</span> <span class="hljs-title">val</span>;</span>
     <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">C</span> * <span class="hljs-title">next</span>;</span>
 } C;
-</code></pre>
-<p>I&#39;m calling the <code>val</code> member&#39;s associated union <code>V</code>, because like the
+</code></pre><p>I&#39;m calling the <code>val</code> member&#39;s associated union <code>V</code>, because like the
 <code>C</code> typedef for <code>Cell</code>, it shows up a LOT in the code and I want it to be clean
 looking.</p>
 <p>I can now update the <code>makecell()</code> signature to accept this type as an arg
 instead of multiple different types of values.</p>
-
-<pre><code class="lang-c">C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> type, <span class="hljs-keyword">union</span> V val, C *next)</span> {
+<pre><code class="hljs language-c">C *<span class="hljs-title function_">makecell</span><span class="hljs-params">(<span class="hljs-type">int</span> type, <span class="hljs-keyword">union</span> V val, C *next)</span> {
     C *out = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(C));
     out-&gt;type = type;
     out-&gt;val = val;
     out-&gt;next = next;
     <span class="hljs-keyword">return</span> out;
 };
-</code></pre>
-<p>And I can update the calls to it to pass in a union. The syntax for this is
+</code></pre><p>And I can update the calls to it to pass in a union. The syntax for this is
 kind of weird, but you can initialize a union like this:</p>
-
-<pre><code class="lang-c">(<span class="hljs-keyword">union</span> Example){ .member_name = <span class="hljs-string">&quot;member value&quot;</span> };
-</code></pre>
-<p>In the read function, it looks like this:</p>
-
-<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+<pre><code class="hljs language-c">(<span class="hljs-keyword">union</span> Example){ .member_name = <span class="hljs-string">&quot;member value&quot;</span> };
+</code></pre><p>In the read function, it looks like this:</p>
+<pre><code class="hljs language-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
     <span class="hljs-keyword">switch</span>(*s) {
         <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
             <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
@@ -310,12 +269,10 @@ kind of weird, but you can initialize a union like this:</p>
             <span class="hljs-keyword">return</span> makecell(LABEL, (<span class="hljs-keyword">union</span> V){.label = read_substring(s)}, read(s + count_substring_length(s) + <span class="hljs-number">1</span>));
     }
 }
-</code></pre>
-<hr>
+</code></pre><hr>
 
 <p>This presents a new problem! Consider the <code>debug_list()</code> function, now.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
     <span class="hljs-keyword">if</span> (car-&gt;type == LABEL) {
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LABEL- Address: %p, Value: %s Next: %p\n&quot;</span>,
             car,
@@ -338,27 +295,21 @@ kind of weird, but you can initialize a union like this:</p>
         debug_list(car-&gt;next);
     }
 }
-</code></pre>
-<p>The chunk of memory that represents the cell looks like this:</p>
-
+</code></pre><p>The chunk of memory that represents the cell looks like this:</p>
 <pre><code>-----------------------------
 | type |    value    | next |
 -----------------------------
-</code></pre>
-<p>When we try to check the existence of the <code>val.list</code> member,</p>
-
-<pre><code class="lang-c"><span class="hljs-keyword">if</span> (car-&gt;val.<span class="hljs-built_in">list</span>) {
+</code></pre><p>When we try to check the existence of the <code>val.list</code> member,</p>
+<pre><code class="hljs language-c"><span class="hljs-keyword">if</span> (car-&gt;val.<span class="hljs-built_in">list</span>) {
     debug_list(car-&gt;val.<span class="hljs-built_in">list</span>);
 }
-</code></pre>
-<p>The boolean returns true, because though there is not a valid cell pointer in
+</code></pre><p>The boolean returns true, because though there is not a valid cell pointer in
 that space, there <em>is</em> data there, that represents the <code>label</code> member. The
 program then does what we tell it to and tries to <code>debug_list()</code> the string
 pointer that lives in <code>val.label</code>, inevitably rupturing as a result.</p>
 <p>I can fix this by putting the recursive call to debug the <code>list_val</code> <em>inside</em>
 of the conditional that <em>already</em> checks if it is a <code>LIST</code> typed cell.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
     <span class="hljs-keyword">if</span> (car-&gt;type == LABEL) {
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LABEL- Address: %p, Value: %s Next: %p\n&quot;</span>,
             car,
@@ -376,8 +327,7 @@ of the conditional that <em>already</em> checks if it is a <code>LIST</code> typ
         debug_list(car-&gt;next);
     }
 }
-</code></pre>
-<p>But this highlights a situtation that I really don&#39;t like, which is that I have
+</code></pre><p>But this highlights a situtation that I really don&#39;t like, which is that I have
 to have a null check before every recursive call to any function that operates
 on these lists. This isn&#39;t a huge deal now, but as the program grew it became
 more difficult to reason about the structure of all the moving parts when each
@@ -385,19 +335,15 @@ function had to concern itself with both the cell it&#39;s operating directly on
 <em>and</em> the cell immediately following it (if it exists or not!).</p>
 <p>I decided to solve this problem by creating a special type of cell, the <code>NIL</code>
 cell. (h/t to Rubby).</p>
-
-<pre><code class="lang-c"><span class="hljs-class"><span class="hljs-keyword">enum</span> {</span> NIL, LABEL, LIST };
-</code></pre>
-<p>And assigning it <em>only once</em> as a global, static variable in the running
+<pre><code class="hljs language-c"><span class="hljs-class"><span class="hljs-keyword">enum</span> {</span> NIL, LABEL, LIST };
+</code></pre><p>And assigning it <em>only once</em> as a global, static variable in the running
 program. Notice that I&#39;m initializing the struct with a bracketed, array like
 syntax, and the union inside the struct with another such bracketed section.
 When you assign a union in this way, it assumes the first member of the union.
 This is a little terse, but in this case it doesn&#39;t matter; ostensibly, this
 will never be accessed.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">static</span> C nil = { NIL, {<span class="hljs-literal">NULL</span>}, <span class="hljs-literal">NULL</span> };
-</code></pre>
-<p>this cell, <code>nil</code>, is now the source of falsehood for everything running inside
+<pre><code class="hljs language-c"><span class="hljs-type">static</span> C nil = { NIL, {<span class="hljs-literal">NULL</span>}, <span class="hljs-literal">NULL</span> };
+</code></pre><p>this cell, <code>nil</code>, is now the source of falsehood for everything running inside
 the program. It exists in only one place, at the address that can be shown by
 <code>&amp;nil</code>, and I&#39;ll refer to it that way in the code because I want it to be clear
 I&#39;m explicitly looking at the address of the <code>nil</code> cell.</p>
@@ -405,8 +351,7 @@ I&#39;m explicitly looking at the address of the <code>nil</code> cell.</p>
 cell without worrying about the program hitting a <code>NULL</code> pointer in any normal
 usage. Now, I change the read function to return <code>&amp;nil</code> instead of <code>NULL</code> at
 the end of a list or string:</p>
-
-<pre><code class="lang-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+<pre><code class="hljs language-c">C * <span class="hljs-title function_">read</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
     <span class="hljs-keyword">switch</span>(*s) {
         <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;\0&#x27;</span>: <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;)&#x27;</span>:
             <span class="hljs-keyword">return</span> &amp;nil;
@@ -418,12 +363,10 @@ the end of a list or string:</p>
             <span class="hljs-keyword">return</span> makecell(LABEL, (<span class="hljs-keyword">union</span> V){.label = read_substring(s)}, read(s + count_substring_length(s) + <span class="hljs-number">1</span>));
     }
 }
-</code></pre>
-<p>And I can change the <code>debug_list()</code> function to treat the <code>NIL</code> type as the
+</code></pre><p>And I can change the <code>debug_list()</code> function to treat the <code>NIL</code> type as the
 terminal cell in a string, instead of checking against a NULL pointer before
 passing it in.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">debug_list</span><span class="hljs-params">(C *car)</span> {
     <span class="hljs-keyword">if</span> (car-&gt;type == LABEL) {
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;LABEL- Address: %p, Value: %s Next: %p\n&quot;</span>,
             car,
@@ -440,12 +383,15 @@ passing it in.</p>
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;NIL&quot;</span>);
     }
 }
-</code></pre>
-<p>During some research, I discovered after implementing this that this is a known
+</code></pre><p>During some research, I discovered after implementing this that this is a known
 pattern, and it has a name! It&#39;s called a &#39;sentinel node&#39;</p>
 <blockquote>
-<h2 id="sentinel-nodes">Sentinel nodes</h2>
+<h2>Sentinel nodes</h2>
+</blockquote>
+<blockquote>
 <p>Main article: <a href="https://en.wikipedia.org/wiki/Sentinel_node">Sentinel node</a></p>
+</blockquote>
+<blockquote>
 <p>In some implementations an extra &#39;sentinel&#39; or &#39;dummy&#39; node may be added before
 the first data record or after the last one. This convention simplifies and
 accelerates some list-handling algorithms, by ensuring that all links can be
@@ -455,19 +401,16 @@ elements) always has a &quot;first&quot; and &quot;last&quot; node.</p>
 <p>To me, this looks a lot cleaner, and is a lot easier to reason about, which
 will be a big help when I start writing more complicated functions that operate
 on cells, like idk <code>eval</code> and <code>apply</code>... but that&#39;s for later.</p>
-<h2 id="sublists">Sublists</h2>
+<h2>Sublists</h2>
 <p>Theres one remaining problem with the way the program is currently written with
 regards to lists, and that is that it cannot handle sublists! Consider this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     C *a_list = read(<span class="hljs-string">&quot;(let us consider words not chars)&quot;</span>);
     debug_list(a_list);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
-</code></pre>
-<p>returns:</p>
-
-<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7fcd00c034e0</span>, List_Value: <span class="hljs-number">0x7fcd00c034c0</span> Next: <span class="hljs-number">0x10bad4020</span>
+</code></pre><p>returns:</p>
+<pre><code class="hljs language-c">LIST- Address: <span class="hljs-number">0x7fcd00c034e0</span>, List_Value: <span class="hljs-number">0x7fcd00c034c0</span> Next: <span class="hljs-number">0x10bad4020</span>
 LABEL- Address: <span class="hljs-number">0x7fcd00c034c0</span>, Value: let Next: <span class="hljs-number">0x7fcd00c034a0</span>
 LABEL- Address: <span class="hljs-number">0x7fcd00c034a0</span>, Value: us Next: <span class="hljs-number">0x7fcd00c03480</span>
 LABEL- Address: <span class="hljs-number">0x7fcd00c03480</span>, Value: consider Next: <span class="hljs-number">0x7fcd00c03460</span>
@@ -475,18 +418,14 @@ LABEL- Address: <span class="hljs-number">0x7fcd00c03460</span>, Value: words Ne
 LABEL- Address: <span class="hljs-number">0x7fcd00c03440</span>, Value: not Next: <span class="hljs-number">0x7fcd00c03420</span>
 LABEL- Address: <span class="hljs-number">0x7fcd00c03420</span>, Value: chars Next: <span class="hljs-number">0x10bad4020</span>
 NIL
-</code></pre>
-<p>But this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+</code></pre><p>But this:</p>
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     C *a_list = read(<span class="hljs-string">&quot;(let us (consider) words not chars)&quot;</span>);
     debug_list(a_list);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
-</code></pre>
-<p>returns this:</p>
-
-<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7f9bb8c03620</span>, List_Value: <span class="hljs-number">0x7f9bb8c03570</span> Next: <span class="hljs-number">0x7f9bb8c03600</span>
+</code></pre><p>returns this:</p>
+<pre><code class="hljs language-c">LIST- Address: <span class="hljs-number">0x7f9bb8c03620</span>, List_Value: <span class="hljs-number">0x7f9bb8c03570</span> Next: <span class="hljs-number">0x7f9bb8c03600</span>
 LABEL- Address: <span class="hljs-number">0x7f9bb8c03570</span>, Value: let Next: <span class="hljs-number">0x7f9bb8c03550</span>
 LABEL- Address: <span class="hljs-number">0x7f9bb8c03550</span>, Value: us Next: <span class="hljs-number">0x7f9bb8c03530</span>
 LIST- Address: <span class="hljs-number">0x7f9bb8c03530</span>, List_Value: <span class="hljs-number">0x7f9bb8c03480</span> Next: <span class="hljs-number">0x7f9bb8c03510</span>
@@ -495,26 +434,20 @@ LABEL- Address: <span class="hljs-number">0x7f9bb8c03460</span>, Value: words Ne
 LABEL- Address: <span class="hljs-number">0x7f9bb8c03440</span>, Value: not Next: <span class="hljs-number">0x7f9bb8c03420</span>
 LABEL- Address: <span class="hljs-number">0x7f9bb8c03420</span>, Value: chars Next: <span class="hljs-number">0x109a80020</span>
 NIL
-</code></pre>
-<p>Which is incorrect... &quot;consider&quot; should not be pointing to &quot;words not chars&quot;,
+</code></pre><p>Which is incorrect... &quot;consider&quot; should not be pointing to &quot;words not chars&quot;,
 the <code>LIST</code> cell that contains it should be! <code>debug_list()</code> is hard to read with
 nesting, but the structure should look like this:</p>
-
-<pre><code class="lang-c">let -&gt; us -&gt; LIST -&gt; words -&gt; not -&gt; cars -&gt; NIL
+<pre><code class="hljs language-c">let -&gt; us -&gt; LIST -&gt; words -&gt; not -&gt; cars -&gt; NIL
                \
                  consider -&gt; NIL
-</code></pre>
-<p>But instead, it looks like this:</p>
-
-<pre><code class="lang-c">let -&gt; us -&gt; LIST -&gt; NIL
+</code></pre><p>But instead, it looks like this:</p>
+<pre><code class="hljs language-c">let -&gt; us -&gt; LIST -&gt; NIL
                \
                  consider -&gt; words -&gt; not -&gt; cars -&gt; NIL
-</code></pre>
-<p>If I take another look at <code>count_list_length</code>, I can see that it has no way of
+</code></pre><p>If I take another look at <code>count_list_length</code>, I can see that it has no way of
 knowing whether it is inside of a sublist or not. I can add a variable that
 keeps track of this internally to this function.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">count_list_length</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">count_list_length</span><span class="hljs-params">(<span class="hljs-type">char</span> *s)</span> {
     <span class="hljs-type">int</span> depth = <span class="hljs-number">1</span>;
     <span class="hljs-type">int</span> i = <span class="hljs-number">1</span>;
     <span class="hljs-keyword">while</span> (depth &gt; <span class="hljs-number">0</span>) {
@@ -527,10 +460,8 @@ keeps track of this internally to this function.</p>
     }
     <span class="hljs-keyword">return</span> i;
 }
-</code></pre>
-<p>Now it will read sublists appropriately!</p>
-
-<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7fbb6a403500</span>, List_Value: <span class="hljs-number">0x7fbb6a4034e0</span> Next: <span class="hljs-number">0x10e9c6020</span>
+</code></pre><p>Now it will read sublists appropriately!</p>
+<pre><code class="hljs language-c">LIST- Address: <span class="hljs-number">0x7fbb6a403500</span>, List_Value: <span class="hljs-number">0x7fbb6a4034e0</span> Next: <span class="hljs-number">0x10e9c6020</span>
 LABEL- Address: <span class="hljs-number">0x7fbb6a4034e0</span>, Value: let Next: <span class="hljs-number">0x7fbb6a4034c0</span>
 LABEL- Address: <span class="hljs-number">0x7fbb6a4034c0</span>, Value: us Next: <span class="hljs-number">0x7fbb6a4034a0</span>
 LIST- Address: <span class="hljs-number">0x7fbb6a4034a0</span>, List_Value: <span class="hljs-number">0x7fbb6a4033f0</span> Next: <span class="hljs-number">0x7fbb6a403480</span>
@@ -541,13 +472,11 @@ LABEL- Address: <span class="hljs-number">0x7fbb6a403460</span>, Value: not Next
 LABEL- Address: <span class="hljs-number">0x7fbb6a403440</span>, Value: chars Next: <span class="hljs-number">0x10e9c6020</span>
 NIL- Address: <span class="hljs-number">0x10e9c6020</span>
 NIL- Address: <span class="hljs-number">0x10e9c6020</span>
-</code></pre>
-<p>As I said before, the <code>debug_list()</code> function is now becoming difficult to use,
+</code></pre><p>As I said before, the <code>debug_list()</code> function is now becoming difficult to use,
 since the depth of nested lists aren&#39;t being visually represented. I can fix
 this by passing in an <code>int depth</code> argument to the debugging function and
 printing an indent for each level of nesting!</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">printtabs</span><span class="hljs-params">(<span class="hljs-type">int</span> depth)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">printtabs</span><span class="hljs-params">(<span class="hljs-type">int</span> depth)</span> {
     <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; depth; i++) {
         <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;|   &quot;</span>);
     }
@@ -582,13 +511,11 @@ printing an indent for each level of nesting!</p>
     debug_list_inner(l, <span class="hljs-number">0</span>);
 
 }
-</code></pre>
-<p>Notice I&#39;m also wrapping the main loop in a convenience function so that I still
+</code></pre><p>Notice I&#39;m also wrapping the main loop in a convenience function so that I still
 interface with it the same way, since the initial call to <code>debug_list_inner()</code>
 will always start with a depth of 0.</p>
 <p>LHOOQ!</p>
-
-<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7fd02ac03500</span>, List_Value: <span class="hljs-number">0x7fd02ac034e0</span> Next: <span class="hljs-number">0x10aab3020</span>
+<pre><code class="hljs language-c">LIST- Address: <span class="hljs-number">0x7fd02ac03500</span>, List_Value: <span class="hljs-number">0x7fd02ac034e0</span> Next: <span class="hljs-number">0x10aab3020</span>
 |   LABEL- Address: <span class="hljs-number">0x7fd02ac034e0</span>, Value: let Next: <span class="hljs-number">0x7fd02ac034c0</span>
 |   LABEL- Address: <span class="hljs-number">0x7fd02ac034c0</span>, Value: us Next: <span class="hljs-number">0x7fd02ac034a0</span>
 |   LIST- Address: <span class="hljs-number">0x7fd02ac034a0</span>, List_Value: <span class="hljs-number">0x7fd02ac033f0</span> Next: <span class="hljs-number">0x7fd02ac03480</span>
@@ -602,17 +529,13 @@ will always start with a depth of 0.</p>
 -------------------------------------------------------
 NIL- Address: <span class="hljs-number">0x10aab3020</span>
 -------------------------------------------------------
-</code></pre>
-<p>Now it is a lot easier, visually, to see the groupings of each list. Try this!</p>
-
-<pre><code class="lang-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
+</code></pre><p>Now it is a lot easier, visually, to see the groupings of each list. Try this!</p>
+<pre><code class="hljs language-c"><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
     C *a_list = read(<span class="hljs-string">&quot;(here (is (another (more deeply) nested) list))&quot;</span>);
     debug_list(a_list);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
-</code></pre>
-
-<pre><code class="lang-c">LIST- Address: <span class="hljs-number">0x7fb472c03570</span>, List_Value: <span class="hljs-number">0x7fb472c03550</span> Next: <span class="hljs-number">0x107b6f020</span>
+</code></pre><pre><code class="hljs language-c">LIST- Address: <span class="hljs-number">0x7fb472c03570</span>, List_Value: <span class="hljs-number">0x7fb472c03550</span> Next: <span class="hljs-number">0x107b6f020</span>
 |   LABEL- Address: <span class="hljs-number">0x7fb472c03550</span>, Value: here Next: <span class="hljs-number">0x7fb472c03530</span>
 |   LIST- Address: <span class="hljs-number">0x7fb472c03530</span>, List_Value: <span class="hljs-number">0x7fb472c03510</span> Next: <span class="hljs-number">0x107b6f020</span>
 |   |   LABEL- Address: <span class="hljs-number">0x7fb472c03510</span>, Value: is Next: <span class="hljs-number">0x7fb472c034f0</span>
@@ -633,8 +556,7 @@ NIL- Address: <span class="hljs-number">0x10aab3020</span>
 -------------------------------------------------------
 NIL- Address: <span class="hljs-number">0x107b6f020</span>
 -------------------------------------------------------
-</code></pre>
-<hr>
+</code></pre><hr>
 
 <p>Now I have a program that can take an arbitrary string of arbitrarily nested
 parenthetical expressions and turn it into an abstract syntax tree that&#39;s

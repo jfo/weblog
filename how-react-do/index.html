@@ -61,8 +61,7 @@ have to take my word for it</a>.</p>
 <p>This post got kind of long, so here&#39;s a</p>
 <div id="toc"></div>
 
-<h2 id="table-of-contents-">Table of Contents:</h2>
-
+<h2>Table of Contents:</h2>
 <ul>
 <li><a href="#mkdir">mkdir</a></li>
 <li><a href="#singleel">injecting a single React element into the dom</a></li>
@@ -85,13 +84,10 @@ from <code>mkdir</code>. The repo of all the code is
 <a href="https://github.com/urthbound/boxes">here</a>. You can follow along with it if you want to!</p>
 <div id="mkdir"></div>
 
-<h1 id="mkdir">mkdir</h1>
-
+<h1>mkdir</h1>
 <pre><code>mkdir boxes &amp;&amp; cd boxes
-</code></pre>
-<p>I&#39;ll start with an <code>index.html</code> file that can look like this:</p>
-
-<pre><code class="lang-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
+</code></pre><p>I&#39;ll start with an <code>index.html</code> file that can look like this:</p>
+<pre><code class="hljs language-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
 
 <span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
@@ -101,27 +97,20 @@ from <code>mkdir</code>. The repo of all the code is
         <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
-</code></pre>
-<p>Since this is completely static, you can simply open the <code>index.html</code> file in a
+</code></pre><p>Since this is completely static, you can simply open the <code>index.html</code> file in a
 browser and it will act exactly as if it&#39;s been served to you.</p>
 <p>You don&#39;t have to, but you could also run a tiny little development server I
 like to use by typing...</p>
-
 <pre><code>python -m SimpleHTTPServer 4321
-</code></pre>
-<p>I alias this to <code>serve</code>, it simply serves the working directory on the specified port.</p>
+</code></pre><p>I alias this to <code>serve</code>, it simply serves the working directory on the specified port.</p>
 <p>Visiting <code>localhost:4321</code> now will yield what we would expect, the same as
 opening the file in the browser.</p>
-
 <pre><code>Hello World!
-</code></pre>
-<p>And in the <code>head</code> tag of the index file:</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript">
+</code></pre><p>And in the <code>head</code> tag of the index file:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript">
     <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Hello Warld!&quot;</span>);
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-</code></pre>
-<p>Now reloading the page gives me both &quot;Hello World!&quot; in the browser window and
+</code></pre><p>Now reloading the page gives me both &quot;Hello World!&quot; in the browser window and
 &quot;Hello Warld!&quot; in the console. All is right with the world.</p>
 <p>Ok. So. Now. React. How do I <em>get React</em>, into the right place, so I can use it?
 There are one billion ways to do this, and I am sure countless best practices
@@ -134,29 +123,24 @@ my page. This is almost definitely not the best way to do this.</p>
 2003, and also console.log the two objects I get back. I know these are the
 objects I get back from those calls because
 <a href="https://facebook.github.io/react/docs/package-management.html">this</a>.</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/react@15.3.1/dist/react.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/react@15.3.1/dist/react.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/react-dom@15.3.1/dist/react-dom.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="language-javascript">
     <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">React</span>);
     <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">ReactDOM</span>);
 </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-</code></pre>
-<p>...which yields in the console:</p>
-
-<pre><code class="lang-js">&gt; <span class="hljs-title class_">Object</span> {<span class="hljs-attr">__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED</span>: <span class="hljs-title class_">Object</span>, <span class="hljs-attr">__SECRET_DOM_SERVER_DO_NOT_USE_OR_YOU_WILL_BE_FIRED</span>: <span class="hljs-title class_">Object</span>, <span class="hljs-title class_">Children</span>: <span class="hljs-title class_">Object</span>, <span class="hljs-title class_">PropTypes</span>: <span class="hljs-title class_">Obj</span>... <span class="hljs-comment">// etc</span>
+</code></pre><p>...which yields in the console:</p>
+<pre><code class="hljs language-js">&gt; <span class="hljs-title class_">Object</span> {<span class="hljs-attr">__SECRET_DOM_DO_NOT_USE_OR_YOU_WILL_BE_FIRED</span>: <span class="hljs-title class_">Object</span>, <span class="hljs-attr">__SECRET_DOM_SERVER_DO_NOT_USE_OR_YOU_WILL_BE_FIRED</span>: <span class="hljs-title class_">Object</span>, <span class="hljs-title class_">Children</span>: <span class="hljs-title class_">Object</span>, <span class="hljs-title class_">PropTypes</span>: <span class="hljs-title class_">Obj</span>... <span class="hljs-comment">// etc</span>
 &gt; <span class="hljs-title class_">Object</span> {<span class="hljs-attr">version</span>: <span class="hljs-string">&quot;15.3.1&quot;</span>}
-</code></pre>
-<p><a href="https://www.reddit.com/r/javascript/comments/3m6wyu/found_this_line_in_the_react_codebase_made_me/cvcyo4a">Lol.</a></p>
+</code></pre><p><a href="https://www.reddit.com/r/javascript/comments/3m6wyu/found_this_line_in_the_react_codebase_made_me/cvcyo4a">Lol.</a></p>
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="singleel"></div>
 
-<h1 id="injecting-a-single-react-element-into-the-dom">Injecting a single react element into the dom</h1>
+<h1>Injecting a single react element into the dom</h1>
 <p>Ok, now I want to inject a React element into the dom. To do that I first need
 a reference to a container that already exists in the dom. Let&#39;s see if I can
 get one this way:</p>
-
-<pre><code class="lang-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
 
 <span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
@@ -171,8 +155,7 @@ get one this way:</p>
         <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;example&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
-</code></pre>
-<p>This logs <code>null</code> to the console, and is just the kind of garbage javascript
+</code></pre><p>This logs <code>null</code> to the console, and is just the kind of garbage javascript
 that ruins lives and families. <em>of course</em> I can&#39;t access that div yet, it
 hasn&#39;t been rendered at the time the script is trying to access it. This is
 exactly the kind of dumb mistake that proper dependency management solves, but
@@ -184,8 +167,7 @@ without wrapping everything in
 <p>Also it lets the browser go ahead and render a lot of the visible dom before
 loading all the javascript dependencies in random script tags (react is ~20,000
 lines, after all!)</p>
-
-<pre><code class="lang-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
 
 <span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
@@ -200,19 +182,15 @@ lines, after all!)</p>
         </span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
-</code></pre>
-<p>This logs:</p>
-
-<pre><code class="lang-js">&gt; div#example
-</code></pre>
-<p>Which is a DOM object that you can open up and mess with in the console which
+</code></pre><p>This logs:</p>
+<pre><code class="hljs language-js">&gt; div#example
+</code></pre><p>Which is a DOM object that you can open up and mess with in the console which
 is what I wanted hooray.</p>
 <p>This so far is loosely coupled with
 <a href="https://facebook.github.io/react/docs/getting-started.html">this</a>:</p>
 <p>So let&#39;s try dropping in that React code directly. This should work, right? I
 know that I have access to the ReactDOM object there, after all.</p>
-
-<pre><code class="lang-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
 
 <span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
@@ -233,81 +211,61 @@ know that I have access to the ReactDOM object there, after all.</p>
     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
 
 <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
-</code></pre>
-<p>This won&#39;t work! I get a syntax error in the console:</p>
-
+</code></pre><p>This won&#39;t work! I get a syntax error in the console:</p>
 <pre><code>index.html:13 Uncaught SyntaxError: Unexpected token &lt;
-</code></pre>
-<p>Astute readers will notice that I did not include <code>babel</code> like in the facebook example:</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/babel-core@5.8.38/browser.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-</code></pre>
-<p>Wtf is <a href="https://babeljs.io/">babel</a>? Do I want to use it? Eventually, yes I do.
+</code></pre><p>Astute readers will notice that I did not include <code>babel</code> like in the facebook example:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/babel-core@5.8.38/browser.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre><p>Wtf is <a href="https://babeljs.io/">babel</a>? Do I want to use it? Eventually, yes I do.
 In this case, it&#39;s turning <code>&lt;h1&gt;Hello, world!&lt;/h1&gt;,</code> from inlined <code>JSX</code> into
 vanilla javascript.</p>
 <p><a href="https://facebook.github.io/react/docs/jsx-in-depth.html">More on JSX here!</a>.
 I&#39;ll come back to it in a minute.</p>
 <p>Maybe I can just pass in a string of html, then?</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-string">&quot;&lt;h1&gt;Hello, world!&lt;/h1&gt;&quot;</span>,
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Nope! But I <em>do</em> get a helpful error message!</p>
-
+</code></pre><p>Nope! But I <em>do</em> get a helpful error message!</p>
 <pre><code>react.js:20150 Uncaught Invariant Violation: ReactDOM.render(): Invalid
 component element. Instead of passing a string like &#39;div&#39;, pass
 React.createElement(&#39;div&#39;) or &lt;div /&gt;.
-</code></pre>
-<p>I can&#39;t pass <code>&lt;div /&gt;</code> yet, because that&#39;s JSX and I&#39;m not transpiling yet. (To
-see what that would get turned into, try this <a href="https://babeljs.io/repl/#?babili=false&amp;evaluate=true&amp;lineWrap=false&amp;presets=es2015%2Creact%2Cstage-2&amp;code=%3Cdiv%20%2F%3E%0A"> REPL
+</code></pre><p>I can&#39;t pass <code>&lt;div /&gt;</code> yet, because that&#39;s JSX and I&#39;m not transpiling yet. (To
+see what that would get turned into, try this <a href="https://babeljs.io/repl/#?babili=false&evaluate=true&lineWrap=false&presets=es2015%2Creact%2Cstage-2&code=%3Cdiv%20%2F%3E%0A"> REPL
 </a>).</p>
 <p>But I can pass the other one!</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;div&quot;</span>),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>No errors! It isn&#39;t immediately apparent what this does, but if you inspect the
+</code></pre><p>No errors! It isn&#39;t immediately apparent what this does, but if you inspect the
 DOM now you&#39;ll see something new added to it:</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;example&quot;</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;example&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">data-reactroot</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-</code></pre>
-<p>That <code>data-reactroot</code> div is the element I created! Interesting to note, but
+</code></pre><p>That <code>data-reactroot</code> div is the element I created! Interesting to note, but
 you can pass any string into that <code>createElement()</code> and you will get a tag of
 that name. What the rendering browser does with that is up to it, but the React
 function doesn&#39;t heel you to a particular set of elements. <a href="http://stackoverflow.com/questions/3593726/whats-stopping-me-from-using-arbitrary-tags-in-html">Here&#39;s a pedantic
 Stack Overflow thread about
 arbitrary tags</a>.</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;thingamadoodad&quot;</span>),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>yields</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;example&quot;</span>&gt;</span>
+</code></pre><p>yields</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;example&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">thingamadoodad</span> <span class="hljs-attr">data-reactroot</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">thingamadoodad</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-</code></pre>
-<p>If we check out the <code>React.createElement</code> in the console we can see a few lines
+</code></pre><p>If we check out the <code>React.createElement</code> in the console we can see a few lines
 of the source, including the argument list:</p>
-
-<pre><code class="lang-js">&gt; <span class="hljs-title class_">React</span>.<span class="hljs-property">createElement</span>
+<pre><code class="hljs language-js">&gt; <span class="hljs-title class_">React</span>.<span class="hljs-property">createElement</span>
 
 &lt; <span class="hljs-keyword">function</span> (<span class="hljs-params">type, props, children</span>) {
     <span class="hljs-keyword">var</span> validType = <span class="hljs-keyword">typeof</span> type === <span class="hljs-string">&#x27;string&#x27;</span> || <span class="hljs-keyword">typeof</span> type === <span class="hljs-string">&#x27;function&#x27;</span>;
     <span class="hljs-comment">// We warn in this case but don&#x27;t throw. We expect the element creation to</span>
     <span class="hljs-comment">// suc…</span>
-</code></pre>
-<p>We can see the whole source by calling <code>toString</code> on the function:</p>
-
-<pre><code class="lang-js">&gt; <span class="hljs-title class_">React</span>.<span class="hljs-property">createElement</span>.<span class="hljs-title function_">toString</span>()
+</code></pre><p>We can see the whole source by calling <code>toString</code> on the function:</p>
+<pre><code class="hljs language-js">&gt; <span class="hljs-title class_">React</span>.<span class="hljs-property">createElement</span>.<span class="hljs-title function_">toString</span>()
 &lt; <span class="hljs-string">&quot;function (type, props, children) {
     var validType = typeof type === &#x27;string&#x27; || typeof type === &#x27;function&#x27;;
     // We warn in this case but don&#x27;t throw. We expect the element creation to
@@ -339,76 +297,60 @@ of the source, including the argument list:</p>
 
     return element;
 }&quot;</span>
-</code></pre>
-<p>Sweet, sweet code comments! This looks like a light wrapper around
+</code></pre><p>Sweet, sweet code comments! This looks like a light wrapper around
 <code>ReactElement.createElement.apply()</code> that does a little bit of error handling.</p>
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="elprops"></div>
 
-<h1 id="element-props">Element props</h1>
+<h1>Element props</h1>
 <p>The function takes three arguments: <code>type</code>, <code>props</code>, and <code>children</code>. We know
 what &#39;type&#39; is, how about &#39;props&#39;? I would expect that to map to <a href="http://www.w3schools.com/html/html_attributes.asp">html
 attributes</a>. Perhaps a
 string?</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;div&quot;</span>, <span class="hljs-string">&quot;name=&#x27;thing&#x27;&quot;</span>),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Nope! But this does give me two error messages!</p>
-
+</code></pre><p>Nope! But this does give me two error messages!</p>
 <pre><code>react.js:20483 Warning: React.createElement(...): Expected props argument to be a plain object. Properties defined in its prototype chain will be ignored.
 
 react.js:20483 Warning: Unknown props `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` on &lt;div&gt; tag. Remove these props from the element. For details, see https://fb.me/react-unknown-prop in div
-</code></pre>
-<p>Aha! Using an object as a key/value dictionary makes a lot of sense wrt
+</code></pre><p>Aha! Using an object as a key/value dictionary makes a lot of sense wrt
 properties/attributes, since that&#39;s essentially what they are!</p>
 <p>As for that other error- it comes with a long stack trace that I don&#39;t feel
 like digging into right now, but I would put money on the string being
 <code>split()</code> into an array of characters at some point and then <code>keys()</code> called on
 it somewhere and then some iterator iterating over that somewhere, or something
 like that... like try it in the console!:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;this is a string&quot;</span>.<span class="hljs-title function_">split</span>(<span class="hljs-string">&#x27;&#x27;</span>).<span class="hljs-title function_">keys</span>()
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;this is a string&quot;</span>.<span class="hljs-title function_">split</span>(<span class="hljs-string">&#x27;&#x27;</span>).<span class="hljs-title function_">keys</span>()
 thing.<span class="hljs-title function_">next</span>()
 thing.<span class="hljs-title function_">next</span>()
 thing.<span class="hljs-title function_">next</span>()
 thing.<span class="hljs-title function_">next</span>()
 <span class="hljs-comment">// etc...</span>
-</code></pre>
-<p>That&#39;s a guess anyway, but it doesn&#39;t matter right now! We&#39;re experimenting!
+</code></pre><p>That&#39;s a guess anyway, but it doesn&#39;t matter right now! We&#39;re experimenting!
 Move fast and maintain a cursory understanding of the architecture that
 underpins your systems, that&#39;s what I always say!</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;thingy&quot;</span>, { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;doodad&quot;</span> }),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Does indeed give me:</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">thingy</span> <span class="hljs-attr">data-reactroot</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;doodad&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">thingy</span>&gt;</span>
-</code></pre>
-<p>Woot Woot!</p>
+</code></pre><p>Does indeed give me:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">thingy</span> <span class="hljs-attr">data-reactroot</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;doodad&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">thingy</span>&gt;</span>
+</code></pre><p>Woot Woot!</p>
 <p>Here&#39;s a classy classic React gotcha! Let&#39;s make an element with a class on
 it, something we&#39;re likely to do all the time.</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;whatsit&quot;</span>, { <span class="hljs-attr">class</span>: <span class="hljs-string">&quot;hoohaa&quot;</span> }),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Does not work! Gives this warning:</p>
-
+</code></pre><p>Does not work! Gives this warning:</p>
 <pre><code>Warning: Unknown DOM property class. Did you mean className?
-</code></pre>
-<p>Lol! This actually makes sense though... since &quot;class&quot; is a reserved word in
+</code></pre><p>Lol! This actually makes sense though... since &quot;class&quot; is a reserved word in
 javascript and can muck up the chains if you throw it around! The same is true
 for <code>for</code>, which mapes to <code>htmlFor</code> in react land. <a href="https://www.quora.com/Why-do-I-have-to-use-className-instead-of-class-in-ReactJs-components-done-in-JSX">Here&#39;s an explanation of
     this from a react core team
     human.</a></p>
-
 <pre><code>ReactDOM.render(
     React.createElement(
         &quot;whatsit&quot;,
@@ -416,18 +358,14 @@ for <code>for</code>, which mapes to <code>htmlFor</code> in react land. <a href
     ),
     document.getElementById(&#39;example&#39;)
 );
-</code></pre>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">whatsit</span> <span class="hljs-attr">data-reactroot</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hoohaa&quot;</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;derp&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">whatsit</span>&gt;</span>
-</code></pre>
-<p><sub><a href='#toc'>toc</a></sub></p>
+</code></pre><pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">whatsit</span> <span class="hljs-attr">data-reactroot</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;hoohaa&quot;</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;derp&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">whatsit</span>&gt;</span>
+</code></pre><p><sub><a href='#toc'>toc</a></sub></p>
 <div id="children"></div>
 
-<h1 id="think-of-the-children">Think of the Children</h1>
+<h1>Think of the Children</h1>
 <p>And as for the last argument to the function, <code>children</code>, You pass any child
 elements and/or strings and/or numbers and/or arrays you want to be rendered!</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(
         <span class="hljs-string">&quot;h1&quot;</span>,
         {},
@@ -439,14 +377,11 @@ elements and/or strings and/or numbers and/or arrays you want to be rendered!</p
     ),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>This yields this html, basically:</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">data-reactroot</span>&gt;</span>
+</code></pre><p>This yields this html, basically:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">data-reactroot</span>&gt;</span>
     string<span class="hljs-tag">&lt;<span class="hljs-name">sup</span>&gt;</span>UPP<span class="hljs-tag">&lt;/<span class="hljs-name">sup</span>&gt;</span>123<span class="hljs-tag">&lt;<span class="hljs-name">sub</span>&gt;</span>little doooown<span class="hljs-tag">&lt;/<span class="hljs-name">sub</span>&gt;</span>what78
 <span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-</code></pre>
-<p>Notice some things... the array was flattened and each element was just treated
+</code></pre><p>Notice some things... the array was flattened and each element was just treated
 like it was passed in individually. Some of these children are themselves React
 Elements. Also, I haven&#39;t passed in an array of things, I&#39;ve just passed in an
 arbitrary number of args. Funny story about <code>children</code>... it&#39;s never even
@@ -454,53 +389,40 @@ accessed in the function body! it&#39;s simply a semantic placeholder, and the
 entire argument list is passed through into the sub call as an array (accessed
 by the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments">arguments</a> keyword). You can see this in the function body above!</p>
 <p>Ok back to safety:</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;h1&quot;</span>, {}, <span class="hljs-string">&quot;Hello, &quot;</span>, <span class="hljs-string">&quot;World!&quot;</span>),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">data-reactroot</span>&gt;</span>Hello, World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-</code></pre>
-<p>And we&#39;re back where we started, but with React in the mix. This Single Page
+</code></pre><pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">data-reactroot</span>&gt;</span>Hello, World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+</code></pre><p>And we&#39;re back where we started, but with React in the mix. This Single Page
 App is going to be so sweeeeeeeet!</p>
 <hr>
 
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="notinline"></div>
 
-<h1 id="ok-let-s-not-inline-the-js-in-the-template">ok let&#39;s not inline the js in the template</h1>
+<h1>ok let&#39;s not inline the js in the template</h1>
 <p>Ok this inline JS thing is cute and all but let&#39;s put that in its own file, in
 the same directory as the index.html file.</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;./index.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-</code></pre>
-
-<pre><code class="lang-js"><span class="hljs-comment">// index.js</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;./index.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre><pre><code class="hljs language-js"><span class="hljs-comment">// index.js</span>
 <span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;h1&quot;</span>, {}, <span class="hljs-string">&quot;Hello, &quot;</span>, <span class="hljs-string">&quot;World!&quot;</span>),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Also, now that we know what JSX renders into (just a plain old javascript
+</code></pre><p>Also, now that we know what JSX renders into (just a plain old javascript
 function call, as it turn out!) I can see the great benefit of it.</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/babel-core@5.8.38/browser.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/babel-core@5.8.38/browser.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/babel&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;./index.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-</code></pre>
-<p>This fails when loaded directly as a file (on chrome at least) because of cross
+</code></pre><p>This fails when loaded directly as a file (on chrome at least) because of cross
 site scripting safeties! I can however run that little web server I mentioned
 earlier with</p>
-
-<pre><code class="lang-bash">python -m SimpleHTTPServer 4321
-</code></pre>
-<p>And go to <code>localhost:4321</code> in the browser, and <em>that</em> will work! Or whatever
+<pre><code class="hljs language-bash">python -m SimpleHTTPServer 4321
+</code></pre><p>And go to <code>localhost:4321</code> in the browser, and <em>that</em> will work! Or whatever
 dev server you have lying around will work, really.</p>
 <p>Now I can freely use JSX inlined in the js file, like this! Both of those lines
 are equivalent:</p>
-
-<pre><code class="lang-diff">
+<pre><code class="hljs language-diff">
 <span class="hljs-comment">diff --git a/index.js b/index.js</span>
 <span class="hljs-comment">index 031694d..090b3af 100644</span>
 <span class="hljs-comment">--- a/index.js</span>
@@ -511,15 +433,13 @@ are equivalent:</p>
 <span class="hljs-addition">+    &lt;h1&gt;Hello World!&lt;/h1&gt;,</span>
      document.getElementById(&#x27;example&#x27;)
  );
-</code></pre>
-<p>Using babel (or I guess some other toolchain? I am sure there are others...) to
+</code></pre><p>Using babel (or I guess some other toolchain? I am sure there are others...) to
 transpile inlined JSX in React is the accepted Way of Things. I can see why.
 JSX simply turns into regular JS at the end of the day, and it is a lot easier
 to work with, especially for nested structures (it is essentially just XML
 after all) and especially for designers, most of whom are already familiar with
 html tags and maybe not so familiar with function calls. Of course it doesn&#39;t
 really matter who you are, it&#39;s not especially controversial to prefer this:</p>
-
 <pre><code>&lt;App props=&quot;this&quot;&gt;
     &lt;div&gt;Wow&lt;/div&gt;
     &lt;ol&gt;
@@ -531,10 +451,8 @@ really matter who you are, it&#39;s not especially controversial to prefer this:
         &lt;li&gt;list&lt;/li&gt;
     &lt;/ol&gt;
 &lt;/App&gt;
-</code></pre>
-<p>to this:</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-title class_">App</span>,{ <span class="hljs-attr">props</span>: <span class="hljs-string">&quot;this&quot;</span> },
+</code></pre><p>to this:</p>
+<pre><code class="hljs language-js"><span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-title class_">App</span>,{ <span class="hljs-attr">props</span>: <span class="hljs-string">&quot;this&quot;</span> },
         <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>( <span class="hljs-string">&quot;div&quot;</span>, <span class="hljs-literal">null</span>, <span class="hljs-string">&quot;Wow&quot;</span>),
         <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>( <span class="hljs-string">&quot;ol&quot;</span>, <span class="hljs-literal">null</span>,
             <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>( <span class="hljs-string">&quot;li&quot;</span>, <span class="hljs-literal">null</span>, <span class="hljs-string">&quot;hey&quot;</span>),
@@ -545,59 +463,47 @@ really matter who you are, it&#39;s not especially controversial to prefer this:
             <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>( <span class="hljs-string">&quot;li&quot;</span>, <span class="hljs-literal">null</span>, <span class="hljs-string">&quot;list&quot;</span>)
         )
 );
-</code></pre>
-<p>So here we are!</p>
+</code></pre><p>So here we are!</p>
 <div id="elements"></div>
 
-<h1 id="elements">Elements</h1>
+<h1>Elements</h1>
 <p>In JSX land, you can interpolate arbitrary javascript code by wrapping it in
 curlies. (Sorry, my syntax highlighter doesn&#39;t like inlined JSX at all.)</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
 
 <span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>{thing}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span>,
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>That will be the same thing as this:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
+</code></pre><p>That will be the same thing as this:</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
 
 <span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="hljs-title class_">React</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&quot;h1&quot;</span>, <span class="hljs-literal">null</span>, thing),
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Ok, so, what if I want to style this thing? I know how to add attributes in
+</code></pre><p>Ok, so, what if I want to style this thing? I know how to add attributes in
 JSX, how about this?</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
 
 <span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;color:red;&quot;</span>&gt;</span>{thing}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span>,
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Seems reasonable! Doesn&#39;t work! Another gotcha gotme. But a wild good error
+</code></pre><p>Seems reasonable! Doesn&#39;t work! Another gotcha gotme. But a wild good error
 message appeared!</p>
-
 <pre><code>react.js:20150 Uncaught Invariant Violation: The `style` prop expects a mapping from style properties to values, not a string. For example, style= when using JSX.
-</code></pre>
-<p>This, once again, makes sense, but I wouldn&#39;t have guessed it offhand!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
+</code></pre><p>This, once again, makes sense, but I wouldn&#39;t have guessed it offhand!</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
 
 <span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{</span> {<span class="hljs-attr">color:</span>&quot;<span class="hljs-attr">red</span>&quot;} }&gt;</span>{thing}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span>,
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Notice the double curlies- the first for inlining the js into the jsx and the
+</code></pre><p>Notice the double curlies- the first for inlining the js into the jsx and the
 second is just the object notation. This works! I get a big red <code>Hello World!</code>.</p>
 <p>Alright alright. What if I want a random color on page load?</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> text = <span class="hljs-string">&quot;Hello World!&quot;</span>;
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> text = <span class="hljs-string">&quot;Hello World!&quot;</span>;
 <span class="hljs-keyword">var</span> colors = [ <span class="hljs-string">&quot;red&quot;</span>, <span class="hljs-string">&quot;blue&quot;</span>, <span class="hljs-string">&quot;orange&quot;</span>, <span class="hljs-string">&quot;green&quot;</span> ];
 <span class="hljs-keyword">var</span> color = colors[<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * colors.<span class="hljs-property">length</span>)];
 
@@ -605,51 +511,48 @@ second is just the object notation. This works! I get a big red <code>Hello Worl
     <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{</span> {<span class="hljs-attr">color:color</span>} }&gt;</span>{thing}<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span>,
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p>lol @</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> color = colors[<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * colors.<span class="hljs-property">length</span>)];
-</code></pre>
+</blockquote>
+<blockquote>
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> color = colors[<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * colors.<span class="hljs-property">length</span>)];
+</code></pre></blockquote>
+<blockquote>
 <p>This is a total aside, but I could monkeypatch <code>Array.prototype</code> to have a
 legit <code>random</code> &quot;method&quot; like this!</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">Array</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">random</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+</blockquote>
+<blockquote>
+<pre><code class="hljs language-js"><span class="hljs-title class_">Array</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">random</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>[<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * <span class="hljs-variable language_">this</span>.<span class="hljs-property">length</span>)];
 }
-</code></pre>
+</code></pre></blockquote>
+<blockquote>
 <p>And then I could call <code>colors.random()</code>! I&#39;m not going to do that right now,
 prototypes make my head blow up a little bit.</p>
 </blockquote>
 <p>Aside aside, this gives me a new color on every page load! Success!</p>
 <p>Now. Let&#39;s see how React reacts. Here is a dumb function that is set to run on
 a loop, once every second.</p>
-
-<pre><code class="lang-js"><span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+<pre><code class="hljs language-js"><span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
     color = colors[<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * colors.<span class="hljs-property">length</span>)];
 }, <span class="hljs-number">1000</span>)
-</code></pre>
-<p>But... React doesn&#39;t do anything! Shouldn&#39;t it like, you know, react?</p>
+</code></pre><p>But... React doesn&#39;t do anything! Shouldn&#39;t it like, you know, react?</p>
 <p>Of course not! I am simply changing the state of a variable in memory... React
 doesn&#39;t know anything about that, and I already used it to set the style the
 first time through!</p>
-
-<pre><code class="lang-js"><span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+<pre><code class="hljs language-js"><span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
     color = colors[<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * colors.<span class="hljs-property">length</span>)];
     <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(color);
 }, <span class="hljs-number">1000</span>)
-</code></pre>
-<p>You can see that the var is being updated, but of course it&#39;s not going to
+</code></pre><p>You can see that the var is being updated, but of course it&#39;s not going to
 affect the dom in any way.</p>
 <p>Now, in vanilla javascript, this would be &quot;simple.&quot; I just grab the element out
 of the DOM and manipulate its style property directly!</p>
-
-<pre><code class="lang-js"><span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+<pre><code class="hljs language-js"><span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
     color = colors[<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * colors.<span class="hljs-property">length</span>)];
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>).<span class="hljs-property">children</span>[<span class="hljs-number">0</span>].<span class="hljs-property">style</span>.<span class="hljs-property">color</span> = color
 }, <span class="hljs-number">1000</span>)
-</code></pre>
-<p>This works! I will see the color change every second.</p>
+</code></pre><p>This works! I will see the color change every second.</p>
 <p>But it is <em>so, so, ugly.</em></p>
 <p>It&#39;s bad in so many ways... I&#39;m reaching into the DOM from an arbitrary place
 in the code. The selector is brittle and if I moved that div <em>at all</em> I&#39;d have
@@ -670,8 +573,7 @@ to have to manage the state of the DOM procedurally like that, I want the dom
 to manage itself based on a description of what it should look like in various
 states.</p>
 <p>I can do this very simply, by <em>rerendering the entire ReactDOM anytime the state changes!</em></p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
 <span class="hljs-keyword">var</span> colors = [ <span class="hljs-string">&quot;red&quot;</span>, <span class="hljs-string">&quot;blue&quot;</span>, <span class="hljs-string">&quot;orange&quot;</span>, <span class="hljs-string">&quot;green&quot;</span> ];
 
 <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
@@ -681,12 +583,10 @@ states.</p>
         <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
     );
 }, <span class="hljs-number">1000</span>)
-</code></pre>
-<p>&quot;But wait!&quot; I hear you saying, &quot;Isn&#39;t that inefficient?? Rerendering the whole
+</code></pre><p>&quot;But wait!&quot; I hear you saying, &quot;Isn&#39;t that inefficient?? Rerendering the whole
 tree everytime anything changes at all?&quot;</p>
 <p>No!! It is not! Consider this snippet:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> thing = <span class="hljs-string">&quot;Hello World!&quot;</span>;
 <span class="hljs-keyword">var</span> colors = [ <span class="hljs-string">&quot;red&quot;</span>, <span class="hljs-string">&quot;blue&quot;</span>, <span class="hljs-string">&quot;orange&quot;</span>, <span class="hljs-string">&quot;green&quot;</span>, <span class="hljs-string">&quot;yellow&quot;</span>];
 
 <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
@@ -702,8 +602,7 @@ tree everytime anything changes at all?&quot;</p>
             <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
             );
         }, <span class="hljs-number">100</span>)
-</code></pre>
-<p>This updates the whole ReactDom <em>10 times a second</em>. But it only ever <em>touches
+</code></pre><p>This updates the whole ReactDom <em>10 times a second</em>. But it only ever <em>touches
 the real DOM</em> where it&#39;s <em>actually</em> changing!</p>
 <p>This is one of React&#39;s superpowers. It maintains a <em>virtual dom</em> in addition to
 the &quot;real&quot; dom in the browser. When state is updated or when
@@ -725,20 +624,21 @@ manipulations, but it happens at lower speeds too. Turns out that with only 5
 possible colors the odds of repeating the same one are pretttttty high, and
 that&#39;s what makes it seems like that. Better to just produce a random hexcode!
 That would reduce the repeating chance from 20% to 0.00000596%.</p>
+</blockquote>
+<blockquote>
 <p><a href="http://www.paulirish.com/2009/random-hex-color-code-snippets/">I found this rad page with lots of little solutions to how to make a hexcode
 form nothing and stole
 one!</a> Thanks,
 the internet. (<a href="http://i.imgur.com/SZPjHwz.jpg">me rn</a>)</p>
 </blockquote>
-<h2 id="components">Components</h2>
+<h2>Components</h2>
 <p>I was confused about components for a while, thinking that they were somehow a
 superset of elements but with more stuff in them or something. <em>the truth is
 much stranger!</em></p>
 <p>All of the following things are basically equivalent as written, where an
 element can be produced from either a pure function (the first two), or an
 Object (the last two).</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> randColor = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> randColor = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;#&#x27;</span>+<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>()*<span class="hljs-number">16777215</span>).<span class="hljs-title function_">toString</span>(<span class="hljs-number">16</span>);
 }
 
@@ -772,10 +672,11 @@ Object (the last two).</p>
         <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
     );
 }, <span class="hljs-number">100</span>)
-</code></pre>
-<p><a href="https://facebook.github.io/react/blog/2015/12/18/react-components-elements-and-instances.html">I found a good doc about this!!</a></p>
+</code></pre><p><a href="https://facebook.github.io/react/blog/2015/12/18/react-components-elements-and-instances.html">I found a good doc about this!!</a></p>
 <blockquote>
 <p>also it includes this gem:</p>
+</blockquote>
+<blockquote>
 <p><a href="https://youtu.be/4u2ZsoYWwJA?t=7m37s">&quot;React is like a child asking “what is Y” for every “X is Y” you explain to them
 until they figure out every little thing in the world.&quot;</a></p>
 </blockquote>
@@ -792,10 +693,9 @@ thing at the end of the day. JavaScript!</p>
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="box"></div>
 
-<h1 id="let-s-make-a-box">Let&#39;s make a box</h1>
+<h1>Let&#39;s make a box</h1>
 <p>With this in mind, let&#39;s make a box.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> randColor = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> randColor = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;#&#x27;</span>+<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>()*<span class="hljs-number">16777215</span>).<span class="hljs-title function_">toString</span>(<span class="hljs-number">16</span>);
 }
 
@@ -809,29 +709,24 @@ thing at the end of the day. JavaScript!</p>
         <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
     );
 }, <span class="hljs-number">100</span>)
-</code></pre>
-<p>Everytime this is rendered (10 times a second!) we get a new color box. Let&#39;s make 2!</p>
+</code></pre><p>Everytime this is rendered (10 times a second!) we get a new color box. Let&#39;s make 2!</p>
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="boxes"></div>
 
-<h1 id="let-s-make-two-boxes">Let&#39;s make two boxes</h1>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<h1>Let&#39;s make two boxes</h1>
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> /&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> /&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>,
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
 );
-</code></pre>
-<p>Hmm... I wanted these side by side, but they are on top of each other. This is
+</code></pre><p>Hmm... I wanted these side by side, but they are on top of each other. This is
 a classic styling thinger! Divs are <code>block</code> elements, and by default stack on top of each other. Easy fix!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> <span class="hljs-title function_">Box</span> = (<span class="hljs-params"></span>) =&gt; {
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> <span class="hljs-title function_">Box</span> = (<span class="hljs-params"></span>) =&gt; {
     <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string"> /&gt;</span></span>;
 }
-</code></pre>
-<p>It feels really weird to me to have all this styling directly on the element
+</code></pre><p>It feels really weird to me to have all this styling directly on the element
 itself instead of in an external style sheet... but this is the react way. Self
 contained composable units!</p>
 <blockquote>
@@ -842,11 +737,10 @@ that.</a></p>
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="row"></div>
 
-<h1 id="let-s-make-a-row-of-boxes">Let&#39;s make a row of boxes</h1>
+<h1>Let&#39;s make a row of boxes</h1>
 <p>Now that boxes can be put next to each other, I can make a <code>Row</code> component that
 composes 5 of them side by side!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Row</span> = (<span class="hljs-params"></span>) =&gt; {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Row</span> = (<span class="hljs-params"></span>) =&gt; {
     <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> /&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> /&gt;</span>
@@ -855,14 +749,12 @@ composes 5 of them side by side!</p>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> /&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
 }
-</code></pre>
-<p><sub><a href='#toc'>toc</a></sub></p>
+</code></pre><p><sub><a href='#toc'>toc</a></sub></p>
 <div id="grid"></div>
 
-<h1 id="let-s-make-a-grid-of-rows-of-boxes">Let&#39;s make a grid of rows of boxes</h1>
+<h1>Let&#39;s make a grid of rows of boxes</h1>
 <p>I can do a very similar thing by stacking 5 rows together to make a <code>Grid</code> component.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Grid</span> = (<span class="hljs-params"></span>) =&gt; {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Grid</span> = (<span class="hljs-params"></span>) =&gt; {
     <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Row</span> /&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Row</span> /&gt;</span>
@@ -871,26 +763,22 @@ composes 5 of them side by side!</p>
         <span class="hljs-tag">&lt;<span class="hljs-name">Row</span> /&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
 }
-</code></pre>
-<p>Now, rendering a <code>Grid</code> element will give me a 5x5 grid of statically sized
+</code></pre><p>Now, rendering a <code>Grid</code> element will give me a 5x5 grid of statically sized
 100x100 pixel boxes!</p>
-
-<pre><code class="lang-js"><span class="hljs-built_in">setInterval</span>(<span class="hljs-function">()=&gt;</span>{
+<pre><code class="hljs language-js"><span class="hljs-built_in">setInterval</span>(<span class="hljs-function">()=&gt;</span>{
     <span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
         <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Grid</span> /&gt;</span></span>,
         <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
     );
 }, <span class="hljs-number">100</span>)
-</code></pre>
-<p><sub><a href='#toc'>toc</a></sub></p>
+</code></pre><p><sub><a href='#toc'>toc</a></sub></p>
 <div id="sizing"></div>
 
-<h1 id="dynamically-sizing-the-grid-with-props-">Dynamically sizing the grid with <code>props</code></h1>
+<h1>Dynamically sizing the grid with <code>props</code></h1>
 <p>What I would like, though, is a dynamically sized grid. This is fairly simple-
 I can pass height and width in as props to the grid and set the style
 accordingly...</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Grid</span> = (<span class="hljs-params">props</span>) =&gt; {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Grid</span> = (<span class="hljs-params">props</span>) =&gt; {
     <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Row</span> /&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Row</span> /&gt;</span>
@@ -906,11 +794,9 @@ accordingly...</p>
         <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
     );
 }, <span class="hljs-number">100</span>)
-</code></pre>
-<p>This limits the size of the enclosing <code>Grid</code> element to what I specify. I would
+</code></pre><p>This limits the size of the enclosing <code>Grid</code> element to what I specify. I would
 like to cascade that value down through the hierarchy.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Row</span> = (<span class="hljs-params">props</span>) =&gt; {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Row</span> = (<span class="hljs-params">props</span>) =&gt; {
     <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> /&gt;</span>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> /&gt;</span>
@@ -929,15 +815,13 @@ like to cascade that value down through the hierarchy.</p>
         <span class="hljs-tag">&lt;<span class="hljs-name">Row</span> <span class="hljs-attr">height</span>=<span class="hljs-string">{props.height</span> / <span class="hljs-attr">5</span>} <span class="hljs-attr">width</span>=<span class="hljs-string">{props.width}</span> /&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
 }
-</code></pre>
-<p>Notice something important here- the <code>Row</code>s don&#39;t do the calculation to know
+</code></pre><p>Notice something important here- the <code>Row</code>s don&#39;t do the calculation to know
 their own height- they simply respond to the input. Passing in the full size of
 the grid and then doing the calculation inside the <code>Row</code> would give the Row
 knowledge about its parent, which feels like an antipattern maybe? I don&#39;t
 know. Feels like it though.</p>
 <p>A similar pass for the <code>Box</code>:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Box</span> = (<span class="hljs-params">props</span>) =&gt; {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Box</span> = (<span class="hljs-params">props</span>) =&gt; {
     <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string"> /&gt;</span></span>;
 }
 
@@ -950,14 +834,12 @@ know. Feels like it though.</p>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> <span class="hljs-attr">height</span>=<span class="hljs-string">{props.height}</span> <span class="hljs-attr">width</span>=<span class="hljs-string">{props.width</span> / <span class="hljs-attr">5</span>} /&gt;</span>
     <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
 }
-</code></pre>
-<p><sub><a href='#toc'>toc</a></sub></p>
+</code></pre><p><sub><a href='#toc'>toc</a></sub></p>
 <div id="dimensions"></div>
 
-<h1 id="giving-it-dimensions">Giving it dimensions</h1>
+<h1>Giving it dimensions</h1>
 <p>The grid really has two things I&#39;d like to specify- the absolute size that I&#39;ve been working with so far, and also the x y values of how many boxes are inside of it.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> randColor = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> randColor = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;#&#x27;</span>+<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>()*<span class="hljs-number">16777215</span>).<span class="hljs-title function_">toString</span>(<span class="hljs-number">16</span>);
 }
 
@@ -991,14 +873,12 @@ know. Feels like it though.</p>
         <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;example&#x27;</span>)
     );
 }, <span class="hljs-number">100</span>)
-</code></pre>
-<p>Now, I want to dynamically generate the number of boxes based on those
+</code></pre><p>Now, I want to dynamically generate the number of boxes based on those
 dimension values, and compute the absolute height and width values of these
 children on the fly. Step one is to recognize that I can return <em>an array of
 React elements</em> inside of a jsx curly brace block. This will be munged and
 rendered as if I had written them by hand as before.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Row</span> = (<span class="hljs-params">props</span>) =&gt; {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">Row</span> = (<span class="hljs-params">props</span>) =&gt; {
     <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&gt;</span>{[
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> <span class="hljs-attr">height</span>=<span class="hljs-string">{props.height}</span> <span class="hljs-attr">width</span>=<span class="hljs-string">{props.width</span> / <span class="hljs-attr">props.count</span>} /&gt;</span>,
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> <span class="hljs-attr">height</span>=<span class="hljs-string">{props.height}</span> <span class="hljs-attr">width</span>=<span class="hljs-string">{props.width</span> / <span class="hljs-attr">props.count</span>} /&gt;</span>,
@@ -1007,26 +887,22 @@ rendered as if I had written them by hand as before.</p>
         <span class="hljs-tag">&lt;<span class="hljs-name">Box</span> <span class="hljs-attr">height</span>=<span class="hljs-string">{props.height}</span> <span class="hljs-attr">width</span>=<span class="hljs-string">{props.width</span> / <span class="hljs-attr">props.count</span>} /&gt;</span>
     ]}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
 }
-</code></pre>
-<p>A wild error message appears!</p>
-
+</code></pre><p>A wild error message appears!</p>
 <pre><code>react.js:20483 Warning: Each child in an array or iterator should have a unique
 &quot;key&quot; prop. Check the render method of `Grid`. See
 https://fb.me/react-warning-keys for more information.  in Row (created by
 Grid) in Grid
-</code></pre>
-<p><a href="https://fb.me/react-warning-keys">https://fb.me/react-warning-keys</a>.</p>
+</code></pre><p><a href="https://fb.me/react-warning-keys">https://fb.me/react-warning-keys</a>.</p>
 <p>Duly noted, I need to manually assign these keys when I create an array of
 elements, then, so that react knows how to keep track of them.</p>
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="multi"></div>
 
-<h1 id="multiplying-elements-with-a-cheeky-little-lambda-">Multiplying elements (with a cheeky little lambda)</h1>
+<h1>Multiplying elements (with a cheeky little lambda)</h1>
 <p>Ok! I need to create a little block that returns an array of elements whose
 length is the <code>count</code> that I pass in! This is a fun one! A first pass might
 look something like this:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span>(<span class="hljs-params">count</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span>(<span class="hljs-params">count</span>) {
     <span class="hljs-keyword">let</span> out = [];
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; count; i++) {
         out.<span class="hljs-title function_">push</span>(<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Row</span>
@@ -1039,63 +915,49 @@ look something like this:</p>
     }
     <span class="hljs-keyword">return</span> out;
 }(props.<span class="hljs-property">dimensions</span>.<span class="hljs-property">y</span>)
-</code></pre>
-<p>This will totally work! But it&#39;s so imperative! Let&#39;s get more functional.</p>
+</code></pre><p>This will totally work! But it&#39;s so imperative! Let&#39;s get more functional.</p>
 <p>I start with the number, and I want to end with an array. I can start by making
 an Array with that number of elements.</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">Array</span>(props.<span class="hljs-property">dimensions</span>.<span class="hljs-property">y</span>)
-</code></pre>
-<p>This will return a reference to an Array that has its <code>length</code> property set to
+<pre><code class="hljs language-js"><span class="hljs-title class_">Array</span>(props.<span class="hljs-property">dimensions</span>.<span class="hljs-property">y</span>)
+</code></pre><p>This will return a reference to an Array that has its <code>length</code> property set to
 that number (if you pass more than one argument to this constructor, it simply
 makes an array out of them).</p>
 <p>If I want to map over this array, I need to fill in the array with a
 placeholder value (this is weird that I have to do this, but whatever- it&#39;s all
 in the service of a good one liner!)</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">Array</span>(props.<span class="hljs-property">dimensions</span>.<span class="hljs-property">y</span>).<span class="hljs-title function_">fill</span>()
-</code></pre>
-<p>Will do this. This returns (for a y value of <code>5</code>, say) ....</p>
-
-<pre><code class="lang-js">[<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>]
-</code></pre>
-<p>Since I didn&#39;t pass in anything to <code>fill()</code>.</p>
+<pre><code class="hljs language-js"><span class="hljs-title class_">Array</span>(props.<span class="hljs-property">dimensions</span>.<span class="hljs-property">y</span>).<span class="hljs-title function_">fill</span>()
+</code></pre><p>Will do this. This returns (for a y value of <code>5</code>, say) ....</p>
+<pre><code class="hljs language-js">[<span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-literal">undefined</span>]
+</code></pre><p>Since I didn&#39;t pass in anything to <code>fill()</code>.</p>
 <p>Now, I can map over this array! I pass it a function (yay stabby procs!)</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">Array</span>(<span class="hljs-number">5</span>).<span class="hljs-title function_">fill</span>().<span class="hljs-title function_">map</span>(<span class="hljs-function">()=&gt;</span><span class="hljs-number">3</span>)
-</code></pre>
-<p>Would return</p>
-
-<pre><code class="lang-js">[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>]
-</code></pre>
-<p>Instead of those <code>3</code>&#39;s, I&#39;ll simply return the element I wanted!</p>
+<pre><code class="hljs language-js"><span class="hljs-title class_">Array</span>(<span class="hljs-number">5</span>).<span class="hljs-title function_">fill</span>().<span class="hljs-title function_">map</span>(<span class="hljs-function">()=&gt;</span><span class="hljs-number">3</span>)
+</code></pre><p>Would return</p>
+<pre><code class="hljs language-js">[<span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>, <span class="hljs-number">3</span>]
+</code></pre><p>Instead of those <code>3</code>&#39;s, I&#39;ll simply return the element I wanted!</p>
 <p>The map function takes two arguments, positionally they are <code>(element, index)</code>.
 I can use that index as the <code>key</code> of the element I&#39;m producing! (Keys only need
 to be unique amongst their siblings, so this won&#39;t interfere with other rows of
 keys boxes, for example.)</p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">Array</span>(props.<span class="hljs-property">dimensions</span>.<span class="hljs-property">y</span>).<span class="hljs-title function_">fill</span>().<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">_, i</span>) =&gt;</span> {
+<pre><code class="hljs language-js"><span class="hljs-title class_">Array</span>(props.<span class="hljs-property">dimensions</span>.<span class="hljs-property">y</span>).<span class="hljs-title function_">fill</span>().<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">_, i</span>) =&gt;</span> {
     <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Row</span>
             <span class="hljs-attr">height</span>=<span class="hljs-string">{props.height</span> / <span class="hljs-attr">props.dimensions.y</span>}
             <span class="hljs-attr">width</span>=<span class="hljs-string">{props.width}</span>
             <span class="hljs-attr">count</span>=<span class="hljs-string">{props.dimensions.x}</span>
             <span class="hljs-attr">key</span>=<span class="hljs-string">{i}</span> /&gt;</span></span>;
 })
-</code></pre>
-<p>And Robert&#39;s your sister&#39;s husband&#39;s father-in-law&#39;s cousin&#39;s cousin!</p>
+</code></pre><p>And Robert&#39;s your sister&#39;s husband&#39;s father-in-law&#39;s cousin&#39;s cousin!</p>
 <p>I thought that one could use some splainin&#39; because... while it&#39;s very simple,
 it looks pretty weird.</p>
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="statedom"></div>
 
-<h1 id="the-state-of-the-dom">The State of the Dom</h1>
+<h1>The State of the Dom</h1>
 <p>Ok, it&#39;s about to get pretty wild in here. So far, this has been fairly
 straightforward... just passing in some props and generating a dom based on
 that. But what if some of those elements had state of their own? I have to use
 the es6 class syntax to add state into one of these Elements- because the pure
 function doesn&#39;t maintain a reference to itself.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Box</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">React.Component</span> {
+<pre><code class="hljs language-js"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Box</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">React.Component</span> {
     <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
         <span class="hljs-variable language_">super</span>();
         <span class="hljs-variable language_">this</span>.<span class="hljs-property">state</span> = {
@@ -1107,21 +969,18 @@ function doesn&#39;t maintain a reference to itself.</p>
         <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string"> <span class="hljs-attr">onMouseOver</span>=<span class="hljs-string">{()</span>=&gt;</span> this.setState({color: randColor()})}/&gt;</span>;
     }
 }
-</code></pre>
-<p>You&#39;ll notice that the <code>render()</code> method returns exactly what it was returning before, but the color refers to <code>state</code>, not to a <code>prop</code>. This is important!</p>
+</code></pre><p>You&#39;ll notice that the <code>render()</code> method returns exactly what it was returning before, but the color refers to <code>state</code>, not to a <code>prop</code>. This is important!</p>
 <p>Also notice I&#39;ve attached an event handler to the onMouseOver event. It simply
 updates the color- that&#39;s it! But, now, I take away the interval function that
 was rewriting the whole dom every second or so, and just replace it with a
 single call, once, to <code>ReactDOM.render()</code></p>
-
-<pre><code class="lang-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
+<pre><code class="hljs language-js"><span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">render</span>(
     <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Grid</span> <span class="hljs-attr">height</span>=<span class="hljs-string">{window.innerHeight}</span>
           <span class="hljs-attr">width</span>=<span class="hljs-string">{window.innerWidth}</span>
           /&gt;</span></span>,
     <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;grid&#x27;</span>)
 );
-</code></pre>
-<p><em>But now, something magical happens.</em></p>
+</code></pre><p><em>But now, something magical happens.</em></p>
 <p>When I mouse over a box, the onMouseOver callback is triggered, which updates
 that box&#39;s state. When the state is update <em>the box just rerenders itself into
 the dom</em>.</p>
@@ -1132,8 +991,7 @@ roll) react to state changes!</p>
 <p>If there were child elements that depended on this state, they would also be
 rerendered! This is amaze and I think I really like it.</p>
 <p>Case in point!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Grid</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">React.Component</span> {
+<pre><code class="hljs language-js"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Grid</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">React.Component</span> {
     <span class="hljs-title function_">constructor</span>(<span class="hljs-params">props</span>) {
         <span class="hljs-variable language_">super</span>(props);
         <span class="hljs-variable language_">this</span>.<span class="hljs-property">state</span> = {
@@ -1159,8 +1017,7 @@ rerendered! This is amaze and I think I really like it.</p>
         <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
     }
 }
-</code></pre>
-<p>I&#39;ve added two sliders for the x and y dimension values. Now, instead of
+</code></pre><p>I&#39;ve added two sliders for the x and y dimension values. Now, instead of
 passing them in as props, they are given a default value of 1, and when the
 sliders are moved, the whole dom is efficiently rerendered! This means that the
 cells are resized <em>but the colors stay the same</em>, because the boxes each
@@ -1183,7 +1040,7 @@ of this post.)</p>
 <p><sub><a href='#toc'>toc</a></sub></p>
 <div id="coda"></div>
 
-<h1 id="coda">Coda</h1>
+<h1>Coda</h1>
 <p>This app doesn&#39;t really do that much! But I think I kind of sort of get the basic
 ideas behind react and also how to sort of use it! The next thing I would want
 to learn is how to bundle dependencies, so I could separate the &quot;library&quot;

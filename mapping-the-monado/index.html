@@ -62,7 +62,6 @@ potato!</a></p>
 <hr>
 
 <p>Monads have a reputation. Why?</p>
-
 <ol>
 <li><p>The term is <a href="https://en.wikipedia.org/wiki/Monad">imprecise</a> across
 disciplines, and even many professed experts
@@ -100,7 +99,7 @@ with an emphasis on why abstruse theory may be of interest to computing
 scientists.</p>
 </blockquote>
 <p>Here&#39;s <a href="https://www.linkedin.com/in/brianbeckman/">Brian Beckman</a>
-fullthroatedly <a href="https://www.youtube.com/watch?v=ZhuHCtR3xq8&amp;feature=youtu.be&amp;t=26m20s">making a similar
+fullthroatedly <a href="https://www.youtube.com/watch?v=ZhuHCtR3xq8&feature=youtu.be&t=26m20s">making a similar
 point.</a></p>
 <blockquote>
 <p>...and that&#39;s where we go into category theory... but you <em>don&#39;t need</em> to know
@@ -131,112 +130,86 @@ categories because you understand, that as long as the types line up, then
 <p>A monad is <em>three things</em> that, working together, satisfy <em>three
 rules</em>, and that is what makes them, in aggregate, a monad.</p>
 <p>The three things are:</p>
-<h2 id="a-type-of-thing">a type of thing</h2>
+<h2>a type of thing</h2>
 <p>The structure doesn&#39;t matter, only that it satisfies a certain interface I&#39;ll
 get into below.</p>
-<h2 id="-unit-"><code>unit()</code></h2>
+<h2><code>unit()</code></h2>
 <p><code>unit</code> takes a value and returns a <em>new</em> something of a type that incorporates
 that initial value.  It&#39;s <em>almost</em> just a constructor.</p>
 <p>In javascript, I could use the <code>new</code> keyword for this. Again, it does not
 matter what the structure of the returned thing is. I&#39;ll simply return an
 object that has a <code>value</code> property.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> <span class="hljs-title class_">Thing</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> <span class="hljs-title class_">Thing</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) {
     <span class="hljs-keyword">return</span> {
         <span class="hljs-attr">value</span>: x
     };
 }
-</code></pre>
-<p>For now, <code>unit</code> will simply be a wrapper around this constructor.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> unit = <span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) {
+</code></pre><p>For now, <code>unit</code> will simply be a wrapper around this constructor.</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> unit = <span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thing</span>(x);
 }
-</code></pre>
-<p>I will use only the <code>unit</code> function below, and it always means <code>new Thing()</code>.</p>
-<h2 id="-bind-"><code>bind()</code></h2>
+</code></pre><p>I will use only the <code>unit</code> function below, and it always means <code>new Thing()</code>.</p>
+<h2><code>bind()</code></h2>
 <p><em>This is not javascript&#39;s bind function.</em></p>
 <p>Vanilla javascript doesn&#39;t have any typing to help here. I&#39;m going to use a
 little <a href="https://www.typescriptlang.org/">Typescript</a> instead. You can just think
 at it as javascript with type annotations!</p>
 <p>Here is a function that takes a number and adds one to it and return a number!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> addOne = <span class="hljs-keyword">function</span>(<span class="hljs-params">x: number</span>) : number {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> addOne = <span class="hljs-keyword">function</span>(<span class="hljs-params">x: number</span>) : number {
     <span class="hljs-keyword">return</span> x + <span class="hljs-number">1</span>;
 }
-</code></pre>
-<p>What if I want to add one to a <code>Thing</code>?</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">let</span> mx = <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>);
+</code></pre><p>What if I want to add one to a <code>Thing</code>?</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">let</span> mx = <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>);
 <span class="hljs-title function_">addOne</span>(mx);
-</code></pre>
-<p><code>mx</code> is a <code>Thing</code>, and <code>addOne</code> expects and <code>number</code>, so I get this compilation
+</code></pre><p><code>mx</code> is a <code>Thing</code>, and <code>addOne</code> expects and <code>number</code>, so I get this compilation
 error:</p>
-
 <pre><code>../monad.ts (15,12): Argument of type &#39;Thing&#39; is not assignable to parameter of type &#39;number&#39;. (2345)
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p>In vanilla javascript, this <em>does work</em>. What it returns is much worse than
 useless, though.</p>
-
+</blockquote>
 <pre><code>[object Object]1
-</code></pre>
+</code></pre><blockquote>
 <p>It casts my <code>Thing</code> to a string by calling <code>Thing.prototype.toString()</code>,
 which returned <code>&quot;[object Object]&quot;</code>, then it &quot;added&quot; &quot;1&quot; to it by concatenating the
 string <code>&quot;1&quot;</code> onto the end. Typescript catches this error.</p>
 </blockquote>
 <p>What I really wanted is a function <code>addOneToThing</code> that can add one to the
 <code>value</code> of a <code>Thing</code>.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> addOneToThing = <span class="hljs-keyword">function</span>(<span class="hljs-params">mx: Thing</span>) : <span class="hljs-title class_">Thing</span> {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> addOneToThing = <span class="hljs-keyword">function</span>(<span class="hljs-params">mx: Thing</span>) : <span class="hljs-title class_">Thing</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">unit</span>(mx.<span class="hljs-property">value</span> + <span class="hljs-number">1</span>);
 }
-</code></pre>
-<p>This function takes a <code>Thing</code> and returns a <em>new</em> <code>Thing</code>. And it does what I would
+</code></pre><p>This function takes a <code>Thing</code> and returns a <em>new</em> <code>Thing</code>. And it does what I would
 expect it to.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">let</span> mx = <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>);
+<pre><code class="hljs language-js"><span class="hljs-keyword">let</span> mx = <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>);
 <span class="hljs-title function_">addOneToThing</span>(mx);
-</code></pre>
-
-<pre><code>{ value: 2 }
-</code></pre>
-<p><code>addOneToThing</code> <em>knows</em> about <code>Thing</code>s. It knows how to get a value out of a
+</code></pre><pre><code>{ value: 2 }
+</code></pre><p><code>addOneToThing</code> <em>knows</em> about <code>Thing</code>s. It knows how to get a value out of a
 thing and it knows how to make a new one.</p>
 <p><code>bind</code> is a function that knows how to <em>apply a function to an underlying type
 contained inside of another type.</em></p>
 <p>For this example, the underlying type is a <code>number</code>, and the another type is a
 <code>Thing</code>, which is just an object with a <code>value</code> property that is a number!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> bind = <span class="hljs-keyword">function</span>(<span class="hljs-params">fn: <span class="hljs-built_in">Function</span>, mx: Thing</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> bind = <span class="hljs-keyword">function</span>(<span class="hljs-params">fn: <span class="hljs-built_in">Function</span>, mx: Thing</span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">fn</span>(mx.<span class="hljs-property">value</span>);
 }
-</code></pre>
-<p><code>bind</code> knows about <code>.value</code>, so <code>addOne</code> doesn&#39;t have to be <code>addOneToThing</code>
+</code></pre><p><code>bind</code> knows about <code>.value</code>, so <code>addOne</code> doesn&#39;t have to be <code>addOneToThing</code>
 anymore. I can just use <code>bind</code>!</p>
 <p>What do I get, then, if I <em>bind</em> <code>addOne</code> to a <code>Thing</code>?</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>));
-</code></pre>
-<p>I get:</p>
-
+<pre><code class="hljs language-js"><span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>));
+</code></pre><p>I get:</p>
 <pre><code>2
-</code></pre>
-<p>This certainly works, but I am left with a <code>number</code> instead of a <code>Thing</code>. If I
+</code></pre><p>This certainly works, but I am left with a <code>number</code> instead of a <code>Thing</code>. If I
 try to bind another function to the return value, now:</p>
-
-<pre><code class="lang-js"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(
+<pre><code class="hljs language-js"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(
     <span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>)))
 );
-</code></pre>
-
-<pre><code>NaN
-</code></pre>
-<blockquote>
+</code></pre><pre><code>NaN
+</code></pre><blockquote>
 <p>You might expect to see a type error like</p>
-
+</blockquote>
 <pre><code>Argument of type &#39;number&#39; is not assignable to parameter of type &#39;Thing&#39;. (2345)
-</code></pre>
+</code></pre><blockquote>
 <p>But <code>bind</code> is dynamically applying a function and can&#39;t be statically type checked here.</p>
 </blockquote>
 <p>If I wanted to <em>chain</em> these calls, then any function that is bound in this
@@ -249,96 +222,66 @@ numbers, and <code>M b</code> is, say, a number &quot;wrapped&quot; in some othe
 <p>I&#39;ll redefine <code>addOne</code> then, to do this, and add a <code>timesTwo</code> function to help
 with the next example. The function signatures below amount to <code>a -&gt; M b</code> where
 <code>M b</code> is a <code>Thing(number)</code> and <code>a</code> and <code>b</code> are <code>number</code>s.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> addOne = <span class="hljs-keyword">function</span>(<span class="hljs-params">x: number</span>) : <span class="hljs-title class_">Thing</span> {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> addOne = <span class="hljs-keyword">function</span>(<span class="hljs-params">x: number</span>) : <span class="hljs-title class_">Thing</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">unit</span>(x + <span class="hljs-number">1</span>);
 };
 <span class="hljs-keyword">const</span> timesTwo = <span class="hljs-keyword">function</span>(<span class="hljs-params">x: number</span>) : <span class="hljs-title class_">Thing</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">unit</span>(x * <span class="hljs-number">2</span>);
 };
-</code></pre>
-<p>Now, if I</p>
-
-<pre><code class="lang-typescript"><span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>))
-</code></pre>
-<p>I get a <code>Thing</code> back...</p>
-
+</code></pre><p>Now, if I</p>
+<pre><code class="hljs language-typescript"><span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>))
+</code></pre><p>I get a <code>Thing</code> back...</p>
 <pre><code>Thing { value: 2 }
-</code></pre>
-<p>and if I</p>
-
-<pre><code class="lang-typescript"><span class="hljs-title function_">bind</span>(timesTwo, <span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>)))
-</code></pre>
-<p>I <em>also</em> get a <code>Thing</code> back!</p>
-
+</code></pre><p>and if I</p>
+<pre><code class="hljs language-typescript"><span class="hljs-title function_">bind</span>(timesTwo, <span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>)))
+</code></pre><p>I <em>also</em> get a <code>Thing</code> back!</p>
 <pre><code>Thing { value: 4 }
-</code></pre>
-<p>Interesting...</p>
+</code></pre><p>Interesting...</p>
 <p>So, this is <em>all</em> that is needed to satisfy:</p>
-<h1 id="the-three-laws">the three laws</h1>
+<h1>the three laws</h1>
 <p>Described in terms of the preceding functions <code>unit</code> and <code>bind</code>, and using
 <code>addOne</code> and <code>timesTwo</code> as arbitrary example functions that <em>happen</em> to have
 this <code>a -&gt; M b</code> type signature, they are:</p>
-<h2 id="left-identity">left identity</h2>
+<h2>left identity</h2>
 <p>Binding a function to a monad must result in the same output as calling the
 bare function on the value(s) contained &quot;inside&quot; the monad.</p>
 <p>so,</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>))
-</code></pre>
-<p>must be equivalent to:</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">addone</span>(<span class="hljs-number">1</span>);
-</code></pre>
-<p>They are! They both return:</p>
-
+<pre><code class="hljs language-js"><span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>))
+</code></pre><p>must be equivalent to:</p>
+<pre><code class="hljs language-js"><span class="hljs-title function_">addone</span>(<span class="hljs-number">1</span>);
+</code></pre><p>They are! They both return:</p>
 <pre><code>{ value: 2 }
-</code></pre>
-<h2 id="right-identity">right identity</h2>
+</code></pre><h2>right identity</h2>
 <p>Binding a unit function to a monad must result in the same thing as simply
 calling the unit function on a bare value.</p>
 <p>So,</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">bind</span>(unit, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>))
-</code></pre>
-<p>must be equivalent to:</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>);
-</code></pre>
-<p>They are! They both return:</p>
-
+<pre><code class="hljs language-js"><span class="hljs-title function_">bind</span>(unit, <span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>))
+</code></pre><p>must be equivalent to:</p>
+<pre><code class="hljs language-js"><span class="hljs-title function_">unit</span>(<span class="hljs-number">1</span>);
+</code></pre><p>They are! They both return:</p>
 <pre><code>{ value: 1 }
-</code></pre>
-<h2 id="associativity">associativity</h2>
+</code></pre><h2>associativity</h2>
 <p>Functions should be able to be composed together in any grouping and result in
 the same ouput regardless of that grouping, assuming they are applied in the
 same order.</p>
 <p><code>compose</code> takes 2 functions and returns a <em>new function</em> that composes them
 together. <code>compose(g, f)</code> then, returns a function that takes an input <code>mx</code>,
 <code>bind</code>s <code>g</code> to it, and then <code>binds</code> <code>f</code> to <em>that</em>.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">const</span> compose = <span class="hljs-keyword">function</span>(<span class="hljs-params">g, f</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> compose = <span class="hljs-keyword">function</span>(<span class="hljs-params">g, f</span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">mx</span>) {
         <span class="hljs-title function_">bind</span>(f, <span class="hljs-title function_">bind</span>(g, mx));
     }
 }
-</code></pre>
-<p>So,</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">compose</span>(timesTwo, addOne)(mx))
-</code></pre>
-<p>must be equivalent to:</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">compose</span>(addOne, addOne)(<span class="hljs-title function_">bind</span>(timesTwo, mx))
-</code></pre>
-<p>They are! they both return</p>
-
+</code></pre><p>So,</p>
+<pre><code class="hljs language-js"><span class="hljs-title function_">bind</span>(addOne, <span class="hljs-title function_">compose</span>(timesTwo, addOne)(mx))
+</code></pre><p>must be equivalent to:</p>
+<pre><code class="hljs language-js"><span class="hljs-title function_">compose</span>(addOne, addOne)(<span class="hljs-title function_">bind</span>(timesTwo, mx))
+</code></pre><p>They are! they both return</p>
 <pre><code>{ value: 4 }
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p><a href="http://lambda-the-ultimate.org/node/2448">I briefly confused associativity with commutativity.</a></p>
 </blockquote>
-<h2 id="but-_why_">but... <em>why</em></h2>
+<h2>but... <em>why</em></h2>
 <p>The usefulness of this construct is probably not readily apparent, but in
 actual fact this is very powerful and can be used for many things, <em>especially</em>
 in a purely functional context!</p>
@@ -351,31 +294,23 @@ define, but only at the top level, and it has display for printing to stdout,
 and <em>that&#39;s all</em>.</p>
 <p>Can I use monads in sild for anything useful? It turns out that I can!</p>
 <p>I&#39;ll start by implementing the same thing from above, the <code>identity</code> monad.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> unit
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> unit
  (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x)
   (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> x &#x27;() )))
-</code></pre>
-<p>I have no way of creating objects other than lists, or types of any kind at
+</code></pre><p>I have no way of creating objects other than lists, or types of any kind at
 all, in Sild, but let&#39;s call a  &quot;<code>Thing</code>&quot; simply something that is wrapped in a
 list. Remember, it doesn&#39;t really matter what the <em>structure of the type</em> is,
 only that these particular interfaces are satisfied.</p>
 <p><code>unit</code> is a function that will take something and wrap it in a list, then!</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">unit</span> &#x27;(a b c))
-</code></pre>
-
-<pre><code>((a b c))
-</code></pre>
-<p>Remember that <code>bind</code> needs to know how to &quot;get at&quot; that internal value. In this
+<pre><code class="hljs language-scheme">(<span class="hljs-name">unit</span> &#x27;(a b c))
+</code></pre><pre><code>((a b c))
+</code></pre><p>Remember that <code>bind</code> needs to know how to &quot;get at&quot; that internal value. In this
 case, it&#39;s as simple as unwrapping that outer list by using <code>car</code> and then
 applying the given function to it.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> bind
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> bind
   (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (f mx)
     (<span class="hljs-name">f</span> (<span class="hljs-name"><span class="hljs-built_in">car</span></span> mx))))
-</code></pre>
-<p>This is already <em>a</em> monad! I&#39;ve got a <em>type</em> of something, in this case denoted by
+</code></pre><p>This is already <em>a</em> monad! I&#39;ve got a <em>type</em> of something, in this case denoted by
 a doubly wrapped list. I have <code>unit</code> which takes a value and makes it into a
 thing of that &quot;type&quot;, and I have <code>bind</code>, which knows how to &quot;unwrap&quot; the value
 and apply a function to it!</p>
@@ -384,26 +319,21 @@ I don&#39;t have a type system to help here! But, any function I pass in needs t
 take some value and return it as a &quot;<code>Thing</code>&quot;, in this case by wrapping it in a
 list.</p>
 <p>Here are three test functions that do that:</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> push_a
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> push_a
   (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) (<span class="hljs-name">unit</span> (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> <span class="hljs-symbol">&#x27;a</span> x))))
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> push_c
   (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) (<span class="hljs-name">unit</span> (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> <span class="hljs-symbol">&#x27;c</span> x))))
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> pop
   (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (x) (<span class="hljs-name">unit</span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> x))))
-</code></pre>
-<p>I&#39;ll also need <code>compose</code>, of course, to test for associativity. That looks just
+</code></pre><p>I&#39;ll also need <code>compose</code>, of course, to test for associativity. That looks just
 like the js version:</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> compose (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (g f)
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> compose (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (g f)
   (<span class="hljs-name"><span class="hljs-built_in">lambda</span></span> (m)
     (<span class="hljs-name">bind</span> f
       (<span class="hljs-name">bind</span> g m)))))
-</code></pre>
-<p>Does this already pass the tests? I don&#39;t have any list equality functions to
+</code></pre><p>Does this already pass the tests? I don&#39;t have any list equality functions to
 check with, but we can just look at the output!</p>
-
-<pre><code class="lang-scheme"><span class="hljs-comment">; this is a bare value to start with, it&#x27;s just a list with a few symbols in it.</span>
+<pre><code class="hljs language-scheme"><span class="hljs-comment">; this is a bare value to start with, it&#x27;s just a list with a few symbols in it.</span>
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> y &#x27;(a b c))
 <span class="hljs-comment">; and here&#x27;s a monadic version of that, created with `unit`!</span>
 (<span class="hljs-name"><span class="hljs-built_in">define</span></span> My (<span class="hljs-name">unit</span> y))
@@ -419,9 +349,8 @@ check with, but we can just look at the output!</p>
 <span class="hljs-comment">; ; associativity</span>
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> (<span class="hljs-name">bind</span> push_c ((<span class="hljs-name">compose</span> push_a pop) My))) <span class="hljs-comment">; ((c a b c))</span>
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> ((<span class="hljs-name">compose</span> pop push_c) (<span class="hljs-name">bind</span> push_a My))) <span class="hljs-comment">; ((c a b c))</span>
-</code></pre>
-<p>This is the identity monad!</p>
-<h2 id="a-digression-monads-are-_-like-_-functions">A digression: Monads are <em>&quot;like&quot;</em> functions</h2>
+</code></pre><p>This is the identity monad!</p>
+<h2>A digression: Monads are <em>&quot;like&quot;</em> functions</h2>
 <p>Monads, like functions, are an <em>abstraction</em>. Functions can be thought of in
 metaphorical terms... a black box, a machine with inputs and outputs, these are
 intuitively correct but insufficient descriptions of what a function <em>is</em>.
@@ -446,16 +375,13 @@ pass those three tests: left identity, right identity, and associativity. That i
 that matters in terms of defining a monad. To prove this, here&#39;s another
 Identity monad implemented in a more object oriented way, This time using PHP.</p>
 <p>First, I&#39;ll define an interface that any monadic class will need to implement.</p>
-
-<pre><code class="lang-php"><span class="hljs-meta">&lt;?</span>
+<pre><code class="hljs language-php"><span class="hljs-meta">&lt;?</span>
 <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">Monad</span> </span>{
     <span class="hljs-keyword">public</span> <span class="hljs-built_in">static</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">unit</span>(<span class="hljs-params"><span class="hljs-variable">$x</span></span>)</span>;
     <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bind</span>(<span class="hljs-params"><span class="hljs-keyword">callable</span> <span class="hljs-variable">$fn</span></span>)</span>;
 }
-</code></pre>
-<p>Now, I&#39;ll make one!</p>
-
-<pre><code class="lang-php"><span class="hljs-meta">&lt;?</span>
+</code></pre><p>Now, I&#39;ll make one!</p>
+<pre><code class="hljs language-php"><span class="hljs-meta">&lt;?</span>
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ID</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Monad</span> </span>{
 
@@ -477,17 +403,13 @@ Identity monad implemented in a more object oriented way, This time using PHP.</
         <span class="hljs-keyword">return</span> <span class="hljs-variable">$g</span>(<span class="hljs-variable language_">$this</span>-&gt;value)-&gt;<span class="hljs-title function_ invoke__">bind</span>(<span class="hljs-variable">$f</span>);
     }
 }
-</code></pre>
-<p>Here are two functions that I can pass to <code>bind</code>.</p>
-
-<pre><code class="lang-php"><span class="hljs-meta">&lt;?</span>
+</code></pre><p>Here are two functions that I can pass to <code>bind</code>.</p>
+<pre><code class="hljs language-php"><span class="hljs-meta">&lt;?</span>
 
 <span class="hljs-variable">$increment</span> = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"><span class="hljs-variable">$n</span></span>) </span>{ <span class="hljs-keyword">return</span> ID::<span class="hljs-title function_ invoke__">unit</span>(<span class="hljs-variable">$n</span> + <span class="hljs-number">1</span>); };
 <span class="hljs-variable">$times2</span>    = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"><span class="hljs-variable">$n</span></span>) </span>{ <span class="hljs-keyword">return</span> ID::<span class="hljs-title function_ invoke__">unit</span>(<span class="hljs-variable">$n</span> * <span class="hljs-number">2</span>); };
-</code></pre>
-<p>Does this pass those tests?</p>
-
-<pre><code class="lang-php"><span class="hljs-meta">&lt;?</span>
+</code></pre><p>Does this pass those tests?</p>
+<pre><code class="hljs language-php"><span class="hljs-meta">&lt;?</span>
 
 <span class="hljs-comment"># left identity</span>
 ID::<span class="hljs-title function_ invoke__">unit</span>(<span class="hljs-number">1</span>)-&gt;<span class="hljs-title function_ invoke__">bind</span>(<span class="hljs-variable">$increment</span>) == <span class="hljs-variable">$increment</span>(<span class="hljs-number">1</span>)
@@ -498,23 +420,19 @@ ID::<span class="hljs-title function_ invoke__">unit</span>(<span class="hljs-nu
 <span class="hljs-comment"># associativity identity</span>
 ID::<span class="hljs-title function_ invoke__">unit</span>(<span class="hljs-number">1</span>)-&gt;<span class="hljs-title function_ invoke__">compose</span>(<span class="hljs-variable">$increment</span>, <span class="hljs-variable">$times2</span>)-&gt;<span class="hljs-title function_ invoke__">bind</span>(<span class="hljs-variable">$increment</span>) ==
 ID::<span class="hljs-title function_ invoke__">unit</span>(<span class="hljs-number">1</span>)-&gt;<span class="hljs-title function_ invoke__">bind</span>(<span class="hljs-variable">$increment</span>)-&gt;<span class="hljs-title function_ invoke__">compose</span>(<span class="hljs-variable">$times2</span>, <span class="hljs-variable">$increment</span>);
-</code></pre>
-<p>All of these are:</p>
-
+</code></pre><p>All of these are:</p>
 <pre><code>bool(true)
-</code></pre>
-<p>Notice something important, here... those <code>bind</code>s are <em>not returning self</em>.
+</code></pre><p>Notice something important, here... those <code>bind</code>s are <em>not returning self</em>.
 There&#39;s no mutation happening to the original object, it&#39;s a completely new
 <code>ID</code>, each and every time. I&#39;m not going to say that&#39;s the most efficient
 pattern in terms of memory use, but languages designed for purely functional
 calculations employ techniques to mitigate and <a href="http://okasaki.blogspot.dk/2008/02/ten-years-of-purely-functional-data.html">abstract this
 away</a></p>
-<h2 id="back-to-sild-and-something-actually-useful-">Back to Sild and something actually useful...</h2>
+<h2>Back to Sild and something actually useful...</h2>
 <p>How can I keep track of all the functions I&#39;ve run on an object? In a stateful
 language, this is pretty easy. Here&#39;s one way to do so in some Ruby:</p>
-
-<pre><code class="lang-ruby"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Whatever</span>
-    <span class="hljs-keyword">attr_reader</span> <span class="hljs-symbol">:history</span>, <span class="hljs-symbol">:value</span>
+<pre><code class="hljs language-ruby"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Whatever</span>
+    <span class="hljs-built_in">attr_reader</span> <span class="hljs-symbol">:history</span>, <span class="hljs-symbol">:value</span>
 
     <span class="hljs-keyword">def</span> <span class="hljs-title function_">initialize</span>
         <span class="hljs-variable">@history</span> = []
@@ -534,13 +452,12 @@ language, this is pretty easy. Here&#39;s one way to do so in some Ruby:</p>
     <span class="hljs-keyword">end</span>
 <span class="hljs-keyword">end</span>
 
-x = Whatever.new
+x = <span class="hljs-title class_">Whatever</span>.new
 x.inc.inc.dec.inc.inc.inc.dec.dec.dec
 
 puts x.value <span class="hljs-comment"># 1</span>
 puts x.history.join(<span class="hljs-string">&quot;, &quot;</span>) <span class="hljs-comment"># inc, inc, dec, inc, inc, inc, dec, dec, dec</span>
-</code></pre>
-<p>I&#39;m sure that could be metaprogrammed and monkeypatched into Object if you
+</code></pre><p>I&#39;m sure that could be metaprogrammed and monkeypatched into Object if you
 wanted to debug <em>everything</em> run on <em>everything</em>.</p>
 <p>But, how could I <em>possibly</em> do this in a pure language, with no mutability or
 global state, and no side effects? It can be done!</p>
@@ -548,75 +465,56 @@ global state, and no side effects? It can be done!</p>
 monad</a>
 that will let me keep a log of all the functions I&#39;ve run, in Sild.</p>
 <p>First, I&#39;ll define some aliases I like to use:</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> def define)
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">define</span></span> def define)
 (<span class="hljs-name">def</span> λ lambda)
-</code></pre>
-<p>Sild is not especially smart, but you <em>can</em> use arbitrary unicode like <code>λ</code> and
+</code></pre><p>Sild is not especially smart, but you <em>can</em> use arbitrary unicode like <code>λ</code> and
 redefine basic language keywords, which is nice.</p>
 <p>I&#39;ll also define a few old fashioned lisp functions.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">def</span> cadr (<span class="hljs-name">λ</span> (<span class="hljs-name">l</span>) (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> l))))
+<pre><code class="hljs language-scheme">(<span class="hljs-name">def</span> cadr (<span class="hljs-name">λ</span> (<span class="hljs-name">l</span>) (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> l))))
 (<span class="hljs-name">def</span> caadr (<span class="hljs-name">λ</span> (<span class="hljs-name">l</span>) (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">car</span></span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> l)))))
-</code></pre>
-<p>I&#39;ll also need a couple of utility functions...</p>
+</code></pre><p>I&#39;ll also need a couple of utility functions...</p>
 <p><code>reverse</code> will reverse a list.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">def</span> revinner
+<pre><code class="hljs language-scheme">(<span class="hljs-name">def</span> revinner
  (<span class="hljs-name">λ</span> (<span class="hljs-name">l</span> acc)
   (<span class="hljs-name"><span class="hljs-built_in">cond</span></span> l (<span class="hljs-name">revinner</span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> l) (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> (<span class="hljs-name"><span class="hljs-built_in">car</span></span> l) acc))
         acc)))
 (<span class="hljs-name">def</span> reverse (<span class="hljs-name">λ</span> (<span class="hljs-name">l</span>) (<span class="hljs-name">revinner</span> l &#x27;())))
-</code></pre>
-<p><code>unshift</code> will &quot;push&quot; something on to the <em>end</em> of a list. It&#39;s the opposite of
+</code></pre><p><code>unshift</code> will &quot;push&quot; something on to the <em>end</em> of a list. It&#39;s the opposite of
 <code>cons</code> and <code>push</code>.  <a href="http://www.perlmonks.org/?node_id=613124">Here read this!</a></p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">def</span> unshift
+<pre><code class="hljs language-scheme">(<span class="hljs-name">def</span> unshift
   (<span class="hljs-name">λ</span> (<span class="hljs-name">el</span> l)
     (<span class="hljs-name"><span class="hljs-built_in">reverse</span></span> (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> el (<span class="hljs-name"><span class="hljs-built_in">reverse</span></span> l)))))
-</code></pre>
-<p>Ok, with these useful extras out of the way, let&#39;s get to the meat of things.</p>
+</code></pre><p>Ok, with these useful extras out of the way, let&#39;s get to the meat of things.</p>
 <p>Here&#39;s the unit function. This monad will have the form:</p>
-
 <pre><code>(() ())
-</code></pre>
-<p>...that is to say, it must be a list with two lists inside of it.
+</code></pre><p>...that is to say, it must be a list with two lists inside of it.
 The first will be the value, the second will be the record (history) of all the
 procedures that were bound to the monad. <code>unit</code> then will take a value (a
 list), and &#39;wrap&#39; it into a monad with a blank history.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">def</span> unit
+<pre><code class="hljs language-scheme">(<span class="hljs-name">def</span> unit
   (<span class="hljs-name">λ</span> (<span class="hljs-name">x</span>)
     (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> x &#x27;(()))))
-</code></pre>
-<p>I&#39;ll have a constructor, that simply takes two lists and wraps them up.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">def</span> constructor
+</code></pre><p>I&#39;ll have a constructor, that simply takes two lists and wraps them up.</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name">def</span> constructor
   (<span class="hljs-name">λ</span> (<span class="hljs-name">value</span> history)
     (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> value (<span class="hljs-name"><span class="hljs-built_in">cons</span></span> history &#x27;()))))
-</code></pre>
-<p>And I&#39;ll define a few aliases to make it clearer what I&#39;m doing to <code>Thing</code>s</p>
-
-<pre><code class="lang-scheme"><span class="hljs-comment">; some aliases to make usage clearer when applied to `Thing`s.</span>
+</code></pre><p>And I&#39;ll define a few aliases to make it clearer what I&#39;m doing to <code>Thing</code>s</p>
+<pre><code class="hljs language-scheme"><span class="hljs-comment">; some aliases to make usage clearer when applied to `Thing`s.</span>
 (<span class="hljs-name">def</span> get-val car)
 (<span class="hljs-name">def</span> get-hist cadr)
 (<span class="hljs-name">def</span> get-most-recent-hist caadr)
-</code></pre>
-<p>Here&#39;s a function that writes a new element to a history and returns a new
+</code></pre><p>Here&#39;s a function that writes a new element to a history and returns a new
 Thing with that new history, leaving the value unchanged.</p>
-
-<pre><code class="lang-scheme"><span class="hljs-comment">; takes a symbol `sym` and a monad `Mx` and returns a new monad with the symbol</span>
+<pre><code class="hljs language-scheme"><span class="hljs-comment">; takes a symbol `sym` and a monad `Mx` and returns a new monad with the symbol</span>
 <span class="hljs-comment">; appended to its history list</span>
 (<span class="hljs-name">def</span> write-to-hist
   (<span class="hljs-name">λ</span> (<span class="hljs-name">sym</span> Mx)
     (<span class="hljs-name">constructor</span> (<span class="hljs-name">get-val</span> Mx)
                  (<span class="hljs-name">unshift</span> sym (<span class="hljs-name">get-hist</span> Mx)))))
-</code></pre>
-<p>Next, I&#39;ll need this function that takes two <code>Thing</code>s, an old one and a new one.
+</code></pre><p>Next, I&#39;ll need this function that takes two <code>Thing</code>s, an old one and a new one.
 It merges the histories, and returns a new <code>Thing</code> with the new value and the
 merged histories.</p>
-
-<pre><code class="lang-scheme"><span class="hljs-comment">; takes two monads, an old one and a new one. Combines the new&#x27;s value with the</span>
+<pre><code class="hljs language-scheme"><span class="hljs-comment">; takes two monads, an old one and a new one. Combines the new&#x27;s value with the</span>
 <span class="hljs-comment">; old&#x27;s history while appending the new&#x27;s most recent history entry.</span>
 (<span class="hljs-name">def</span> combine-hist
   (<span class="hljs-name">λ</span> (<span class="hljs-name">m-old</span> m-new)
@@ -629,16 +527,12 @@ merged histories.</p>
                 (<span class="hljs-name">get-val</span> m-new)
                 (<span class="hljs-name">get-hist</span> (<span class="hljs-name">write-to-hist</span> (<span class="hljs-name">get-most-recent-hist</span> m-new)
                                          m-old))))))
-</code></pre>
-<p>It&#39;s our friend, bind! in this case, we apply the function with signature <code>a -&gt;
-M b</code> to the extracted value, and combine histories, and we&#39;re done!</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">def</span> bind
+</code></pre><p>It&#39;s our friend, bind! in this case, we apply the function with signature <code>a -&gt; M b</code> to the extracted value, and combine histories, and we&#39;re done!</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name">def</span> bind
   (<span class="hljs-name">λ</span> (<span class="hljs-name">f</span> Mx)
     (<span class="hljs-name">combine-hist</span> Mx
                   (<span class="hljs-name">f</span> (<span class="hljs-name">get-val</span> Mx)))))
-</code></pre>
-<p>It might seem like not much is happening here- to be fair, I&#39;ve hidden quite
+</code></pre><p>It might seem like not much is happening here- to be fair, I&#39;ve hidden quite
 a bit of complexity in that <code>combine-history</code> function. But this is truly
 &quot;where the magic happens.&quot; Because <code>bind</code> &quot;knows&quot; so much about the structure
 of this monad, and has references available to both the old and new state of
@@ -649,8 +543,7 @@ this is <em>only one use</em> of monads, and a relatively simple one at that.</p
 <p>A salient take home point: <code>bind</code>&#39;s implementation for any particular monad is
 where a lot of the complexity is both implemented and hidden away.</p>
 <p>Now, I&#39;ll also need some functions of the form <code>a -&gt; M b</code>.</p>
-
-<pre><code class="lang-scheme"><span class="hljs-comment">; takes a datum to push into something and a name for the function to be</span>
+<pre><code class="hljs language-scheme"><span class="hljs-comment">; takes a datum to push into something and a name for the function to be</span>
 <span class="hljs-comment">; recorded into history as and returns a function that pushes into a value and</span>
 <span class="hljs-comment">; returns a monad</span>
 (<span class="hljs-name">def</span> makepusher
@@ -662,16 +555,12 @@ where a lot of the complexity is both implemented and hidden away.</p>
 (<span class="hljs-name">def</span> push-c (<span class="hljs-name">makepusher</span> <span class="hljs-symbol">&#x27;c</span> <span class="hljs-symbol">&#x27;push-c</span>))
 <span class="hljs-comment">; this will break if the monad&#x27;s value list is empty! caveat lisper</span>
 (<span class="hljs-name">def</span> pop    (<span class="hljs-name">λ</span> (<span class="hljs-name">l</span>) (<span class="hljs-name">write-to-hist</span> <span class="hljs-symbol">&#x27;pop</span> (<span class="hljs-name">unit</span> (<span class="hljs-name"><span class="hljs-built_in">cdr</span></span> l)))))
-</code></pre>
-<p>And finally, compose, which looks and acts just like the js example.</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name">def</span> compose
+</code></pre><p>And finally, compose, which looks and acts just like the js example.</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name">def</span> compose
   (<span class="hljs-name">λ</span> (<span class="hljs-name">g</span> f)
     (<span class="hljs-name">λ</span> (<span class="hljs-name">m</span>) (<span class="hljs-name">bind</span> f (<span class="hljs-name">bind</span> g m)))))
-</code></pre>
-<p>With all of this out of the way, what do we get? Does this pass those three tests?</p>
-
-<pre><code class="lang-scheme"><span class="hljs-comment">; an initial value state to play with</span>
+</code></pre><p>With all of this out of the way, what do we get? Does this pass those three tests?</p>
+<pre><code class="hljs language-scheme"><span class="hljs-comment">; an initial value state to play with</span>
 (<span class="hljs-name">def</span> y &#x27;(a b c))
 <span class="hljs-comment">; an initial monad with that initial value state to play with</span>
 (<span class="hljs-name">def</span> My (<span class="hljs-name">unit</span> y))
@@ -687,10 +576,8 @@ where a lot of the complexity is both implemented and hidden away.</p>
 <span class="hljs-comment">; associativity</span>
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> (<span class="hljs-name">bind</span> push-c ((<span class="hljs-name">compose</span> push-a pop) My))) <span class="hljs-comment">; ((c a b c) (push-a pop push-c))</span>
 (<span class="hljs-name"><span class="hljs-built_in">display</span></span> ((<span class="hljs-name">compose</span> pop push-c) (<span class="hljs-name">bind</span> push-a My))) <span class="hljs-comment">; ((c a b c) (push-a pop push-c))</span>
-</code></pre>
-<p>Indeed it does. This is a monad! And look here,</p>
-
-<pre><code class="lang-scheme">(<span class="hljs-name"><span class="hljs-built_in">display</span></span> (<span class="hljs-name">bind</span> push-c
+</code></pre><p>Indeed it does. This is a monad! And look here,</p>
+<pre><code class="hljs language-scheme">(<span class="hljs-name"><span class="hljs-built_in">display</span></span> (<span class="hljs-name">bind</span> push-c
           (<span class="hljs-name">bind</span> pop
            (<span class="hljs-name">bind</span> pop
             (<span class="hljs-name">bind</span> push-a
@@ -699,16 +586,14 @@ where a lot of the complexity is both implemented and hidden away.</p>
                (<span class="hljs-name">bind</span> pop
                 (<span class="hljs-name">bind</span> pop My)))))))))
 <span class="hljs-comment">; ((c c c) (pop pop push-c push-b push-a pop pop push-c))</span>
-</code></pre>
-<p>This monad has a &quot;memory&quot;, a history of everything that&#39;s been bound to it! That is useful!</p>
+</code></pre><p>This monad has a &quot;memory&quot;, a history of everything that&#39;s been bound to it! That is useful!</p>
 <p>Thanks to Gabe Herrera, Adit Bhargava, Vaibhav Sagar, Veit Heller, Julia Evans, and Alan O&#39;Donnell for discussing drafts of this post with me.</p>
 <div id="ref">
 
-<h2 id="references">References</h2>
+<h2>References</h2>
 <p>Here are a bunch of things I read or watched to do this post. In no particular
 order. I&#39;d recommend reading as many things as you can get your hands on to get
 different perspectives and facets presented in as many ways as possible.</p>
-
 <ul>
 <li><a href="https://wiki.haskell.org/Typeclassopedia">Typeclassopedia</a></li>
 <li><a href="https://curiosity-driven.org/monads-in-javascript">Monads in JavaScript</a></li>

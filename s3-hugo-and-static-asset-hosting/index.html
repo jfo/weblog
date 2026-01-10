@@ -83,57 +83,43 @@ to manage.</p>
 <p>I went to an <a href="https://aws.amazon.com/events/awsomeday-nordics-2017/">AWS conference last
 week</a>, and guess what
 will solve my problem? <a href="https://aws.amazon.com/s3/">S3</a>!</p>
-<h2 id="here-s-how-i-set-it-up-">Here&#39;s how I set it up.</h2>
+<h2>Here&#39;s how I set it up.</h2>
 <p>I started with a <code>.gitignore</code>d folder in the root of my blog&#39;s directory: <code>s3</code>.</p>
 <p>I installed and authenticated the <a href="https://aws.amazon.com/cli/">command line interface
 <code>awscli</code></a> with homebrew:</p>
-
 <pre><code>$ brew install awscli
-</code></pre>
-<p>... and
+</code></pre><p>... and
 <a href="http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration">configured</a>
 it with</p>
-
 <pre><code>$ aws configure
-</code></pre>
-<p>I created a bucket on <code>s3</code> just for this purpose called <code>blog.jfo.click</code>, and I
+</code></pre><p>I created a bucket on <code>s3</code> just for this purpose called <code>blog.jfo.click</code>, and I
 added some <code>make</code> targets that sync both to the bucket:</p>
-
-<pre><code class="lang-make"><span class="hljs-section">syncs3:</span>
+<pre><code class="hljs language-make"><span class="hljs-section">syncs3:</span>
     aws s3 sync ./s3 s3://blog.jfo.click/
-</code></pre>
-<p>and from the bucket:</p>
-
-<pre><code class="lang-make"><span class="hljs-section">syncfroms3:</span>
+</code></pre><p>and from the bucket:</p>
+<pre><code class="hljs language-make"><span class="hljs-section">syncfroms3:</span>
     aws s3 sync s3://blog.jfo.click/ ./s3
-</code></pre>
-<p>Since I am in there, I also took care of a <code>TODO</code> I&#39;ve been meaning to do to
+</code></pre><p>Since I am in there, I also took care of a <code>TODO</code> I&#39;ve been meaning to do to
 make it easier to deploy my whole site with a single command.</p>
-
-<pre><code class="lang-make"><span class="hljs-section">push: build</span>
+<pre><code class="hljs language-make"><span class="hljs-section">push: build</span>
     cd ./public &amp;&amp; git add -A &amp;&amp; git commit -m <span class="hljs-string">&quot;`date`&quot;</span> &amp;&amp; git push
 
 <span class="hljs-section">build:</span>
     hugo
-</code></pre>
-<p><code>build</code> simply issues the <code>hugo</code> command to build the site. <code>push</code> now <code>cd</code>&#39;s
+</code></pre><p><code>build</code> simply issues the <code>hugo</code> command to build the site. <code>push</code> now <code>cd</code>&#39;s
 into the built directory, adds and commits everything indiscriminantly, and
 pushes it to <em>its</em> remote, which is a <a href="https://gohugo.io/hosting-and-deployment/hosting-on-github://gohugo.io/hosting-and-deployment/hosting-on-github/">git
 subtree</a></p>
 <p>Finally,</p>
-
-<pre><code class="lang-make"><span class="hljs-section">deploy: syncs3 push</span>
-</code></pre>
-<p>Now, with a single <code>make deploy</code>, I can sync my images, build the site, and
+<pre><code class="hljs language-make"><span class="hljs-section">deploy: syncs3 push</span>
+</code></pre><p>Now, with a single <code>make deploy</code>, I can sync my images, build the site, and
 push it all up to the hosted environment. This is a lot better than the multi
 step process I was doing before, <em>and</em> adds the images!</p>
 <p>Ok, last thing. Hosting static content on s3 has a lot of benefits... it&#39;s
 easy, scriptable via the command line interface, cheap, and automagically
 CDN&#39;d. But it also results in ugly URLs like this:</p>
-
 <pre><code>https://s3-us-west-2.amazonaws.com/blog.jfo.click/images/redefine.jpg
-</code></pre>
-<p>This is not good for two reasons. I don&#39;t want to be typing that into every
+</code></pre><p>This is not good for two reasons. I don&#39;t want to be typing that into every
 place I post a photo, certainly, but more importantly I want to be able to
 replicate my full image folder in an arbitrary place and switch every reference
 across my site to it without editing every file. Let&#39;s say that tomorrow,
@@ -147,19 +133,13 @@ notice.</p>
 <p>Hugo has a great feature I can use for this,
 <a href="https://gohugo.io/content-management/shortcodes/">shortcodes</a>!</p>
 <p>I make a template for my simple little shortcode here:</p>
-
 <pre><code>/themes/jfo/shortcodes/img.html
-</code></pre>
-<p>That consists of a single, simple line:</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://s3-us-west-2.amazonaws.com/blog.jfo.click/images/&quot;</span> /&gt;</span>
-</code></pre>
-<p>You&#39;ll notice an interpolated variable here, or at least a method that looks
+</code></pre><p>That consists of a single, simple line:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://s3-us-west-2.amazonaws.com/blog.jfo.click/images/&quot;</span> /&gt;</span>
+</code></pre><p>You&#39;ll notice an interpolated variable here, or at least a method that looks
 like it is accessing same:</p>
-
-<pre><code class="lang-go">
-</code></pre>
-<p>This is how I access things I pass in!</p>
+<pre><code class="hljs language-go">
+</code></pre><p>This is how I access things I pass in!</p>
 <p>I can now put a shortcode tag anywhere in my markdown passing in a filename as
 a string of something I&#39;ve stored in that I&#39;ve stored in the synced <code>s3</code> folder:</p>
 <pre>{&#8205;{< img "redefine.jpg" >}}</pre>
@@ -168,10 +148,8 @@ a string of something I&#39;ve stored in that I&#39;ve stored in the synced <cod
 <p>Hey also fun fact, I had to use a hidden <a href="https://en.wikipedia.org/wiki/Zero-width_joiner">zero width
 joiner</a> in my markup to
 actually type that and not have it be preprocessed. Looks like:</p>
-
 <pre><code>{&amp;#8205;{&lt; img &quot;redefine.jpg&quot; &gt;}}
-</code></pre>
-<p>!</p>
+</code></pre><p>!</p>
 </blockquote>
 <p>That, by the way, is the new version of the <a href="/v-i">very first post I made</a> on
 my OG site that was Wordpress.</p>

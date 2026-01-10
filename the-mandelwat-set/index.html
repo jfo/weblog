@@ -62,18 +62,12 @@ watch!</p>
 <p>So before I can draw a Mandlebrot set, I have to have something to draw on! In
 html5 land, that thing is a <code>&lt;canvas&gt;</code></p>
 <p>That looks like this:</p>
-<canvas></canvas>
-
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">canvas</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
-</code></pre>
-<p>Here, let me put a border on it so you can see where it is:</p>
-<canvas style="border: 1px solid black;"></canvas>
-
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">canvas</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;border: 1px solid black;&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
-</code></pre>
-<p>By default, the dimensions of a canvas element will be 150 pixels tall by 300
+<p><canvas></canvas></p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">canvas</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
+</code></pre><p>Here, let me put a border on it so you can see where it is:</p>
+<p><canvas style="border: 1px solid black;"></canvas></p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">canvas</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;border: 1px solid black;&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
+</code></pre><p>By default, the dimensions of a canvas element will be 150 pixels tall by 300
 pixels wide. This is a funny size, and I&#39;m not sure why it&#39;s the default, but
 in any case you&#39;re almost always going to want to set the width and height
 yourself. You can do this with either with CSS, programatically in JS land, or as
@@ -82,30 +76,21 @@ CSS for
 this</a>,
 and because I don&#39;t intend to resize the canvas dynamically in the JS code,
 I&#39;ll just set the attributes directly.</p>
-<canvas style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">canvas</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;border: 1px solid black;&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;200px&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;200px&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
-</code></pre>
-<p>Now we just need to slap an <code>id</code> in there and we can grab it from the JavaScriptville.</p>
-
-<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">canvas</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;ex0&quot;</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;border: 1px solid black;&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;200px&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;200px&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
-</code></pre>
-<p>That&#39;s it from the HTML side. All the rest of the canvases will look the same
+<p><canvas style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">canvas</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;border: 1px solid black;&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;200px&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;200px&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
+</code></pre><p>Now we just need to slap an <code>id</code> in there and we can grab it from the JavaScriptville.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">canvas</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;ex0&quot;</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;border: 1px solid black;&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;200px&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;200px&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">canvas</span>&gt;</span>
+</code></pre><p>That&#39;s it from the HTML side. All the rest of the canvases will look the same
 except with incrementing ids!</p>
 <p><image src="https://blog.jfo.click/mb/mb03.jpg" /></p>
 <p>You can do many wonderful things on a canvas! First you need to grab a
 reference to the thing:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> canvas = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;ex1&quot;</span>);
-</code></pre>
-<p>And then instantiate a <em>context</em> for drawing on it. For now, we&#39;re just going
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> canvas = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&quot;ex1&quot;</span>);
+</code></pre><p>And then instantiate a <em>context</em> for drawing on it. For now, we&#39;re just going
 to stick with a basic <code>CanvasRenderingContext2D</code>, which can be fetched with a
 call like this:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> context = canvas.<span class="hljs-title function_">getContext</span>(<span class="hljs-string">&quot;2d&quot;</span>);
-</code></pre>
-<p>From there, there are a <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">lot of methods you can call on the
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> context = canvas.<span class="hljs-title function_">getContext</span>(<span class="hljs-string">&quot;2d&quot;</span>);
+</code></pre><p>From there, there are a <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D">lot of methods you can call on the
 context</a>
 to affect the canvas itself. In the following example, notice that we access
 the canvas&#39;s <code>width</code> and <code>height</code> attributes to know how big a rectangle to
@@ -114,16 +99,12 @@ I&#39;m just drawing a rectangle to fill the whole canvas though. <a href="https
 random color
 function</a> I found for <a href="/how-react-do">another post</a>.
 To run this example, press this button labeled &quot;Run&quot;, right here: <span><button id="ex1button1">Run</button></span>.</p>
-<canvas id="ex1" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
-
-
-<pre><code class="lang-js">context.<span class="hljs-title function_">beginPath</span>();
+<p><canvas id="ex1" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
+<pre><code class="hljs language-js">context.<span class="hljs-title function_">beginPath</span>();
 context.<span class="hljs-title function_">rect</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>);
 context.<span class="hljs-property">fillStyle</span> = <span class="hljs-title function_">randColor</span>();
 context.<span class="hljs-title function_">fill</span>();
-</code></pre>
-<script>
+</code></pre><script>
     (function() {
         var canvasId = "ex1"
         var canvas = document.getElementById(canvasId);
@@ -139,11 +120,8 @@ context.<span class="hljs-title function_">fill</span>();
 </script>
 
 <p>You can also do other things! Like drawing lines: <span><button id="ex2button">Randinavian</button></span></p>
-<canvas id="ex2" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
-
-
-<pre><code class="lang-js">context.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">35</span>;
+<p><canvas id="ex2" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
+<pre><code class="hljs language-js">context.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">35</span>;
 context.<span class="hljs-property">strokeStyle</span> = <span class="hljs-title function_">randColor</span>();
 
 context.<span class="hljs-title function_">beginPath</span>();
@@ -155,8 +133,7 @@ context.<span class="hljs-title function_">beginPath</span>();
 context.<span class="hljs-title function_">moveTo</span>(<span class="hljs-number">0</span>, canvas.<span class="hljs-property">height</span>/<span class="hljs-number">2</span>);
 context.<span class="hljs-title function_">lineTo</span>(canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>/<span class="hljs-number">2</span>);
 context.<span class="hljs-title function_">stroke</span>();
-</code></pre>
-<script>
+</code></pre><script>
     (function() {
         var canvasId = "ex2"
         var canvas = document.getElementById(canvasId);
@@ -190,18 +167,15 @@ context.<span class="hljs-title function_">stroke</span>();
 </script>
 
 <p>So, let&#39;s look a little closer at those lines.</p>
-<canvas id="ex3" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
-
-<pre><code class="lang-js">context.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">5</span>;
+<p><canvas id="ex3" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
+<pre><code class="hljs language-js">context.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">5</span>;
 context.<span class="hljs-property">strokeStyle</span> = <span class="hljs-title function_">randColor</span>();
 
 context.<span class="hljs-title function_">beginPath</span>();
 context.<span class="hljs-title function_">moveTo</span>(<span class="hljs-number">50</span>, <span class="hljs-number">20</span>);
 context.<span class="hljs-title function_">lineTo</span>(<span class="hljs-number">120</span>, <span class="hljs-number">150</span>);
 context.<span class="hljs-title function_">stroke</span>();
-</code></pre>
-<script>
+</code></pre><script>
     (function() {
         var canvasId = "ex3"
         var canvas = document.getElementById(canvasId);
@@ -219,18 +193,15 @@ context.<span class="hljs-title function_">stroke</span>();
 <p>Those numbers that I&#39;m passing to <code>moveTo</code> and <code>lineTo</code> are x and y values,
 sort of, but they&#39;re indexed <em>from the upper left corner</em>. if they exceed the
 width or height of the canvas, they&#39;ll just go straight off the side!</p>
-<canvas id="ex4" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
-
-<pre><code class="lang-js">context.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">5</span>;
+<p><canvas id="ex4" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
+<pre><code class="hljs language-js">context.<span class="hljs-property">lineWidth</span> = <span class="hljs-number">5</span>;
 context.<span class="hljs-property">strokeStyle</span> = <span class="hljs-title function_">randColor</span>();
 
 context.<span class="hljs-title function_">beginPath</span>();
 context.<span class="hljs-title function_">moveTo</span>(<span class="hljs-number">50</span>, <span class="hljs-number">100</span>);
 context.<span class="hljs-title function_">lineTo</span>(<span class="hljs-number">1200</span>, <span class="hljs-number">1000</span>);
 context.<span class="hljs-title function_">stroke</span>();
-</code></pre>
-<script>
+</code></pre><script>
     (function() {
         var canvasId = "ex4"
         var canvas = document.getElementById(canvasId);
@@ -257,11 +228,9 @@ interact directly with the pixels in a canvas by using a representation called
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/ImageData"><code>ImageData</code></a>.</p>
 <p>Calling <code>createImageData(height, width)</code> on a <code>CanvasRenderingContext2d</code> will
 return an ImageData object that contains three things:</p>
-
-<pre><code class="lang-js">context.<span class="hljs-title function_">createImageData</span>(<span class="hljs-number">10</span>, <span class="hljs-number">10</span>)
+<pre><code class="hljs language-js">context.<span class="hljs-title function_">createImageData</span>(<span class="hljs-number">10</span>, <span class="hljs-number">10</span>)
 <span class="hljs-comment">// ImageData { data: Uint8ClampedArray[400], width: 10, height: 10 }</span>
-</code></pre>
-<p>There is the <code>width</code> and <code>height</code> that I expected to see. What is the other
+</code></pre><p>There is the <code>width</code> and <code>height</code> that I expected to see. What is the other
 thing? It&#39;s just a 1-dimensional array of bytes! 10 x 10 = 100, it seems like a
 10 x 10 ImageData should contain 100 items since it represents 100 pixels, but
 it contains 400, because each pixel is represented by 4 bytes, one each for
@@ -272,8 +241,7 @@ simulating the hard type of a single byte. This is important because javascript
 doesn&#39;t otherwise have any sense of integer types, and internally represents
 <a href="http://www.2ality.com/2012/04/number-encoding.html">all numerical values as 64 bit floats.</a></p>
 <p>You might expect a 2d array here, like this:</p>
-
-<pre><code class="lang-js">[
+<pre><code class="hljs language-js">[
     [p, p, p, p, p, p, p, p, p, p],
     [p, p, p, p, p, p, p, p, p, p],
     [p, p, p, p, p, p, p, p, p, p],
@@ -285,29 +253,23 @@ doesn&#39;t otherwise have any sense of integer types, and internally represents
     [p, p, p, p, p, p, p, p, p, p],
     [p, p, p, p, p, p, p, p, p, p]
 ]
-</code></pre>
-<p>Where <code>p</code> is a some sort of pixel object that can be address by attribute like:</p>
-
-<pre><code class="lang-js">p.<span class="hljs-property">r</span> = <span class="hljs-number">255</span>;
+</code></pre><p>Where <code>p</code> is a some sort of pixel object that can be address by attribute like:</p>
+<pre><code class="hljs language-js">p.<span class="hljs-property">r</span> = <span class="hljs-number">255</span>;
 p.<span class="hljs-property">g</span> = <span class="hljs-number">0</span>;
 p.<span class="hljs-property">b</span> = <span class="hljs-number">0</span>;
 p.<span class="hljs-property">a</span> = <span class="hljs-number">0</span>;
-</code></pre>
-<p>But this is lower level than that. It is literally just a one dimensional
+</code></pre><p>But this is lower level than that. It is literally just a one dimensional
 array! Let&#39;s play with it though. This example simply fills all the channels
 for all the pixels with a random value.  You&#39;ll notice that it looks a little
 pastel, since on average there will be some transparency applied to each
 pixel. <span><button id="ex5button">RGB Noise</button></span></p>
-<canvas id="ex5" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> imageData = context.<span class="hljs-title function_">createImageData</span>(canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>);
+<p><canvas id="ex5" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> imageData = context.<span class="hljs-title function_">createImageData</span>(canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>);
 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; imageData.<span class="hljs-property">data</span>.<span class="hljs-property">length</span>; i += <span class="hljs-number">1</span>) {
     imageData.<span class="hljs-property">data</span>[i] = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>() * <span class="hljs-number">255</span>;
 }
 context.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>); <span class="hljs-comment">//  0, 0 is the offset to start putting the imageDate into the actual canvas. I won&#x27;t use any other values for that in this article..</span>
-</code></pre>
-<script>
+</code></pre><script>
     (function() {
         var canvasId = "ex5"
         var canvas = document.getElementById(canvasId);
@@ -333,11 +295,8 @@ This example simply turns every pixel blue with no transparency.
     <button id="ex6button">blue</button>
     <button id="ex6clear">clear</button>
 </span></p>
-<canvas id="ex6" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
-
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> imageData = context.<span class="hljs-title function_">createImageData</span>(canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>);
+<p><canvas id="ex6" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> imageData = context.<span class="hljs-title function_">createImageData</span>(canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>);
 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; canvas.<span class="hljs-property">width</span> * canvas.<span class="hljs-property">height</span> * <span class="hljs-number">4</span>; i += <span class="hljs-number">4</span>) {
     imageData.<span class="hljs-property">data</span>[i]     = <span class="hljs-number">255</span>;  <span class="hljs-comment">// red channel</span>
     imageData.<span class="hljs-property">data</span>[i + <span class="hljs-number">1</span>] = <span class="hljs-number">0</span>;    <span class="hljs-comment">// blue channel</span>
@@ -345,8 +304,7 @@ This example simply turns every pixel blue with no transparency.
     imageData.<span class="hljs-property">data</span>[i + <span class="hljs-number">3</span>] = <span class="hljs-number">255</span>;  <span class="hljs-comment">// alpha channel</span>
 }
 context.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
-</code></pre>
-<script>
+</code></pre><script>
     (function() {
         var canvasId = "ex6"
         var canvas = document.getElementById(canvasId);
@@ -384,8 +342,7 @@ canvas. I can remedy this problem with a little bit of math and a helper functio
 for that index in that imageData object. Note that <code>canvas</code> must be in scope
     and a valid canvas for this to work! I will address that more thoroughly
     later.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> indexToCoord = <span class="hljs-keyword">function</span>(<span class="hljs-params">index</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> indexToCoord = <span class="hljs-keyword">function</span>(<span class="hljs-params">index</span>) {
     <span class="hljs-comment">// first, we&#x27;ll divide by 4 to get an absolute pixel. This number</span>
     <span class="hljs-comment">// represents the pixel location where 0 is the upper left and the highest</span>
     <span class="hljs-comment">// index is in the lower right.</span>
@@ -401,10 +358,8 @@ for that index in that imageData object. Note that <code>canvas</code> must be i
     <span class="hljs-comment">// returning that coordinate will let us use it later on</span>
     <span class="hljs-keyword">return</span> coord;
 }
-</code></pre>
-<p>So now, let&#39;s say I have a 10x10 canvas. (That&#39;s a very small canvas, but lol I
+</code></pre><p>So now, let&#39;s say I have a 10x10 canvas. (That&#39;s a very small canvas, but lol I
 guess) and I want to address the pixel marked below with an <code>@</code>.</p>
-
 <pre><code>. . . . . . . . . .
 . . . . . . . . . .
 . . . . . . . . . .
@@ -415,23 +370,19 @@ guess) and I want to address the pixel marked below with an <code>@</code>.</p>
 . . . . . . . . . .
 . . . . . . . . . .
 . . . . . . . . . .
-</code></pre>
-<p>An ImageData object for this size of 10x10 would contain 400 byte values, and
+</code></pre><p>An ImageData object for this size of 10x10 would contain 400 byte values, and
 the 4 bytes associated with that pixel would be at indices 132-136. This is
 pretty straight forward, but if I put it through the <code>indexToCoord()</code> function,
 I get something a little more palatable!</p>
-
 <pre><code>{ x: 3, y: 3 }
-</code></pre>
-<p>This tells me a lot more about that pixel&#39;s location.</p>
+</code></pre><p>This tells me a lot more about that pixel&#39;s location.</p>
 <p>We&#39;re almost there. I want to be able to use coordinates on a coordinate plane,
 this is still 0 indexed from the top and left. Also, I want to decouple the
 coordinate from the pixels themselves and simply be able to scale it to
 whatever range I want. That scaling value is going to be an &quot;r&quot; value.</p>
 <p>Let&#39;s say that I want the coordinate plane to go from -2 to 2 on both axes.
 (Just, you know, for example.)</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> indexToCoord = <span class="hljs-keyword">function</span>(<span class="hljs-params">index</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> indexToCoord = <span class="hljs-keyword">function</span>(<span class="hljs-params">index</span>) {
     index = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(index / <span class="hljs-number">4</span>);
     <span class="hljs-keyword">var</span> r = <span class="hljs-number">4</span>;
 
@@ -450,33 +401,28 @@ whatever range I want. That scaling value is going to be an &quot;r&quot; value.
 
     <span class="hljs-keyword">return</span> coord;
 }
-</code></pre>
-<p>Let&#39;s also assume we have a much larger canvas! 10 x 10 is not very
+</code></pre><p>Let&#39;s also assume we have a much larger canvas! 10 x 10 is not very
 interesting. 200 x 200, as before, gives us an ImageData object that has
-160,000 bytes in it! Again, that&#39;s 200 <em> 200 = 40,000 </em> 4 = 160,000. Quite a
+160,000 bytes in it! Again, that&#39;s 200 * 200 = 40,000 * 4 = 160,000. Quite a
 lot.</p>
 <p>So we have a way to turn an index into a coordinate that can be scaled
 according to what you&#39;re trying to see! Given a canvas of 200 x 200, and a
 scale of -2 to 2, then, yields something very close to what you&#39;d expect:</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">indexToCoord</span>(<span class="hljs-number">0</span>);      <span class="hljs-comment">// { x: -2,    y: 2 }</span>
+<pre><code class="hljs language-js"><span class="hljs-title function_">indexToCoord</span>(<span class="hljs-number">0</span>);      <span class="hljs-comment">// { x: -2,    y: 2 }</span>
 <span class="hljs-title function_">indexToCoord</span>(<span class="hljs-number">159999</span>); <span class="hljs-comment">// { x: 1.98,  y: -1.98 }</span>
 <span class="hljs-title function_">indexToCoord</span>(<span class="hljs-number">132987</span>); <span class="hljs-comment">// { x: -1.08, y: -1.3199999999999998 }</span>
 <span class="hljs-title function_">indexToCoord</span>(<span class="hljs-number">54</span>));    <span class="hljs-comment">// { x: -1.74, y: 2 }</span>
-</code></pre>
-<p>This is just begging to be abstracted, so that&#39;s what I&#39;m going to do.</p>
+</code></pre><p>This is just begging to be abstracted, so that&#39;s what I&#39;m going to do.</p>
 <p>First, the constructor will take one thing, a string that represents the canvas
 id in the dom! It will assign both <code>canvas</code> and <code>context</code> as private variables.
 We&#39;re also going to go ahead and allocate an <code>ImageData</code> object for this graph
 that we can reuse.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Graph</span>(<span class="hljs-params">canvasId</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Graph</span>(<span class="hljs-params">canvasId</span>) {
     <span class="hljs-keyword">var</span> canvas = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(canvasId);
     <span class="hljs-keyword">var</span> ctx = canvas.<span class="hljs-title function_">getContext</span>(<span class="hljs-string">&quot;2d&quot;</span>);
     <span class="hljs-keyword">var</span> imageData = ctx.<span class="hljs-title function_">createImageData</span>(canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>);
 }
-</code></pre>
-<p>Next we&#39;ll add that <code>indexToCoord</code> method. I&#39;ve put the <code>r</code> value and the
+</code></pre><p>Next we&#39;ll add that <code>indexToCoord</code> method. I&#39;ve put the <code>r</code> value and the
 <code>center</code> value as attributes on the object so that I can manipulate them from
 outside, and I&#39;ve added an aspect ratio to scale the coordinates correctly in
 case the canvas is not 1:1.</p>
@@ -485,8 +431,7 @@ case the canvas is not 1:1.</p>
 be settable as well, but this is a stepping stone to the Mandelbrot
 rendering, which will always be 1:1.</p>
 </blockquote>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Graph</span>(<span class="hljs-params">canvasId</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Graph</span>(<span class="hljs-params">canvasId</span>) {
     <span class="hljs-keyword">var</span> canvas = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(canvasId);
     <span class="hljs-keyword">var</span> ctx = canvas.<span class="hljs-title function_">getContext</span>(<span class="hljs-string">&quot;2d&quot;</span>);
     <span class="hljs-keyword">var</span> imageData = ctx.<span class="hljs-title function_">createImageData</span>(canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>);
@@ -517,16 +462,11 @@ rendering, which will always be 1:1.</p>
         context.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
     }
 }
-</code></pre>
-<p>I&#39;ve also added the rgb noise example as the render function for this object.</p>
+</code></pre><p>I&#39;ve also added the rgb noise example as the render function for this object.</p>
 <p>Now we can interact with a canvas something like this: <span><button id="ex7button">Run</button></span></p>
-
 <pre><code>var graph = new Graph(&quot;canvas-id&quot;)
 graph.render()
-</code></pre>
-<canvas id="ex7" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
-
+</code></pre><p><canvas id="ex7" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
 <script>
     (function() {
         function Graph(canvasId) {
@@ -575,8 +515,7 @@ depending on what you want to see!</p>
 more thing. This render function above just randomly sets all the pixel values,
 but of course I want more control than that. I will change the <code>render()</code>
 method to accept a predicate function, instead:</p>
-
-<pre><code class="lang-js">    <span class="hljs-variable language_">this</span>.<span class="hljs-property">render</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">predicate</span>) {
+<pre><code class="hljs language-js">    <span class="hljs-variable language_">this</span>.<span class="hljs-property">render</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">predicate</span>) {
         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; canvas.<span class="hljs-property">width</span> * canvas.<span class="hljs-property">height</span> * <span class="hljs-number">4</span>; i += <span class="hljs-number">4</span>) {
             set = <span class="hljs-title function_">predicate</span>(<span class="hljs-title function_">indexToCoord</span>(i)) ? <span class="hljs-number">255</span> : <span class="hljs-number">0</span>;
             imageData.<span class="hljs-property">data</span>[i]     = <span class="hljs-number">0</span>;
@@ -586,8 +525,7 @@ method to accept a predicate function, instead:</p>
         }
         context.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
     }
-</code></pre>
-<p>Now, for every pixel on a given Graph, the predicate is called on it&#39;s
+</code></pre><p>Now, for every pixel on a given Graph, the predicate is called on it&#39;s
 coordinate and returns whether or not it should be filled in with black or not.
 The first three values per pixel are RGB values, and the last one is the
 <code>alpha</code> channel, which sets the transparency of the pixel. The higher it is,
@@ -595,8 +533,7 @@ the more opaque, so by setting it to its maximum value of <code>255</code>, we m
 pixel black.</p>
 <p>From now on we&#39;re going to interact with a Graph object for each canvas in the
 next section, like this!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> graph = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Graph</span>(<span class="hljs-string">&quot;canvasid&quot;</span>)
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> graph = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Graph</span>(<span class="hljs-string">&quot;canvasid&quot;</span>)
 
 <span class="hljs-comment">// the below is the default so we don&#x27;t need to do it.</span>
 <span class="hljs-comment">// graph.center = { x: 0, y: 0 }</span>
@@ -607,8 +544,7 @@ graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword
     <span class="hljs-comment">// stuff stuff stuff</span>
     <span class="hljs-comment">// return true or return false</span>
 })
-</code></pre>
-<p>Ok let&#39;s play with it!</p>
+</code></pre><p>Ok let&#39;s play with it!</p>
 <script>
     function Graph(canvasId) {
         var canvas = document.getElementById(canvasId);
@@ -646,8 +582,7 @@ graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword
     }
 </script>
 
-<canvas id="ex8" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
+<p><canvas id="ex8" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
 <script>
     (function() {
         var canvasId = "ex8"
@@ -673,8 +608,7 @@ graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword
     })()
 </script>
 
-
-<pre><code class="lang-js">graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">coord</span>) {
+<pre><code class="hljs language-js">graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">coord</span>) {
     <span class="hljs-keyword">return</span> (
         coord.<span class="hljs-property">x</span> == coord.<span class="hljs-property">y</span>
         ||
@@ -691,39 +625,33 @@ graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword
         coord.<span class="hljs-property">x</span> * <span class="hljs-number">40</span> == coord.<span class="hljs-property">y</span>
     )
 });
-</code></pre>
-<p>Above we see a predicate function that basically says: &quot;if the current pixel is
+</code></pre><p>Above we see a predicate function that basically says: &quot;if the current pixel is
 on the line described by one of these equations, fill it in. If not, don&#39;t!&quot;</p>
 <p>You&#39;ll notice that some of the lines are not totally smooth, and instead are
 made up of dots or dashes. What you&#39;re seeing is kind of sort of a version of
 the &quot;<a href="https://en.wikipedia.org/wiki/Screen-door_effect">screen door effect</a>&quot;.
 For each individual pixel in, say, this equation:</p>
-
 <pre><code>x * 2 = y
-</code></pre>
-<p>The pixel&#39;s coordinate must match <em>exactly</em> with the output of the equation in
+</code></pre><p>The pixel&#39;s coordinate must match <em>exactly</em> with the output of the equation in
 order to qualify and be filled in. This means that when it&#39;s even with a
 multiple of the size of the canvas, it&#39;s much more likely to be filled!</p>
 <p>If I were building a fully functional graphing library, I would have to deal
 with this issue (and many more!). But I&#39;m not, so I won&#39;t! This is adequate for
 now. Let&#39;s talk about sets!</p>
 <p><image src="https://blog.jfo.click/mb/mb06.jpg" /></p>
-<h1 id="sets-wtf-is-a-set">Sets wtf is a set</h1>
+<h1>Sets wtf is a set</h1>
 <blockquote>
 <p>I&#39;m not going to get into set theory because I don&#39;t know really anything
 about it, but maybe it&#39;s worth a mention? Wonder what would be a really good
 succinct but not wrong explanation of set theory...</p>
 </blockquote>
-<p>Let&#39;s say a <a href="https://en.wikipedia.org/wiki/Set_(mathematics">set</a>) is pretty
+<p>Let&#39;s say a <a href="https://en.wikipedia.org/wiki/Set_(mathematics)">set</a> is pretty
 much what you think it is, then. How can we describe a set? We can have a set
 that is completely enumerated.</p>
-
 <pre><code>{ 1, 4, 397376, 89, 44 }
-</code></pre>
-<p>These are just some numbers. They don&#39;t really have anything in common with
+</code></pre><p>These are just some numbers. They don&#39;t really have anything in common with
 each other, I just typed some numbers. And so for any number <code>x</code> that you can
 dream up, <code>x</code> will either be in this set, or not.</p>
-
 <pre><code>|-----------------+------------+
 | `x`             | Is in set? |
 |:---------------:|:----------:|
@@ -734,20 +662,16 @@ dream up, <code>x</code> will either be in this set, or not.</p>
 | 397376          | yes        |
 | 100             | no         |
 |-----------------+------------+
-</code></pre>
-<p>Hey actually, JavaScript has a syntax for exactly this!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> mySet = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>([ <span class="hljs-number">1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">397376</span>, <span class="hljs-number">89</span>, <span class="hljs-number">44</span> ])
+</code></pre><p>Hey actually, JavaScript has a syntax for exactly this!</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> mySet = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>([ <span class="hljs-number">1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">397376</span>, <span class="hljs-number">89</span>, <span class="hljs-number">44</span> ])
 mySet.<span class="hljs-title function_">has</span>(<span class="hljs-number">2</span>)      <span class="hljs-comment">// false</span>
 mySet.<span class="hljs-title function_">has</span>(<span class="hljs-number">20</span>)     <span class="hljs-comment">// false</span>
 mySet.<span class="hljs-title function_">has</span>(<span class="hljs-number">76</span>)     <span class="hljs-comment">// false</span>
 mySet.<span class="hljs-title function_">has</span>(<span class="hljs-number">88</span>)     <span class="hljs-comment">// false</span>
 mySet.<span class="hljs-title function_">has</span>(<span class="hljs-number">397376</span>) <span class="hljs-comment">// true</span>
 mySet.<span class="hljs-title function_">has</span>(<span class="hljs-number">100</span>)    <span class="hljs-comment">// false</span>
-</code></pre>
-<p>Will this work??</p>
-<canvas id="ex9" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
+</code></pre><p>Will this work??</p>
+<p><canvas id="ex9" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
 <script>
     (function() {
         var canvasId = "ex9"
@@ -768,8 +692,7 @@ mySet.<span class="hljs-title function_">has</span>(<span class="hljs-number">10
     })()
 </script>
 
-
-<pre><code class="lang-js">
+<pre><code class="hljs language-js">
 graph.<span class="hljs-property">r</span> = <span class="hljs-number">4</span>;
 
 <span class="hljs-keyword">var</span> myset = <span class="hljs-keyword">new</span> <span class="hljs-title function_">set</span>([
@@ -781,20 +704,16 @@ graph.<span class="hljs-property">r</span> = <span class="hljs-number">4</span>;
 graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">coord</span>) {
     <span class="hljs-keyword">return</span> mySet.<span class="hljs-title function_">has</span>(coord);
 });
-</code></pre>
-<p>Hmm, no it will not. Because of JavaScript&#39;s equality rules, objects are not
+</code></pre><p>Hmm, no it will not. Because of JavaScript&#39;s equality rules, objects are not
 compared to each other by value. To whit, these are falsy:</p>
-
-<pre><code class="lang-js">{} == {} <span class="hljs-comment">// false</span>
+<pre><code class="hljs language-js">{} == {} <span class="hljs-comment">// false</span>
 {} === {} <span class="hljs-comment">// false</span>
 { <span class="hljs-attr">thing</span>: <span class="hljs-number">7</span> } == { <span class="hljs-attr">thing</span>: <span class="hljs-number">7</span> } <span class="hljs-comment">// false</span>
 { <span class="hljs-attr">thing</span>: <span class="hljs-number">7</span> } === { <span class="hljs-attr">thing</span>: <span class="hljs-number">7</span> } <span class="hljs-comment">// false</span>
 <span class="hljs-comment">// etc...</span>
-</code></pre>
-<p>Objects instead are equal if they are <em>actually the same object</em>, meaning the
+</code></pre><p>Objects instead are equal if they are <em>actually the same object</em>, meaning the
 two sides of the double or triple equals refer to the same memory.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> thing1 = { <span class="hljs-attr">whatever</span>: <span class="hljs-string">&quot;whatevar&quot;</span> };
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> thing1 = { <span class="hljs-attr">whatever</span>: <span class="hljs-string">&quot;whatevar&quot;</span> };
 thing1 == thing1 <span class="hljs-comment">// true</span>
 thing1 === thing1 <span class="hljs-comment">// true</span>
 
@@ -802,8 +721,7 @@ thing1 === thing1 <span class="hljs-comment">// true</span>
 
 thing1 == thing2 <span class="hljs-comment">// true</span>
 thing1 === thing2 <span class="hljs-comment">// true</span>
-</code></pre>
-<p>You get the idea. Now, I <em>could</em> write a deep checking set class for these
+</code></pre><p>You get the idea. Now, I <em>could</em> write a deep checking set class for these
 coordinates, or build the coordinates into a real object that has a function
 that can do that, but I don&#39;t really want to. Instead I&#39;m going to talk
 about sets more generally!</p>
@@ -811,20 +729,15 @@ about sets more generally!</p>
 <p>So, you can have a set that is just a defined set of whatever, and write all
 the whatevers out, like the example above.. That works great! But what about
 something like this:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> mySet = { <span class="hljs-comment">/* The set of all even integers */</span> }
-</code></pre>
-<p>Obviously, I can&#39;t write that out! But I <em>can</em> check if an arbitrary number is
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> mySet = { <span class="hljs-comment">/* The set of all even integers */</span> }
+</code></pre><p>Obviously, I can&#39;t write that out! But I <em>can</em> check if an arbitrary number is
 a member of that set with a simple function.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> isInTheSetOfAllEvenIntegers = <span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> isInTheSetOfAllEvenIntegers = <span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) {
     <span class="hljs-keyword">return</span> x % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>;
 }
-</code></pre>
-<p>Hey cool! This is like, a programaticalized way to test for set membership in
+</code></pre><p>Hey cool! This is like, a programaticalized way to test for set membership in
 that particular set of numbers.</p>
-<canvas id="ex10" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
+<p><canvas id="ex10" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
 <script>
     (function() {
         var canvasId = "ex10"
@@ -837,20 +750,15 @@ that particular set of numbers.</p>
     })()
 </script>
 
-
-<pre><code class="lang-js"><span class="hljs-comment">// we&#x27;re making the scale of the graph 20x20 here</span>
+<pre><code class="hljs language-js"><span class="hljs-comment">// we&#x27;re making the scale of the graph 20x20 here</span>
 graph.<span class="hljs-property">r</span> = <span class="hljs-number">20</span>;
 
 graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">coord</span>) {
     <span class="hljs-keyword">return</span> coord.<span class="hljs-property">x</span> % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>;
 });
-</code></pre>
-<p>Now we&#39;re getting somewhere! What about this one:</p>
-
+</code></pre><p>Now we&#39;re getting somewhere! What about this one:</p>
 <pre><code>The set of all points whose x value is higher than 100 and whose y value is higher that -27;
-</code></pre>
-<canvas id="ex11" style="border: 1px solid black;" width="200px" height="200px"></canvas>
-
+</code></pre><p><canvas id="ex11" style="border: 1px solid black;" width="200px" height="200px"></canvas></p>
 <script>
     (function() {
         var canvasId = "ex11"
@@ -863,18 +771,16 @@ graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword
     })()
 </script>
 
-
-<pre><code class="lang-js"><span class="hljs-comment">// again, changing the scale of the graph.</span>
+<pre><code class="hljs language-js"><span class="hljs-comment">// again, changing the scale of the graph.</span>
 graph.<span class="hljs-property">r</span> = <span class="hljs-number">500</span>;
 
 graph.<span class="hljs-title function_">render</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">coord</span>) {
     <span class="hljs-keyword">return</span> (coord.<span class="hljs-property">x</span> &gt; <span class="hljs-number">100</span> &amp;&amp; coord.<span class="hljs-property">y</span> &gt; -<span class="hljs-number">27</span>);
 });
-</code></pre>
-<p>This is cool, then, I have a way of &quot;graphing&quot; sets! These sets are pretty
+</code></pre><p>This is cool, then, I have a way of &quot;graphing&quot; sets! These sets are pretty
 boring though. But you know what&#39;s not boring??</p>
 <p><image src="https://blog.jfo.click/mb/mb07.jpg" /></p>
-<h1 id="the-mandelbrot-set">The Mandelbrot Set</h1>
+<h1>The Mandelbrot Set</h1>
 <p>Ok, The Mandelbrot set is:</p>
 <blockquote>
 <p>The set of all complex numbers that remain bounded when iterated on the equation f<sub>c</sub>(z) = z<sup>2</sup> + c</p>
@@ -887,17 +793,12 @@ going to explain them to you, one by one!</p>
 <p>f<sub>c</sub>(z) = z<sup>2</sup> + c</p>
 </blockquote>
 <p>This part&#39;s pretty easy. I have a function, and I feed it a number, and I get a number back.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">z</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">z</span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">pow</span>(z, <span class="hljs-number">2</span>) + c;
 }
-</code></pre>
-<p>This is, of course, borked.</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">thinger</span>(<span class="hljs-number">2</span>);
-</code></pre>
-
-<pre><code>ReferenceError: c is not defined
+</code></pre><p>This is, of course, borked.</p>
+<pre><code class="hljs language-js"><span class="hljs-title function_">thinger</span>(<span class="hljs-number">2</span>);
+</code></pre><pre><code>ReferenceError: c is not defined
     at thinger (/private/tmp/thinger.js:2:29)
     at Object.&lt;anonymous&gt; (/private/tmp/thinger.js:5:13)
     at Module._compile (module.js:570:32)
@@ -908,46 +809,34 @@ going to explain them to you, one by one!</p>
     at Module.runMain (module.js:604:10)
     at run (bootstrap_node.js:394:7)
     at startup (bootstrap_node.js:149:9)
-</code></pre>
-<p><code>c</code> here must be defined. I will define it then!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">z, c</span>) {
+</code></pre><p><code>c</code> here must be defined. I will define it then!</p>
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">z, c</span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">pow</span>(z, <span class="hljs-number">2</span>) + c;
 }
-</code></pre>
-<p>Cool cool. I can plug whatever in there now great.</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">thinger</span>(<span class="hljs-number">4</span>, <span class="hljs-number">2</span>);
+</code></pre><p>Cool cool. I can plug whatever in there now great.</p>
+<pre><code class="hljs language-js"><span class="hljs-title function_">thinger</span>(<span class="hljs-number">4</span>, <span class="hljs-number">2</span>);
 <span class="hljs-title function_">thinger</span>(<span class="hljs-number">40</span>, <span class="hljs-number">3</span>);
 <span class="hljs-title function_">thinger</span>(<span class="hljs-number">4000</span>, <span class="hljs-number">3.32</span>);
-</code></pre>
-
-<pre><code>18
+</code></pre><pre><code>18
 1603
 16000003.32
-</code></pre>
-<p>Ok so now, what does &#39;iterated on&#39; mean?</p>
+</code></pre><p>Ok so now, what does &#39;iterated on&#39; mean?</p>
 <p>It means that I take the output of the function and feed it back into the same
 function. The initial <code>z</code> input is always 0.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">z, c</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">z, c</span>) {
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">pow</span>(z, <span class="hljs-number">2</span>) + c, c);
 }
-</code></pre>
-<p>Obviously, this is also borked.</p>
-
+</code></pre><p>Obviously, this is also borked.</p>
 <pre><code>RangeError: Maximum call stack size exceeded
     at Object.pow (native)
     ...
-</code></pre>
-<p>This is a recursive function with no base case. This is where the &quot;bounded&quot;
+</code></pre><p>This is a recursive function with no base case. This is where the &quot;bounded&quot;
 part comes in. For a given input, this equation exhibits one of two behaviors
 under iteration. It can either stay <em>bounded</em> Or it can <em>explode</em> to infinity.
 This makes a little more sense if we see some output. I&#39;ll add a counter that
 I&#39;ll increment on each call just to give us a way to get out of the recursive
 loop.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">z, c, i</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">z, c, i</span>) {
     <span class="hljs-keyword">if</span> (i &gt; <span class="hljs-number">10</span>) {
         <span class="hljs-keyword">return</span>;
     }
@@ -956,13 +845,9 @@ loop.</p>
     <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(next);
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">thinger</span>(next, c, i += <span class="hljs-number">1</span>);
 }
-</code></pre>
-<p>Now, we can see some interesting stuff.</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">thinger</span>(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>);
-</code></pre>
-
-<pre><code>2
+</code></pre><p>Now, we can see some interesting stuff.</p>
+<pre><code class="hljs language-js"><span class="hljs-title function_">thinger</span>(<span class="hljs-number">0</span>, <span class="hljs-number">2</span>, <span class="hljs-number">0</span>);
+</code></pre><pre><code>2
 6
 38
 1446
@@ -973,14 +858,10 @@ loop.</p>
 1.3347256950852164e+101
 1.781492681120714e+202
 Infinity
-</code></pre>
-<p>Exponents are no joke, and 2 decidedly does <em>not</em> remain bounded.</p>
+</code></pre><p>Exponents are no joke, and 2 decidedly does <em>not</em> remain bounded.</p>
 <p>What about this one?</p>
-
-<pre><code class="lang-js"><span class="hljs-title function_">thinger</span>(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
-</code></pre>
-<p>Hmm...</p>
-
+<pre><code class="hljs language-js"><span class="hljs-title function_">thinger</span>(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+</code></pre><p>Hmm...</p>
 <pre><code>-1
 0
 -1
@@ -992,8 +873,7 @@ Infinity
 -1
 0
 -1
-</code></pre>
-<p><em>But this one does!</em> -1 is thus <em>in the Mandelbrot set</em>, and 2 <em>is not</em>.</p>
+</code></pre><p><em>But this one does!</em> -1 is thus <em>in the Mandelbrot set</em>, and 2 <em>is not</em>.</p>
 <p><image src="https://blog.jfo.click/mb/mb08.jpg" /></p>
 <p>Wait, though, we were talking about <em>complex numbers</em>. And the numbers -1 and 2
 are not coordinates, they are integers. How do you make a 2 dimensional graph
@@ -1018,7 +898,7 @@ that explains it in more detail.</p>
 complex number <code>1 + 2i</code>.</p>
 <p>So, remember, we wanted to feed <em>complex numbers</em> into that function, but we
 can&#39;t because javascript doesn&#39;t have a <em>complex number</em> type. There are, of
-course, <a href="https://www.npmjs.com/search?q=complex%20number&amp;page=2&amp;ranking=optimal">36 packages on npm that probably can do
+course, <a href="https://www.npmjs.com/search?q=complex%20number&page=2&ranking=optimal">36 packages on npm that probably can do
 this</a>,
 but I&#39;m not going to use any of them, because reasons!</p>
 <p>No but seriously. It&#39;s just one application and I can do it by hand and that&#39;s
@@ -1026,25 +906,18 @@ how we learn new things.</p>
 <p><image src="https://blog.jfo.click/mb/mb09.jpg" /></p>
 <p>So, A complex number is made up of a real part and an imaginary part. Never the
 two shall meet. What if I wanted to add two complex numbers together?</p>
-
 <pre><code>(1 + 2i) + (3 + 5i) = 4 + 7i
-</code></pre>
-<p>Alright. But in JS, I could just keep track of these two parts <em>separately.</em></p>
-
-<pre><code class="lang-js">realOne = <span class="hljs-number">1</span>;
+</code></pre><p>Alright. But in JS, I could just keep track of these two parts <em>separately.</em></p>
+<pre><code class="hljs language-js">realOne = <span class="hljs-number">1</span>;
 imaginaryOne = <span class="hljs-number">2</span>;
 realTwo = <span class="hljs-number">3</span>;
 imaginaryTwo = <span class="hljs-number">5</span>;
 
 <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>([realOne + realTwo, imaginaryOne + imaginaryTwo]
-</code></pre>
-
-<pre><code>[4, 7]
-</code></pre>
-<p>Or <code>4 + 7i</code>.</p>
+</code></pre><pre><code>[4, 7]
+</code></pre><p>Or <code>4 + 7i</code>.</p>
 <p>I&#39;m returning this as a tuple of two values. I could use objects, if I wanted...</p>
-
-<pre><code class="lang-js">first = {
+<pre><code class="hljs language-js">first = {
     <span class="hljs-attr">real</span>: <span class="hljs-number">1</span>,
     <span class="hljs-attr">imaginary</span>: <span class="hljs-number">2</span>
 };
@@ -1057,11 +930,8 @@ second = {
     <span class="hljs-attr">real</span>: first.<span class="hljs-property">real</span> + second.<span class="hljs-property">real</span>,
     <span class="hljs-attr">imaginary</span>: first.<span class="hljs-property">imaginary</span> + second.<span class="hljs-property">imaginary</span>
 });
-</code></pre>
-
-<pre><code class="lang-js">{ <span class="hljs-attr">real</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">imaginary</span>: <span class="hljs-number">7</span> }
-</code></pre>
-<p>Do you see it? Do you see how this is just <em>dying</em> to be made into a prototype
+</code></pre><pre><code class="hljs language-js">{ <span class="hljs-attr">real</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">imaginary</span>: <span class="hljs-number">7</span> }
+</code></pre><p>Do you see it? Do you see how this is just <em>dying</em> to be made into a prototype
 that implements basic math over itself and stuff? Oh man, it really wants me to
 do that, but I&#39;m not going to do it.</p>
 <p>We also need to be able to <em>multiply</em> complex numbers, in order to square them.
@@ -1069,12 +939,26 @@ What does that look like? It looks like algebra. Remember <code>FOIL</code>? &qu
 outer, inner, last.&quot;</p>
 <blockquote>
 <p>(1 + 2i) * (3 + 5i)</p>
-<p>(1 <em> 3) + (1 </em> 5i) + (2i <em> 3) + (2i </em> 5i)</p>
+</blockquote>
+<blockquote>
+<p>(1 * 3) + (1 * 5i) + (2i * 3) + (2i * 5i)</p>
+</blockquote>
+<blockquote>
 <p>3 + 5i + 6i + 10i<sup>2</sup></p>
+</blockquote>
+<blockquote>
 <p>3 + 11i + 10i<sup>2</sup></p>
+</blockquote>
+<blockquote>
 <p>3 + 11i + 10(i * i)</p>
+</blockquote>
+<blockquote>
 <p>3 + 11i + 10(-1)</p>
+</blockquote>
+<blockquote>
 <p>3 + 11i - 10</p>
+</blockquote>
+<blockquote>
 <p>-7 + 11i</p>
 </blockquote>
 <p>Remember that <code>i</code> is actually the square root of -1, so i<sup>2</sup> is...
@@ -1084,8 +968,7 @@ outer, inner, last.&quot;</p>
 replace <code>z</code> and <code>c</code> with &quot;complex numbers&quot; made up of <code>zr</code> (z real), <code>zi</code> (z
 imaginary), <code>cr</code> (c real), and <code>ci</code> (c imaginary). I&#39;ll keep that index var <code>i</code> around
 for now, as well, but I&#39;m going to change it to <code>iterations</code> for a little more clarity.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">zr, zi, cr, ci, iterations</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">zr, zi, cr, ci, iterations</span>) {
     <span class="hljs-keyword">if</span> (iterations &gt; <span class="hljs-number">10</span>) {
         <span class="hljs-keyword">return</span>;
     }
@@ -1097,8 +980,7 @@ for now, as well, but I&#39;m going to change it to <code>iterations</code> for 
 
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">thinger</span>(nextr, nexti, cr, ci, iterations += <span class="hljs-number">1</span>);
 }
-</code></pre>
-<p>Those <code>nextr</code> and <code>nexti</code> expressions are just what you get when you factor out
+</code></pre><p>Those <code>nextr</code> and <code>nexti</code> expressions are just what you get when you factor out
 the real and imaginary operations from the <code>FOIL</code> procedure from above.</p>
 <p>So here&#39;s the trick. Right now I&#39;m sort of just, winging it with those
 iteration counts. But how do I <em>really</em> know if a point is not in the set?</p>
@@ -1108,8 +990,7 @@ number <em>ever exceed 4</em>, then that complex number is <em>not</em> in the M
 set.</p>
 </blockquote>
 <p>That&#39;s a little more useful!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">zr, zi, cr, ci, iterations</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">thinger</span>(<span class="hljs-params">zr, zi, cr, ci, iterations</span>) {
     <span class="hljs-keyword">if</span> (iterations &gt; <span class="hljs-number">20</span>) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
     }
@@ -1124,8 +1005,7 @@ set.</p>
 
     <span class="hljs-keyword">return</span> <span class="hljs-title function_">thinger</span>(nextr, nexti, cr, ci, iterations += <span class="hljs-number">1</span>);
 }
-</code></pre>
-<p>So what we have here... this is getting there. If the condition stated above is
+</code></pre><p>So what we have here... this is getting there. If the condition stated above is
 met, then the number is not in the set. BUT if we&#39;ve reached some maximum
 iteration count, then <em>as far as we know</em>, the number <em>is</em> in the set. That&#39;s
 going to be important later on!</p>
@@ -1135,8 +1015,7 @@ state be internal and leave it out of the function signature. And as a matter
 of fact, dropping the recursion means we don&#39;t have to pass in the inital <code>zr</code>
 and <code>zi</code>, either. And what the hell, why don&#39;t I change that name from
 <code>thinger</code> to something a little more descriptive...</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">isMandlebrot</span>(<span class="hljs-params">cr, ci</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">isMandlebrot</span>(<span class="hljs-params">cr, ci</span>) {
     <span class="hljs-keyword">var</span> zr = cr;
     <span class="hljs-keyword">var</span> zi = ci
 
@@ -1152,12 +1031,10 @@ and <code>zi</code>, either. And what the hell, why don&#39;t I change that name
     }
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 }
-</code></pre>
-<p>Ok so, remember those predicate functions from before? They took in a <code>coord</code>
+</code></pre><p>Ok so, remember those predicate functions from before? They took in a <code>coord</code>
 with an <code>x</code> value and a <code>y</code> value? Doesn&#39;t that look... suspiciously similar to
 what we&#39;ve got above?</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">isMandlebrot</span>(<span class="hljs-params">coord</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">isMandlebrot</span>(<span class="hljs-params">coord</span>) {
     <span class="hljs-keyword">var</span> cr = coord.<span class="hljs-property">x</span>;
     <span class="hljs-keyword">var</span> ci = coord.<span class="hljs-property">y</span>;
     <span class="hljs-keyword">var</span> zr = cr;
@@ -1175,9 +1052,7 @@ what we&#39;ve got above?</p>
     }
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 }
-</code></pre>
-<canvas id="ex12" height="200" width="200" style="border: 1px solid black;"></canvas>
-
+</code></pre><p><canvas id="ex12" height="200" width="200" style="border: 1px solid black;"></canvas></p>
 <script>
 (function() {
     function isMandlebrot(coord) {
@@ -1204,24 +1079,20 @@ what we&#39;ve got above?</p>
 })();
 </script>
 
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> graph = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Graph</span>(<span class="hljs-string">&quot;ex12&quot;</span>);
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> graph = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Graph</span>(<span class="hljs-string">&quot;ex12&quot;</span>);
 graph.<span class="hljs-title function_">render</span>(isMandlebrot);
-</code></pre>
-<p>There it is. Our old friend. The Mandelbrot set.</p>
+</code></pre><p>There it is. Our old friend. The Mandelbrot set.</p>
 <p><image src="https://blog.jfo.click/mb/mb44.jpg" /></p>
-<h1 id="that-looks-like-a-fuzzy-potato">That looks like a fuzzy potato</h1>
+<h1>That looks like a fuzzy potato</h1>
 <p>Yeah, it might look boring from where we&#39;re sitting, <em>but it&#39;s totally not</em></p>
 <p>Remember when I built that &quot;Graph&quot; object, I made both <code>r</code> (the zoom factor)
 and <code>center</code> accessible. We can totally change where we&#39;re looking at the graph
 and re-render on the fly!</p>
-<canvas id="ex13" height="200" width="200" style="border: 1px solid black;"></canvas>
-
-<button class="ex13button" data-centerx="-0.7463" data-centery="0.1102" data-r="0.005" >x:-0.7463, y:0.1102, r:0.005</button>
+<p><canvas id="ex13" height="200" width="200" style="border: 1px solid black;"></canvas></p>
+<p><button class="ex13button" data-centerx="-0.7463" data-centery="0.1102" data-r="0.005" >x:-0.7463, y:0.1102, r:0.005</button>
 <button class="ex13button" data-centerx="-0.7453" data-centery="0.1127" data-r="0.00065" >x:-0.7453, y:0.1127, r:0.00065</button>
 <button class="ex13button" data-centerx="-1.25066" data-centery="0.02012" data-r="0.0005" >x:-1.25066, y:0.02012, r:0.0005</button>
-<button class="ex13button" data-centerx="-0.16" data-centery="1.0405" data-r="0.076">x:-0.16, y:1.0405 r:0.046</button>
-
+<button class="ex13button" data-centerx="-0.16" data-centery="1.0405" data-r="0.076">x:-0.16, y:1.0405 r:0.046</button></p>
 <script>
 (function() {
     function isMandlebrot(coord) {
@@ -1262,12 +1133,11 @@ and re-render on the fly!</p>
 </script>
 
 
-<h1 id="small-refactor">Small refactor</h1>
+<h1>Small refactor</h1>
 <p>So at this point I am going to drop the more general <code>Graph</code> abstraction and
 just hardcode that object&#39;s predicate as the Mandelbrot test. That... pretty
 much looks like you would expect.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Mandelbrot</span>(<span class="hljs-params">canvasId</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Mandelbrot</span>(<span class="hljs-params">canvasId</span>) {
     <span class="hljs-keyword">var</span> canvas = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(canvasId);
     <span class="hljs-keyword">var</span> ctx = canvas.<span class="hljs-title function_">getContext</span>(<span class="hljs-string">&quot;2d&quot;</span>);
     <span class="hljs-keyword">var</span> imageData = ctx.<span class="hljs-title function_">createImageData</span>(canvas.<span class="hljs-property">width</span>, canvas.<span class="hljs-property">height</span>);
@@ -1322,8 +1192,7 @@ much looks like you would expect.</p>
         ctx.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
     }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>)
 }
-</code></pre>
-<script>
+</code></pre><script>
 function MandelbrotOne(canvasId) {
     var canvas = document.getElementById(canvasId);
     var ctx = canvas.getContext("2d");
@@ -1381,25 +1250,21 @@ function MandelbrotOne(canvasId) {
 }
 </script>
 
-<canvas id="ex14" height="200" width="200" style="border: 1px solid black;"></canvas>
-
+<p><canvas id="ex14" height="200" width="200" style="border: 1px solid black;"></canvas></p>
 <script>
     var mb = new MandelbrotOne("ex14")
     mb.render();
 </script>
 
 <p>Now, I can do something like this:</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> mb = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Mandelbrot</span>(<span class="hljs-string">&quot;ex14&quot;</span>)
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> mb = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Mandelbrot</span>(<span class="hljs-string">&quot;ex14&quot;</span>)
 mb.<span class="hljs-title function_">render</span>();
-</code></pre>
-<p>There&#39;s one important change here! In the <code>Mandelbrot</code> object above, you can
+</code></pre><p>There&#39;s one important change here! In the <code>Mandelbrot</code> object above, you can
 see that I&#39;ve exposed another attribute. <code>this.iterations</code>, and used it as a
 maximum value in the for loop in the Mandelbrot function.</p>
 <p>Why are iterations important? Well, the more iterations we use the more fine
 grained the Mandlebrot can be displayed. Look at this!</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> mb = <span class="hljs-keyword">new</span> <span class="hljs-title class_">MandelbrotOne</span>(<span class="hljs-string">&quot;ex15&quot;</span>)
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> mb = <span class="hljs-keyword">new</span> <span class="hljs-title class_">MandelbrotOne</span>(<span class="hljs-string">&quot;ex15&quot;</span>)
 <span class="hljs-keyword">var</span> iterations = <span class="hljs-number">1</span>;
 <span class="hljs-keyword">var</span> x = <span class="hljs-number">1</span>;
 <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>){
@@ -1411,9 +1276,7 @@ grained the Mandlebrot can be displayed. Look at this!</p>
     }
     mb.<span class="hljs-title function_">render</span>();
 }, <span class="hljs-number">1000</span>)
-</code></pre>
-<canvas id="ex15" height="200" width="200" style="border: 1px solid black;"></canvas>
-
+</code></pre><p><canvas id="ex15" height="200" width="200" style="border: 1px solid black;"></canvas></p>
 <script>
 (function() {
     var mb = new MandelbrotOne("ex15")
@@ -1436,7 +1299,7 @@ get more definition. That could go on infinitely, though what you see above is
 about as high fidelity as we can get at that zoom level, since pixels have a
 definite size, small as they may seem.</p>
 <p><image src="https://blog.jfo.click/mb/mb10.jpg" /></p>
-<h1 id="colors-come-out-of-the-speakers">Colors come out of the speakers</h1>
+<h1>Colors come out of the speakers</h1>
 <p>Let&#39;s talk about those trippy ass colors you see on all the zooms on youtube.</p>
 <p>Right now we&#39;ve got a pretty simple true false test that tells us if a pixel is
 not in the set or if, <em>as far as we know</em>, it is. Every extra iteration increases
@@ -1447,8 +1310,7 @@ is really interesting information!</p>
 <p>Currently, the render function uses the boolean value returned by
 <code>isMandlebrot</code> to decide whether or not to set the <code>opacity</code> &#39;byte&#39; to either
 255, or 0.</p>
-
-<pre><code class="lang-js">    <span class="hljs-variable language_">this</span>.<span class="hljs-property">render</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+<pre><code class="hljs language-js">    <span class="hljs-variable language_">this</span>.<span class="hljs-property">render</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
         <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; canvas.<span class="hljs-property">width</span> * canvas.<span class="hljs-property">height</span> * <span class="hljs-number">4</span>; i += <span class="hljs-number">4</span>) {
             set = <span class="hljs-title function_">isMandlebrot</span>(<span class="hljs-title function_">indexToCoord</span>(i)) ? <span class="hljs-number">255</span> : <span class="hljs-number">0</span>;
             imageData.<span class="hljs-property">data</span>[i]     = <span class="hljs-number">0</span>;
@@ -1458,11 +1320,9 @@ is really interesting information!</p>
         }
         ctx.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
     }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>)
-</code></pre>
-<p>We can change <code>isMandlebrot</code> to return a tuple instead, of two things: the
+</code></pre><p>We can change <code>isMandlebrot</code> to return a tuple instead, of two things: the
 original boolean value <em>and the iterations required to divine it</em>.</p>
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> isMandlebrot = <span class="hljs-keyword">function</span>(<span class="hljs-params">coord</span>) {
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> isMandlebrot = <span class="hljs-keyword">function</span>(<span class="hljs-params">coord</span>) {
     <span class="hljs-keyword">var</span> cr = coord.<span class="hljs-property">x</span>
     <span class="hljs-keyword">var</span> ci = coord.<span class="hljs-property">y</span>
     <span class="hljs-keyword">var</span> zr = coord.<span class="hljs-property">x</span>
@@ -1481,11 +1341,9 @@ original boolean value <em>and the iterations required to divine it</em>.</p>
     }
     <span class="hljs-keyword">return</span> [<span class="hljs-literal">true</span>, i];
 }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>);
-</code></pre>
-<p>Now, back in the render function, we can use that information to color the
+</code></pre><p>Now, back in the render function, we can use that information to color the
 pixel according to it&#39;s iteration score!</p>
-
-<pre><code class="lang-js"><span class="hljs-variable language_">this</span>.<span class="hljs-property">render</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+<pre><code class="hljs language-js"><span class="hljs-variable language_">this</span>.<span class="hljs-property">render</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; canvas.<span class="hljs-property">width</span> * canvas.<span class="hljs-property">height</span> * <span class="hljs-number">4</span>; i += <span class="hljs-number">4</span>) {
         thing = <span class="hljs-title function_">isMandlebrot</span>(<span class="hljs-title function_">indexToCoord</span>(i))
         set =  thing[<span class="hljs-number">0</span>] ?  <span class="hljs-number">0</span>: (thing[<span class="hljs-number">1</span>] / <span class="hljs-variable language_">this</span>.<span class="hljs-property">iterations</span>) * <span class="hljs-number">0xffffff</span>;
@@ -1496,8 +1354,7 @@ pixel according to it&#39;s iteration score!</p>
     }
     ctx.<span class="hljs-title function_">putImageData</span>(imageData, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
 }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>)
-</code></pre>
-<blockquote>
+</code></pre><blockquote>
 <p><code>set</code> here is a value that I&#39;m first normalizing between 0 and 1, then
 scaling to be between 0 and 16777215. Then I&#39;m extracting RGB values in kind
 from it with some bit twiddling. Sorry I&#39;m not explaining that more/better,
@@ -1563,8 +1420,7 @@ I&#39;m turning the iteration count into a color value is all!</p>
     }
 </script>
 
-<canvas id="ex16" height="200" width="200" style="border: 1px solid black;"></canvas>
-
+<p><canvas id="ex16" height="200" width="200" style="border: 1px solid black;"></canvas></p>
 <script>
 (function() {
     var mb = new Mandelbrot("ex16")
@@ -1572,17 +1428,14 @@ I&#39;m turning the iteration count into a color value is all!</p>
 })()
 </script>
 
-
-<pre><code class="lang-js"><span class="hljs-keyword">var</span> mb = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Mandelbrot</span>(<span class="hljs-string">&quot;ex16&quot;</span>)
+<pre><code class="hljs language-js"><span class="hljs-keyword">var</span> mb = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Mandelbrot</span>(<span class="hljs-string">&quot;ex16&quot;</span>)
 mb.<span class="hljs-title function_">render</span>();
-</code></pre>
-<p>Remember those little thingers from before? Look what they look like in <em>color</em>!!</p>
-<p><canvas id="ex17" height="200" width="200" style="border: 1px solid black;"></canvas></p>
+</code></pre><p>Remember those little thingers from before? Look what they look like in <em>color</em>!!</p>
+<p><canvas id="ex17" height="200" width="200" style="border: 1px solid black;"></canvas>
 <button class="ex17button" data-centerx="-0.7463" data-centery="0.1102" data-r="0.005" >x:-0.7463, y:0.1102, r:0.005</button>
 <button class="ex17button" data-centerx="-0.7453" data-centery="0.1127" data-r="0.00065" >x:-0.7453, y:0.1127, r:0.00065</button>
 <button class="ex17button" data-centerx="-1.25066" data-centery="0.02012" data-r="0.0005" >x:-1.25066, y:0.02012, r:0.0005</button>
-<button class="ex17button" data-centerx="-0.16" data-centery="1.0405" data-r="0.076">x:-0.16, y:1.0405 r:0.046</button>
-
+<button class="ex17button" data-centerx="-0.16" data-centery="1.0405" data-r="0.076">x:-0.16, y:1.0405 r:0.046</button></p>
 <script>
 (function() {
     var canvasId = "ex17";
@@ -1622,14 +1475,12 @@ the webgl connected and up and running, and the parts that aren&#39;t boilerplat
 aren&#39;t substantially different from the code I&#39;ve shown in vanilla javascript
 over the course of this post.</p>
 <p>I hacked together this widget using</p>
-
 <ul>
 <li><a href="https://webglfundamentals.org">https://webglfundamentals.org</a></li>
 </ul>
 <p>The author <a href="https://github.com/greggman">Greggman</a> also maintains a library called
 <a href="http://twgljs.org/">twgl.js</a> for making the WebGL api less verbose and I am
 definitely going to use it next time.</p>
-
 <ul>
 <li><a href="https://www.shadertoy.com/view/4df3Rn">https://www.shadertoy.com/view/4df3Rn</a></li>
 </ul>
@@ -1658,9 +1509,8 @@ sometime, or just put it off until 64 bit floats are native to the platform!</p>
 
 
 <p><span id="references"></span></p>
-<h1 id="references">References</h1>
+<h1>References</h1>
 <p>Here are some things I found really helpful while working on this project.</p>
-
 <ul>
 <li><p><a href="https://www.youtube.com/watch?v=NGMRB4O922I">Holly Krieger&#39;s explanation of the set on Numberphile</a></p>
 </li>
@@ -1670,7 +1520,7 @@ sometime, or just put it off until 64 bit floats are native to the platform!</p>
 </li>
 <li><p><a href="https://www.youtube.com/watch?v=ZDU40eUcTj0">This deep zoom video accompanied by Jonathan Coulton&#39;s song &quot;Mandelbrot Set&quot;</a></p>
 </li>
-<li><p><a href="http://tilde.club/~david/m/#zoom=6.2260371959942775,3.4&amp;lookAt=-0.6,0&amp;iterations=85&amp;superSamples=1&amp;escapeRadius=10.0&amp;colorScheme=pickColorGrayscale">This JavaScript Mandelbrot generator</a></p>
+<li><p><a href="http://tilde.club/~david/m/#zoom=6.2260371959942775,3.4&lookAt=-0.6,0&iterations=85&superSamples=1&escapeRadius=10.0&colorScheme=pickColorGrayscale">This JavaScript Mandelbrot generator</a></p>
 </li>
 <li><p><a href="http://www.wikihow.com/Plot-the-Mandelbrot-Set-By-Hand">This wikihow.com page (I know right? But it was helpful early on!)</a></p>
 </li>
@@ -1695,7 +1545,7 @@ any screens, or at least not staring at the computer screen for the whole day.</
 <p>(That one is secretely my favorite :))</p>
 <div id="update"></div>
 
-<h2 id="sept-2017-update-">Sept 2017 update!</h2>
+<h2>Sept 2017 update!</h2>
 <p>As part of my self hosting images
 <a href="/s3-hugo-and-static-asset-hosting/">initiative</a>, I&#39;ve updated all of the
 examples on this page to much more hi-res and web optimized images, and they

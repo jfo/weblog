@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rotating Triangles</title>
+    <style>
+        body { margin: 0; background: white; overflow: hidden; font-family: Arial, sans-serif; }
+        canvas { display: block; }
+        #colorSelector {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <select id="colorSelector">
+        <option value="rgb-cmy">RGB + CMY</option>
+        <option value="rainbow">Rainbow (6 Hues)</option>
+        <option value="split-complementary">Split Complementary</option>
+        <option value="warm-cool">Warm + Cool</option>
+        <option value="primaries-secondaries">Primaries + Secondaries</option>
+    </select>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0xffffff, 1);
+        document.body.appendChild(renderer.domElement);
+
+        // Create equilateral triangle geometry joined at one vertex
+        const geometry = new THREE.BufferGeometry();
+        const vertices = new Float32Array([
+            0, 0, 0,        // shared vertex at origin
+            2, 0, 0,        // right vertex
+            1, 1.732, 0     // top vertex (makes equilateral)
+        ]);
+        geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+
+        // Color palettes
+        const colorPalettes = {
+            'rgb-cmy': [0xcc2222, 0x22cc22, 0x2222cc, 0x22cccc, 0xcc22cc, 0xcccc22],
+            'rainbow': [0xff0000, 0xff8800, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff],
+            'split-complementary': [0xff0000, 0x00ff88, 0x88ff00, 0x0000ff, 0xff8800, 0xff8888],
+            'warm-cool': [0xff4444, 0xff8844, 0xffff44, 0x4444ff, 0x44ff44, 0x8844ff],
+            'primaries-secondaries': [0xff0000, 0x0000ff, 0xffff00, 0xff8800, 0x00ff00, 0x8800ff]
+        };
+
+        function createMaterials(colors) {
+            return colors.map(color => new THREE.MeshBasicMaterial({ 
+                color: color, 
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.5,
+                depthWrite: false
+            }));
+        }
+
+        // Create six triangles with default RGB + CMY colors
+        let materials = createMaterials(colorPalettes['rgb-cmy']);
+
+        const triangles = [];
+        const randomFactors = []; // Store random factors for each triangle
+        materials.forEach((material, i) => {
+            const triangle = new THREE.Mesh(geometry, material);
+            // Initial rotation to spread them out
+            triangle.rotation.y = (i * Math.PI * 2) / 6;
+            triangles.push(triangle);
+            scene.add(triangle);
+            
+            // Generate random factors for each triangle
+            randomFactors.push({
+                speedX: 0.3 + Math.random() * 0.8,
+                speedY: 0.3 + Math.random() * 0.8,
+                speedZ: 0.3 + Math.random() * 0.8,
+                phaseX: Math.random() * Math.PI * 2,
+                phaseY: Math.random() * Math.PI * 2,
+                phaseZ: Math.random() * Math.PI * 2,
+                wobbleX: 0.2 + Math.random() * 0.6,
+                wobbleY: 0.2 + Math.random() * 0.6,
+                wobbleZ: 0.2 + Math.random() * 0.6
+            });
+        });
+
+        // Add wireframe outlines
+        const wireframeMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x333333, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.8
+        });
+        triangles.forEach(triangle => {
+            const wireframe = new THREE.Mesh(geometry, wireframeMaterial);
+            triangle.add(wireframe);
+        });
+
+        camera.position.set(3, 3, 5);
+        camera.lookAt(0, 0, 0);
+
+        // Color palette selector
+        document.getElementById('colorSelector').addEventListener('change', (event) => {
+            const selectedPalette = event.target.value;
+            const newColors = colorPalettes[selectedPalette];
+            triangles.forEach((triangle, i) => {
+                triangle.material.color.setHex(newColors[i]);
+            });
+        });
+
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+
+            // Random rotation patterns for each triangle
+            triangles.forEach((triangle, i) => {
+                const r = randomFactors[i];
+                triangle.rotation.x = time * r.speedX + Math.sin(time * r.wobbleX + r.phaseX) * 0.5;
+                triangle.rotation.y = time * r.speedY + Math.cos(time * r.wobbleY + r.phaseY) * 0.7;
+                triangle.rotation.z = time * r.speedZ + Math.sin(time * r.wobbleZ + r.phaseZ) * 0.6;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>

@@ -57,22 +57,18 @@ it turns out.</p>
 
 <p>In the Spring of 2013, I couldn&#39;t <code>ls</code>. I hadn&#39;t programmed anything since a
 Qbasic class I took in probably 4th grade, and the only program I could remember was</p>
-
-<pre><code class="lang-basic"><span class="hljs-symbol">10 </span><span class="hljs-keyword">PRINT</span> <span class="hljs-string">&quot;HELLO&quot;</span>
+<pre><code class="hljs language-basic"><span class="hljs-symbol">10 </span><span class="hljs-keyword">PRINT</span> <span class="hljs-string">&quot;HELLO&quot;</span>
 <span class="hljs-symbol">20 </span><span class="hljs-keyword">GOTO</span> <span class="hljs-number">10</span>
-</code></pre>
-<p>Or something like that.</p>
+</code></pre><p>Or something like that.</p>
 <p>The very first thing that got my wheels turning on this- it was around January
 of 2013 or so, maybe... I was working on permutations of different four voiced
 chordal structures on the guitar, mostly by hand and in my head, trying to come
 up with a relatively complete set. Any shape would have one of</p>
-
 <pre><code>7  different chord qualities
 4  different inversions (including root position)
 12 different root notes
 4  different voicings
-</code></pre>
-<p>The specifics of these, while interesting and certainly blogelaboutable, are not
+</code></pre><p>The specifics of these, while interesting and certainly blogelaboutable, are not
 pertinent right now. Just ... I wanted to figure out a lot of different
 permutations. For any given chord, I could see how it fell along these
 dimensions easily, but I was trying to figure out <em>everything</em> because I am a
@@ -83,10 +79,8 @@ That would take forever to write out. This is like, the perfect thing to make a
 computer do for me, right? I called my old buddy Yuri, a fine musician and bash
 scriptor, and he recited a one liner over the phone that did exactly what I
 wanted:</p>
-
-<pre><code class="lang-bash"><span class="hljs-built_in">echo</span> {A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab}{M7,m7,7,m7b5,dim7,mM7,M7<span class="hljs-comment">#5}_{0,1,2,3}_{drop2,drop2/3,drop2/4,drop3/4}</span>
-</code></pre>
-<p>This was completely incomprehensible to me at the time, as I was
+<pre><code class="hljs language-bash"><span class="hljs-built_in">echo</span> {A,Bb,B,C,Db,D,Eb,E,F,Gb,G,Ab}{M7,m7,7,m7b5,dim7,mM7,M7<span class="hljs-comment">#5}_{0,1,2,3}_{drop2,drop2/3,drop2/4,drop3/4}</span>
+</code></pre><p>This was completely incomprehensible to me at the time, as I was
 still afraid of opening the terminal, but that didn&#39;t matter, because <em>it
 totally worked</em>. I had my giant list of voicings! This got my wheels turning.</p>
 <hr>
@@ -188,6 +182,8 @@ So I sent Mary a follow up email, asking for feedback.</p>
 <p>A few days later she wrote back. Posted with her permission:</p>
 <blockquote>
 <p>Hi Jeff,</p>
+</blockquote>
+<blockquote>
 <p>You seemed to be focused on building things, rather than learning to program.
 We love it when people make stuff at Hacker School.  But, we try to admit
 people who are obsessed with programming for its own sake.  Having the goals
@@ -286,7 +282,7 @@ of Mary&#39;s feedback, I listened to myself. I wrote a <a href="https://rubygem
 gem</a> that models a
 rubik&#39;s cube, and that could solve it from an arbitrary position, and tried to
 turn it into a webapp of some sort. It became (quickly
-obvious)[<a href="https://github.com/urthbound/rubyksonrails">https://github.com/urthbound/rubyksonrails</a>] that rails was completely
+obvious)[<a href="https://github.com/urthbound/rubyksonrails%5D">https://github.com/urthbound/rubyksonrails]</a> that rails was completely
 overkill for what I was trying to do, so I swtiched to a lightweight framework
 called <a href="http://www.sinatrarb.com/">Sinatra</a> that I had read about in Peter
 Cooper&#39;s Beginning Ruby book.</p>

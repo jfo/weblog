@@ -38,8 +38,7 @@ and I have a program blueprint that I should be able to implement. I only need
 to be able to use if/else and if. I looked up some algorithms to use for this
 bit, and these are the ones I settled on...</p>
 <p>if...</p>
-
-<pre><code class="lang-brainfuck"><span class="hljs-comment">temp0</span><span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span>
+<pre><code class="hljs language-brainfuck"><span class="hljs-comment">temp0</span><span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span>
 <span class="hljs-comment">temp1</span><span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span>
 <span class="hljs-comment">x</span><span class="hljs-title">[</span><span class="hljs-comment">temp0</span><span class="hljs-literal">+</span><span class="hljs-comment">temp1</span><span class="hljs-literal">+</span><span class="hljs-comment">x</span><span class="hljs-literal">-</span><span class="hljs-title">]</span><span class="hljs-comment">temp0</span><span class="hljs-title">[</span><span class="hljs-comment">x</span><span class="hljs-literal">+</span><span class="hljs-comment">temp0</span><span class="hljs-literal">-</span><span class="hljs-title">]</span><span class="hljs-literal">+</span>
 <span class="hljs-comment">temp1</span><span class="hljs-title">[</span><span class="hljs-comment">temp0</span><span class="hljs-literal">-</span><span class="hljs-comment">temp1</span><span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span><span class="hljs-title">]</span>
@@ -48,10 +47,8 @@ bit, and these are the ones I settled on...</p>
     <span class="hljs-comment">(code)</span>
 
 <span class="hljs-comment">temp0</span><span class="hljs-literal">-</span><span class="hljs-title">]</span>
-</code></pre>
-<p>and If/Else...</p>
-
-<pre><code class="lang-brainfuck"><span class="hljs-comment">temp0</span><span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span><span class="hljs-literal">+</span>
+</code></pre><p>and If/Else...</p>
+<pre><code class="hljs language-brainfuck"><span class="hljs-comment">temp0</span><span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span><span class="hljs-literal">+</span>
 <span class="hljs-comment">temp1</span><span class="hljs-title">[</span><span class="hljs-literal">-</span><span class="hljs-title">]</span>
 <span class="hljs-comment">x</span><span class="hljs-title">[</span>
 
@@ -66,8 +63,7 @@ bit, and these are the ones I settled on...</p>
     <span class="hljs-comment">(code2)</span>
 
 <span class="hljs-comment">temp0</span><span class="hljs-title">]</span>
-</code></pre>
-<p>Note that the inline &quot;variable&quot; names are actually describing whatever location
+</code></pre><p>Note that the inline &quot;variable&quot; names are actually describing whatever location
 that cell happens to be. When we get to the final code, those plain text names
 will be appended with the pointer motions necessary to arrive at them. Both of
 these algorithms were lifted from <a
@@ -85,8 +81,7 @@ just have to invert all the code we had <a title="fizzbuzz in brainfuck, part
 one" href="http://www.jeffalanfowler.com/blog/fizzbuzz-in-brainfuck-part-one/"
 target="_blank">before</a>. Just keep that in mind. Lets write the inverted
 program in psuedo-code and then fill it all in with the specifics...</p>
-
-<pre><code class="lang-ruby">number = <span class="hljs-number">0</span>
+<pre><code class="hljs language-ruby">number = <span class="hljs-number">0</span>
 
 <span class="hljs-keyword">until</span> number == <span class="hljs-number">100</span> <span class="hljs-keyword">do</span>
   <span class="hljs-keyword">if</span> number   % <span class="hljs-number">3</span> != <span class="hljs-number">0</span>
@@ -106,16 +101,14 @@ program in psuedo-code and then fill it all in with the specifics...</p>
 
 number += <span class="hljs-number">1</span>
 <span class="hljs-keyword">end</span>
-</code></pre>
-<p>Keep in mind that we&#39;ve taken care of all the variable assignments and memory
+</code></pre><p>Keep in mind that we&#39;ve taken care of all the variable assignments and memory
 allocation in the last post, so this really is all we have left.</p>
 <p>Here is the complete, annotated program, which you can also view and run <a
 href="http://replit.com/Kr0/3" target="_blank">here</a>. This is EXACTLY the
 same code as the giant block of bf symbols I put in the <a title="fizzbuzz in
 brainfuck, part one" href="/2013/09/fizzbuzz-in-brainfuck-part-one.html"
 target="_blank">first part</a>, just spread out with indentation etc.</p>
-
-<pre><code class="lang-brainfuck">
+<pre><code class="hljs language-brainfuck">
 <span class="hljs-comment">MOVE 20 CELLS TO THE RIGHT TO &quot;CLEAR&quot; MEMORY</span>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
 &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
@@ -302,8 +295,7 @@ target="_blank">first part</a>, just spread out with indentation etc.</p>
 &gt;&gt;&gt;<span class="hljs-string">.</span>
 &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;
 &gt;<span class="hljs-string">.</span>&gt;<span class="hljs-string">.</span>&gt;<span class="hljs-string">.</span><span class="hljs-string">.</span>
-</code></pre>
-<p>So, that&#39;s basically that. This is super hard to read, because of the crazy
+</code></pre><p>So, that&#39;s basically that. This is super hard to read, because of the crazy
 syntax and how unreadable brainfuck is, but maybe having it parsed out so much
 will help some people understand it better. I sure learned a hell of a lot
 about memory allocation, cursors, and logic gates. All in all, now that I have
@@ -313,12 +305,10 @@ a couple of weeks between it and me, it was worth the time.</p>
 the same ballpark as reality, so I&#39;ll keep them around.TBH I didn&#39;t really
 know wtf I was doing back then.</p>
 </blockquote>
-<p>Next time in the brainfuck series maybe: <a href="a
-href=&quot;https://github.com/urthbound/esoteric/blob/master/brainfuckint.rb&quot;
-target=&quot;_blank&quot;">a
-href=&quot;https://github.com/urthbound/esoteric/blob/master/brainfuckint.rb&quot;
-target=&quot;_blank&quot;</a>writing a compiler / interpreter for brainfuck in
-ruby. </a> Sometime. But don&#39;t hold your breath. All you brainfuck fans out
+<p>Next time in the brainfuck series maybe: <a
+href="https://github.com/urthbound/esoteric/blob/master/brainfuckint.rb"
+target="_blank">writing a compiler / interpreter for brainfuck in
+ruby. </a> Sometime. But don&#39;t hold your breath. All you brainfuck fans out
 there. In Ukraine. Don&#39;t think I don&#39;t see your ip&#39;s.</p>
 <div id="never-going-to-happen"></div>
 

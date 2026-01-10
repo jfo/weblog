@@ -65,20 +65,15 @@
 <p>On the left side of the page, click &quot;Instances.&quot; You&#39;ll have a list of your running instances, which right now is just the one that you just launched. Select the instance with the little box next to it to get some info. Again, there is lot of info there, but right now, the only thing we need is the <strong>Public IP</strong>. Take out a pen and paper and write that down. Just kidding. Or do that, if you want. Just, hold on. We&#39;re going to need that number in a second.</p>
 <p>Now comes the commandlinefu part. Open a terminal and type &quot;which ssh.&quot; Did it say /usr/bin/ssh? Or something like that? Great, you&#39;ve got SSH already. I thought you might! If you don&#39;t you can brew install it, or apt-get install it, or google how to do those things.</p>
 <p>Type this:</p>
-
 <pre><code>yourawesomeprompt$ ssh [your public IP]
-</code></pre>
-<p>Did it work? No? Haha, fooled you! that was a learning experience! What kind of service would let just anyone ssh willy nilly into whereever any time? That would be sub-optimal, from a network security standpoint. Also, we didn&#39;t specify a user.</p>
+</code></pre><p>Did it work? No? Haha, fooled you! that was a learning experience! What kind of service would let just anyone ssh willy nilly into whereever any time? That would be sub-optimal, from a network security standpoint. Also, we didn&#39;t specify a user.</p>
 <p>So, you&#39;re going to need a public/private key pair. Amazon is actually pretty helpful on this one! Under the &quot;instances&quot; tab we were just looking at, click on the &quot;Connect&quot; tab at the top. It will let you generate a new key pair, the private of which you will download. Follow the instructions to ssh into your client- but they&#39;ll probably look something like this:</p>
-
 <pre><code>To access your instance:
 
 Open an SSH client.
 
 Locate your private key file ([thenameyouchose].pem). The wizard automatically detects the key you used to launch the instance.
-</code></pre>
-<p>and</p>
-
+</code></pre><p>and</p>
 <pre><code>Your key must not be publicly viewable for SSH to work. Use this command if needed:
 
 chmod 400 [thenameyouchose].pem
@@ -86,31 +81,24 @@ chmod 400 [thenameyouchose].pem
 Connect to your instance using its Public IP:
 
 [your public IP]
-</code></pre>
-<p>and</p>
-
+</code></pre><p>and</p>
 <pre><code>ssh -i [thenameyouchose].pem ubuntu@[your public IP]
-</code></pre>
-<p>The key file referred to above must reside in your working directory, or be given an absolute path, of course. And the permissions thing is a necessary step almost always, despite what they said.</p>
+</code></pre><p>The key file referred to above must reside in your working directory, or be given an absolute path, of course. And the permissions thing is a necessary step almost always, despite what they said.</p>
 <p>If you ran those commands, then you probably get a server prompt! Congratulations, you now have what amounts to a free virtual computer! You can install whatever you want and <code>sudo</code> to your hearts content! You can spin up a new VM and destroy the old ones as much as you&#39;d like! Pretty rad.</p>
 <p>Oh, but one more</p>
 <h4>Step Four: making step three easier.</h4>
 
 <p>So, yeah, that last bit is a lot of typing, and keeping track of a keyfile explicitly is a little bit not great. Let&#39;s fix that part now. You should have already changed permissions, so that&#39;s taken care of, so it&#39;s only a couple more steps from here.</p>
 <p>Move your .pem keyfile into the .ssh folder in your home directory. If you don&#39;t have one yet, make one and then move the file into it. Now make a file in that directory called <code>config</code>. Just <code>config</code>, and add these four lines to it:</p>
-
 <pre><code>Host (an alias, can be anything you want)
 HostName (your public ip)
 User (your username, probably &quot;ubuntu&quot; or whatever came before &quot;@&quot;)
 IdentityFile (path to the keyfile, probably ~/.ssh/[nameoffile].pem)
-</code></pre>
-<p>date: 2014-04-26 17:54 UTC</p>
+</code></pre><p>date: 2014-04-26 17:54 UTC</p>
 <p>Take out the parens, as well. That&#39;s the kind of little thing that can stick you, you know?</p>
 <p>Now, anytime you want to connect to your server, just type:</p>
-
 <pre><code>yoursuperradprompt$ ssh (whatever sweet alias you chose)
-</code></pre>
-<p>And that&#39;s it!</p>
+</code></pre><p>And that&#39;s it!</p>
 <p>Let&#39;s try</p>
 <h4>Step Five: connecting to your webserver</h4>
 

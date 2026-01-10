@@ -50,17 +50,14 @@ cube. For that- this was a perfect test problem, so that&#39;s what I did.</p>
 easy. Using those methods in series to build helper methods that perform even
 complex algorithms was as simple as stringing them together on a single Cube
 object and then returning that object. Like this:</p>
-
-<pre><code class="lang-ruby"><span class="hljs-comment">#Re-orients cubies of [0][4], [0][6], and [0][8] without affecting anything else.</span>
+<pre><code class="hljs language-ruby"><span class="hljs-comment">#Re-orients cubies of [0][4], [0][6], and [0][8] without affecting anything else.</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">last_move</span>
     <span class="hljs-variable language_">self</span>.rr.d.d.r.f.d.d.fr.ur.f.d.d.fr.rr.d.d.r.u
     <span class="hljs-variable language_">self</span>
 <span class="hljs-keyword">end</span>
-</code></pre>
-<p>That&#39;s the most long winded combination in my repertoire, used to reorient the
+</code></pre><p>That&#39;s the most long winded combination in my repertoire, used to reorient the
 final cubies to their proper faces.</p>
 <p>I planned out the solution by thinking of the steps I use normally:</p>
-
 <ol>
 <li>top cross</li>
 <li>corners next to the top cross</li>
@@ -71,8 +68,7 @@ final cubies to their proper faces.</p>
 <p>So I implemented solving methods for each of these. Basically, each step
 repeats a set of motions that don&#39;t change the effects of the previous step
 until some condition is satisfied. Here is the top cross method for an example:</p>
-
-<pre><code class="lang-ruby"><span class="hljs-comment">##Solves for cross on first layer. Affects all other layers.</span>
+<pre><code class="hljs language-ruby"><span class="hljs-comment">##Solves for cross on first layer. Affects all other layers.</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">cross_solve</span>
     downcross = []
     i = <span class="hljs-number">1</span>
@@ -127,16 +123,14 @@ until some condition is satisfied. Here is the top cross method for an example:<
 
     <span class="hljs-variable language_">self</span>
 <span class="hljs-keyword">end</span>
-</code></pre>
-<p>It is a very dumb, brute force solving method. I also included several
+</code></pre><p>It is a very dumb, brute force solving method. I also included several
 conditionals that trip if the loop has iterated a certain number of times;
 these act like a tilt- jogging things around just enough to change whatever was
 causing the loop to lock up.</p>
 <p>And so on down the line, until the cube is solved.</p>
 <p>The final method to call all of these layers in sequence looks something like
 this:</p>
-
-<pre><code class="lang-ruby"><span class="hljs-comment">#solve invokes all layer solving methods in sequence, solving from any legal state</span>
+<pre><code class="hljs language-ruby"><span class="hljs-comment">#solve invokes all layer solving methods in sequence, solving from any legal state</span>
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">simple_solve</span>
     testarray = []
     <span class="hljs-variable">@cube</span>.each {|<span class="hljs-params">side</span>| testarray &lt;&lt; side.uniq}
@@ -145,8 +139,7 @@ this:</p>
     <span class="hljs-variable language_">self</span>.cross_solve.corners_solve.second_layer_solve.top_cross.top_corners
     <span class="hljs-variable language_">self</span>
 <span class="hljs-keyword">end</span>
-</code></pre>
-<p>Note that it always checks to see if the cube is ALREADY solved before mucking
+</code></pre><p>Note that it always checks to see if the cube is ALREADY solved before mucking
 it up!</p>
 <p>Going through the process of modeling my own behavior was enlightening. The
 computer is very, very stupid, but if you give it explicit enough instructions

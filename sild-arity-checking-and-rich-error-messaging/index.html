@@ -37,29 +37,24 @@
 bit. Where are some opportunities for that kind of thing?</p>
 <p>Every builtin function does an arity check on its arguments before it does
 anything else. this check follows a simple pattern... take <code>cons</code> for example:</p>
-
-<pre><code class="lang-c">    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL || <span class="hljs-comment">// checks that there is a first argument.</span>
+<pre><code class="hljs language-c">    <span class="hljs-keyword">if</span> (operand-&gt;type == NIL || <span class="hljs-comment">// checks that there is a first argument.</span>
         operand-&gt;next-&gt;type == NIL || <span class="hljs-comment">// checks that there is a second argument</span>
         operand-&gt;next-&gt;next-&gt;type != NIL) { <span class="hljs-comment">// checks that there is NOT a third argument</span>
         <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
     }
-</code></pre>
-<p>It has to go in order this way, because if the conditional attempted to access
+</code></pre><p>It has to go in order this way, because if the conditional attempted to access
 <code>operand-&gt;next</code> when the <code>operand</code> was <code>NIL</code>, it would be trying to dereference
 the <code>NULL</code> pointer that <code>NIL</code> is acting as a wrapper for. Here&#39;s another, for
 <code>car</code> and <code>cdr</code>, which both have only one argument.</p>
-
-<pre><code class="lang-c"><span class="hljs-keyword">if</span> (operand-&gt;type == NIL || operand-&gt;next-&gt;type != NIL) {
+<pre><code class="hljs language-c"><span class="hljs-keyword">if</span> (operand-&gt;type == NIL || operand-&gt;next-&gt;type != NIL) {
     <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
 }
-</code></pre>
-<p>This is generic enough to abstract into a simple function that can be called at
+</code></pre><p>This is generic enough to abstract into a simple function that can be called at
 the beginning of each builtin. It will take the first operand and the number of
 arguments, and return true if the number matches the number of arguments passed
 to the function. Like most of the other functions that operate on these linked
 lists, it could be recursive.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">int</span> args, C *operand)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">int</span> args, C *operand)</span> {
     <span class="hljs-keyword">if</span> (args &gt; <span class="hljs-number">0</span>) {
         <span class="hljs-keyword">if</span> (operand-&gt;type == NIL) {
             <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
@@ -70,19 +65,15 @@ lists, it could be recursive.</p>
         <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
     }
 }
-</code></pre>
-<p>I can now replace the long hand checks in the builtin functions with a call to
+</code></pre><p>I can now replace the long hand checks in the builtin functions with a call to
 this function with the appropriate number of args.</p>
-
-<pre><code class="lang-c">C *<span class="hljs-title function_">quote</span><span class="hljs-params">(C *operand)</span> {
+<pre><code class="hljs language-c">C *<span class="hljs-title function_">quote</span><span class="hljs-params">(C *operand)</span> {
     arity_check(<span class="hljs-number">1</span>, operand);
     <span class="hljs-keyword">return</span> operand;
 }
-</code></pre>
-<p>But you know what? I want to stop writing crappy errors that just exit with a
+</code></pre><p>But you know what? I want to stop writing crappy errors that just exit with a
 generic code. #itstime for real error messaging. To do this, I could just print something to standard out before exiting, like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">int</span> args, C *operand)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">int</span> args, C *operand)</span> {
     <span class="hljs-keyword">if</span> (args &gt; <span class="hljs-number">0</span>) {
         <span class="hljs-keyword">if</span> (operand-&gt;type == NIL) {
             <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;something happened, you didn&#x27;t have enough args&quot;</span>);
@@ -95,12 +86,10 @@ generic code. #itstime for real error messaging. To do this, I could just print 
         <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
     }
 }
-</code></pre>
-<p>But standard out (<code>stdout</code>) is not the most appropriate stream for this
+</code></pre><p>But standard out (<code>stdout</code>) is not the most appropriate stream for this
 message. It&#39;s an error message, so it should be directed to standard error:
 <code>stderr</code>. I can print to an arbitrary stream by using <code>fprintf</code> instead:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">int</span> args, C *operand)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">int</span> args, C *operand)</span> {
     <span class="hljs-keyword">if</span> (args &gt; <span class="hljs-number">0</span>) {
         <span class="hljs-keyword">if</span> (operand-&gt;type == NIL) {
             <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">&quot;something happened, you didn&#x27;t have enough args&quot;</span>);
@@ -113,12 +102,10 @@ message. It&#39;s an error message, so it should be directed to standard error:
         <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
     }
 }
-</code></pre>
-<p>This is heading in the right direction, but it&#39;s not very rich. What function
+</code></pre><p>This is heading in the right direction, but it&#39;s not very rich. What function
 was being called? What was being passed in? I can give <code>arity_check()</code> the name
 of the caller like this:</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">char</span> *caller_name, <span class="hljs-type">int</span> args, C *operand)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">char</span> *caller_name, <span class="hljs-type">int</span> args, C *operand)</span> {
     <span class="hljs-keyword">if</span> (args &gt; <span class="hljs-number">0</span>) {
         <span class="hljs-keyword">if</span> (operand-&gt;type == NIL) {
             <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>,
@@ -135,14 +122,12 @@ of the caller like this:</p>
         <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
     }
 }
-</code></pre>
-<p>This is better, but you know what? I don&#39;t need to make this recursive at all,
+</code></pre><p>This is better, but you know what? I don&#39;t need to make this recursive at all,
 really. Doing so means I have to copy all those inputs to the function on each
 call, and I don&#39;t really know what state I&#39;m in when the error gets tripped. I
 can just count the number of args to the function and compare it against the
 number that was passed in. That&#39;s much easier!</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">char</span> *caller_name, <span class="hljs-type">int</span> args, C *cur)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">char</span> *caller_name, <span class="hljs-type">int</span> args, C *cur)</span> {
     <span class="hljs-type">int</span> passed_in = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">while</span> (cur-&gt;type != NIL) {
         passed_in++;
@@ -156,12 +141,10 @@ number that was passed in. That&#39;s much easier!</p>
         <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
     }
 }
-</code></pre>
-<p>I still would like to list the arguments passed in. I can retain access to the
+</code></pre><p>I still would like to list the arguments passed in. I can retain access to the
 first operand by copying the pointer at the beginning before transforming it in
 the counting loop.</p>
-
-<pre><code class="lang-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">char</span> *caller_name, <span class="hljs-type">int</span> args, C *c)</span> {
+<pre><code class="hljs language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">arity_check</span><span class="hljs-params">(<span class="hljs-type">char</span> *caller_name, <span class="hljs-type">int</span> args, C *c)</span> {
     C *cur = c;
     <span class="hljs-type">int</span> passed_in = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">while</span> (cur-&gt;type != NIL) {
@@ -177,17 +160,12 @@ the counting loop.</p>
         <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
     }
 }
-</code></pre>
-<p>Hey great! Now when I call something like:</p>
-
+</code></pre><p>Hey great! Now when I call something like:</p>
 <pre><code>(quote this (that))
-</code></pre>
-<p>I get something like this:</p>
-
+</code></pre><p>I get something like this:</p>
 <pre><code>ArityError: quote expected 1, got 2: this (that)
 shell returned 1
-</code></pre>
-<p>MUCH more helpful. I can just replace the arity checks in all the builtins with
+</code></pre><p>MUCH more helpful. I can just replace the arity checks in all the builtins with
 this simple call, and I get cleaner code and more useful error messaging, to
 boot.</p>
 </div>

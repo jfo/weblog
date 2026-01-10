@@ -42,9 +42,8 @@ puzzle <em>inputs</em> are different from user to user. You could copy someone&#
 solution, but you&#39;d still have to run it on your own input data.</p>
 <p>I did 6 days last year before getting distracted and falling &quot;behind.&quot; This
 year, I&#39;m doing it a little differently, here&#39;s how.</p>
-<h2 id="how-i-m-doing-advent-of-code-this-year">How I&#39;m doing Advent of Code this year</h2>
+<h2>How I&#39;m doing Advent of Code this year</h2>
 <p>AoC is a really good opportunity for learning things!</p>
-
 <ul>
 <li>new problem solving techniques and algorithms</li>
 <li>practice ingesting different input data into usable structures and models in different ways</li>
@@ -58,7 +57,6 @@ feel like you&#39;ve &quot;fallen behind&quot; though, and doing all the puzzles
 they are posted at midnight my time for 25 straight days is <em>very difficult</em> to
 sustain. So,</p>
 <p><strong>Things I DON&#39;T care about this year</strong>:</p>
-
 <ul>
 <li><em>Competing</em>. It&#39;s just not going to happen. I&#39;ve done all the problems so far
 right at midnight, but I&#39;m going to have to burst that bubble soon, maybe
@@ -73,7 +71,6 @@ service or something... input sanitation... edge case checking, stuff like
 that. I&#39;m just not going to worry about any of that as long as it works on the
 input I was provided.</p>
 <p><strong>Things I DO care about this year</strong>:</p>
-
 <ul>
 <li><em>Solving all the puzzles, eventually.</em> I think that this is a reasonable
 goal. The problems get really difficult later on, so I doubt I&#39;ll be able
@@ -93,13 +90,12 @@ same time, but I do want to keep learning it. I <em>do</em> know Ruby well enoug
 toss off a solution in whatever random way might occur to me, but I don&#39;t have
 too much interest in polishing it up once I&#39;ve finished it.</p>
 <p>In the past few days, following this process, a neat thing has been happening!</p>
-<h2 id="a-neat-thing-that-s-been-happening">A neat thing that&#39;s been happening</h2>
+<h2>A neat thing that&#39;s been happening</h2>
 <p>Because I have told myself that the first iteration doesn&#39;t have to look nice,
 or be efficient, or really anything at all, I&#39;ve been able to just jump right
 in with writing dumpster fire procedural code that still spits out the answer I
 want! Look at this hot garbage from <a href="http://adventofcode.com/2016/day/2">day 2 part 2</a>:</p>
-
-<pre><code class="lang-ruby"><span class="hljs-variable">@input</span> = File.open(<span class="hljs-string">&#x27;./inputs/2.txt&#x27;</span>, <span class="hljs-string">&quot;r&quot;</span>).readlines.each {|<span class="hljs-params">l</span>| l.chomp!}.collect! {|<span class="hljs-params">e</span>| e.split(<span class="hljs-string">&#x27;&#x27;</span>)}
+<pre><code class="hljs language-ruby"><span class="hljs-variable">@input</span> = <span class="hljs-title class_">File</span>.open(<span class="hljs-string">&#x27;./inputs/2.txt&#x27;</span>, <span class="hljs-string">&quot;r&quot;</span>).readlines.each {|<span class="hljs-params">l</span>| l.chomp!}.collect! {|<span class="hljs-params">e</span>| e.split(<span class="hljs-string">&#x27;&#x27;</span>)}
 <span class="hljs-variable">@keypadtwo</span> = [[<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>], [<span class="hljs-number">6</span>,<span class="hljs-number">7</span>,<span class="hljs-number">8</span>], [<span class="hljs-string">&quot;A&quot;</span>,<span class="hljs-string">&quot;B&quot;</span>,<span class="hljs-string">&quot;C&quot;</span>]]
 <span class="hljs-keyword">def</span> <span class="hljs-title function_">two</span>
     x = <span class="hljs-number">0</span>
@@ -181,8 +177,7 @@ want! Look at this hot garbage from <a href="http://adventofcode.com/2016/day/2"
 <span class="hljs-keyword">end</span>
 
 p two
-</code></pre>
-<p>The specifics of this problem are not important right now, and in fact you&#39;d
+</code></pre><p>The specifics of this problem are not important right now, and in fact you&#39;d
 need to solve the first part to see them on the link above. But, I mean, even
 just looking at the shape of that you can tell that it&#39;s some... not very great
 or sophisticated code! There is a ton of repetition, the whole boolean &quot;lock&quot;
@@ -198,8 +193,7 @@ minutes. Once I&#39;ve solved the problem I can be confident that I really do un
 it, and then I can take my time in implementing either an efficient or elegant
 solution for teh learns. Ideally both!</p>
 <p>Here&#39;s my Rust for that very same problem:</p>
-
-<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::io::prelude::*;
+<pre><code class="hljs language-rust"><span class="hljs-keyword">use</span> std::io::prelude::*;
 <span class="hljs-keyword">use</span> std::fs::File;
 <span class="hljs-keyword">use</span> std::collections::HashSet;
 <span class="hljs-keyword">use</span> std::iter::FromIterator;
@@ -223,7 +217,7 @@ solution for teh learns. Ideally both!</p>
     <span class="hljs-keyword">let</span> <span class="hljs-variable">allowed</span> = HashSet::&lt;_&gt;::<span class="hljs-title function_ invoke__">from_iter</span>(allowedarr.<span class="hljs-title function_ invoke__">iter</span>());
 
     <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">f</span> = File::<span class="hljs-title function_ invoke__">open</span>(<span class="hljs-string">&quot;../inputs/2.txt&quot;</span>).<span class="hljs-title function_ invoke__">unwrap</span>();
-    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = String::<span class="hljs-title function_ invoke__">new</span>();
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">mut </span><span class="hljs-variable">s</span> = <span class="hljs-type">String</span>::<span class="hljs-title function_ invoke__">new</span>();
     f.<span class="hljs-title function_ invoke__">read_to_string</span>(&amp;<span class="hljs-keyword">mut</span> s).<span class="hljs-title function_ invoke__">unwrap</span>();
     <span class="hljs-keyword">let</span> <span class="hljs-variable">len</span> = s.<span class="hljs-title function_ invoke__">len</span>();
     s.<span class="hljs-title function_ invoke__">truncate</span>(len - <span class="hljs-number">1</span>);
@@ -250,8 +244,7 @@ solution for teh learns. Ideally both!</p>
 
     <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;{}&quot;</span>, keys);
 }
-</code></pre>
-<p>So... I don&#39;t really know yet if this is &quot;good Rust&quot; because I don&#39;t know Rust
+</code></pre><p>So... I don&#39;t really know yet if this is &quot;good Rust&quot; because I don&#39;t know Rust
 super well yet, but I can say for certain that it&#39;s much better written than
 the first one!It uses a completely different boundary checking method, and is
 much more functional. Again,the specifics of the problem are not that important
@@ -259,11 +252,10 @@ here, but you can see that my thinking is clearer. Basically it just pulls in
 the input and then chains together a lot of functions to turn that input into
 the desired answer! Yay functions!</p>
 <p>Here&#39;s where something else neat happened.</p>
-<h2 id="something-else-neat-that-happened-">Something else neat that happened.</h2>
+<h2>Something else neat that happened.</h2>
 <p>Take a look at my ruby solution for the
 next day&#39;s second problem:</p>
-
-<pre><code class="lang-rb"><span class="hljs-variable">@input</span> = File.open(<span class="hljs-string">&#x27;./inputs/3.txt&#x27;</span>, <span class="hljs-string">&quot;r&quot;</span>)
+<pre><code class="hljs language-rb"><span class="hljs-variable">@input</span> = <span class="hljs-title class_">File</span>.open(<span class="hljs-string">&#x27;./inputs/3.txt&#x27;</span>, <span class="hljs-string">&quot;r&quot;</span>)
 .readlines
 .collect! {|<span class="hljs-params">e</span>|
     e.split(<span class="hljs-string">&#x27; &#x27;</span>)
@@ -277,8 +269,7 @@ p (<span class="hljs-number">0</span>..<span class="hljs-number">2</span>).map{|
 .flatten(<span class="hljs-number">1</span>)
 .select {|<span class="hljs-params">e</span>| e.inject(<span class="hljs-symbol">:+</span>) &gt; e.max * <span class="hljs-number">2</span> }
 .count
-</code></pre>
-<p>It&#39;s functional af! The whole thing is just one chain of methods that spits out
+</code></pre><p>It&#39;s functional af! The whole thing is just one chain of methods that spits out
 the answer! It reminds me of the
 <a href="https://github.com/twitter/scalding">scalding</a> code I&#39;ve written at work to
 produce big data jobs. It also looks like (shocker) the Rust code I wrote the

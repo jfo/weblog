@@ -48,8 +48,7 @@ straightforward format whose data section, when the header is configured
 as I have done, consists of nothing more than a series of byte-wide samples
 with no compression or interpolation.</p>
 <p>Translating the rust program to zig directly was pretty straightforward, naively it looks like this.</p>
-
-<pre><code class="lang-zig"><span class="hljs-keyword">const</span> std = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>);
+<pre><code class="hljs language-zig"><span class="hljs-keyword">const</span> std = <span class="hljs-meta">@import</span>(<span class="hljs-string">&quot;std&quot;</span>);
 <span class="hljs-keyword">const</span> File = std.fs.File;
 <span class="hljs-keyword">const</span> sin = std.math.sin;
 
@@ -105,19 +104,16 @@ with no compression or interpolation.</p>
     <span class="hljs-keyword">try</span> sine_wave(<span class="hljs-number">3</span>, file, <span class="hljs-number">440.0</span>);
     _ = file.close();
 }
-</code></pre>
-<p>I&#39;ve implemented a simple little set of helper functions to write <code>u32</code> and
+</code></pre><p>I&#39;ve implemented a simple little set of helper functions to write <code>u32</code> and
 <code>u64</code> to the output. I believe there are better ways to do that, but this works
 fine. Much of this is really pretty close to the <a href="https://github.com/jfo/rav/blob/3e5db5f9cdbd1a3458ad166175b9c64626bc7e8c/src/main.rs">rust
 source</a>,
 maybe surprisingly so.</p>
-<h2 id="a-bug-story">A bug story</h2>
+<h2>A bug story</h2>
 <p>The hardest part about this was testing it, for reasons almost completely
 unrelated to the code. I had originally defined <code>PI</code> as:</p>
-
-<pre><code class="lang-zig"><span class="hljs-keyword">const</span> PI: <span class="hljs-built_in">f64</span> = <span class="hljs-number">3.1415</span>
-</code></pre>
-<p>This is more than enough precision for this use case, and will produce a sine
+<pre><code class="hljs language-zig"><span class="hljs-keyword">const</span> PI: <span class="hljs-built_in">f64</span> = <span class="hljs-number">3.1415</span>
+</code></pre><p>This is more than enough precision for this use case, and will produce a sine
 wave at the desired frequency when plugged into the function in the example
 above.</p>
 <p><em>but...</em></p>
@@ -132,7 +128,6 @@ noise to come out, but I assumed that the file was malformed and something was
 wrong with the header.</p>
 <p>When comparing the rust program&#39;s output byte for byte with the zig version&#39;s,
 they seemed very different for inscrutable reasons!</p>
-
 <ol>
 <li>The <code>data</code> section in the zig version was 4x too long (suspicious)</li>
 <li>The bytes were all different!</li>
@@ -141,7 +136,6 @@ they seemed very different for inscrutable reasons!</p>
 <p>The first one was a real bug in the code, as I was initially trying to write
 <code>f32</code>&#39;s into the data section instead of <code>u8</code>&#39;s... whoops! But that still left
 the other two problems.</p>
-
 <ol>
 <li>The bytes were all different!</li>
 <li>As I said, it wouldn&#39;t play!</li>
@@ -151,14 +145,10 @@ there was a lot of headscratcing about that, maybe my write functions were
 wrong, or writing big endian or something? No, tested in isolation they were
 doing as I expected.</p>
 <p>Ah, I&#39;m not using the <em>exact</em> same PI as <a href="https://github.com/jfo/rav/blob/3e5db5f9cdbd1a3458ad166175b9c64626bc7e8c/src/main.rs#L6">rust was though!</a></p>
-
-<pre><code class="lang-rust"><span class="hljs-keyword">use</span> std::f64::consts::PI;
-</code></pre>
-<p>What is that <a href="https://github.com/rust-lang/rust/blob/af7ab3447079fddc51c6c7749b160d24769f7c16/library/core/src/num/f32.rs#L272"><em>exactly</em></a>?</p>
-
-<pre><code class="lang-rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> PI: <span class="hljs-type">f32</span> = <span class="hljs-number">3.14159265358979323846264338327950288_f32</span>;
-</code></pre>
-<p>So, replacing my weak, sad 4 digits of PI PI with that beefy boi solved problem
+<pre><code class="hljs language-rust"><span class="hljs-keyword">use</span> std::<span class="hljs-type">f64</span>::consts::PI;
+</code></pre><p>What is that <a href="https://github.com/rust-lang/rust/blob/af7ab3447079fddc51c6c7749b160d24769f7c16/library/core/src/num/f32.rs#L272"><em>exactly</em></a>?</p>
+<pre><code class="hljs language-rust"><span class="hljs-keyword">pub</span> <span class="hljs-keyword">const</span> PI: <span class="hljs-type">f32</span> = <span class="hljs-number">3.14159265358979323846264338327950288_f32</span>;
+</code></pre><p>So, replacing my weak, sad 4 digits of PI PI with that beefy boi solved problem
 number 2, but the resulting <code>.wav</code> file <em>still</em> wouldn&#39;t play, despite being
 <em>byte for byte identical</em> to the rust program&#39;s output. What gives??</p>
 <p>You might be surprised to learn that I was trying to play this file in Apple
@@ -176,10 +166,8 @@ header and that&#39;s why the file wouldn&#39;t play. I was right, at the time! 
 was writing 4x the data (as floats instead of bytes) to the data section, the
 line that writes the expected data size was mismatched to what was actually in
 the data section:</p>
-
-<pre><code class="lang-zig">    <span class="hljs-keyword">try</span> write_<span class="hljs-type">u16</span>(<span class="hljs-meta">@truncate</span>(<span class="hljs-type">u16</span>, (CHANNELS * (BIT_DEPTH / BYTE_SIZE))), file);
-</code></pre>
-<p>So the first time I tried to play the file in music, it cached it but the
+<pre><code class="hljs language-zig">    <span class="hljs-keyword">try</span> write_<span class="hljs-type">u16</span>(<span class="hljs-meta">@truncate</span>(<span class="hljs-type">u16</span>, (CHANNELS * (BIT_DEPTH / BYTE_SIZE))), file);
+</code></pre><p>So the first time I tried to play the file in music, it cached it but the
 version it cached was corrupt, or rather, malformed, so the player didn&#39;t even
 attempt to play back the garbage I had written.</p>
 <p>Once I fixed the issue, first with the bytes writing correctly (which despite
@@ -188,7 +176,7 @@ and then with the identical output, it should have played normally, but since
 the <em>header</em> was identical, Apple Music happily expected the cached version to
 be the same, so it just kept trying to play that corrupted version.</p>
 <p>I played it in quicktime and it worked as expected! Simple, right?</p>
-<h2 id="just-the-worst-type-of-bug-you-know-">Just, the worst type of bug, you know?</h2>
+<h2>Just, the worst type of bug, you know?</h2>
 <p>This was like an hour and a half of debugging. I started with the assumption
 that I was doing something wrong in the translated code, and I was but that was
 only 1/3 of the issue. We kept staring at the <code>sine</code> function and that gnarly
