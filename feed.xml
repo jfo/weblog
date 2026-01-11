@@ -9,7 +9,20 @@
       <link>https://blog.jfo.click</link>
       <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Sat Jan 10 2026 19:28:22 GMT+0100 (Central European Standard Time)</lastBuildDate>
+    <lastBuildDate>Sun Jan 11 2026 21:15:44 GMT+0100 (Central European Standard Time)</lastBuildDate>
+    <item>
+      <title>Goodbye 2025</title>
+      <link>https://blog.jfo.click/goodbye-2025</link>
+      <description><![CDATA[<h3>It&#39;s been a year. It&#39;s been a series of years.</h3>
+<p>First, a quick rewind... without much ado:</p>
+<ul>
+<li><strong>I passed the <a href="https://www.visaverge.com/news/denmarks-citizenship-test-2025-new-format-stricter-passing-criteria/">Indfødsretsprøve</a> in November.</strong></li>
+</ul>
+<p>This is a very difficult test with a ~40% pass rate, and was the last official
+hoop I needed to jump through before I am allowed to apply f...]]></description>
+      <guid isPermaLink="true">https://blog.jfo.click/goodbye-2025</guid>
+      <pubDate>Jan 11, 2026</pubDate>
+    </item>
     <item>
       <title>It&#39;s Just a Function</title>
       <link>https://blog.jfo.click/it-s-just-a-function</link>
@@ -35,18 +48,6 @@ Going to RC and being surrounded by interesting ideas and interesting people
 and also, cr...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/batch-no-2-return-statement</guid>
       <pubDate>Aug 06, 2022</pubDate>
-    </item>
-    <item>
-      <title>Building a tiny little broken calculator with parser combinators</title>
-      <link>https://blog.jfo.click/building-a-tiny-little-broken-calculator-with-parser-combinators</link>
-      <description><![CDATA[<p>Perhaps I have a string lying around somewhere...</p>
-<pre><code class="hljs language-js"><span class="hljs-keyword">const</span> testString = <span class="hljs-string">&quot;Abcd123&quot;</span>;
-</code></pre><p>What a lovely little string.</p>
-<p>I will start with a function that takes a string as input and tells you if the
-input passes some test you&#39;ve set out for it. This is not yet a parser, not
-really. Usually, a parser does quite a ...]]></description>
-      <guid isPermaLink="true">https://blog.jfo.click/building-a-tiny-little-broken-calculator-with-parser-combinators</guid>
-      <pubDate>Jul 25, 2022</pubDate>
     </item>
   </channel>
 </rss>
