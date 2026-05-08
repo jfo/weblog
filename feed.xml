@@ -9,7 +9,20 @@
       <link>https://blog.jfo.click</link>
       <url>https://blog.jfo.click/desk.jpg</url>
     </image>
-    <lastBuildDate>Sun Jan 11 2026 21:15:44 GMT+0100 (Central European Standard Time)</lastBuildDate>
+    <lastBuildDate>Fri May 08 2026 08:15:20 GMT-0400 (Eastern Daylight Time)</lastBuildDate>
+    <item>
+      <title>Twelve years</title>
+      <link>https://blog.jfo.click/twelve-years</link>
+      <description><![CDATA[<p>Now seems as good a time as any to reflect on my career, such as it is, and
+such as it has been, so far.</p>
+<p>In truth, I&#39;ve been trying to get myself to write this post for months, if not
+years. I would tell myself, oh I haven&#39;t written much lately, wouldn&#39;t it be
+weird to write about this alongside such a paltry recent output? I should build up
+some more content, flesh out some more of these drafts, many of which are so
+old as ...]]></description>
+      <guid isPermaLink="true">https://blog.jfo.click/twelve-years</guid>
+      <pubDate>May 08, 2026</pubDate>
+    </item>
     <item>
       <title>Goodbye 2025</title>
       <link>https://blog.jfo.click/goodbye-2025</link>
@@ -35,19 +48,6 @@ particular but likewise arbitrary programming language and syntax, and is in
 practice here interpreted by a <em>virtual...]]></description>
       <guid isPermaLink="true">https://blog.jfo.click/it-s-just-a-function</guid>
       <pubDate>Jan 08, 2023</pubDate>
-    </item>
-    <item>
-      <title>Batch no. 2 return statement</title>
-      <link>https://blog.jfo.click/batch-no-2-return-statement</link>
-      <description><![CDATA[<p>My Recurse center half-batch ended yesterday. This is my reflections post. We
-used to call these &quot;return statements,&quot; because that&#39;s what happens at the end
-of a function, and also I guess it&#39;s like a return to normalcy. So this is my
-return statement.</p>
-<p>Six weeks is really not a very long time, and I was conscious of that going in.
-Going to RC and being surrounded by interesting ideas and interesting people
-and also, cr...]]></description>
-      <guid isPermaLink="true">https://blog.jfo.click/batch-no-2-return-statement</guid>
-      <pubDate>Aug 06, 2022</pubDate>
     </item>
   </channel>
 </rss>
